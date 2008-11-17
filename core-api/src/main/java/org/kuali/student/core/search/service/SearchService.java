@@ -9,11 +9,11 @@ import org.kuali.student.core.search.dto.Result;
 import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
 import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
-import org.kuali.student.poc.common.ws.exceptions.DoesNotExistException;
-import org.kuali.student.poc.common.ws.exceptions.InvalidParameterException;
-import org.kuali.student.poc.common.ws.exceptions.MissingParameterException;
-import org.kuali.student.poc.common.ws.exceptions.OperationFailedException;
-import org.kuali.student.poc.common.ws.exceptions.PermissionDeniedException;
+import org.kuali.student.common.ws.exceptions.DoesNotExistException;
+import org.kuali.student.common.ws.exceptions.InvalidParameterException;
+import org.kuali.student.common.ws.exceptions.MissingParameterException;
+import org.kuali.student.common.ws.exceptions.OperationFailedException;
+import org.kuali.student.common.ws.exceptions.PermissionDeniedException;
 
 public interface SearchService {
     /** 

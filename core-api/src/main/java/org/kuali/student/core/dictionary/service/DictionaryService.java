@@ -7,10 +7,10 @@ import javax.jws.WebParam;
 
 import org.kuali.student.core.dictionary.dto.EnumeratedValue;
 import org.kuali.student.core.dictionary.dto.ObjectStructure;
-import org.kuali.student.poc.common.ws.exceptions.DoesNotExistException;
-import org.kuali.student.poc.common.ws.exceptions.InvalidParameterException;
-import org.kuali.student.poc.common.ws.exceptions.MissingParameterException;
-import org.kuali.student.poc.common.ws.exceptions.OperationFailedException;
+import org.kuali.student.common.ws.exceptions.DoesNotExistException;
+import org.kuali.student.common.ws.exceptions.InvalidParameterException;
+import org.kuali.student.common.ws.exceptions.MissingParameterException;
+import org.kuali.student.common.ws.exceptions.OperationFailedException;
 
 public interface DictionaryService {
 	/**
