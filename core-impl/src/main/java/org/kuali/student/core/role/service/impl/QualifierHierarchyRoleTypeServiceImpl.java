@@ -20,25 +20,24 @@ import java.util.List;
 
 import javax.jws.WebService;
 
+import org.kuali.rice.kim.bo.types.KimAttributesTranslator;
+import org.kuali.rice.kim.bo.types.dto.AttributeSet;
+import org.kuali.rice.kim.service.support.KimRoleTypeService;
+import org.kuali.student.core.role.QualifierHierarchyRoleTypeService;
+import org.kuali.student.core.role.dao.QualifierHierarchyDAO;
 import org.kuali.student.core.role.entity.Qualifier;
 import org.kuali.student.core.role.entity.QualifierHierarchy;
 import org.kuali.student.core.role.entity.QualifierType;
-import org.kuali.rice.kim.bo.types.KimAttributesTranslator;
-import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.student.core.role.dao.QualifierHierarchyDAO;
-import org.kuali.rice.kim.service.support.KimRoleTypeService;
-//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This is a description of what this class does - Rich don't forget to fill this in. 
  * 
  */
-@WebService(endpointInterface = "org.kuali.rice.kim.service.support.KimRoleTypeService", serviceName = "KimRoleTypeService", portName = "KimRoleTypeService", targetNamespace = "http://service.kim.rice.kuali.org")
+@WebService(endpointInterface = "org.kuali.student.core.role.QualifierHierarchyRoleTypeService", serviceName = "QHRoleTypeService", portName = "QHRoleTypeService", targetNamespace = "http://org.kuali.student/core/qhRoleType")
 @Transactional
-public class KimRoleTypeServiceImpl implements KimRoleTypeService {
+public class QualifierHierarchyRoleTypeServiceImpl implements QualifierHierarchyRoleTypeService, KimRoleTypeService {
     
-    //@Autowired
     private QualifierHierarchyDAO qualifierHierarchyDAO;
     private String qualifierHierarchyName;
     
@@ -215,7 +214,7 @@ public class KimRoleTypeServiceImpl implements KimRoleTypeService {
      * if this role was based on the campus and the role assigned to it was based 
      * on organization.
      */
-    @Override
+    //@Override
     public AttributeSet convertQualificationAttributesToRequired(AttributeSet qualificationAttributes ){
         return null;
     }
