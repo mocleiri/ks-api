@@ -1,12 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.kuali.student.poc.common</groupId>
-	<artifactId>ks-parent-pom</artifactId>
+	<groupId>org.kuali.student.core</groupId>
+	<artifactId>ks-parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<version>0.1.0-SNAPSHOT</version>
-	<name>KS POC Parent POM</name>
-	<description>Kuali Student POC Parent POM</description>
+	<name>KS Parent POM</name>
+	<description>Kuali Student Parent POM</description>
 
 	<url>http://kuali.org/communities/ks/</url>
 	<licenses>
@@ -27,31 +29,38 @@
 
 
 	<modules>
-		<module>ks-service-api-pom</module>
-		<module>ks-service-pom</module>
-		<module>common-test</module>
+		<module>ks-cxf</module>
+		<module>ks-metro</module>
+		<module>ks-eclipselink</module>
+		<module>ks-hibernate</module>
+		<module>ks-jta</module>	
 		<module>common-util</module>
-		<module>common-ws</module>
-		<module>common-cxf</module>
-		<module>common-metro</module>
+		<module>common-test</module>
+		<module>core-api</module>
+		<module>core-impl</module>
+		<module>core-web</module>
 	</modules>
 
 	<scm>
-		<connection>scm:svn:https://test.kuali.org/svn/student/poc/common/branches/common-dev</connection>
-		<developerConnection>scm:svn:https://test.kuali.org/svn/student/poc/common/branches/common-dev</developerConnection>
+		<connection>
+			scm:svn:https://test.kuali.org/svn/student/sandbox/team2/ks-core/branches/ks-core-dev
+		</connection>
+		<developerConnection>
+			scm:svn:https://test.kuali.org/svn/student/sandbox/team2/ks-core/branches/ks-core-dev
+		</developerConnection>
 	</scm>
 
 	<repositories>
 		<repository>
 			<id>kuali.release</id>
-			<url>http://kuali.umd.edu/archiva/repository/release</url>
+			<url>http://archiva.kuali.umd.edu/repository/release</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>
 			<id>kuali.snapshot</id>
-			<url>http://kuali.umd.edu/archiva/repository/snapshot</url>
+			<url>http://archiva.kuali.umd.edu/repository/snapshot</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
@@ -63,12 +72,11 @@
 		<cxf.version>2.1.3</cxf.version>
 		<jaxws-api.version>2.1</jaxws-api.version>
 		<jaxws.version>2.1.3</jaxws.version>
-		<metro.version>1.1</metro.version>
+		<metro.version>1.4</metro.version>
 		<junit.version>4.4</junit.version>
 		<spring.version>2.5.4</spring.version>
 		<derby.version>10.4.2.0</derby.version>
 		<jetty.version>6.1.6</jetty.version>
-        <velocity.version>1.4</velocity.version>
 	</properties>
 
 	<profiles>
@@ -91,10 +99,6 @@
 					<layout>legacy</layout>
 				</repository>
 				<repository>
-					<id>jboss</id>
-					<url>http://repository.jboss.org/maven2</url>
-				</repository>
-				<repository>
 					<id>kuali.rice</id>
 					<url>https://test.kuali.org/maven</url>
 				</repository>
@@ -105,9 +109,15 @@
 					</url>
 				</repository>
 				<repository>
-					<id>ks.external.free</id>
+					<id>ks.public</id>
 					<url>
-						http://kuali.umd.edu/archiva/repository/external-free
+						http://archiva.kuali.umd.edu/repository/public/
+					</url>
+				</repository>
+				<repository>
+					<id>EclipseLink Repo</id>
+					<url>
+						http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo
 					</url>
 				</repository>
 			</repositories>
@@ -159,6 +169,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-java2ws-plugin</artifactId>
+				<version>${cxf.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.cxf</groupId>
+						<artifactId>cxf-rt-frontend-jaxws</artifactId>
+						<version>${cxf.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.apache.cxf</groupId>
+						<artifactId>cxf-rt-frontend-simple</artifactId>
+						<version>${cxf.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<genWsdl>true</genWsdl>
+					<genWrapperbean>true</genWrapperbean>
+					<verbose>true</verbose>
+					<argline>-s ${project.build.directory}/generated/src -classdir ${project.build.outputDirectory}</argline>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -182,12 +215,28 @@
 	<dependencyManagement>
 		<dependencies>
 
+			<!-- Test Framework Dependencies -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
 				<scope>test</scope>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.derby</groupId>
+				<artifactId>derby</artifactId>
+				<version>${derby.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty</artifactId>
+				<version>${jetty.version}</version>
+				<scope>test</scope>
+			</dependency>
+			
 
 			<dependency>
 				<artifactId>servlet-api</artifactId>
@@ -219,36 +268,35 @@
 			</dependency>
 
 			<!--  Hibernate -->
+
 			<dependency>
 				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate</artifactId>
-				<version>3.2.6.ga</version>
-				<exclusions>
-					<exclusion>
-						<groupId>asm</groupId>
-						<artifactId>asm-attrs</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>cglib</groupId>
-						<artifactId>cglib</artifactId>
-					</exclusion>
-				</exclusions>
+				<artifactId>hibernate-annotations</artifactId>
+				<version>3.4.0.GA</version>
 			</dependency>
-
 			<dependency>
-				<groupId>org.apache.derby</groupId>
-				<artifactId>derby</artifactId>
-				<version>${derby.version}</version>
-				<scope>test</scope>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>3.4.0.GA</version>
 			</dependency>
 
+
+			<!-- Hibernate Transitive Dependencies -->
 			<dependency>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty</artifactId>
-				<version>${jetty.version}</version>
-				<scope>test</scope>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
 			</dependency>
-
+			<dependency>
+				<groupId>commons-collections</groupId>
+				<artifactId>commons-collections</artifactId>
+				<version>3.2</version>
+			</dependency>
+			<dependency>
+				<groupId>antlr</groupId>
+				<artifactId>antlr</artifactId>
+				<version>2.7.7</version>
+			</dependency>
 
 			<!-- Spring Dependencies -->
 			<dependency>
@@ -298,10 +346,17 @@
 				<version>${spring.version}</version>
 			</dependency>
 
+			<!-- Metro Dependencies -->
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>webservices-rt</artifactId>
+				<version>${metro.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.jvnet.jax-ws-commons.spring</groupId>
 				<artifactId>jaxws-spring</artifactId>
-				<version>1.7</version>
+				<version>1.8</version>
 				<exclusions>
 					<exclusion>
 						<groupId>org.springframework</groupId>
@@ -353,20 +408,82 @@
 				<version>1.2</version>
 			</dependency>
 
-
-			<!--  Metro Dependencies -->
+			<!-- CXF Dependencies -->
+			<!-- Libraries not required for Java 1.6_04+ are being excluding (based cxf WHICH_JARS file) -->
 			<dependency>
-				<groupId>com.sun.xml.ws</groupId>
-				<artifactId>webservices-rt</artifactId>
-				<version>${metro.version}</version>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-tools-common</artifactId>
+				<version>${cxf.version}</version>
 			</dependency>
-
-
-			<!--  CXF Dependencies -->
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-rt-frontend-jaxws</artifactId>
 				<version>${cxf.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-javamail_1.4_spec</artifactId>
+					</exclusion>				
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-jaxws_2.1_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-activation_1.1_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-annotation_1.0_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.soap</groupId>
+						<artifactId>saaj-api</artifactId>
+					</exclusion>					
+					<exclusion>
+						<groupId>com.sun.xml.messaging.saaj</groupId>
+						<artifactId>saaj-impl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.codehaus.woodstox</groupId>
+						<artifactId>wstx-asl</artifactId>
+					</exclusion>					
+				</exclusions>				
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-common-utilities</artifactId>
+				<version>${cxf.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>				
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-tools-common</artifactId>
+				<version>${cxf.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.soap</groupId>
+						<artifactId>saaj-api</artifactId>
+					</exclusion>
+				
+					<exclusion>
+						<groupId>org.apache.velocity</groupId>
+						<artifactId>velocity</artifactId>
+					</exclusion>										
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.cxf</groupId>
@@ -377,6 +494,48 @@
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-rt-transports-http-jetty</artifactId>
 				<version>${cxf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-ws-security</artifactId>
+				<version>${cxf.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-annotation_1.0_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-stax-api_1.0_spec</artifactId>
+					</exclusion>					
+					<exclusion>
+						<groupId>javax.xml.soap</groupId>
+						<artifactId>saaj-api</artifactId>
+					</exclusion>
+				</exclusions>					
+			</dependency>
+			<dependency>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-rt-bindings-soap</artifactId>
+				<version>${cxf.version}</version>			
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-javamail_1.4_spec</artifactId>
+					</exclusion>				
+					<exclusion>
+						<groupId>org.apache.geronimo.specs</groupId>
+						<artifactId>geronimo-activation_1.1_spec</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+					</exclusion>					
+					<exclusion>
+						<groupId>org.codehaus.woodstox</groupId>
+						<artifactId>wstx-asl</artifactId>
+					</exclusion>
+				</exclusions>				
 			</dependency>
 
 
@@ -424,31 +583,52 @@
 				<version>1.2.14</version>
 			</dependency>
 
-			<!-- Hibernate Transitive Dependencies -->
-			<dependency>
-				<groupId>dom4j</groupId>
-				<artifactId>dom4j</artifactId>
-				<version>1.6.1</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-collections</groupId>
-				<artifactId>commons-collections</artifactId>
-				<version>3.2</version>
-			</dependency>
-			<dependency>
-				<groupId>antlr</groupId>
-				<artifactId>antlr</artifactId>
-				<version>2.7.7</version>
-			</dependency>
-
 			<!-- Velocity (used by cxf & brms) -->
 			<dependency>
 				<groupId>velocity</groupId>
 				<artifactId>velocity</artifactId>
-				<version>${velocity.version}</version>			
+				<version>1.4</version>
 			</dependency>
-			
+
+			<!-- Pom dependencies for impl specific jars -->
+			<dependency>
+				<groupId>org.kuali.student.core</groupId>
+				<artifactId>ks-jta</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+			</dependency>		
+			<dependency>
+				<groupId>org.kuali.student.core</groupId>
+				<artifactId>ks-cxf</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.kuali.student.core</groupId>
+				<artifactId>ks-metro</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.kuali.student.core</groupId>
+				<artifactId>ks-eclipselink</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.kuali.student.core</groupId>
+				<artifactId>ks-hibernate</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<type>pom</type>
+			</dependency>			
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
 
 </project>

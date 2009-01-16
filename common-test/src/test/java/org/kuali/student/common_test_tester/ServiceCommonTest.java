@@ -2,19 +2,20 @@ package org.kuali.student.common_test_tester;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 
 import org.aopalliance.aop.Advice;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.Test;
+import org.kuali.student.common.test.spring.AbstractServiceTest;
+import org.kuali.student.common.test.spring.Client;
+import org.kuali.student.common.test.spring.Dao;
+import org.kuali.student.common.test.spring.Daos;
+import org.kuali.student.common.test.spring.IdToObjectEhcacheAdvice;
+import org.kuali.student.common.test.spring.PersistenceFileLocation;
 import org.kuali.student.common_test_tester.support.MyService;
-import org.kuali.student.poc.common.test.spring.AbstractServiceTest;
-import org.kuali.student.poc.common.test.spring.Client;
-import org.kuali.student.poc.common.test.spring.Dao;
-import org.kuali.student.poc.common.test.spring.Daos;
-import org.kuali.student.poc.common.test.spring.IdToObjectEhcacheAdvice;
-import org.kuali.student.poc.common.test.spring.PersistenceFileLocation;
 import org.springframework.aop.aspectj.AspectInstanceFactory;
 import org.springframework.aop.aspectj.AspectJAroundAdvice;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
@@ -37,6 +38,12 @@ public class ServiceCommonTest extends AbstractServiceTest {
 		assertNotNull(client.saveString("la la la"));
 	}
 
+	@Test
+	public void testDaoLoader(){
+	    String value = "loaded-value";
+	    assertEquals(value, client.findValueFromValue(value));
+	}
+	
 	@Test
 	public void testClientCaching() {
 		// Create a proxy for aop caching
@@ -78,10 +85,10 @@ public class ServiceCommonTest extends AbstractServiceTest {
 			
 			cachedClient = (MyService) factory.getProxy();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 

@@ -1,50 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.kuali.student.poc.common</groupId>
-	<artifactId>common-util</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
-	<name>KS POC Common Util</name>
-	<description>Kuali Student POC Common Util</description>
+	<groupId>org.kuali.student.core</groupId>
+	<artifactId>ks-common-util</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>KS Common Util</name>
+	<description>KS common utilitiy classes</description>
 
 	<parent>
-		<groupId>org.kuali.student.poc.common</groupId>
-		<artifactId>ks-parent-pom</artifactId>
-		<version>0.1.0-SNAPSHOT</version>
+		<groupId>org.kuali.student.core</groupId>
+		<artifactId>ks-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-	<profiles>
-		<profile>
-			<id>external.repositories.util</id>
-			<activation>
-				<property>
-					<name>!ks.use.proxy</name>
-				</property>
-			</activation>
-
-			<repositories>
-				<repository>
-					<id>EclipseLink Repo</id>
-					<url>
-						http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo
-					</url>
-				</repository>
-			</repositories>
-
-		</profile>
-	</profiles>
 
 	<dependencies>
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>jta</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
