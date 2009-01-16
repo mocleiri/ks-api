@@ -24,57 +24,26 @@ import org.kuali.student.poc.common.ws.binding.JaxbAttributeMapListAdapter;
  * @author Kuali Student Team (kamal.kuali@gmail.com)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessRuleAnchorDTO implements Serializable {
-
-    @XmlElement
-    private String businessRuleTypeKey;
+public class AgendaDeterminationInfoDTO implements Serializable {
     
-    @XmlElement
-    private String anchorTypeKey;
     
-    @XmlElement
-    private String anchorValue;
-
-    /**
-     * @return the businessRuleTypeKey
-     */
-    public String getBusinessRuleTypeKey() {
-        return businessRuleTypeKey;
-    }
-
-    /**
-     * @param businessRuleTypeKey the businessRuleTypeKey to set
-     */
-    public void setBusinessRuleTypeKey(String businessRuleTypeKey) {
-        this.businessRuleTypeKey = businessRuleTypeKey;
-    }
-
-    /**
-     * @return the anchorTypeKey
-     */
-    public String getAnchorTypeKey() {
-        return anchorTypeKey;
-    }
-
-    /**
-     * @param anchorTypeKey the anchorTypeKey to set
-     */
-    public void setAnchorTypeKey(String anchorTypeKey) {
-        this.anchorTypeKey = anchorTypeKey;
-    }
-
-    /**
-     * @return the anchorValue
-     */
-    public String getAnchorValue() {
-        return anchorValue;
-    }
-
-    /**
-     * @param anchorValue the anchorValue to set
-     */
-    public void setAnchorValue(String anchorValue) {
-        this.anchorValue = anchorValue;
-    }
+    private static final long serialVersionUID = 1L;
     
+    @XmlElement(name="agendaDeterminationKey")
+    @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
+    private Map<String, String> agendaDeterminationKeyList;
+
+    /**
+     * @return the agendaDeterminationKeyList
+     */
+    public Map<String, String> getAgendaDeterminationKeyList() {
+        return agendaDeterminationKeyList;
+    }
+
+    /**
+     * @param agendaDeterminationKeyList the agendaInfoDeterminationKeyList to set
+     */
+    public void setAgendaInfoDeterminationKeyList(Map<String, String> agendaDeterminationKeyList) {
+        this.agendaDeterminationKeyList = agendaDeterminationKeyList;
+    }
 }

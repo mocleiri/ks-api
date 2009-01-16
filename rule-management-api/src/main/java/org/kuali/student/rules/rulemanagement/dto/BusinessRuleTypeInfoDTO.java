@@ -23,16 +23,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.kuali.student.rules.factfinder.dto.FactStructureDTO;
-
 /**
  * Contains information about a business rule type 
  * 
  * @author Kuali Student Team (kamal.kuali@gmail.com)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BusinessRuleTypeDTO implements Serializable{
+public class BusinessRuleTypeInfoDTO implements Serializable{
 
+    private static final long serialVersionUID = 1L;
 
     @XmlElement
     private String bussinessRuleTypeKey;

@@ -8,14 +8,10 @@
 package org.kuali.student.rules.rulemanagement.dto;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.kuali.student.poc.common.ws.binding.JaxbAttributeMapListAdapter;
 
 /**
  * Maps a set of Business Rule Types to form an AgendaInfoDTO and a specif instance of Business Rules form an Agenda for this
@@ -24,26 +20,59 @@ import org.kuali.student.poc.common.ws.binding.JaxbAttributeMapListAdapter;
  * @author Kuali Student Team (kamal.kuali@gmail.com)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AgendaInfoDeterminationStructureDTO implements Serializable {
-    
-    
+public class BusinessRuleAnchorInfoDTO implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
+    @XmlElement
+    private String businessRuleTypeKey;
     
-    @XmlElement(name="agendaInfoDeterminationKey")
-    @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
-    private Map<String, String> agendaInfoDeterminationKeyList;
+    @XmlElement
+    private String anchorTypeKey;
+    
+    @XmlElement
+    private String anchorValue;
 
     /**
-     * @return the agendaInfoDeterminationKeyList
+     * @return the businessRuleTypeKey
      */
-    public Map<String, String> getAgendaInfoDeterminationKeyList() {
-        return agendaInfoDeterminationKeyList;
+    public String getBusinessRuleTypeKey() {
+        return businessRuleTypeKey;
     }
 
     /**
-     * @param agendaInfoDeterminationKeyList the agendaInfoDeterminationKeyList to set
+     * @param businessRuleTypeKey the businessRuleTypeKey to set
      */
-    public void setAgendaInfoDeterminationKeyList(Map<String, String> agendaInfoDeterminationKeyList) {
-        this.agendaInfoDeterminationKeyList = agendaInfoDeterminationKeyList;
+    public void setBusinessRuleTypeKey(String businessRuleTypeKey) {
+        this.businessRuleTypeKey = businessRuleTypeKey;
     }
+
+    /**
+     * @return the anchorTypeKey
+     */
+    public String getAnchorTypeKey() {
+        return anchorTypeKey;
+    }
+
+    /**
+     * @param anchorTypeKey the anchorTypeKey to set
+     */
+    public void setAnchorTypeKey(String anchorTypeKey) {
+        this.anchorTypeKey = anchorTypeKey;
+    }
+
+    /**
+     * @return the anchorValue
+     */
+    public String getAnchorValue() {
+        return anchorValue;
+    }
+
+    /**
+     * @param anchorValue the anchorValue to set
+     */
+    public void setAnchorValue(String anchorValue) {
+        this.anchorValue = anchorValue;
+    }
+    
 }
