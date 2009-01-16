@@ -1,5 +1,4 @@
 package org.kuali.student.core.search.dto;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;

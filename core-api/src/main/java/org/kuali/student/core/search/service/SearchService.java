@@ -6,26 +6,25 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
-import org.kuali.student.core.search.dto.QueryParamValue;
-import org.kuali.student.core.search.dto.Result;
-import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
-import org.kuali.student.core.search.dto.SearchResultTypeInfo;
-import org.kuali.student.core.search.dto.SearchTypeInfo;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.exceptions.PermissionDeniedException;
+import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
+import org.kuali.student.core.search.dto.SearchResultTypeInfo;
+import org.kuali.student.core.search.dto.SearchTypeInfo;
 @WebService(name = "SearchService", targetNamespace = "http://org.kuali.student/core/search")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 public interface SearchService {
+
+
     /** 
      * Retrieves the list of search types known by this service.
      * @param None No Parameters
      * @return list of search type information
      * @throws OperationFailedException unable to complete request
 	 */
-    public List<SearchTypeInfo> findSearchTypes() throws OperationFailedException;
+    public List<SearchTypeInfo> getSearchTypes() throws OperationFailedException;
 
     /** 
      * Retrieves information about a particular search type.
@@ -36,7 +35,7 @@ public interface SearchService {
      * @throws MissingParameterException searchTypeKey not specified
      * @throws OperationFailedException unable to complete request
 	 */
-    public SearchTypeInfo fetchSearchType(@WebParam(name="searchTypeKey")String searchTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+    public SearchTypeInfo getSearchType(@WebParam(name="searchTypeKey")String searchTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /** 
      * Retrieves the list of search types which return results in the specified format.
@@ -47,7 +46,7 @@ public interface SearchService {
      * @throws MissingParameterException searchResultTypeKey not specified
      * @throws OperationFailedException unable to complete request
 	 */
-    public List<SearchTypeInfo> findSearchTypesByResult(@WebParam(name="searchResultTypeKey")String searchResultTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<SearchTypeInfo> getSearchTypesByResult(@WebParam(name="searchResultTypeKey")String searchResultTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /** 
      * Retrieves the list of search types which use criteria in the specified format.
@@ -58,7 +57,7 @@ public interface SearchService {
      * @throws MissingParameterException searchCriteriaTypeKey not specified
      * @throws OperationFailedException unable to complete request
 	 */
-    public List<SearchTypeInfo> findSearchTypesByCriteria(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+    public List<SearchTypeInfo> getSearchTypesByCriteria(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /** 
      * Retrieves the list of search result types known by this service. Search result types describe the return structure for a search.
@@ -66,7 +65,7 @@ public interface SearchService {
      * @return list of search result type information
      * @throws OperationFailedException unable to complete request
 	 */
-    public List<SearchResultTypeInfo> findSearchResultTypes() throws OperationFailedException;
+    public List<SearchResultTypeInfo> getSearchResultTypes() throws OperationFailedException;
 
     /** 
      * Retrieves information about a particular search result type. Search result types describe the return structure for a search.
@@ -77,7 +76,7 @@ public interface SearchService {
      * @throws MissingParameterException searchResultTypeKey not specified
      * @throws OperationFailedException unable to complete request
 	 */
-    public SearchResultTypeInfo fetchSearchResultType(@WebParam(name="searchResultTypeKey")String searchResultTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+    public SearchResultTypeInfo getSearchResultType(@WebParam(name="searchResultTypeKey")String searchResultTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
     /** 
      * Retrieves the list of search criteria types known by this service.
@@ -85,7 +84,7 @@ public interface SearchService {
      * @return list of search criteria type information
      * @throws OperationFailedException unable to complete request
 	 */
-    public List<SearchCriteriaTypeInfo> findSearchCriteriaTypes() throws OperationFailedException;
+    public List<SearchCriteriaTypeInfo> getSearchCriteriaTypes() throws OperationFailedException;
 
     /** 
      * Retrieves information about a particular search criteria type.
@@ -96,19 +95,6 @@ public interface SearchService {
      * @throws MissingParameterException searchCriteriaTypeKey not specified
      * @throws OperationFailedException unable to complete request
 	 */
-    public SearchCriteriaTypeInfo fetchSearchCriteriaType(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
-   
-    /** 
-     * Retrieves results in tabular form for the specified parameters.
-     * @param searchTypeKey search identifier
-     * @param queryParamValues list of values for search parameters
-     * @return list of results from the query
-     * @throws DoesNotExistException specified search type not found
-     * @throws InvalidParameterException invalid searchTypeKey, queryParamValueList
-     * @throws MissingParameterException searchTypeKey, queryParamValueList not specified
-     * @throws OperationFailedException unable to complete request
-     * @throws PermissionDeniedException authorization failure
-	 */
-    public List<Result> searchForResults(@WebParam(name="searchTypeKey")String searchTypeKey, @WebParam(name="queryParamValues")List<QueryParamValue> queryParamValues) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public SearchCriteriaTypeInfo getSearchCriteriaType(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
 
 }

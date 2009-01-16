@@ -1,5 +1,4 @@
-package org.kuali.student.core.dictionary.dto;
-
+package org.kuali.student.core.enumeration.dto;
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;

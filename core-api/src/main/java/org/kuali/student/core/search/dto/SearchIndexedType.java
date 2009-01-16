@@ -8,26 +8,25 @@ import javax.xml.bind.annotation.XmlElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SearchIndexedType implements Serializable {
-
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
-
 	@XmlElement
 	private String name;
-	private String alias;
+	@XmlElement
+	private String allias;
 
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	public String getAlias() {
-		return alias;
+	public String getAllias() {
+		return allias;
 	}
-
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setAllias(String allias) {
+		this.allias = allias;
 	}
 }

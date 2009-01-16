@@ -1,5 +1,4 @@
 package org.kuali.student.core.dictionary.dto;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,8 +27,8 @@ public class FieldDescriptor implements Serializable {
 	private String minValue; 
 	@XmlElement
 	private String maxValue; 
-	@XmlElement(name="enum")
-	private EnumFieldView enumFieldView; 
+	@XmlElement
+	private EnumFieldView enumueration; 
 	@XmlElement
 	private Integer minOccurs; 
 	@XmlElement
@@ -90,11 +89,11 @@ public class FieldDescriptor implements Serializable {
 	public void setMaxValue(String maxValue){
 		this.maxValue = maxValue;
 	}
-	public EnumFieldView getEnumFieldView(){
-		return enumFieldView;
+	public EnumFieldView getEnumueration() {
+		return enumueration;
 	}
-	public void setEnum(EnumFieldView enumFieldView){
-		this.enumFieldView = enumFieldView;
+	public void setEnumueration(EnumFieldView enumueration) {
+		this.enumueration = enumueration;
 	}
 	public Integer getMinOccurs(){
 		return minOccurs;
@@ -114,4 +113,5 @@ public class FieldDescriptor implements Serializable {
 	public void setReadOnly(Boolean readOnly){
 		this.readOnly = readOnly;
 	}
+
 }
