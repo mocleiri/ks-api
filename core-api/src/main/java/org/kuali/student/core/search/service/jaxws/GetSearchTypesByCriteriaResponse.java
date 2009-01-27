@@ -15,9 +15,9 @@ import org.kuali.student.core.search.dto.SearchTypeInfo;
  * Generated source version: 2.1.3
  */
 
-@XmlRootElement(name = "getSearchTypesByCriteriaResponse", namespace = "http://org.kuali.student/core/organization")
+@XmlRootElement(name = "getSearchTypesByCriteriaResponse", namespace = "http://org.kuali.student/core/search")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSearchTypesByCriteriaResponse", namespace = "http://org.kuali.student/core/organization")
+@XmlType(name = "getSearchTypesByCriteriaResponse", namespace = "http://org.kuali.student/core/search")
 
 public class GetSearchTypesByCriteriaResponse {
 
