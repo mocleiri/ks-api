@@ -33,6 +33,7 @@ import org.kuali.student.poc.common.test.spring.Dao;
 import org.kuali.student.poc.common.test.spring.Daos;
 import org.kuali.student.poc.common.test.spring.PersistenceFileLocation;
 import org.kuali.student.rules.factfinder.dto.FactStructureDTO;
+import org.kuali.student.rules.internal.common.entity.BusinessRuleStatus;
 import org.kuali.student.rules.ruleexecution.dto.ExecutionResultDTO;
 import org.kuali.student.rules.rulemanagement.dto.BusinessRuleInfoDTO;
 import org.kuali.student.rules.rulemanagement.dto.RuntimeAgendaDTO;
@@ -86,6 +87,9 @@ public class RuleExecutionServiceTest extends AbstractServiceTest {
 		ruleManagementService = (RuleManagementService) applicationContext.getBean("ruleManagement");
 		ruleManagementService.updateBusinessRule(businessRuleId1, businessRuleInfo1);
 		ruleManagementService.updateBusinessRule(businessRuleId2, businessRuleInfo2);
+		
+		ruleManagementService.updateBusinessRuleState(businessRuleId1, BusinessRuleStatus.ACTIVE.toString());
+		ruleManagementService.updateBusinessRuleState(businessRuleId2, BusinessRuleStatus.ACTIVE.toString());
     }
 
     @AfterClass
@@ -125,8 +129,8 @@ public class RuleExecutionServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testExecuteBusinessRule_StaticFact_TestBeans_Rule2() throws Exception {
-        ExecutionResultDTO result = ruleExecutionService.executeBusinessRule(businessRuleId2, null);
+    public void testExecuteBusinessRuleTest_StaticFact_TestBeans_Rule2() throws Exception {
+    	ExecutionResultDTO result = ruleExecutionService.executeBusinessRuleTest(businessRuleInfo2, null);
         Assert.assertNotNull(result);
 
         Assert.assertTrue(result.getExecutionResult());
@@ -158,14 +162,14 @@ public class RuleExecutionServiceTest extends AbstractServiceTest {
         factStructure1.setFactTypeKey(factTypeKey);
         factStructure1.setParamValueMap(paramMap);
 
-        FactStructureDTO fs = businessRuleInfo1.getRuleElementList().get(0).getRuleProposition().getLeftHandSide().getYieldValueFunction().getFactStructureList().get(0);
+        FactStructureDTO fs = businessRuleInfo1.getBusinessRuleElementList().get(0).getBusinessRuleProposition().getLeftHandSide().getYieldValueFunction().getFactStructureList().get(0);
         fs.setStaticFact(false);
         fs.setFactTypeKey(factTypeKey);
         fs.setParamValueMap(paramMap);
         
         ruleManagementService.updateBusinessRule(businessRuleId1, businessRuleInfo1);
         
-    	ExecutionResultDTO result = ruleExecutionService.executeBusinessRule(businessRuleId1, factStructure1);
+    	ExecutionResultDTO result = ruleExecutionService.executeBusinessRule(businessRuleId1, paramMap);
         Assert.assertNotNull(result);
 
         Assert.assertTrue(result.getExecutionResult());

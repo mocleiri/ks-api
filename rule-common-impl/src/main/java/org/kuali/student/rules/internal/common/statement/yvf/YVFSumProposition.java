@@ -29,6 +29,8 @@ import org.kuali.student.rules.rulemanagement.dto.YieldValueFunctionDTO;
 
 public class YVFSumProposition<E extends Number> extends AbstractYVFProposition<E> {
 	
+	public final static String SUM_COLUMN_KEY = "key.proposition.column.sum";
+
 	public YVFSumProposition(String id, String propositionName, 
 			ComparisonOperator comparisonOperator, BigDecimal expectedValue, 
 			YieldValueFunctionDTO yvf, Map<String, ?> factMap) {
@@ -52,6 +54,7 @@ public class YVFSumProposition<E extends Number> extends AbstractYVFProposition<
 		}
 
 		List<E> factList = null;
+		FactResultDTO factDTO = null;
 
 		if (fact.isStaticFact()) {
 			String value = fact.getStaticValue();
@@ -60,24 +63,40 @@ public class YVFSumProposition<E extends Number> extends AbstractYVFProposition<
 				throw new PropositionException("Static value and data type cannot be null or empty");
 			}
 			factList = getList(dataType, value);
+			factDTO = createStaticFactResult(dataType, value);
 		} else {
 			if (factMap == null || factMap.isEmpty()) {
 				throw new PropositionException("Fact map cannot be null or empty");
 			}
 	    	String factKey = FactUtil.createFactKey(fact);
-			FactResultDTO factDTO = (FactResultDTO) factMap.get(factKey);
-			factList = getList(factDTO);
+			factDTO = (FactResultDTO) factMap.get(factKey);
+
+			String column = fact.getResultColumnKeyTranslations().get(SUM_COLUMN_KEY);
+			if (column == null || column.trim().isEmpty()) {
+				throw new PropositionException("Sum column not found for key '"+
+						SUM_COLUMN_KEY+"'. Fact structure id: " + fact.getFactStructureId());
+			}
+
+			factList = getList(factDTO, column);
+			if (factList == null || factList.isEmpty()) {
+				throw new PropositionException("Facts not found for column '"+
+						column+"'. Fact structure id: " + fact.getFactStructureId());
+			}
 		}
 
 		if(logger.isDebugEnabled()) {
-			logger.debug("Yield value function type="+yvf.getYieldValueFunctionType());
-			logger.debug("Comparison operator="+comparisonOperator);
-			logger.debug("Expected value="+expectedValue);
-			logger.debug("Fact list="+factList);
+			logger.debug("\n---------- YVFSumProposition ----------"
+					+ "\nFact static="+fact.isStaticFact()
+					+ "\nFact key="+FactUtil.createFactKey(fact)
+					+ "\nYield value function type="+yvf.getYieldValueFunctionType()
+					+ "\nComparison operator="+comparisonOperator
+					+ "\nExpected value="+expectedValue
+					+ "\nFact list="+factList
+					+ "\n--------------------------------------------------");
 		}
 
         super.proposition = new SumProposition<E>(id, propositionName, 
         		comparisonOperator, expectedValue, factList); 
+        getReport().setFactResult(factDTO);
 	}
-
 }

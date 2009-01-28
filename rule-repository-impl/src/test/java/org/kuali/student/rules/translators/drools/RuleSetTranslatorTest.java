@@ -51,6 +51,13 @@ import org.kuali.student.rules.factfinder.dto.FactResultTypeInfoDTO;
 import org.kuali.student.rules.factfinder.dto.FactStructureDTO;
 import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
 import org.kuali.student.rules.internal.common.entity.YieldValueFunctionType;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFAverageProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFIntersectionProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFMaxProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFMinProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFSimpleComparableProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFSubsetProposition;
+import org.kuali.student.rules.internal.common.statement.yvf.YVFSumProposition;
 import org.kuali.student.rules.internal.common.utils.BusinessRuleUtil;
 import org.kuali.student.rules.internal.common.utils.FactUtil;
 import org.kuali.student.rules.repository.rule.RuleSet;
@@ -254,6 +261,10 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFSimpleComparableProposition.SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -295,6 +306,10 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFSimpleComparableProposition.SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -336,8 +351,14 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
     	YieldValueFunctionDTO yieldValueFunction2 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
-		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
-		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.comparable.fact");
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFSimpleComparableProposition.SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+
+        FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+
+        FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.comparable.fact");
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -461,6 +482,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MIN.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFMinProposition.MIN_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -509,6 +535,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MIN.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFMaxProposition.MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -597,6 +628,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MAX.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFMaxProposition.MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -685,6 +721,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MAX.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFMaxProposition.MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -733,8 +774,15 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUBSET.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFSubsetProposition.SUBSET_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
     	List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
@@ -828,11 +876,18 @@ public class RuleSetTranslatorTest {
         // DEFINITION: Create rule definition 
 
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.INTERSECTION.toString());
-		
+
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(YVFIntersectionProposition.INTERSECTION_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
-		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
+
+        yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
     	List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
         RuleElementDTO element1 = dtoFactory.createRuleElementDTO(
@@ -927,6 +982,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUM.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+		Map<String,String> resultColumnKey = new HashMap<String, String>();
+		resultColumnKey.put(YVFSumProposition.SUM_COLUMN_KEY, "column1");
+		factStructure1.setResultColumnKeyTranslations(resultColumnKey);
+
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -1015,6 +1075,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.AVERAGE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+		Map<String,String> resultColumnKey = new HashMap<String, String>();
+		resultColumnKey.put(YVFAverageProposition.AVERAGE_COLUMN_KEY, "column1");
+		factStructure1.setResultColumnKeyTranslations(resultColumnKey);
+
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -1122,8 +1187,8 @@ public class RuleSetTranslatorTest {
     	// Set effective and expiry dates
     	Date effectiveStartTime = createDate(2000, 1, 1, 12, 00);
     	Date effectiveEndTime = createDate(2001, 1, 1, 12, 00);
-    	businessRule.setEffectiveStartTime(effectiveStartTime);
-    	businessRule.setEffectiveEndTime(effectiveEndTime);
+    	businessRule.setEffectiveDate(effectiveStartTime);
+    	businessRule.setExpirationDate(effectiveEndTime);
 
         // Parse and generate functional business rule into Drools rules
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
@@ -1149,18 +1214,18 @@ public class RuleSetTranslatorTest {
     private BusinessRuleInfoDTO createBusinessRule(List<RuleElementDTO> ruleElementList) {
         BusinessRuleInfoDTO bri = new BusinessRuleInfoDTO();
     	bri.setName("MyBusinessRule");
-    	bri.setDescription("Some business rule");
+    	bri.setDesc("Some business rule");
     	bri.setSuccessMessage("Success message");
     	bri.setFailureMessage("Failure message");
-    	bri.setBusinessRuleId("1");
-    	bri.setBusinessRuleTypeKey("kuali.student.businessrule.typekey.course.corequisites");
+    	bri.setId("1");
+    	bri.setType("kuali.student.businessrule.typekey.course.corequisites");
     	bri.setAnchorTypeKey("kuali.student.lui.course.id");
     	bri.setAnchorValue("CPR101");
-    	bri.setRuleElementList(ruleElementList);
+    	bri.setBusinessRuleElementList(ruleElementList);
     	Date effectiveStartTime = createDate(2000, 1, 1, 12, 00);
     	Date effectiveEndTime = createDate(2100, 1, 1, 12, 00);
-    	bri.setEffectiveStartTime(effectiveStartTime);
-    	bri.setEffectiveEndTime(effectiveEndTime);
+    	bri.setEffectiveDate(effectiveStartTime);
+    	bri.setExpirationDate(effectiveEndTime);
     	return bri;
     }
 
@@ -1168,7 +1233,7 @@ public class RuleSetTranslatorTest {
     	RuleElementDTO re = new RuleElementDTO();
         re.setName("And");
         re.setDescription("And");
-        re.setOperation("AND");
+        re.setBusinessRuleElemnetTypeKey("AND");
         
         return re;
     }
@@ -1178,12 +1243,23 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUBSET.toString());
     	YieldValueFunctionDTO yieldValueFunction2 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.INTERSECTION.toString());
 		
+		Map<String,String> subsetResultColumnKey = new HashMap<String, String>();
+		subsetResultColumnKey.put(YVFSubsetProposition.SUBSET_COLUMN_KEY, "column1");
+
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+		factStructure1.setResultColumnKeyTranslations(subsetResultColumnKey);
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
+		factStructure2.setResultColumnKeyTranslations(subsetResultColumnKey);
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
+		Map<String,String> intersectionResultColumnKey = new HashMap<String, String>();
+		intersectionResultColumnKey.put(YVFIntersectionProposition.INTERSECTION_COLUMN_KEY, "column1");
+
 		FactStructureDTO factStructure3 = createFactStructure("subset.id.3", "course.subset.criteria");
+		factStructure3.setResultColumnKeyTranslations(intersectionResultColumnKey);
 		FactStructureDTO factStructure4 = createFactStructure("subset.id.4", "course.subset.fact");
+		factStructure4.setResultColumnKeyTranslations(intersectionResultColumnKey);
+
 		yieldValueFunction2.setFactStructureList(Arrays.asList(factStructure3, factStructure4));
 
 		List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
@@ -1339,8 +1415,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("org_kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("org_kuali-student.pre req#1&2");
         bri.setName("TestName `~!@#$%^&*()-+={[}]|\\:;\"'<,>.?/ \b\t\n\f\r \' \"");
 
         RuleSet ruleSet = ruleSetTranslator.translate(bri);
@@ -1354,8 +1430,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("org_kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("org_kuali-student.pre req#1&2");
         bri.setName("ABC123456 `~!@#$%^&*()-+= XYZ");
 
         RuleSet ruleSet = ruleSetTranslator.translate(bri);
@@ -1369,8 +1445,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("123 kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("123 kuali-student.pre req#1&2");
         bri.setName("123456 `~!@#$%^&*()-+= XYZ");
 
 		try {

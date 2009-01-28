@@ -29,6 +29,8 @@ import org.kuali.student.rules.rulemanagement.dto.YieldValueFunctionDTO;
 
 public class YVFMinProposition<T extends Comparable<T>> extends AbstractYVFProposition<T> {
 
+	public final static String MIN_COLUMN_KEY = "key.proposition.column.min";
+
 	public YVFMinProposition(String id, String propositionName, 
 			ComparisonOperator comparisonOperator, T expectedValue, 
 			YieldValueFunctionDTO yvf, Map<String, ?> factMap) {
@@ -52,6 +54,7 @@ public class YVFMinProposition<T extends Comparable<T>> extends AbstractYVFPropo
 		}
 
 		Set<T> factSet = null;
+		FactResultDTO factDTO = null;
 
 		if (fact.isStaticFact()) {
 			String value = fact.getStaticValue();
@@ -60,23 +63,40 @@ public class YVFMinProposition<T extends Comparable<T>> extends AbstractYVFPropo
 				throw new PropositionException("Static value and data type cannot be null or empty");
 			}
 			factSet = getSet(dataType, value);
+			factDTO = createStaticFactResult(dataType, value);
 		} else {
 			if (factMap == null || factMap.isEmpty()) {
 				throw new PropositionException("Fact map cannot be null or empty");
 			}
 	    	String factKey = FactUtil.createFactKey(fact);
-			FactResultDTO factDTO = (FactResultDTO) factMap.get(factKey);
-			factSet = getSet(factDTO);
+			factDTO = (FactResultDTO) factMap.get(factKey);
+
+			String column = fact.getResultColumnKeyTranslations().get(MIN_COLUMN_KEY);
+			if (column == null || column.trim().isEmpty()) {
+				throw new PropositionException("Min column not found for key '"+
+						MIN_COLUMN_KEY+"'. Fact structure id: " + fact.getFactStructureId());
+			}
+
+			factSet = getSet(factDTO, column);
+			if (factSet == null || factSet.isEmpty()) {
+				throw new PropositionException("Facts not found for column '"+
+						column+"'. Fact structure id: " + fact.getFactStructureId());
+			}
 		}
 
 		if(logger.isDebugEnabled()) {
-			logger.debug("Yield value function type="+yvf.getYieldValueFunctionType());
-			logger.debug("Comparison operator="+comparisonOperator);
-			logger.debug("Expected value="+expectedValue);
-			logger.debug("Fact set="+factSet);
+			logger.debug("\n---------- YVFMinProposition ----------"
+					+ "\nFact static="+fact.isStaticFact()
+					+ "\nFact key="+FactUtil.createFactKey(fact)
+					+ "\nYield value function type="+yvf.getYieldValueFunctionType()
+					+ "\nComparison operator="+comparisonOperator
+					+ "\nExpected value="+expectedValue
+					+ "\nFact set="+factSet
+					+ "\n--------------------------------------------------");
 		}
 
         super.proposition = new MinProposition<T>(id, propositionName, 
         		comparisonOperator, expectedValue, factSet); 
+        getReport().setFactResult(factDTO);
 	}
 }

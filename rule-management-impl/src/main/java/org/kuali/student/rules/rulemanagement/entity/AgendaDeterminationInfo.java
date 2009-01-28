@@ -15,9 +15,6 @@
  */
 package org.kuali.student.rules.rulemanagement.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -33,8 +30,8 @@ import org.kuali.student.poc.common.util.UUIDHelper;
  * @author Kuali Student Team (kamal.kuali@gmail.com)
  */
 @Entity
-@Table(name="AgendaInfoDeterminationStructure_T")
-public class AgendaInfoDeterminationStructure {
+@Table(name="AgendaDeterminationInfo_T")
+public class AgendaDeterminationInfo {
 
     @Id
     private String id;
@@ -52,7 +49,7 @@ public class AgendaInfoDeterminationStructure {
      */
     @PrePersist
     public void prePersist() {
-        this.id = UUIDHelper.genStringUUID();
+        this.id = UUIDHelper.genStringUUID(this.id);
     }
 
     /**

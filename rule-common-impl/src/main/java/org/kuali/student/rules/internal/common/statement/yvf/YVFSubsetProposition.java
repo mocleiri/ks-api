@@ -28,6 +28,8 @@ import org.kuali.student.rules.rulemanagement.dto.YieldValueFunctionDTO;
 
 public class YVFSubsetProposition<E> extends AbstractYVFProposition<E> {
 
+	public final static String SUBSET_COLUMN_KEY = "key.proposition.column.subset";
+
 	public YVFSubsetProposition(String id, String propositionName, 
 			YieldValueFunctionDTO yvf, Map<String, ?> factMap) {
 		if (id == null || id.isEmpty()) {
@@ -50,6 +52,8 @@ public class YVFSubsetProposition<E> extends AbstractYVFProposition<E> {
 
 		Set<E> criteriaSet = null;
 		Set<E> factSet = null;
+		FactResultDTO criteriaDTO = null;
+		FactResultDTO factDTO = null;
 		
 		if (criteria.isStaticFact()) {
 			String value = criteria.getStaticValue();
@@ -58,13 +62,25 @@ public class YVFSubsetProposition<E> extends AbstractYVFProposition<E> {
 				throw new PropositionException("Static value and data type cannot be null or empty");
 			}
 			criteriaSet = getSet(dataType, value);
+			criteriaDTO = createStaticFactResult(dataType, value);
 		} else {
 			if (factMap == null || factMap.isEmpty()) {
 				throw new PropositionException("Fact map cannot be null or empty");
 			}
 			String criteriaKey = FactUtil.createCriteriaKey(criteria);
-			FactResultDTO criteriaDTO = (FactResultDTO) factMap.get(criteriaKey);
-			criteriaSet = getSet(criteriaDTO);
+			criteriaDTO = (FactResultDTO) factMap.get(criteriaKey);
+
+			String column = criteria.getResultColumnKeyTranslations().get(SUBSET_COLUMN_KEY);
+			if (column == null || column.trim().isEmpty()) {
+				throw new PropositionException("Subset criteria column not found for key '"+
+						SUBSET_COLUMN_KEY+"'. Fact structure id: " + criteria.getFactStructureId());
+			}
+
+			criteriaSet = getSet(criteriaDTO, column);
+			if (criteriaSet == null || criteriaSet.isEmpty()) {
+				throw new PropositionException("Criteria facts not found for column '"+column+
+						"'. Fact structure id: " + criteria.getFactStructureId());
+			}
 		}
 
 		if (fact.isStaticFact()) {
@@ -74,19 +90,40 @@ public class YVFSubsetProposition<E> extends AbstractYVFProposition<E> {
 				throw new PropositionException("Static value and data type cannot be null or empty");
 			}
 			factSet = getSet(dataType, value);
+			factDTO = createStaticFactResult(dataType, value);
 		} else {
 	    	String factKey = FactUtil.createFactKey(fact);
-			FactResultDTO factDTO = (FactResultDTO) factMap.get(factKey);
-			factSet = getSet(factDTO);
+			factDTO = (FactResultDTO) factMap.get(factKey);
+
+			String column = fact.getResultColumnKeyTranslations().get(SUBSET_COLUMN_KEY);
+			if (column == null || column.trim().isEmpty()) {
+				throw new PropositionException("Subset column not found for key '"+
+						SUBSET_COLUMN_KEY+"'. Fact structure id: " + fact.getFactStructureId());
+			}
+
+			factSet = getSet(factDTO, column);
+			if (factSet == null || factSet.isEmpty()) {
+				throw new PropositionException("Facts not found for column '"+
+						column+"'. Fact structure id: " + fact.getFactStructureId());
+			}
 		}
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("Yield value function type="+yvf.getYieldValueFunctionType());
 			logger.debug("Criteria set="+criteriaSet);
 			logger.debug("Fact set="+factSet);
+			logger.debug("\n---------- YVFSubsetProposition ----------"
+					+ "\nFact static="+fact.isStaticFact()
+					+ "\nFact key="+FactUtil.createFactKey(fact)
+					+ "\nYield value function type="+yvf.getYieldValueFunctionType()
+					+ "\nCriteria set="+criteriaSet
+					+ "\nFact set="+factSet
+					+ "\n--------------------------------------------------");
 		}
 
 		super.proposition = new SubsetProposition<E>(id, propositionName, criteriaSet, factSet); 
+        getReport().setCriteriaResult(criteriaDTO);
+        getReport().setFactResult(factDTO);
 	}
 	
 }

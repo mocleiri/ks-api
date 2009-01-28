@@ -15,6 +15,9 @@
  */
 package org.kuali.student.rules.internal.common.statement.report;
 
+import org.kuali.student.rules.factfinder.dto.FactResultDTO;
+import org.kuali.student.rules.internal.common.statement.propositions.PropositionType;
+
 /**
  * Proposition report stores the success message and/or failure message after a proposition is applied 
  * 
@@ -23,16 +26,75 @@ package org.kuali.student.rules.internal.common.statement.report;
  */
 public class PropositionReport {
 
-    private boolean successful = false;
+	/**
+	 * Proposition name
+	 */
+	private String name;
+	
+	/**
+	 * Proposition type
+	 */
+	private PropositionType type;
+	
+    /**
+     * True for successful report; otherwise false for an unsuccessful report
+     */
+	private boolean successful = false;
+	
+	/**
+	 * Successful report message
+	 */
 	private String successMessage;
-    private String failureMessage;
     
+	/**
+	 * Failure report message
+	 */
+	private String failureMessage;
+    
+    /**
+     * Criteria used in the proposition
+     */
+    private FactResultDTO criteria;
+
+    /**
+     * Facts used in the proposition
+     */
+    private FactResultDTO facts;
+
+    /**
+     * Constructor.
+     * 
+     * @param name proposition name
+     */
+    public PropositionReport(String name, PropositionType type) {
+    	this.name = name;
+    	this.type = type;
+    }
+
+	/**
+	 * Gets proposition name.
+	 * 
+	 * @return Proposition name
+	 */
+	public String getPropositionName() {
+		return this.name;
+	}
+
+	/**
+	 * Gets proposition type.
+	 * 
+	 * @return Proposition type
+	 */
+	public PropositionType getPropositionType() {
+		return this.type;
+	}
+
 	/**
 	 * Returns true if report is successful.
 	 * @return True if report is successful; otherwise false
 	 */
     public boolean isSuccessful() {
-		return successful;
+		return this.successful;
 	}
 	
     /**
@@ -47,7 +109,7 @@ public class PropositionReport {
      * @return the successMessage
      */
     public String getSuccessMessage() {
-        return successMessage;
+        return this.successMessage;
     }
     /**
      * @param successMessage the successMessage to set
@@ -59,7 +121,7 @@ public class PropositionReport {
      * @return the failureMessage
      */
     public String getFailureMessage() {
-        return failureMessage;
+        return this.failureMessage;
     }
     /**
      * @param failureMessage the failureMessage to set
@@ -68,7 +130,45 @@ public class PropositionReport {
         this.failureMessage = failureMessage;
     }
 
-    public String toString() {
-    	return "PropositionReport[successful=" + successful + "]";
+    /**
+     * Returns the facts used in the proposition.
+     * 
+     * @return Facts
+     */
+    public FactResultDTO getFactResult() {
+		return this.facts;
+	}
+
+    /**
+     * Sets the facts used in the proposition.
+     * 
+     * @param facts Facts
+     */
+	public void setFactResult(FactResultDTO facts) {
+		this.facts = facts;
+	}
+
+	/**
+     * Returns the criteria used in the proposition.
+	 * 
+	 * @return Criteria fact
+	 */
+	public FactResultDTO getCriteriaResult() {
+		return this.criteria;
+	}
+
+	/**
+     * Sets the criteria used in the proposition.
+	 * 
+	 * @param criteria Criteria fact
+	 */
+	public void setCriteriaResult(FactResultDTO criteria) {
+		this.criteria = criteria;
+	}
+
+	public String toString() {
+    	return "PropositionReport[name="+this.name+
+    		", type="+this.type+
+    		"successful=" + successful + "]";
     }
 }
