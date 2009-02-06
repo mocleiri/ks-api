@@ -1,5 +1,6 @@
 package org.kuali.student.core.organization.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.kuali.student.core.organization.dto.OrgPersonRelationCriteria;
 import org.kuali.student.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.core.organization.dto.OrgPersonRelationTypeInfo;
 import org.kuali.student.core.organization.dto.OrgPositionRestrictionInfo;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.dto.OrgTypeInfo;
 import org.kuali.student.core.organization.entity.Org;
 import org.kuali.student.core.organization.entity.OrgHierarchy;
@@ -281,7 +283,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public OrgHierarchyInfo getOrgHierarchy(String orgHierarchyKey)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		return OrganizationAssembler.toOrgHierarchyInfo((OrgHierarchy) organizationDao.fetch(OrgHierarchy.class, orgHierarchyKey));
+		return OrganizationAssembler.toOrgHierarchyInfo(organizationDao.fetch(OrgHierarchy.class, orgHierarchyKey));
 	}
 
 	@Override
@@ -293,7 +295,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			throw new MissingParameterException("orgOrgRelationId can not be null");
 		}
 
-		return OrganizationAssembler.toOrgOrgRelationInfo((OrgOrgRelation) organizationDao.fetch(OrgOrgRelation.class, orgOrgRelationId));
+		return OrganizationAssembler.toOrgOrgRelationInfo(organizationDao.fetch(OrgOrgRelation.class, orgOrgRelationId));
 
 	}
 
@@ -302,7 +304,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 			String orgOrgRelationTypeKey) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException {
-		return OrganizationAssembler.toOrgOrgRelationTypeInfo((OrgOrgRelationType) organizationDao.fetch(OrgOrgRelationType.class, orgOrgRelationTypeKey));
+		return OrganizationAssembler.toOrgOrgRelationTypeInfo(organizationDao.fetch(OrgOrgRelationType.class, orgOrgRelationTypeKey));
 	}
 
 	@Override
@@ -423,7 +425,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	public OrgTypeInfo getOrgType(String orgTypeKey)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		return OrganizationAssembler.toOrgTypeInfo((OrgType) organizationDao.fetch(OrgType.class, orgTypeKey));
+		return OrganizationAssembler.toOrgTypeInfo(organizationDao.fetch(OrgType.class, orgTypeKey));
 	}
 
 	@Override
@@ -835,6 +837,32 @@ public class OrganizationServiceImpl implements OrganizationService {
 			String info) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<OrgTreeInfo> getOrgTree(String rootOrgId,
+			String orgHierarchyId, int maxLevels) throws DoesNotExistException,
+			InvalidParameterException, MissingParameterException,
+			OperationFailedException, PermissionDeniedException {
+		
+		List<OrgTreeInfo> results = new ArrayList<OrgTreeInfo>();
+		Org rootOrg = organizationDao.fetch(Org.class, rootOrgId);
+		results.add(new OrgTreeInfo(rootOrgId,null,rootOrg.getLongName()));
+		results.addAll(parseOrgTree(rootOrgId, orgHierarchyId, maxLevels,0));
+		return results;
+	}
+
+	private List<OrgTreeInfo> parseOrgTree(String rootOrgId,
+			String orgHierarchyId, int maxLevels, int currentLevel) {
+		List<OrgTreeInfo> results = new ArrayList<OrgTreeInfo>();
+		if(maxLevels==0||currentLevel<maxLevels){
+			List<OrgTreeInfo> orgTreeInfos = this.organizationDao.getOrgTreeInfo(rootOrgId,orgHierarchyId);
+			for(OrgTreeInfo orgTreeInfo:orgTreeInfos){
+				results.addAll(parseOrgTree(orgTreeInfo.getOrgId(),orgHierarchyId, maxLevels, currentLevel+1));
+			}
+			results.addAll(orgTreeInfos);
+		}
+		return results;
 	}
 
 }

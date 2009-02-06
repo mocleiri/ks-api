@@ -29,7 +29,13 @@ import org.kuali.student.core.entity.MetaEntity;
 				+ "   AND oor.type.orgHierarchy.key = :orgHierarchy"),
 			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByIdList", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.id IN (:idList)"),
 			@NamedQuery(name="OrgOrgRelation.OrgOrgRelation", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.org.id = :orgId"),
-			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByRelatedOrg", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.relatedOrg.id = :relatedOrgId")
+			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByRelatedOrg", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.relatedOrg.id = :relatedOrgId"),
+			@NamedQuery(name="OrgOrgRelation.getOrgTreeInfo", 
+					   query="SELECT NEW org.kuali.student.core.organization.dto.OrgTreeInfo(oor.relatedOrg.id, oor.org.id, oor.relatedOrg.longName) " +
+					   		"   FROM OrgOrgRelation oor " +
+					   		"  WHERE oor.org.id = :orgId " +
+					   		"    AND oor.type.orgHierarchy.key = :orgHierarchyId ")
+			
 })
 public class OrgOrgRelation extends MetaEntity implements
 		AttributeOwner<OrgOrgRelationAttribute> {

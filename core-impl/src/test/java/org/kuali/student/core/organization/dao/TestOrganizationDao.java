@@ -16,6 +16,7 @@ import org.kuali.student.common.test.spring.AbstractTransactionalDaoTest;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
 import org.kuali.student.core.exceptions.DoesNotExistException;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.entity.Org;
 import org.kuali.student.core.organization.entity.OrgAttribute;
 import org.kuali.student.core.organization.entity.OrgAttributeDef;
@@ -33,9 +34,43 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 	public OrganizationDao dao;
 
 	@Test
+	public void testGetOrgTreeInfo(){
+		List<OrgTreeInfo> orgTreeInfos = dao.getOrgTreeInfo("4", "kuali.org.hierarchy.Main");
+		assertEquals(8,orgTreeInfos.size());
+	}
+	
+//	@Test
+//	@Rollback(false)
+//	public void createNestedData(){
+//		List<OrgHierarchy> ohs = dao.find(OrgHierarchy.class);
+//		for(OrgHierarchy oh:ohs){
+//			updateNested(oh.getRootOrg().getId(),oh.getKey(),1,new HashSet<String>());
+//		}
+//		
+//	}
+//	
+//	private long updateNested(String orgId, String orgHierarchy, long i,
+//			HashSet<String> visited) {
+//		long curr = i;
+//		for(OrgOrgRelation oor:dao.getOrgOrgRelationsByOrg(orgId)){
+//			if(oor.getType().getOrgHierarchy().getKey().equals(orgHierarchy)&&!visited.contains(oor.getId())){
+//				visited.add(oor.getId());
+//				curr++;
+//				oor.setLeft(String.valueOf(curr));
+//				curr = updateNested(oor.getRelatedOrg().getId(), orgHierarchy, curr,visited)+1;
+//				oor.setRight(String.valueOf(curr));
+//				dao.update(oor);
+//				em.flush();
+//			}
+//		}
+//		return curr;
+//	}
+
+	@Test
 	public void testCreateOrganization() throws DoesNotExistException {
 
 		OrgType orgType = new OrgType();
+
 		orgType.setKey("kuali.org.CorporateEntity");
 		orgType.setName("Corporate Entity");
 		orgType.setDesc("A legal corporate entity");

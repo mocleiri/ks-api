@@ -33,6 +33,7 @@ import org.kuali.student.core.organization.dto.OrgOrgRelationTypeInfo;
 import org.kuali.student.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.core.organization.dto.OrgPersonRelationTypeInfo;
 import org.kuali.student.core.organization.dto.OrgPositionRestrictionInfo;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.dto.OrgTypeInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
 
@@ -129,6 +130,16 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertEquals("KIM-12345",createdOPRInfo.getPersonId());
 		assertEquals("kuali.org.PersonRelation.Dean",createdOPRInfo.getType());
 		assertNotNull(createdOPRInfo.getId());
+		
+//		OrgPersonRelationInfo updateInfo = client.getOrgPersonRelation(createdOPRInfo.getId());
+//		updateInfo.setState("Updated Active");
+//		updateInfo.setEffectiveDate(df.parse("20090111"));
+//		updateInfo.setExpirationDate(df.parse("21001211"));
+//		updateInfo.setOrgId("4");
+//		updateInfo.setPersonId("Updated KIM-12345");
+//		updateInfo.setType("kuali.org.PersonRelation.Dean");
+		
+		
 	}
 
 	@Test
@@ -418,6 +429,14 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertTrue(orgOrgRelationTypeInfos == null || orgOrgRelationTypeInfos.size() == 0);
 	}
 
+	
+	@Test 
+	public void testGetOrgTreeInfo() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
+		List<OrgTreeInfo> results = client.getOrgTree("4", "kuali.org.hierarchy.Main", 1);
+		assertEquals(9,results.size());
+
+	}
+	
 	/*
 	 * Test delete operations
 	 */
@@ -470,4 +489,6 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 			assertTrue(true);
 		}
 	}
+
+	
 }
