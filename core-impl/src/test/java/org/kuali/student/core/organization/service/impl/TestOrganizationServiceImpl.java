@@ -1,8 +1,10 @@
 package org.kuali.student.core.organization.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,7 @@ import org.kuali.student.common.test.spring.Client;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.Daos;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
+import org.kuali.student.core.atp.dto.TimeAmountInfo;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
@@ -23,6 +26,7 @@ import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.exceptions.PermissionDeniedException;
+import org.kuali.student.core.exceptions.VersionMismatchException;
 import org.kuali.student.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.core.organization.dto.OrgOrgRelationInfo;
@@ -30,6 +34,7 @@ import org.kuali.student.core.organization.dto.OrgOrgRelationTypeInfo;
 import org.kuali.student.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.core.organization.dto.OrgPersonRelationTypeInfo;
 import org.kuali.student.core.organization.dto.OrgPositionRestrictionInfo;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.dto.OrgTypeInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
 
@@ -42,7 +47,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 
 
 	@Test
-	public void testCreateDeleteOrg() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException, ParseException {
+	public void testCreateUpdateOrg() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException, ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 
 		OrgInfo orgInfo = new OrgInfo();
@@ -68,6 +73,40 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertEquals("OrgAlias",createOrg.getAttributes().get("Alias"));
 		assertNotNull(createOrg.getId());
 
+		OrgInfo updateInfo = client.getOrganization(createOrg.getId());
+		updateInfo.setDesc("Updated Description for new OrgInfo");
+		updateInfo.setLongName("Updated TestOrgLongName");
+		updateInfo.setShortName("Updated TestOrgShortName");
+		updateInfo.setState("Updated Active");
+		updateInfo.setType("kuali.org.College");
+		updateInfo.setEffectiveDate(df.parse("20090111"));
+		updateInfo.setExpirationDate(df.parse("21001211"));
+		updateInfo.getAttributes().put("Alias", "Updated OrgAlias");
+		
+		OrgInfo updated=null;
+		try {
+			updated = client.updateOrganization(updateInfo.getId(), updateInfo);
+		} catch (VersionMismatchException e) {
+			fail("Should not throw VersionMismatchException");
+		}
+		
+		//Validate
+		assertEquals("Updated Description for new OrgInfo",updated.getDesc());
+		assertEquals("Updated TestOrgLongName",updated.getLongName());
+		assertEquals("Updated TestOrgShortName",updated.getShortName());
+		assertEquals("Updated Active",updated.getState());
+		assertEquals("kuali.org.College",updated.getType());
+		assertEquals(df.parse("20090111"),updated.getEffectiveDate());
+		assertEquals(df.parse("21001211"),updated.getExpirationDate());
+		assertEquals("Updated OrgAlias",updated.getAttributes().get("Alias"));
+		
+		//Check version mismatch
+		try {
+			client.updateOrganization(updateInfo.getId(), updateInfo);
+			fail("Should throw VersionMismatchException");
+		} catch (VersionMismatchException e) {
+		}
+		
 	}
 
 	@Test
@@ -92,6 +131,16 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertEquals("KIM-12345",createdOPRInfo.getPersonId());
 		assertEquals("kuali.org.PersonRelation.Dean",createdOPRInfo.getType());
 		assertNotNull(createdOPRInfo.getId());
+		
+//		OrgPersonRelationInfo updateInfo = client.getOrgPersonRelation(createdOPRInfo.getId());
+//		updateInfo.setState("Updated Active");
+//		updateInfo.setEffectiveDate(df.parse("20090111"));
+//		updateInfo.setExpirationDate(df.parse("21001211"));
+//		updateInfo.setOrgId("4");
+//		updateInfo.setPersonId("Updated KIM-12345");
+//		updateInfo.setType("kuali.org.PersonRelation.Dean");
+		
+		
 	}
 
 	@Test
@@ -116,6 +165,35 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertEquals("17",createdOORInfo.getRelatedOrgId());
 		assertEquals("kuali.org.Part",createdOORInfo.getType());
 		assertNotNull(createdOORInfo.getId());
+	}
+	
+	@Test
+	public void testAddPositionRestriction() throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
+		
+		TimeAmountInfo stdDuration = new TimeAmountInfo();
+		stdDuration.setAtpDurationTypeKey("ks.foreign.atp.key");
+		stdDuration.setTimeQuantity(new Integer(123456));
+		
+		OrgPositionRestrictionInfo orgPositionRestrictionInfo = new OrgPositionRestrictionInfo();
+		orgPositionRestrictionInfo.setDesc("Description For Position Restriction");
+		orgPositionRestrictionInfo.setMaxNumRelations("2345");
+		orgPositionRestrictionInfo.setMinNumRelations(2);
+		orgPositionRestrictionInfo.setStdDuration(stdDuration);
+		orgPositionRestrictionInfo.setTitle("Title for PositionRestriction");
+		orgPositionRestrictionInfo.setOrgId("");
+		orgPositionRestrictionInfo.setOrgPersonRelationTypeKey("");
+		
+		OrgPositionRestrictionInfo created = client.addPositionRestrictionToOrg("1", "kuali.org.PersonRelation.Treasurer", orgPositionRestrictionInfo);
+		
+		//validate fields
+		assertEquals("Description For Position Restriction",created.getDesc());
+		assertEquals("2345",created.getMaxNumRelations());
+		assertEquals(new Integer(2),created.getMinNumRelations());
+		assertEquals("ks.foreign.atp.key",created.getStdDuration().getAtpDurationTypeKey());
+		assertEquals(new Integer(123456),created.getStdDuration().getTimeQuantity());
+		assertEquals("Title for PositionRestriction",created.getTitle());
+		assertEquals("1",created.getOrgId());
+		assertEquals("kuali.org.PersonRelation.Treasurer",created.getOrgPersonRelationTypeKey());
 	}
 
 	@Test
@@ -352,6 +430,20 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertTrue(orgOrgRelationTypeInfos == null || orgOrgRelationTypeInfos.size() == 0);
 	}
 
+	
+	@Test 
+	public void testGetOrgTreeInfo() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
+		List<OrgTreeInfo> results = client.getOrgTree("4", "kuali.org.hierarchy.Main", 1);
+		assertEquals(9,results.size());
+
+	}
+	
+	@Test
+	public void testHasOrgOrgRelation() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
+		assertTrue(client.hasOrgOrgRelation("15", "28", "kuali.org.Part"));
+		assertFalse(client.hasOrgOrgRelation("1", "15", "kuali.org.Part"));
+	}
+	
 	/*
 	 * Test delete operations
 	 */
@@ -384,14 +476,14 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 	public void removeOrgPersonRelation() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
 		StatusInfo si;
 		try {
-			si = client.removeOrgPersonRelation("4");
+			si = client.removeOrgPersonRelation("5");
 			assertTrue(si.getSuccess());
 		} catch (DoesNotExistException e) {
 			assertTrue(false);
 		}
 
 		try {
-			si = client.removeOrgPersonRelation("4");
+			si = client.removeOrgPersonRelation("5");
 			assertTrue(false);
 		} catch (DoesNotExistException e) {
 			assertTrue(true);
@@ -404,4 +496,14 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 			assertTrue(true);
 		}
 	}
+
+	@Test
+	public void getOrgPersonIdsByRelationType() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		List<String> result = client.getPersonIdsForOrgByRelationType("68", "kuali.org.PersonRelation.Professor");
+		assertEquals(2, result.size());
+		result = client.getPersonIdsForOrgByRelationType("147", "kuali.org.PersonRelation.Coordinator");
+		assertEquals(1, result.size());
+		assertEquals("KIM-3", result.get(0));
+	}
+	
 }

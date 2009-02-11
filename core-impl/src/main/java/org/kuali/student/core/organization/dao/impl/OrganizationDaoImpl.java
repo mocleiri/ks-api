@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.kuali.student.core.dao.impl.AbstractCrudDaoImpl;
 import org.kuali.student.core.organization.dao.OrganizationDao;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.entity.Org;
 import org.kuali.student.core.organization.entity.OrgOrgRelation;
 import org.kuali.student.core.organization.entity.OrgOrgRelationType;
@@ -169,6 +170,32 @@ public class OrganizationDaoImpl extends AbstractCrudDaoImpl implements Organiza
 
 		return orgOrgRelations;
 
+	}
+
+	@Override
+	public List<OrgTreeInfo> getOrgTreeInfo(String orgId,
+			String orgHierarchyId) {
+		Query query = em.createNamedQuery("OrgOrgRelation.getOrgTreeInfo");
+		query.setParameter("orgId",orgId);
+		query.setParameter("orgHierarchyId",orgHierarchyId);
+		@SuppressWarnings("unchecked")
+		List<OrgTreeInfo> orgTreeInfos = query.getResultList();
+		
+		return orgTreeInfos;
+	}
+
+	@Override
+	public boolean hasOrgOrgRelation(String orgId, String comparisonOrgId,
+			String orgOrgRelationTypeKey) {
+		
+		Query query = em.createNamedQuery("OrgOrgRelation.hasOrgOrgRelation");
+		query.setParameter("orgId",orgId);
+		query.setParameter("comparisonOrgId",comparisonOrgId);
+		query.setParameter("orgOrgRelationTypeKey",orgOrgRelationTypeKey);
+		
+		Long relationCount = (Long)query.getSingleResult();
+		
+		return relationCount>0;
 	}
 
 }

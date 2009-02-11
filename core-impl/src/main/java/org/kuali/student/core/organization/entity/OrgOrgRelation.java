@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +29,18 @@ import org.kuali.student.core.entity.MetaEntity;
 				+ "   AND oor.type.orgHierarchy.key = :orgHierarchy"),
 			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByIdList", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.id IN (:idList)"),
 			@NamedQuery(name="OrgOrgRelation.OrgOrgRelation", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.org.id = :orgId"),
-			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByRelatedOrg", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.relatedOrg.id = :relatedOrgId")
+			@NamedQuery(name="OrgOrgRelation.getOrgOrgRelationsByRelatedOrg", query="SELECT oor FROM OrgOrgRelation oor WHERE oor.relatedOrg.id = :relatedOrgId"),
+			@NamedQuery(name="OrgOrgRelation.getOrgTreeInfo", 
+					   query="SELECT NEW org.kuali.student.core.organization.dto.OrgTreeInfo(oor.relatedOrg.id, oor.org.id, oor.relatedOrg.longName) " +
+					   		"   FROM OrgOrgRelation oor " +
+					   		"  WHERE oor.org.id = :orgId " +
+					   		"    AND oor.type.orgHierarchy.key = :orgHierarchyId "),
+			@NamedQuery(name="OrgOrgRelation.hasOrgOrgRelation", 
+					   query="SELECT COUNT(oor) " +
+					   		 "  FROM OrgOrgRelation oor " +
+					   		 " WHERE oor.org.id = :orgId " +
+					   		 "   AND oor.relatedOrg.id = :comparisonOrgId " +
+					   		 "   AND oor.type.key = :orgOrgRelationTypeKey")
 })
 public class OrgOrgRelation extends MetaEntity implements
 		AttributeOwner<OrgOrgRelationAttribute> {
@@ -67,8 +77,8 @@ public class OrgOrgRelation extends MetaEntity implements
 	/**
 	 * AutoGenerate the Id
 	 */
-	@PrePersist
-	public void prePersist() {
+	@Override
+	public void onPrePersist() {
 		this.id = UUIDHelper.genStringUUID(this.id);
 	}
 

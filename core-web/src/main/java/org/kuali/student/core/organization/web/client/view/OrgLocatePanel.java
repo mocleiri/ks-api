@@ -24,9 +24,10 @@ import org.kuali.student.core.organization.dto.OrgHierarchyInfo;
 import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.core.organization.web.client.service.OrgRpcService;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -43,8 +44,11 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class OrgLocatePanel extends Composite{
 
-    VerticalPanel vPanel = new VerticalPanel();
-    HorizontalPanel browsePanel = new HorizontalPanel();
+    VerticalPanel root = new VerticalPanel();
+    VerticalPanel browsePanel;
+    
+    SimplePanel orgChart;
+    HorizontalPanel orgList;
        
     SimplePanel results = new SimplePanel();
        
@@ -53,29 +57,43 @@ public class OrgLocatePanel extends Composite{
     Map<String, String> orgRootHierarchy = new HashMap<String,String>();
     
     boolean loaded = false;
-    
         
     public OrgLocatePanel(){
-        super.initWidget(vPanel);
+        super.initWidget(root);
     }
   
     protected void onLoad(){
-        vPanel.add(createLocateMenu());
-        vPanel.add(new SectionLabel("Browse Organizations"));
-        vPanel.add(results);
+        root.setWidth("100%");
+        root.add(createLocateMenu());
+        root.add(new SectionLabel("Browse Organizations"));
+        root.add(results);
         
         getBrowseResults();
     }
     
     private Widget createLocateMenu(){
+        VerticalPanel locateMenuPanel = new VerticalPanel();
+        locateMenuPanel.setWidth("100%");
+        locateMenuPanel.setStyleName("ks-section");
+        
         FlexTable fTable = new FlexTable();
         fTable.setWidget(0,0, new SectionLabel("Search"));       
         fTable.setWidget(0,1, new SectionLabel("Browse"));      
         
-        return fTable;
+        locateMenuPanel.add(fTable);
+        
+        return locateMenuPanel;
     }
     
     private void getBrowseResults() {
+        browsePanel = new VerticalPanel();
+        browsePanel.setStyleName("ks-section");
+        browsePanel.setWidth("100%");
+        
+        orgList = new HorizontalPanel();        
+        orgChart = new SimplePanel();
+        orgChart.setVisible(false);
+        
         OrgRpcService.Util.getInstance().getOrgHierarchies(new AsyncCallback<List<OrgHierarchyInfo>>(){
             public void onFailure(Throwable caught) {
                 Window.alert(caught.getMessage());
@@ -92,6 +110,15 @@ public class OrgLocatePanel extends Composite{
             }
         });
 
+        browsePanel.add(orgList);
+
+        //wrap org chart in vertical panel
+        VerticalPanel vPanel = new VerticalPanel();
+        vPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+        vPanel.setWidth("100%");
+        vPanel.add(orgChart);        
+        browsePanel.add(vPanel);
+        
         results.setWidget(browsePanel);
     }
     
@@ -109,7 +136,7 @@ public class OrgLocatePanel extends Composite{
                     resultTable.setWidget(i, 0, new OrgWidget(orgInfo));
                     i++;
                 }
-                browsePanel.add(resultTable);
+                orgList.add(resultTable);
             }
         });
     }
@@ -128,8 +155,8 @@ public class OrgLocatePanel extends Composite{
     
        
     protected void removeWidgetsRight(Widget w){
-        for (int i=browsePanel.getWidgetCount()-1; i > browsePanel.getWidgetIndex(w);i--){
-            browsePanel.remove(i);
+        for (int i=orgList.getWidgetCount()-1; i > orgList.getWidgetIndex(w);i--){
+            orgList.remove(i);
         }
     }
     
@@ -146,26 +173,28 @@ public class OrgLocatePanel extends Composite{
             orgId = orgInfo.getId();
             super.initWidget(vOrgPanel);
             orgLink = new Hyperlink(orgInfo.getLongName(), "viewOrg");
-            orgLink.addClickListener(new ClickListener(){           
-                public void onClick(Widget sender) {
+            orgLink.addClickHandler(new ClickHandler(){           
+                public void onClick(ClickEvent event) {
                     removeWidgetsRight(vOrgPanel.getParent().getParent());
                     if (orgRootHierarchy.containsKey(orgId)){
                         activeHierarchyId = orgRootHierarchy.get(orgId);
                     }
                     getOrgChildren(orgId);
+                    orgChart.setWidget((new OrgChartWidget(orgId,activeHierarchyId,0)));
+                    orgChart.setVisible(true);
             }});
             
             orgEditLbl = new Hyperlink("Edit", "editOrg");
             orgEditLbl.setStyleName("action");
-            orgEditLbl.addClickListener(new OrgActionClickListener(orgId, OrgCreatePanel.CREATE_ORG_ALL));
+            orgEditLbl.addClickHandler(new OrgActionClickHandler(orgId, OrgCreatePanel.CREATE_ORG_ALL));
             
             orgAddPosLbl = new Hyperlink("(+)org pos", "addPosRel");
             orgAddPosLbl.setStyleName("action");
-            orgAddPosLbl.addClickListener(new OrgActionClickListener(orgId, OrgCreatePanel.CREATE_ORG_POSITIONS));
+            orgAddPosLbl.addClickHandler(new OrgActionClickHandler(orgId, OrgCreatePanel.CREATE_ORG_POSITIONS));
 
             orgAddRelLbl = new Hyperlink("(+)org rel", "addOrgRel");
             orgAddRelLbl.setStyleName("action");
-            orgAddRelLbl.addClickListener(new OrgActionClickListener(orgId, OrgCreatePanel.CREATE_ORG_RELATIONS));
+            orgAddRelLbl.addClickHandler(new OrgActionClickHandler(orgId, OrgCreatePanel.CREATE_ORG_RELATIONS));
 
             FlexTable ft = new FlexTable();
             ft.setWidget(0, 1, orgEditLbl);
@@ -177,18 +206,18 @@ public class OrgLocatePanel extends Composite{
         }        
     }
     
-    public class OrgActionClickListener implements ClickListener{
+    public class OrgActionClickHandler implements ClickHandler{
 
         String orgPanelType;
         String orgId;
         
-        public OrgActionClickListener(String orgId, String orgPanelType){
+        public OrgActionClickHandler(String orgId, String orgPanelType){
             this.orgPanelType = orgPanelType;
             this.orgId = orgId;
         }
         
-        public void onClick(Widget sender) {
-            SimplePanel workPanel  = (SimplePanel)vPanel.getParent().getParent();
+        public void onClick(ClickEvent event) {
+            SimplePanel workPanel  = (SimplePanel)root.getParent().getParent();
             OrgCreatePanel orgCreatePanel = new OrgCreatePanel(orgPanelType);
             orgCreatePanel.setOrgId(orgId);
             workPanel.setWidget(orgCreatePanel);            

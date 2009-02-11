@@ -15,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -61,7 +60,7 @@ public class Org extends MetaEntity implements AttributeOwner<OrgAttribute>{
 	
 	@ManyToMany
 	@JoinTable(
-	        name="KS_ORG_ORG_PERSON_RELATION_TYPE_T",
+	        name="KS_ORG_ORG_PERS_REL_TYPE_T",
 	        joinColumns=
 	            @JoinColumn(name="ORG_KEY", referencedColumnName="ORG_ID"),
 	        inverseJoinColumns=
@@ -75,8 +74,8 @@ public class Org extends MetaEntity implements AttributeOwner<OrgAttribute>{
 	/**
 	 * AutoGenerate the Id
 	 */
-	@PrePersist
-	public void prePersist() {
+	@Override
+	public void onPrePersist() {
 		this.id = UUIDHelper.genStringUUID(this.id);
 	}
 

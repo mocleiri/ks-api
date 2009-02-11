@@ -3,6 +3,7 @@ package org.kuali.student.core.organization.dao;
 import java.util.List;
 
 import org.kuali.student.core.dao.CrudDao;
+import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.entity.Org;
 import org.kuali.student.core.organization.entity.OrgOrgRelation;
 import org.kuali.student.core.organization.entity.OrgOrgRelationType;
@@ -27,4 +28,6 @@ public interface OrganizationDao extends CrudDao{
 	public List<OrgPersonRelation> getOrgPersonRelationsByPerson(String personId, String orgId);
 	public List<OrgOrgRelationType> getOrgOrgRelationTypesForOrgType(String orgTypeKey);
 	public List<OrgOrgRelation> getOrgOrgRelationsByRelatedOrg(String relatedOrgId);
+	public List<OrgTreeInfo> getOrgTreeInfo(String rootOrgId, String orgHierarchyId);
+	public boolean hasOrgOrgRelation(String orgId, String comparisonOrgId, String orgOrgRelationTypeKey);
 }
