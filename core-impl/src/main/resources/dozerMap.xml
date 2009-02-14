@@ -105,6 +105,9 @@
         <b>key</b>
       </field>
   </mapping> 
-
+  <mapping>
+    <class-a>org.kuali.student.core.messages.dto.Message</class-a>
+    <class-b>org.kuali.student.core.messages.entity.MessageEntity</class-b>
+  </mapping>
                
 </mappings>
