@@ -1,58 +1,73 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.kuali.student.lum</groupId>
 	<artifactId>ks-lum-impl</artifactId>
-	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>KS Lum-Impl</name>
+	<description>KS Learning Unit Management-impl</description>
 
-	<name>KS LUM-IMPL POM</name>
-	<description>
-		Kuali Student Learning Unit Management Implementation POM
-	</description>
-
-	<url>http://kuali.org/communities/ks/</url>
 	<parent>
-		<groupId>org.kuali.student.lum</groupId>
-		<artifactId>ks-lum</artifactId>
+		<groupId>org.kuali.student.core</groupId>
+		<artifactId>ks-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<!--
+				Setting forkMode to always. Multiple dao tests using Spring
+				junit class runner doesn't play nice with each other
+				-->
+				<configuration>
+					<forkMode>always</forkMode>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
 	<dependencies>
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>ojdbc14</artifactId>
-			<version>10.2.0.3.0</version>
+			<groupId>org.kuali.student.lum</groupId>
+			<artifactId>ks-lum-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.kuali.student.core</groupId>
+			<artifactId>ks-core-impl</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kuali.rice</groupId>
+			<artifactId>rice-api</artifactId>
+			<version>0.9.4-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.kuali.student.core</groupId>
 			<artifactId>ks-common-test</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+
+
 		<dependency>
 			<groupId>org.kuali.student.core</groupId>
 			<artifactId>ks-jta</artifactId>
 			<type>pom</type>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.kuali.student.lum</groupId>
-			<artifactId>ks-lum-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kuali.student.lum</groupId>
-			<artifactId>ks-lum-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>		
-		</dependency>
-		<dependency>
-			<groupId>org.kuali.student.core</groupId>
-			<artifactId>ks-core-impl</artifactId>
-			<version>0.0.1-SNAPSHOT</version>		
-		</dependency>
+  		</dependency>
+
 	</dependencies>
-	
+
 	<profiles>
 		<profile>
 			<id>ks-hibernate</id>
@@ -104,6 +119,6 @@
 				</dependency>
 			</dependencies>
 		</profile>
-	</profiles>		
-	
+	</profiles>
+
 </project>
