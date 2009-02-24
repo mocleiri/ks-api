@@ -167,8 +167,8 @@ public class OrgRelationWidget extends Composite{
                 int i = 0;
                 for(OrgOrgRelationTypeInfo orgRelTypeInfo:orgRelTypes){
                     i++;
-                    orgRelTypeDropDown.addItem(orgRelTypeInfo.getName(),orgRelTypeInfo.getKey());
-                    if (orgRelTypeInfo.getKey().equals(orgRelType)){
+                    orgRelTypeDropDown.addItem(orgRelTypeInfo.getName(),orgRelTypeInfo.getId());
+                    if (orgRelTypeInfo.getId().equals(orgRelType)){
                         orgRelTypeDropDown.setSelectedIndex(i);
                     }
                 }

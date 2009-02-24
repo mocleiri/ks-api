@@ -25,7 +25,7 @@ public class OrgHierarchy implements AttributeOwner<OrgHierarchyAttribute>{
 	
 	@Id
 	@Column(name = "ORG_HIERARCHY_KEY")
-	private String key;
+	private String id;
 	
 	@Column(name = "ORG_HIERARCHY_NAME")
 	private String name; 
@@ -75,12 +75,12 @@ public class OrgHierarchy implements AttributeOwner<OrgHierarchyAttribute>{
 		this.attributes=attributes;
 	}
 
-	public String getKey() {
-		return key;
+	public String getId() {
+		return id;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

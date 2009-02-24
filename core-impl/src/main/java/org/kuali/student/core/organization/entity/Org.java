@@ -40,8 +40,11 @@ public class Org extends MetaEntity implements AttributeOwner<OrgAttribute>{
 	@Column(name = "ORG_SHORT_NAME")
 	private String shortName; 
 	
-	@Column(name = "ORG_DESC",length=2000)//TODO what is a good number for these long descriptions?
-	private String desc; 
+	@Column(name = "ORG_SHORT_DESC",length=500)//TODO what is a good number for these short descriptions?
+	private String shortDesc; 
+	
+	@Column(name = "ORG_LONG_DESC",length=2000)//TODO what is a good number for these long descriptions?
+	private String longDesc; 
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EFFECTIVE_DT")
@@ -117,14 +120,6 @@ public class Org extends MetaEntity implements AttributeOwner<OrgAttribute>{
 		this.shortName = shortName;
 	}
 
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-
 	public Date getEffectiveDate() {
 		return effectiveDate;
 	}
@@ -166,5 +161,21 @@ public class Org extends MetaEntity implements AttributeOwner<OrgAttribute>{
 
 	public void setOrgPersonRelationTypes(List<OrgPersonRelationType> orgPersonRelationTypes) {
 		this.orgPersonRelationTypes = orgPersonRelationTypes;
+	}
+
+	public void setShortDesc(String shortDesc) {
+		this.shortDesc = shortDesc;
+	}
+
+	public String getShortDesc() {
+		return shortDesc;
+	}
+
+	public void setLongDesc(String longDesc) {
+		this.longDesc = longDesc;
+	}
+
+	public String getLongDesc() {
+		return longDesc;
 	}
 }

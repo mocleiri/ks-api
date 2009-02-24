@@ -211,7 +211,7 @@ public class OrgCreatePanel extends Composite{
         orgInfo.setMetaInfo(orgMetaInfo);
         
         orgInfo.setType(orgTypeDropDown.getValue((orgTypeDropDown.getSelectedIndex())));        
-        orgInfo.setDesc(orgDesc.getText());
+        orgInfo.setShortDesc(orgDesc.getText());
         orgInfo.setLongName(orgName.getText());
         orgInfo.setShortName(orgAbbrev.getText());
         try{
@@ -334,8 +334,8 @@ public class OrgCreatePanel extends Composite{
                     int i=0;
                     for(OrgTypeInfo orgTypeInfo:orgTypes){
                         i++;
-                        orgTypeDropDown.addItem(orgTypeInfo.getName(),orgTypeInfo.getKey());
-                        if (orgTypeInfo.getKey().equals(orgType)){
+                        orgTypeDropDown.addItem(orgTypeInfo.getName(),orgTypeInfo.getId());
+                        if (orgTypeInfo.getId().equals(orgType)){
                             orgTypeDropDown.setSelectedIndex(i);
                         }
                     }
@@ -356,7 +356,7 @@ public class OrgCreatePanel extends Composite{
                 orgType = orgInfo.getType();
                 orgName.setText(orgInfo.getLongName());
                 orgAbbrev.setText(orgInfo.getShortName());
-                orgDesc.setText(orgInfo.getDesc());
+                orgDesc.setText(orgInfo.getShortDesc());
                 try{
                     orgEffectiveDate.setText(dateFmt.format(orgInfo.getEffectiveDate()));
                 } catch (Exception e) {

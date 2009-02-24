@@ -74,10 +74,11 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 		Org org = new Org();
 		org.setType(orgType);
 		org.setShortName("KU");
-		org.setDesc("Kuali University");
+		org.setShortDesc("Kuali University");
+		org.setLongDesc("Kuali University, a Carnegie-class institution of higher learning");
 
 		OrgHierarchy orgHierarchy = new OrgHierarchy();
-		orgHierarchy.setKey("kuali.org.Main");
+		orgHierarchy.setId("kuali.org.Main");
 		orgHierarchy.setName("Main");
 		orgHierarchy.setDesc("Main Organizational Hierarchy");
 		orgHierarchy.setRootOrg(org);
@@ -115,7 +116,8 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 		Org org = new Org();
 		org.setType(orgType);
 		org.setShortName("TestOrg1");
-		org.setDesc("Test Org 1");
+		org.setShortDesc("Test Org 1");
+		org.setLongDesc("Test Org 1 Long Description");
 
 		OrgAttribute orgAttr1 = new OrgAttribute();
 		orgAttr1.setValue("orgAttr1Value");
@@ -126,7 +128,7 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 				.asList(new OrgAttribute[] { orgAttr1, orgAttr2 }));
 
 		OrgHierarchy orgHierarchy = new OrgHierarchy();
-		orgHierarchy.setKey("kuali.org.TestOrgHierarchy1");
+		orgHierarchy.setId("kuali.org.TestOrgHierarchy1");
 		orgHierarchy.setName("TestOrgHeir1");
 		orgHierarchy.setDesc("Test Organizational Hierarchy 1");
 		orgHierarchy.setRootOrg(org);
@@ -177,7 +179,8 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 		Org org = new Org();
 		org.setType(orgType);
 		org.setShortName("TestOrg1");
-		org.setDesc("Test Org 1");
+		org.setShortDesc("Test Org 1");
+		org.setLongDesc("Test Org 1 Long Description");
 
 		OrgAttribute orgAttr1 = new OrgAttribute();
 		orgAttr1.setValue("orgAttr1Value");
@@ -188,7 +191,7 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 				.asList(new OrgAttribute[] { orgAttr1, orgAttr2 }));
 
 		OrgHierarchy orgHierarchy = new OrgHierarchy();
-		orgHierarchy.setKey("kuali.org.TestOrgHierarchy1");
+		orgHierarchy.setId("kuali.org.TestOrgHierarchy1");
 		orgHierarchy.setName("TestOrgHeir1");
 		orgHierarchy.setDesc("Test Organizational Hierarchy 1");
 		orgHierarchy.setRootOrg(org);
@@ -312,11 +315,11 @@ public class TestOrganizationDao extends AbstractTransactionalDaoTest {
 		List<OrgOrgRelationType> relationTypes = dao
 				.getOrgOrgRelationTypesForOrgHierarchy("kuali.org.hierarchy.Main");
 		assertEquals(12, relationTypes.size());
-		assertEquals("kuali.org.Section", relationTypes.get(1).getKey());
-		assertEquals("kuali.org.Subcommittee", relationTypes.get(11).getKey());
+		assertEquals("kuali.org.Section", relationTypes.get(1).getId());
+		assertEquals("kuali.org.Subcommittee", relationTypes.get(11).getId());
 		relationTypes = dao.getOrgOrgRelationTypesForOrgHierarchy("kuali.org.hierarchy.Curriculum");
 		assertEquals(1, relationTypes.size());
-		assertEquals("kuali.org.CurriculumChild", relationTypes.get(0).getKey());
+		assertEquals("kuali.org.CurriculumChild", relationTypes.get(0).getId());
 
 	}
 	

@@ -23,8 +23,8 @@ import org.kuali.student.core.entity.AttributeOwner;
 @Table(name = "KS_ORG_PERSON_REL_TYPE_T")
 @NamedQueries( {
 		@NamedQuery(name = "OrgPersonRelationType.getOrgPersonRelationTypesForOrgType", query = "SELECT oprt FROM OrgPersonRelationType oprt JOIN oprt.organizationTypes ot WHERE ot.id = :orgTypeKey"),
-		@NamedQuery(name = "OrgPersonRelationType.getPersonIdsForOrgByRelationType", query = "SELECT DISTINCT opr.personId FROM OrgPersonRelation opr JOIN opr.org o JOIN opr.orgPersonRelationType t WHERE o.id = :orgId AND t.key = :orgPersonRelationTypeKey"),
-		@NamedQuery(name = "OrgPersonRelationType.hasOrgPersonRelation", query = "SELECT COUNT(oprt) FROM OrgPersonRelationType oprt JOIN oprt.orgPersonRelations relations JOIN oprt.organizations orgs WHERE relations.personId = :personId AND orgs.id = :orgId AND oprt.key = :orgPersonRelationTypeKey") })
+		@NamedQuery(name = "OrgPersonRelationType.getPersonIdsForOrgByRelationType", query = "SELECT DISTINCT opr.personId FROM OrgPersonRelation opr JOIN opr.org o JOIN opr.orgPersonRelationType t WHERE o.id = :orgId AND t.id = :orgPersonRelationTypeKey"),
+		@NamedQuery(name = "OrgPersonRelationType.hasOrgPersonRelation", query = "SELECT COUNT(oprt) FROM OrgPersonRelationType oprt JOIN oprt.orgPersonRelations relations JOIN oprt.organizations orgs WHERE relations.personId = :personId AND orgs.id = :orgId AND oprt.id = :orgPersonRelationTypeKey") })
 public class OrgPersonRelationType implements
 		AttributeOwner<OrgPersonRelationTypeAttribute> {
 	/*
@@ -32,7 +32,7 @@ public class OrgPersonRelationType implements
 	 */
 	@Id
 	@Column(name = "OPRT_KEY")
-	private String key;
+	private String id;
 
 	@Column(name = "OPRT_NAME")
 	private String name;
@@ -128,12 +128,12 @@ public class OrgPersonRelationType implements
 		this.expirationDate = expirationDate;
 	}
 
-	public String getKey() {
-		return key;
+	public String getId() {
+		return id;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public List<Org> getOrganizations() {

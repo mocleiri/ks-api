@@ -1,7 +1,6 @@
 package org.kuali.student.core.messages.service.impl.util;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import net.sf.dozer.util.mapping.DozerBeanMapper;
@@ -34,7 +33,8 @@ public class POJOConverter {
         return to;
     }
 
-    static public <E> List<E> mapList(List<?> sourceList, Class<E> destListClass) {
+    @SuppressWarnings("unchecked")
+	static public <E> List<E> mapList(List<?> sourceList, Class<E> destListClass) {
         List<E> result = new ArrayList<E>();
         try{
 	        for (Object e : sourceList) {

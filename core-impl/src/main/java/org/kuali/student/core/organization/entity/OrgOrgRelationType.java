@@ -22,13 +22,13 @@ import org.kuali.student.core.entity.AttributeOwner;
 @Entity
 @Table(name = "KS_ORG_ORG_REL_TYPE_T")
 @NamedQueries( {
-		@NamedQuery(name = "OrgOrgRelationType.getOrgOrgRelationTypesForOrgHierarchy", query = "SELECT oort FROM OrgOrgRelationType oort WHERE oort.orgHierarchy.key = :orgHierarchy"),
+		@NamedQuery(name = "OrgOrgRelationType.getOrgOrgRelationTypesForOrgHierarchy", query = "SELECT oort FROM OrgOrgRelationType oort WHERE oort.orgHierarchy.id = :orgHierarchy"),
 		@NamedQuery(name = "OrgOrgRelationType.getOrgOrgRelationTypesForOrgType", query = "SELECT DISTINCT oort FROM OrgOrgRelation oor JOIN oor.org org JOIN oor.type oort WHERE org.type.id = :orgTypeKey") })
 public class OrgOrgRelationType implements
 		AttributeOwner<OrgOrgRelationTypeAttribute> {
 	@Id
 	@Column(name = "OORT_KEY")
-	private String key;
+	private String id;
 
 	@Column(name = "OORT_NAME")
 	private String name;
@@ -128,12 +128,12 @@ public class OrgOrgRelationType implements
 		this.expirationDate = expirationDate;
 	}
 
-	public String getKey() {
-		return key;
+	public String getId() {
+		return id;
 	}
 
-	public void setKey(String key) {
-		this.key = key;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

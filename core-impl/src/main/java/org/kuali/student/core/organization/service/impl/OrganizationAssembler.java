@@ -101,7 +101,7 @@ public class OrganizationAssembler extends BaseAssembler{
 		relationInfo.setOrgId(relation.getOrg().getId());
 		relationInfo.setAttributes(toAttributeMap(relation.getAttributes()));
 		relationInfo.setMetaInfo(toMetaInfo(relation.getMeta(), relation.getVersionInd()));
-		relationInfo.setType(relation.getType().getKey());
+		relationInfo.setType(relation.getType().getId());
 		//relationInfo.setId(relation.getId());
 		return relationInfo;
 	}
@@ -128,7 +128,7 @@ public class OrganizationAssembler extends BaseAssembler{
 		// copy attributes, metadata, Type, and related orgs
 		orgOrgRelationInfo.setAttributes(toAttributeMap(orgOrgRelation.getAttributes()));
 		orgOrgRelationInfo.setMetaInfo(toMetaInfo(orgOrgRelation.getMeta(), orgOrgRelation.getVersionInd()));
-		orgOrgRelationInfo.setType(orgOrgRelation.getType().getKey());
+		orgOrgRelationInfo.setType(orgOrgRelation.getType().getId());
 		orgOrgRelationInfo.setOrgId(orgOrgRelation.getOrg().getId());
 		orgOrgRelationInfo.setRelatedOrgId(orgOrgRelation.getRelatedOrg().getId());
 
@@ -143,7 +143,7 @@ public class OrganizationAssembler extends BaseAssembler{
 		restrictionInfo.setOrgId(restriction.getOrg().getId());
 		restrictionInfo.setAttributes(toAttributeMap(restriction.getAttributes()));
 		restrictionInfo.setMetaInfo(toMetaInfo(restriction.getMeta(), restriction.getVersionInd()));
-		restrictionInfo.setOrgPersonRelationTypeKey(restriction.getPersonRelationType().getKey());
+		restrictionInfo.setOrgPersonRelationTypeKey(restriction.getPersonRelationType().getId());
 
 		return restrictionInfo;
 
@@ -193,7 +193,7 @@ public class OrganizationAssembler extends BaseAssembler{
 		BeanUtils.copyProperties(orgOrgRelationType, orgOrgRelationTypeInfo, new String[] { "attributes", "orgHierarchy"});
 
 		orgOrgRelationTypeInfo.setAttributes(toAttributeMap(orgOrgRelationType.getAttributes()));
-		orgOrgRelationTypeInfo.setOrgHierarchyKey(orgOrgRelationType.getOrgHierarchy().getKey());
+		orgOrgRelationTypeInfo.setOrgHierarchyKey(orgOrgRelationType.getOrgHierarchy().getId());
 		return orgOrgRelationTypeInfo;
 	}
 

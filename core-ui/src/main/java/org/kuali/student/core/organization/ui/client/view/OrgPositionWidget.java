@@ -176,8 +176,8 @@ public class OrgPositionWidget extends Composite {
                 int i =0;
                 for(OrgPersonRelationTypeInfo posTypeInfo:posTypes){
                     i++;
-                    posTypeDropDown.addItem(posTypeInfo.getName(),posTypeInfo.getKey());
-                    if (posTypeInfo.getKey().equals(posType)){
+                    posTypeDropDown.addItem(posTypeInfo.getName(),posTypeInfo.getId());
+                    if (posTypeInfo.getId().equals(posType)){
                         posTypeDropDown.setSelectedIndex(i);
                     }
                 }

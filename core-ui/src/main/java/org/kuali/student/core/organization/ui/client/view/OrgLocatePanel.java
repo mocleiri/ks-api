@@ -103,7 +103,7 @@ public class OrgLocatePanel extends Composite{
                 List<String> orgRootIds = new ArrayList<String>();               
                 for(OrgHierarchyInfo orgHInfo:result){
                     orgRootIds.add(orgHInfo.getRootOrgId());
-                    orgRootHierarchy.put(orgHInfo.getRootOrgId(), orgHInfo.getKey());
+                    orgRootHierarchy.put(orgHInfo.getRootOrgId(), orgHInfo.getId());
                 }                
                 
                 getOrgList(orgRootIds);

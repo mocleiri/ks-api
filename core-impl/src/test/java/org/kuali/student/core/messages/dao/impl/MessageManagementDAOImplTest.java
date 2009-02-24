@@ -2,31 +2,25 @@ package org.kuali.student.core.messages.dao.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import junit.framework.TestCase;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kuali.student.common.test.spring.AbstractTransactionalDaoTest;
+import org.kuali.student.common.test.spring.Dao;
+import org.kuali.student.common.test.spring.PersistenceFileLocation;
 import org.kuali.student.core.messages.MessageException;
 import org.kuali.student.core.messages.dto.Message;
 import org.kuali.student.core.messages.dto.MessageList;
 import org.kuali.student.core.messages.entity.MessageEntity;
 import org.kuali.student.core.messages.service.impl.MessageServiceImpl;
 import org.kuali.student.core.messages.service.impl.util.POJOConverter;
-import org.kuali.student.common.test.spring.AbstractTransactionalDaoTest;
-import org.kuali.student.common.test.spring.Dao;
-import org.kuali.student.common.test.spring.PersistenceFileLocation;
 
 @PersistenceFileLocation("classpath:META-INF/messages-persistence.xml")
 public class MessageManagementDAOImplTest extends AbstractTransactionalDaoTest{

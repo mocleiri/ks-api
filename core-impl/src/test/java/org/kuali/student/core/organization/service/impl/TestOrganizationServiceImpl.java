@@ -38,8 +38,6 @@ import org.kuali.student.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.dto.OrgTypeInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
-import org.kuali.student.core.search.dto.QueryParamValue;
-import org.kuali.student.core.search.dto.Result;
 
 
 @Daos( { @Dao(value = "org.kuali.student.core.organization.dao.impl.OrganizationDaoImpl",testSqlFile="classpath:ks-org.sql"/*, testDataFile = "classpath:test-beans.xml"*/) })
@@ -47,25 +45,15 @@ import org.kuali.student.core.search.dto.Result;
 public class TestOrganizationServiceImpl extends AbstractServiceTest {
 	@Client(value = "org.kuali.student.core.organization.service.impl.OrganizationServiceImpl", port = "8181")
 	public OrganizationService client;
-	
-	@Test
-	public void testSearch() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
-		List<QueryParamValue> queryParamValues = new ArrayList<QueryParamValue>();
-		QueryParamValue qpv1 = new QueryParamValue();
-		qpv1.setKey("org.queryParam.orgType");
-		qpv1.setValue("kuali.org.College");
-		queryParamValues.add(qpv1);
-		List<Result> results = client.searchForResults("org.search.orgQuickViewByOrgType", queryParamValues);
-		assertEquals(6,results.size());
-		assertEquals(2,results.get(0).getResultCells().size());
-	}
+
 
 	@Test
 	public void testCreateUpdateOrg() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException, ParseException {
 		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
 
 		OrgInfo orgInfo = new OrgInfo();
-		orgInfo.setDesc("Description for new OrgInfo");
+		orgInfo.setShortDesc("Description for new OrgInfo");
+		orgInfo.setLongDesc("Loooooooooong description for new OrgInfo");
 		orgInfo.setLongName("TestOrgLongName");
 		orgInfo.setShortName("TestOrgShortName");
 		orgInfo.setState("Active");
@@ -77,7 +65,8 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		OrgInfo createOrg = client.createOrganization("kuali.org.Program", orgInfo);
 
 		//Validate all fields
-		assertEquals("Description for new OrgInfo",createOrg.getDesc());
+		assertEquals("Description for new OrgInfo",createOrg.getShortDesc());
+		assertEquals("Loooooooooong description for new OrgInfo", createOrg.getLongDesc());
 		assertEquals("TestOrgLongName",createOrg.getLongName());
 		assertEquals("TestOrgShortName",createOrg.getShortName());
 		assertEquals("Active",createOrg.getState());
@@ -88,7 +77,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		assertNotNull(createOrg.getId());
 
 		OrgInfo updateInfo = client.getOrganization(createOrg.getId());
-		updateInfo.setDesc("Updated Description for new OrgInfo");
+		updateInfo.setShortDesc("Updated Description for new OrgInfo");
 		updateInfo.setLongName("Updated TestOrgLongName");
 		updateInfo.setShortName("Updated TestOrgShortName");
 		updateInfo.setState("Updated Active");
@@ -106,7 +95,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 		}
 
 		//Validate
-		assertEquals("Updated Description for new OrgInfo",updated.getDesc());
+		assertEquals("Updated Description for new OrgInfo",updated.getShortDesc());
 		assertEquals("Updated TestOrgLongName",updated.getLongName());
 		assertEquals("Updated TestOrgShortName",updated.getShortName());
 		assertEquals("Updated Active",updated.getState());
@@ -309,7 +298,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 	@Test
 	public void getOrgType() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
 		OrgTypeInfo orgTypeInfo = client.getOrgType("kuali.org.Division");
-		assertEquals(orgTypeInfo.getKey(), "kuali.org.Division");
+		assertEquals("kuali.org.Division", orgTypeInfo.getId());
 
 		try {
 			orgTypeInfo = client.getOrgType("Dr.Who");
@@ -370,7 +359,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 	@Test
 	public void getOrgOrgRelationType() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
 		OrgOrgRelationTypeInfo orgOrgRelationTypeInfo = client.getOrgOrgRelationType("kuali.org.Report");
-		assertEquals(orgOrgRelationTypeInfo.getKey(), "kuali.org.Report");
+		assertEquals("kuali.org.Report", orgOrgRelationTypeInfo.getId());
 
 		try {
 			orgOrgRelationTypeInfo = client.getOrgOrgRelationType("Babylon.5");
@@ -401,7 +390,7 @@ public class TestOrganizationServiceImpl extends AbstractServiceTest {
 	@Test
 	public void getOrgHierarchy() throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
 		OrgHierarchyInfo orgHierarchyInfo = client.getOrgHierarchy("kuali.org.hierarchy.Curriculum");
-		assertEquals(orgHierarchyInfo.getKey(), "kuali.org.hierarchy.Curriculum");
+		assertEquals("kuali.org.hierarchy.Curriculum", orgHierarchyInfo.getId());
 
 		try {
 			orgHierarchyInfo = client.getOrgHierarchy("Spectre");
