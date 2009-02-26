@@ -16,13 +16,17 @@
 package org.kuali.student.rules.internal.common.statement.propositions;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
 
 public class AverageProposition<E extends Number> extends SumProposition<E> {
-
+	private BigDecimal average;
     private BigDecimal listSize;
+    
+    public final static String PROPOSITION_MESSAGE_CONTEXT_TOKEN_AVERAGE = "proposition_average";
+    public final static String PROPOSITION_MESSAGE_CONTEXT_TOKEN_DIFFERENCE = "proposition_average_diff";
     
 	public AverageProposition(String id, 
 							  String propositionName, 
@@ -30,6 +34,7 @@ public class AverageProposition<E extends Number> extends SumProposition<E> {
     						  BigDecimal expectedValue, 
     						  List<E> factSet) {
     	super(id, propositionName, operator, expectedValue, factSet);
+    	super.propositionType = PropositionType.AVERAGE;
     	if (factSet == null || factSet.size() == 0) {
     		throw new IllegalArgumentException("Fact set cannot be null");
     	}
@@ -38,28 +43,20 @@ public class AverageProposition<E extends Number> extends SumProposition<E> {
 
     @Override
     public Boolean apply() {
-        BigDecimal average = sum().divide(listSize);
+        average = sum().divide(listSize);
 
         result = checkTruthValue(average, super.expectedValue);
 
-        cacheReport("Average is short by %s", average, super.expectedValue);
+        resultValues = new ArrayList<BigDecimal>();
+        resultValues.add(average);
 
         return result;
     }
 
     @Override
-    protected void cacheReport(String format, Object... args) {
-        if (result) {
-            report.setSuccessMessage("Average constraint fulfilled");
-            return;
-        }
-
-        BigDecimal sum = (BigDecimal) args[0];
-        BigDecimal expectedValue = (BigDecimal) args[1];
-
-        // TODO: Use the operator to compute exact message
-        BigDecimal needed = expectedValue.subtract(sum);
-        String advice = String.format(format, needed.toString());
-        report.setFailureMessage(advice);
+    public void buildMessageContextMap() {
+    	addMessageContext(PROPOSITION_MESSAGE_CONTEXT_TOKEN_AVERAGE, average.toString());
+        BigDecimal needed = expectedValue.subtract(average);
+        addMessageContext(PROPOSITION_MESSAGE_CONTEXT_TOKEN_DIFFERENCE, needed.toString());
     }
 }
