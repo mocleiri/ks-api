@@ -11,7 +11,6 @@ public class KitchenSinkStyleConstants {
     public static final String STYLE_RESOURCE_DESCRIPTION = "KSinkResourceDescription";
     public static final String STYLE_BLOCK_HEADER = "KSinkBlockHeader";
     public static final String STYLE_EXAMPLE = "KSinkExample";
-    public static final String STYLE_POPUP_PANEL = "KSinkPopupPanel";
     public static final String STYLE_WELCOME_PANEL = "KSinkWelcomePanel" ;
     public static final String STYLE_TAB_PANEL = "KSinkTabPanel" ;
     public static final String STYLE_EXAMPLE_PANEL = "KSinkExamplePanel" ;
@@ -20,5 +19,6 @@ public class KitchenSinkStyleConstants {
     public static final String STYLE_BUTTON_LARGE = "KSinkButtonLarge" ;
     public static final String STYLE_BUTTON_RED = "KSinkButtonRed" ;
     public static final String STYLE_BUTTON_FANCY = "KSinkButtonFancy" ;
+    public static final String STYLE_POPUP_PANEL = "KSinkPopupPanel";
 
 }

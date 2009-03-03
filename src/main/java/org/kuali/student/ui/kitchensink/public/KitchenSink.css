@@ -36,7 +36,7 @@
 	text-decoration: underline;
 }
 
-.KSinkWelcomPanel {
+.KSinkWelcomePanel {
 	font-size: 18px;
 	font-weight: bold;
 }
@@ -66,9 +66,6 @@
 .KSinkExample {
 	padding: 10px 10px 10px 10px;
 }
-
-
-
 .KSinkPopupPanel {
     height: 250px;
 	width: 250px;
