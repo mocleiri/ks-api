@@ -51,6 +51,14 @@ import org.kuali.student.rules.factfinder.dto.FactResultTypeInfoDTO;
 import org.kuali.student.rules.factfinder.dto.FactStructureDTO;
 import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
 import org.kuali.student.rules.internal.common.entity.YieldValueFunctionType;
+import org.kuali.student.rules.internal.common.statement.MessageContextConstants;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.AverageRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.IntersectionRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.MaxRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.MinRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.SimpleComparableRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.SubsetRuleProposition;
+import org.kuali.student.rules.internal.common.statement.propositions.rules.SumRuleProposition;
 import org.kuali.student.rules.internal.common.utils.BusinessRuleUtil;
 import org.kuali.student.rules.internal.common.utils.FactUtil;
 import org.kuali.student.rules.repository.rule.RuleSet;
@@ -226,7 +234,7 @@ public class RuleSetTranslatorTest {
             factMap.put(factKey, factResult);
 
             Map<String, RulePropositionDTO> propositionMap = BusinessRuleUtil.getRulePropositions(businessRule);
-            FactContainer fact = new FactContainer("id-"+i, anchor, propositionMap, factMap);
+            FactContainer fact = new FactContainer("id-"+i, anchor, "KUALI_COURSE", propositionMap, factMap);
             
             factList.add(fact);
         }
@@ -245,6 +253,33 @@ public class RuleSetTranslatorTest {
         }
     }
     
+    private BusinessRuleInfoDTO createBusinessRule(List<RuleElementDTO> ruleElementList) {
+        BusinessRuleInfoDTO bri = new BusinessRuleInfoDTO();
+    	bri.setName("MyBusinessRule");
+    	bri.setDesc("Some business rule");
+    	bri.setSuccessMessage("Success message");
+    	bri.setFailureMessage("Failure message");
+    	bri.setId("1");
+    	bri.setType("kuali.student.businessrule.typekey.course.corequisites");
+    	bri.setAnchorTypeKey("KUALI_COURSE");
+    	bri.setAnchorValue("CPR101");
+    	bri.setBusinessRuleElementList(ruleElementList);
+    	Date effectiveStartTime = createDate(2000, 1, 1, 12, 00);
+    	Date effectiveEndTime = createDate(2100, 1, 1, 12, 00);
+    	bri.setEffectiveDate(effectiveStartTime);
+    	bri.setExpirationDate(effectiveEndTime);
+    	return bri;
+    }
+
+    private RuleElementDTO getAndOperator() {
+    	RuleElementDTO re = new RuleElementDTO();
+        re.setName("And");
+        re.setDescription("And");
+        re.setBusinessRuleElemnetTypeKey("AND");
+        
+        return re;
+    }
+    
 	@Test
 	public void testTranslateBusinessRule_Comparable_100FactContainers_StatelessSession() throws Exception {
         // Generate Drools rule set source code
@@ -254,6 +289,10 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -295,6 +334,10 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -336,8 +379,14 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
     	YieldValueFunctionDTO yieldValueFunction2 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SIMPLECOMPARABLE.toString());
 		
-		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
-		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.comparable.fact");
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_SIMPLE_COMPARABLE_COLUMN_KEY, "column1");
+
+        FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.comparable.fact");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+
+        FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.comparable.fact");
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
 		
 		// EXECUTION: Fact
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1));
@@ -388,7 +437,7 @@ public class RuleSetTranslatorTest {
         factMap.put(factKey2, factResult2);
 
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts = new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts = new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -445,7 +494,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
 
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts = new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts = new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -461,6 +510,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MIN.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_MIN_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -493,7 +547,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -509,6 +563,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MIN.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -541,7 +600,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -581,7 +640,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -597,6 +656,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MAX.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -629,7 +693,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -669,7 +733,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -685,6 +749,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.MAX.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_MAX_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -717,7 +786,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -733,8 +802,15 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUBSET.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_SUBSET_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
     	List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
@@ -770,7 +846,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -814,7 +890,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -828,11 +904,18 @@ public class RuleSetTranslatorTest {
         // DEFINITION: Create rule definition 
 
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.INTERSECTION.toString());
-		
+
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+        Map<String,String> resultColumnKeyMap = new HashMap<String, String>();
+        resultColumnKeyMap.put(MessageContextConstants.PROPOSITION_INTERSECTION_COLUMN_KEY, "column1");
+        factStructure1.setResultColumnKeyTranslations(resultColumnKeyMap);
+		
 		// EXECUTION: Fact
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
-		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
+        factStructure2.setResultColumnKeyTranslations(resultColumnKeyMap);
+
+        yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
     	List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
         RuleElementDTO element1 = dtoFactory.createRuleElementDTO(
@@ -867,7 +950,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -911,7 +994,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -927,6 +1010,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUM.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+		Map<String,String> resultColumnKey = new HashMap<String, String>();
+		resultColumnKey.put(MessageContextConstants.PROPOSITION_SUM_COLUMN_KEY, "column1");
+		factStructure1.setResultColumnKeyTranslations(resultColumnKey);
+
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -959,7 +1047,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -999,7 +1087,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -1015,6 +1103,11 @@ public class RuleSetTranslatorTest {
     	YieldValueFunctionDTO yieldValueFunction = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.AVERAGE.toString());
 		
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+
+		Map<String,String> resultColumnKey = new HashMap<String, String>();
+		resultColumnKey.put(MessageContextConstants.PROPOSITION_AVERAGE_COLUMN_KEY, "column1");
+		factStructure1.setResultColumnKeyTranslations(resultColumnKey);
+
 		// EXECUTION: Fact
 		yieldValueFunction.setFactStructureList(Arrays.asList(factStructure1));
 		
@@ -1047,7 +1140,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -1087,7 +1180,7 @@ public class RuleSetTranslatorTest {
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
     	
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -1122,8 +1215,8 @@ public class RuleSetTranslatorTest {
     	// Set effective and expiry dates
     	Date effectiveStartTime = createDate(2000, 1, 1, 12, 00);
     	Date effectiveEndTime = createDate(2001, 1, 1, 12, 00);
-    	businessRule.setEffectiveStartTime(effectiveStartTime);
-    	businessRule.setEffectiveEndTime(effectiveEndTime);
+    	businessRule.setEffectiveDate(effectiveStartTime);
+    	businessRule.setExpirationDate(effectiveEndTime);
 
         // Parse and generate functional business rule into Drools rules
         RuleSet ruleSet = ruleSetTranslator.translate(businessRule);
@@ -1139,51 +1232,35 @@ public class RuleSetTranslatorTest {
         factMap.put(factKey, factResult);
 
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), anchorValue, "KUALI_COURSE", propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
         assertFalse(facts.getPropositionContainer().getRuleResult());
     }
 
-    private BusinessRuleInfoDTO createBusinessRule(List<RuleElementDTO> ruleElementList) {
-        BusinessRuleInfoDTO bri = new BusinessRuleInfoDTO();
-    	bri.setName("MyBusinessRule");
-    	bri.setDescription("Some business rule");
-    	bri.setSuccessMessage("Success message");
-    	bri.setFailureMessage("Failure message");
-    	bri.setBusinessRuleId("1");
-    	bri.setBusinessRuleTypeKey("kuali.student.businessrule.typekey.course.corequisites");
-    	bri.setAnchorTypeKey("kuali.student.lui.course.id");
-    	bri.setAnchorValue("CPR101");
-    	bri.setRuleElementList(ruleElementList);
-    	Date effectiveStartTime = createDate(2000, 1, 1, 12, 00);
-    	Date effectiveEndTime = createDate(2100, 1, 1, 12, 00);
-    	bri.setEffectiveStartTime(effectiveStartTime);
-    	bri.setEffectiveEndTime(effectiveEndTime);
-    	return bri;
-    }
-
-    private RuleElementDTO getAndOperator() {
-    	RuleElementDTO re = new RuleElementDTO();
-        re.setName("And");
-        re.setDescription("And");
-        re.setOperation("AND");
-        
-        return re;
-    }
-    
     @Test
     public void testTranslateBusinessRule_SubsetIntersection() throws Exception {
     	YieldValueFunctionDTO yieldValueFunction1 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.SUBSET.toString());
     	YieldValueFunctionDTO yieldValueFunction2 = dtoFactory.createYieldValueFunctionDTO(null, YieldValueFunctionType.INTERSECTION.toString());
 		
+		Map<String,String> subsetResultColumnKey = new HashMap<String, String>();
+		subsetResultColumnKey.put(MessageContextConstants.PROPOSITION_SUBSET_COLUMN_KEY, "column1");
+
 		FactStructureDTO factStructure1 = createFactStructure("subset.id.1", "course.subset.criteria");
+		factStructure1.setResultColumnKeyTranslations(subsetResultColumnKey);
 		FactStructureDTO factStructure2 = createFactStructure("subset.id.2", "course.subset.fact");
+		factStructure2.setResultColumnKeyTranslations(subsetResultColumnKey);
 		yieldValueFunction1.setFactStructureList(Arrays.asList(factStructure1, factStructure2));
 		
+		Map<String,String> intersectionResultColumnKey = new HashMap<String, String>();
+		intersectionResultColumnKey.put(MessageContextConstants.PROPOSITION_INTERSECTION_COLUMN_KEY, "column1");
+
 		FactStructureDTO factStructure3 = createFactStructure("subset.id.3", "course.subset.criteria");
+		factStructure3.setResultColumnKeyTranslations(intersectionResultColumnKey);
 		FactStructureDTO factStructure4 = createFactStructure("subset.id.4", "course.subset.fact");
+		factStructure4.setResultColumnKeyTranslations(intersectionResultColumnKey);
+
 		yieldValueFunction2.setFactStructureList(Arrays.asList(factStructure3, factStructure4));
 
 		List<RuleElementDTO> ruleElementList = new ArrayList<RuleElementDTO>();
@@ -1242,7 +1319,7 @@ public class RuleSetTranslatorTest {
 
         //Map<String, YieldValueFunctionDTO> yvfMap = getYvfMap(businessRule);
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), businessRule.getAnchorValue(), propMap, factMap);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), businessRule.getAnchorValue(), businessRule.getAnchorTypeKey(), propMap, factMap);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -1302,7 +1379,7 @@ public class RuleSetTranslatorTest {
         assertNotNull(ruleSet);
         
     	Map<String, RulePropositionDTO> propMap = BusinessRuleUtil.getRulePropositions(businessRule);
-        FactContainer facts =  new FactContainer(""+System.nanoTime(), businessRule.getAnchorValue(), propMap, null);
+        FactContainer facts =  new FactContainer(""+System.nanoTime(), businessRule.getAnchorValue(), businessRule.getAnchorTypeKey(), propMap, null);
 
         // Execute rule
         executeRule(ruleSet.getContent(), facts);
@@ -1339,8 +1416,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("org_kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("org_kuali-student.pre req#1&2");
         bri.setName("TestName `~!@#$%^&*()-+={[}]|\\:;\"'<,>.?/ \b\t\n\f\r \' \"");
 
         RuleSet ruleSet = ruleSetTranslator.translate(bri);
@@ -1354,8 +1431,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("org_kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("org_kuali-student.pre req#1&2");
         bri.setName("ABC123456 `~!@#$%^&*()-+= XYZ");
 
         RuleSet ruleSet = ruleSetTranslator.translate(bri);
@@ -1369,8 +1446,8 @@ public class RuleSetTranslatorTest {
         // Create functional business rule
         BusinessRuleInfoDTO bri = createBusinessRule(null);
         // Create invalid name
-        bri.setBusinessRuleId("11223344-1122-1122-1112-200000000001");
-        bri.setBusinessRuleTypeKey("123 kuali-student.pre req#1&2");
+        bri.setId("11223344-1122-1122-1112-200000000001");
+        bri.setType("123 kuali-student.pre req#1&2");
         bri.setName("123456 `~!@#$%^&*()-+= XYZ");
 
 		try {

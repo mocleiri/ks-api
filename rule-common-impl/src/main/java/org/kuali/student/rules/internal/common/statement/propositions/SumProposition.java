@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
+import org.kuali.student.rules.internal.common.statement.MessageContextConstants;
 
 /**
  * A constraint that specifies that sum of a list of values is less than the required amount.
@@ -31,6 +32,7 @@ import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
 public class SumProposition<E extends Number> extends AbstractProposition<BigDecimal> {
     // ~ Instance fields --------------------------------------------------------
 
+	private BigDecimal sum;
     List<E> factSet;
 
     // ~ Constructors -----------------------------------------------------------
@@ -39,91 +41,52 @@ public class SumProposition<E extends Number> extends AbstractProposition<BigDec
         super();
     }
 
-    public SumProposition(String id, String propositionName, ComparisonOperator operator, BigDecimal expectedValue, List<E> factSet) {
-        super(id, propositionName, operator, expectedValue);
-        this.factSet = (factSet == null ? new ArrayList<E>() : factSet);
+    public SumProposition(String id, String propositionName, 
+    		ComparisonOperator operator, BigDecimal expectedValue, List<E> factSet) {
+        super(id, propositionName, PropositionType.SUM, operator, expectedValue);
+    	if (factSet == null || factSet.size() == 0) {
+    		throw new IllegalArgumentException("Fact set cannot be null");
+    	}
+        this.factSet = factSet;
     }
 
     // ~ Methods ----------------------------------------------------------------
 
     @Override
     public Boolean apply() {
-        BigDecimal sum = sum();
+        sum = sum();
 
         result = checkTruthValue(sum, super.expectedValue);
 
-        cacheReport("Sum is short by %s", sum, super.expectedValue);
+        resultValues = new ArrayList<BigDecimal>();
+        resultValues.add(sum);
 
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.kuali.rules.constraint.AbstractConstraint#cacheAdvice(java.lang.String, java.lang.Object[])
-     */
     @Override
-    protected void cacheReport(String format, Object... args) {
-        if (result) {
-            report.setSuccessMessage("Sum constraint fulfilled");
-            return;
-        }
-
-        BigDecimal sum = (BigDecimal) args[0];
-        BigDecimal expectedValue = (BigDecimal) args[1];
-
-        // TODO: Use the operator to compute exact message
-        BigDecimal needed = expectedValue.subtract(sum);
-        String advice = String.format(format, needed.toString());
-        report.setFailureMessage(advice);
+    public void buildMessageContextMap() {
+    	addMessageContext(MessageContextConstants.PROPOSITION_SUM_MESSAGE_CTX_KEY_SUM, sum.toString());
+        BigDecimal difference = expectedValue.subtract(sum);
+        addMessageContext(MessageContextConstants.PROPOSITION_SUM_MESSAGE_CTX_KEY_SUM_DIFF, difference.toString());
     }
 
     /**
-     * This method sums all the element in the fact list
+     * This method sums all the element in the fact list.
      * 
-     * @return
+     * @return Sum of all the element in the fact list
      */
     protected BigDecimal sum() {
         BigDecimal sum = new BigDecimal("0.0");
 
         for (E element : factSet) {
-            sum = sum.add(getDecimalValue(element));
+            sum = sum.add(new BigDecimal(element.toString()));
         }
 
         return sum;
     }
 
-    /**
-     * This method converts a given value of any Number type to big decimal
-     * 
-     * @param value
-     * @return
-     */
-    private BigDecimal getDecimalValue(Object value) {
-        BigDecimal decimalValue = null;
-
-        if (value instanceof java.lang.String) {
-            decimalValue = new BigDecimal((java.lang.String) value);
-        } else if (value instanceof java.math.BigDecimal) {
-            decimalValue = (java.math.BigDecimal) value;
-        } else if (value instanceof java.lang.Byte || value instanceof java.lang.Short
-                || value instanceof java.lang.Integer || value instanceof java.lang.Long) {
-            decimalValue = BigDecimal.valueOf(((java.lang.Number) value).longValue());
-        } else if (value instanceof java.lang.Float || value instanceof java.lang.Double) {
-            decimalValue = BigDecimal.valueOf(((java.lang.Number) value).doubleValue());
-        } else if (value instanceof java.lang.Number) {
-            decimalValue = BigDecimal.valueOf(((java.lang.Number) value).doubleValue());
-        }
-
-        // If value is none of the above type then throw exception
-        if (null == decimalValue) {
-            throw new IllegalArgumentException("Value cannot be converted to BigDecimal");
-        }
-
-        return decimalValue;
-    }
-
-    /**
+	/**
      * @return the factSet
      */
     public List<E> getFactSet() {

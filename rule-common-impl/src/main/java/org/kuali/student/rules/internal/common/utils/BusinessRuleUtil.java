@@ -27,7 +27,9 @@ public class BusinessRuleUtil {
     public static final char PROPOSITION_PREFIX = 'P';
     //public static final String CALENDAR_DATE_FORMAT = "yyyy.MM.dd-HH.mm.ss.SSS";
     public static final String ISO_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(ISO_TIMESTAMP_FORMAT);
+    private static final SimpleDateFormat isoDateFormat = new SimpleDateFormat(ISO_TIMESTAMP_FORMAT);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat();
+	private static final Date date = new Date();
 
     /*
      * Validates rule composed of propositions e.g. P1, e.g. (P1), e.g. P1 OR P2 AND P3, e.g. (P1 AND P2 OR P3) etc.
@@ -264,7 +266,7 @@ public class BusinessRuleUtil {
      */
     public static String createFunctionalString(BusinessRuleInfoDTO rule) {
 
-        Collection<RuleElementDTO> ruleElements = rule.getRuleElementList();
+        Collection<RuleElementDTO> ruleElements = rule.getBusinessRuleElementList();
 
         int counter = 1;
         StringBuilder functionString = new StringBuilder();
@@ -278,12 +280,12 @@ public class BusinessRuleUtil {
             
             RuleElementType type = null;
             
-            if(RuleElementType.LPAREN.getName().equals( ruleElement.getOperation() )) {
+            if(RuleElementType.LPAREN.getName().equals( ruleElement.getBusinessRuleElemnetTypeKey() )) {
                 type = RuleElementType.LPAREN;
-            } else if(RuleElementType.RPAREN.getName().equals( ruleElement.getOperation() )) {
+            } else if(RuleElementType.RPAREN.getName().equals( ruleElement.getBusinessRuleElemnetTypeKey() )) {
                 type = RuleElementType.RPAREN;
             } else {
-                type = RuleElementType.valueOf(ruleElement.getOperation()); 
+                type = RuleElementType.valueOf(ruleElement.getBusinessRuleElemnetTypeKey()); 
             }
             
             switch (type) {
@@ -336,7 +338,7 @@ public class BusinessRuleUtil {
     public static Map<String, RulePropositionDTO> getRulePropositions(BusinessRuleInfoDTO rule) {
 
         Map<String, RulePropositionDTO> propositionMap = new HashMap<String, RulePropositionDTO>();
-        Collection<RuleElementDTO> ruleElements = rule.getRuleElementList();
+        Collection<RuleElementDTO> ruleElements = rule.getBusinessRuleElementList();
 
         if (ruleElements == null) {
         	return null;
@@ -344,8 +346,8 @@ public class BusinessRuleUtil {
         
         int counter = 1;
         for (RuleElementDTO ruleElement : ruleElements) {
-            if (RuleElementType.PROPOSITION.toString().equals(ruleElement.getOperation())) {
-                propositionMap.put(PROPOSITION_PREFIX + String.valueOf(counter), ruleElement.getRuleProposition());
+            if (RuleElementType.PROPOSITION.toString().equals(ruleElement.getBusinessRuleElemnetTypeKey())) {
+                propositionMap.put(PROPOSITION_PREFIX + String.valueOf(counter), ruleElement.getBusinessRuleProposition());
                 counter++;
             }
         }
@@ -497,7 +499,7 @@ public class BusinessRuleUtil {
      */
     public static Date convertDate(String value) {
     	try {
-			return dateFormat.parse(value);
+			return isoDateFormat.parse(value);
 		} catch (ParseException e) {
 			throw new RuntimeException("Data type conversion error", e);
 		}
@@ -510,7 +512,29 @@ public class BusinessRuleUtil {
      * @param dateObject A date object  
      * @return
      */
-    public static String formatDate(Date date) {
+    public static String formatIsoDate(Date date) {
+    	return isoDateFormat.format(date).toString();
+    }
+
+    /**
+     * Formats a <code>date</code> according to <code>pattern</code>.
+     * 
+     * @param date Date to format
+     * @param pattern Date format pattern
+     * @return Formatted date
+     */
+    public static String formatDate(Date date, String pattern) {
+    	dateFormat.applyPattern(pattern);
+    	return dateFormat.format(date).toString();
+    }
+
+    /**
+     * Returns the default ISO time zone.
+     * 
+     * @return Default ISO time zone
+     */
+    public static String getDefaultIsoTimeZone() {
+    	dateFormat.applyPattern("Z");
     	return dateFormat.format(date).toString();
     }
 }

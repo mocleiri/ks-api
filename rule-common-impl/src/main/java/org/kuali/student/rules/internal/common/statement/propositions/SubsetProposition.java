@@ -15,10 +15,13 @@
  */
 package org.kuali.student.rules.internal.common.statement.propositions;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
+import org.kuali.student.rules.internal.common.statement.report.PropositionReport;
+import org.kuali.student.rules.rulemanagement.dto.RulePropositionDTO;
 
 /**
  * A constraint that specifies that a fact set must be a subset of a given size of a given set of criteria.
@@ -29,9 +32,15 @@ import org.kuali.student.rules.internal.common.entity.ComparisonOperator;
  */
 public class SubsetProposition<E> extends AbstractProposition<Integer> {
     // ~ Instance fields --------------------------------------------------------
-
+	private Set<E> met;
+	
     Set<E> criteriaSet;
     Set<E> factSet;
+    Collection<?> resultValues;
+
+    public final static String PROPOSITION_MESSAGE_CONTEXT_KEY_MET = "prop_subset_metset";
+    public final static String PROPOSITION_MESSAGE_CONTEXT_KEY_UNMET = "prop_subset_unmetset";
+    public final static String PROPOSITION_MESSAGE_CONTEXT_KEY_DIFFERENCE = "prop_subset_diff";
 
     // ~ Constructors -----------------------------------------------------------
 
@@ -39,8 +48,9 @@ public class SubsetProposition<E> extends AbstractProposition<Integer> {
         super();
     }
 
-    public SubsetProposition(String id, String propositionName, Set<E> criteriaSet, Set<E> factSet) {
-        super(id, propositionName, ComparisonOperator.EQUAL_TO, new Integer(criteriaSet.size()));
+    public SubsetProposition(String id, String propositionName, 
+    		Set<E> criteriaSet, Set<E> factSet, RulePropositionDTO ruleProposition) {
+        super(id, propositionName, PropositionType.SUBSET, ComparisonOperator.EQUAL_TO, new Integer(criteriaSet.size()));
         this.criteriaSet = criteriaSet;
         this.factSet = (factSet == null ? new HashSet<E>() : factSet);
     }
@@ -49,12 +59,11 @@ public class SubsetProposition<E> extends AbstractProposition<Integer> {
 
     @Override
     public Boolean apply() {
-        Set<E> met = and();
-        Integer count = met.size();
+        this.met = and();
 
-        result = checkTruthValue(count, super.expectedValue);
+        result = checkTruthValue(met.size(), super.expectedValue);
 
-        cacheReport("%d of %s is still required", count, super.expectedValue);
+        this.resultValues = met;
 
         return result;
     }
@@ -65,19 +74,13 @@ public class SubsetProposition<E> extends AbstractProposition<Integer> {
      * @see org.kuali.rules.constraint.AbstractConstraint#cacheAdvice(java.lang.String, java.lang.Object[])
      */
     @Override
-    protected void cacheReport(String format, Object... args) {
-        Integer count = (Integer) args[0];
-        Integer expectedValue = (Integer) args[1];
-        if (result) {
-            report.setSuccessMessage("Subset constraint fulfilled");
-            return;
-        }
-
-        // TODO: Use the operator to compute exact message
+    public void buildMessageContextMap() {
+        Integer count = met.size();
         Set<E> unMet = andNot();
-        int needed = expectedValue - count;
-        String advice = String.format(format, needed, unMet.toString());
-        report.setFailureMessage(advice);
+        Integer diff = super.expectedValue - count;
+        addMessageContext(PROPOSITION_MESSAGE_CONTEXT_KEY_MET, this.met);
+        addMessageContext(PROPOSITION_MESSAGE_CONTEXT_KEY_UNMET, unMet);
+        addMessageContext(PROPOSITION_MESSAGE_CONTEXT_KEY_DIFFERENCE, diff);
     }
 
     /**
@@ -98,8 +101,8 @@ public class SubsetProposition<E> extends AbstractProposition<Integer> {
      * @return
      */
     public Set<E> andNot() {
-        HashSet<E> rval = new HashSet<E>(criteriaSet);
-        rval.removeAll(factSet);
+        HashSet<E> rval = new HashSet<E>(factSet);
+        rval.removeAll(criteriaSet);
 
         return rval;
     }
@@ -132,5 +135,9 @@ public class SubsetProposition<E> extends AbstractProposition<Integer> {
      */
     public void setFactSet(Set<E> factSet) {
         this.factSet = new HashSet<E>(factSet);
+    }
+
+    public Collection<?> getResultValues() {
+    	return this.resultValues;
     }
 }
