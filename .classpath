@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="rule-management-developer/target/classes" path="rule-management-developer/src/main/java"/>
-	<classpathentry kind="src" output="rule-management-developer/target/test-classes" path="rule-management-developer/src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="rule-management-developer/target/classes" path="rule-management-developer/src/main/resources"/>
-	<classpathentry excluding="**" kind="src" output="rule-management-developer/target/test-classes" path="rule-management-developer/src/test/resources"/>
+	<classpathentry kind="src" path="brms-api/src/main/java"/>
+	<classpathentry kind="src" path="brms-api/src/main/resources"/>
+	<classpathentry kind="src" path="brms-api/src/test/resources"/>
+	<classpathentry kind="src" path="brms-api/src/test/java"/>
+	<classpathentry kind="src" path="brms-impl/src/main/java"/>
+	<classpathentry kind="src" path="brms-impl/src/main/resources"/>
+	<classpathentry kind="src" path="brms-impl/src/test/java"/>
+	<classpathentry kind="src" path="brms-impl/src/test/resources"/>
+	<classpathentry kind="src" path="brms-ui/src/main/java"/>
+	<classpathentry kind="src" path="brms-ui/src/main/resources"/>
+	<classpathentry kind="src" path="brms-ui/src/main/webapp"/>
+	<classpathentry kind="src" path="brms-ui/src/test/java"/>
+	<classpathentry kind="src" path="brms-ui/src/test/resources"/>
+	<classpathentry kind="src" path="brms-web/src/main/resources"/>
+	<classpathentry kind="src" path="brms-web/src/main/webapp"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="output" path="target/classes"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
