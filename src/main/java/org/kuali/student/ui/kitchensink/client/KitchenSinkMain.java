@@ -34,6 +34,7 @@ import org.kuali.student.ui.kitchensink.client.kscommons.modaldialogpanel.ModalD
 import org.kuali.student.ui.kitchensink.client.kscommons.progressindicator.ProgressIndicatorExampleDescriptor;
 import org.kuali.student.ui.kitchensink.client.kscommons.radiobutton.RadioButtonExampleDescriptor;
 import org.kuali.student.ui.kitchensink.client.kscommons.richeditor.RichEditorExampleDescriptor;
+import org.kuali.student.ui.kitchensink.client.kscommons.tabpanel.TabPanelExampleDescriptor;
 import org.kuali.student.ui.kitchensink.client.kscommons.textarea.TextAreaExampleDescriptor;
 import org.kuali.student.ui.kitchensink.client.kscommons.textbox.TextBoxExampleDescriptor;
 import org.kuali.student.ui.kitchensink.client.kscommons.tooltip.ToolTipExampleDescriptor;
@@ -144,6 +145,7 @@ public class KitchenSinkMain extends Composite {
         initExample(ksPanels, new FloatPanelExampleDescriptor());
         initExample(ksPanels, new InfoDialogExampleDescriptor());
         initExample(ksPanels, new ModalDialogPanelExampleDescriptor());
+        initExample(ksPanels, new TabPanelExampleDescriptor());
 
         initExample(ksInfo, new ToolTipExampleDescriptor());
 //        initExample(ksInfo, new HelpLinkExampleDescriptor());  //TODO
