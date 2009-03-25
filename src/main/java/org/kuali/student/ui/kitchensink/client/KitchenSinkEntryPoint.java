@@ -1,14 +1,23 @@
 package org.kuali.student.ui.kitchensink.client;
 
+import org.kuali.student.common.ui.client.application.Application;
+import org.kuali.student.common.ui.client.application.ApplicationContext;
+import org.kuali.student.common.ui.client.messages.MessagesService;
+import org.kuali.student.core.messages.dto.MessageList;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class KitchenSinkEntryPoint implements EntryPoint {
-
+    ApplicationContext context = new ApplicationContext();
     
     public void onModuleLoad() {
+        Application.setApplicationContext(context);
+        loadMessages();
+        
         KitchenSinkMain ksm = new KitchenSinkMain();
         String exampleClass = Window.Location.getParameter("exampleClass");
         exampleClass = (exampleClass == null) ? "" : exampleClass.trim();
@@ -35,6 +44,19 @@ public class KitchenSinkEntryPoint implements EntryPoint {
             sb.append(ste.toString());
         }
         return sb.toString();
+    }
+    
+    private void loadMessages(){
+        MessagesService.Util.getInstance("MessageService").getMessages("en", "common", new AsyncCallback<MessageList>(){
+
+            public void onFailure(Throwable caught) {
+                throw new RuntimeException("Unable to load messages", caught);
+            }
+
+            public void onSuccess(MessageList result) {
+                context.addMessages(result.getMessages());
+            }           
+        });        
     }
 
 }

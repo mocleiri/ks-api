@@ -129,6 +129,43 @@
 			<artifactId>gwt-visualization</artifactId>
 			<version>1.0</version>
 		</dependency>
+		
+		<!-- The following dependencies are needed to wire the MessagesService from ks-core -->
+		<dependency>
+			<groupId>org.kuali.student.core</groupId>
+			<artifactId>ks-core-impl</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.kuali.student.core</groupId>
+			<artifactId>ks-hibernate</artifactId>
+			<type>pom</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.kuali.student.core</groupId>
+			<artifactId>ks-jta</artifactId>
+			<type>pom</type>
+			<scope>runtime</scope>
+  		</dependency>		
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+		</dependency>												  				
+		
 	</dependencies>
 
 	
