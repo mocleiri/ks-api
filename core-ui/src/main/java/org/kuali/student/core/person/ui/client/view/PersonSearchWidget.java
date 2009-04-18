@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
@@ -52,7 +53,7 @@ public class PersonSearchWidget extends Composite implements HasSelectionHandler
         tb.setWidget(0,0, new KSLabel("Name"));
         tb.setWidget(0,1, personName);
         
-        tb.setWidget(1,2, new KSButton("Search", new ClickHandler(){
+        tb.setWidget(0,2, new KSButton("Search", new ClickHandler(){
             public void onClick(ClickEvent event) {
                 getSearchResults();
             }
@@ -60,6 +61,8 @@ public class PersonSearchWidget extends Composite implements HasSelectionHandler
             }            
         ));
 
+        tb.addStyleName("KS-Person-Search-Widget");
+        
         root.add(tb);
         selectButton.addClickHandler(new ClickHandler(){
             public void onClick(ClickEvent event) {
@@ -83,6 +86,7 @@ public class PersonSearchWidget extends Composite implements HasSelectionHandler
             }
         });
         selectButton.setVisible(false);
+        resultPanel.addStyleName("KS-Org-Search-Widget-Results");
         root.add(resultPanel);
         root.add(selectButton);
     }    

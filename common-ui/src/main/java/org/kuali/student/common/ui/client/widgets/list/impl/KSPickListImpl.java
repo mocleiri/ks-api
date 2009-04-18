@@ -3,11 +3,14 @@ package org.kuali.student.common.ui.client.widgets.list.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectableTableList;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +29,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class KSPickListImpl extends KSSelectItemWidgetAbstract {
     private final List<String> unselected = new ArrayList<String>();
     private final List<String> selected = new ArrayList<String>();
+    
+    private boolean enabled = true;
     
     
     private final HorizontalPanel panel = new HorizontalPanel();
@@ -233,15 +238,58 @@ public class KSPickListImpl extends KSSelectItemWidgetAbstract {
         }
     }
 
-    public void setListItems(ListItems listItems) {
+    @Override
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+    
+                @Override 
+                public void exec(T result){
+                    KSPickListImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
         super.setListItems(listItems);
+        unselected.clear();
         unselected.addAll(listItems.getItemIds());
         unselectedTable.setListItems(unselectedAdapter);
         selectedTable.setListItems(selectedAdapter);
     }
    
+    public void redraw() {
+        unselected.clear();
+        unselected.addAll(KSPickListImpl.this.getListItems().getItemIds());
+        unselected.removeAll(selected);
+        selected.clear();
+        selected.addAll(KSPickListImpl.this.getListItems().getItemIds());
+        selected.removeAll(unselected);
+        KSPickListImpl.this.unselectedTable.onLoad();
+        KSPickListImpl.this.selectedTable.onLoad();
+    }
+
     public void setMultipleSelect(boolean isMultipleSelect) {}
 
     public void onLoad() {}
+
+    @Override
+    public void setEnabled(boolean b) {
+        enabled = b;
+        unselectedTable.setEnabled(b);
+        selectedTable.setEnabled(b);
+        add.setEnabled(b);
+        remove.setEnabled(b);
+        addAll.setEnabled(b);
+        removeAll.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
 }

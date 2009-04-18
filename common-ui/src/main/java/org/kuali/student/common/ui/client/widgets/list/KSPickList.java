@@ -5,7 +5,6 @@ import java.util.List;
 import org.kuali.student.common.ui.client.widgets.list.impl.KSPickListImpl;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
@@ -81,6 +80,21 @@ public class KSPickList extends KSSelectItemWidgetAbstract {
 
     public void setName(String name) {
         selectItemWidget.setName(name);
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        selectItemWidget.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return selectItemWidget.isEnabled();
+    }
+
+    @Override
+    public void redraw() {
+        selectItemWidget.redraw();
     }
 
 

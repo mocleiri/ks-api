@@ -3,10 +3,13 @@ package org.kuali.student.common.ui.client.widgets.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSListBox;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -33,6 +36,15 @@ public class KSListBoxImpl extends KSSelectItemWidgetAbstract{
      */
     public KSListBoxImpl() {
         init();
+    }
+    
+    public void redraw(){
+        listBox.clear();
+        
+        for (String id: super.getListItems().getItemIds()){
+            listBox.addItem(super.getListItems().getItemText(id),id);            
+        }
+        
     }
 
     protected void init() {
@@ -103,7 +115,21 @@ public class KSListBoxImpl extends KSSelectItemWidgetAbstract{
     }
 
     @Override
-    public void setListItems(ListItems listItems) {
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+                
+                @Override 
+                public void exec(T result){
+                    KSListBoxImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
         super.setListItems(listItems);
         
         listBox.clear();
@@ -132,6 +158,16 @@ public class KSListBoxImpl extends KSSelectItemWidgetAbstract{
     @Override
     public void onLoad() {
                 
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        listBox.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return listBox.isEnabled();
     }
 
 }

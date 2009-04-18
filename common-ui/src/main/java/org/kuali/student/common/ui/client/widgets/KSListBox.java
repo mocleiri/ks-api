@@ -100,5 +100,21 @@ public class KSListBox extends KSSelectItemWidgetAbstract{
     public void setName(String name) {
         dropDown.setName(name);
     }
+
+    @Override
+    public void setEnabled(boolean b) {
+        dropDown.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return dropDown.isEnabled();
+    }
+
+    @Override
+    public void redraw() {
+        dropDown.redraw();
+        
+    }
     
 }

@@ -2,6 +2,8 @@ package org.kuali.student.common.ui.client.widgets.list;
 
 import java.util.List;
 
+import org.kuali.student.core.dto.Idable;
+
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasName;
@@ -22,9 +24,12 @@ public abstract class KSSelectItemWidgetAbstract extends Composite implements Ha
 		return listItems;
 	}
 
-	public void setListItems(ListItems listItems) {
+	public <T extends Idable> void setListItems(ListItems listItems) {
 		this.listItems = listItems;
 	}
+	
+	
+	public abstract void redraw();
 
 	/**
 	 * Used to had a selection change handler.
@@ -103,5 +108,9 @@ public abstract class KSSelectItemWidgetAbstract extends Composite implements Ha
     }
     
     public abstract void onLoad();
+
+    public abstract void setEnabled(boolean b);
+    
+    public abstract boolean isEnabled();
 	
 }

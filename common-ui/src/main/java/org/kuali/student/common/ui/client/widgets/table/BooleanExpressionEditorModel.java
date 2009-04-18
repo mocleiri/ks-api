@@ -8,7 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
-public class RuleEditorModel implements NodeEditor {
+public class BooleanExpressionEditorModel implements NodeEditor {
     private List<Node<Token>> orignalOrder = new ArrayList<Node<Token>>();
     private List<Widget> widgetList = new ArrayList<Widget>();
     private List<Node<Token>> nodeList = new ArrayList<Node<Token>>();
@@ -81,7 +81,6 @@ public class RuleEditorModel implements NodeEditor {
             clonedWidgetList.add(n.clone());
         }
         undoStack.add(clonedWidgetList);
-        System.out.println("dump:"+undoStack+"\n");
     }
 
     public List<NodeWidget> getAllNodeWidget() {

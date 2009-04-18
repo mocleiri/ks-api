@@ -1,4 +1,4 @@
-package org.kuali.student.common.util;
+package org.kuali.student.common.ui.client.mvc;
 /**
  * 
  * Generic callback used in place of return values, in cases where a response may be asynchronous, or may 
@@ -7,6 +7,5 @@ package org.kuali.student.common.util;
  *
  */
 public interface Callback <T extends Object> { 
-    public void onFailure(Exception e);
-    public void onSuccess(T result);
+    public void exec(T result);
 }

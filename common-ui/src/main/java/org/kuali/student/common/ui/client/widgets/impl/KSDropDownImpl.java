@@ -3,9 +3,13 @@ package org.kuali.student.common.ui.client.widgets.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.common.ui.client.widgets.list.impl.KSCheckBoxListImpl;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -24,9 +28,22 @@ import com.google.gwt.user.client.ui.ListBox;
 public class KSDropDownImpl extends KSSelectItemWidgetAbstract{ 
 
 	private ListBox listBox;
+	private boolean blankFirstItem = true;
 	
 	public KSDropDownImpl() {
 	    init();
+	}
+	
+	public void redraw(){
+        listBox.clear();
+        
+        if(blankFirstItem){
+            listBox.addItem("");
+        }
+        for (String id: super.getListItems().getItemIds()){
+            listBox.addItem(super.getListItems().getItemText(id),id);            
+        }
+        
 	}
 	
     protected void init() {
@@ -103,24 +120,45 @@ public class KSDropDownImpl extends KSSelectItemWidgetAbstract{
      * @see org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract#deSelectItem(java.lang.String)
      */
     @Override
-    public void deSelectItem(String id) {        
-        for(int i = 0; i < listBox.getItemCount(); i++){
-            if(id.equals(listBox.getValue(i))){
-                listBox.setItemSelected(i, false);
-                listBox.setItemSelected(0, true);
-            }
-        }        
+    public void deSelectItem(String id) {
+        int i = listBox.getSelectedIndex();
+        if (i >= 0 && listBox.getValue(i).equals(id)){
+            listBox.setItemSelected(i, false);
+            listBox.setItemSelected(0, true);            
+        }
     }
 
     @Override
-    public void setListItems(ListItems listItems) {
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+                
+                @Override 
+                public void exec(T result){
+                    KSDropDownImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
+        
         super.setListItems(listItems);
         
         listBox.clear();
-        listBox.addItem("Select");
+        if(blankFirstItem){
+            listBox.addItem("");
+        }
+        
         for (String id:listItems.getItemIds()){
             listBox.addItem(listItems.getItemText(id),id);            
-        }        
+        }
+        if(listBox.getItemCount() != 0){
+            listBox.setSelectedIndex(0);
+        }
+
     }
 
     /**
@@ -129,8 +167,11 @@ public class KSDropDownImpl extends KSSelectItemWidgetAbstract{
     @Override
     public List<String> getSelectedItems() {
         List<String> result = new ArrayList<String>();
-        if (listBox.getSelectedIndex() > 0){
-            String id = listBox.getValue(listBox.getSelectedIndex());
+
+        int selectedIdx = listBox.getSelectedIndex();                
+        
+        if((blankFirstItem && selectedIdx > 0) || (!blankFirstItem && selectedIdx >= 0)){
+            String id = listBox.getValue(selectedIdx);            
             result.add(id);
         }
         return result;
@@ -144,4 +185,21 @@ public class KSDropDownImpl extends KSSelectItemWidgetAbstract{
                 
     }
 
+    @Override
+    public void setEnabled(boolean b) {
+        listBox.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return listBox.isEnabled();
+    }
+
+    public boolean isBlankFirstItem() {
+        return blankFirstItem;
+    }
+
+    public void setBlankFirstItem(boolean blankFirstItem) {
+        this.blankFirstItem = blankFirstItem;
+    }
 }

@@ -108,5 +108,20 @@ public class KSSelectableTableList extends KSSelectItemWidgetAbstract {
     public void setName(String name) {
         selectItemWidget.setName(name);
     }
+
+    @Override
+    public void setEnabled(boolean b) {
+        selectItemWidget.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return selectItemWidget.isEnabled();
+    }
+
+    @Override
+    public void redraw() {
+        selectItemWidget.redraw();
+    }
     
 }

@@ -47,15 +47,17 @@ public class OrgMenu extends VerticalPanel{
         List<KSMenuItemData> menuItems = new ArrayList<KSMenuItemData>();
         
         KSMenuItemData createItem = new KSMenuItemData("Create"); 
-        addSubItem(createItem, "Organization", new OrgCreatePanel(OrgCreatePanel.CREATE_ORG_ALL));
-        addSubItem(createItem, "Position", new OrgCreatePanel(OrgCreatePanel.CREATE_ORG_POSITIONS));
+        addSubItem(createItem, "Organization", new OrganizationWidget(OrganizationWidget.Scope.ORG_CREATE_ALL));
+        addSubItem(createItem, "Position", new OrganizationWidget(OrganizationWidget.Scope.ORG_POSITIONS));
         
-        KSMenuItemData modifyItem = new KSMenuItemData("Modify");
+        KSMenuItemData modifyItem = new KSMenuItemData("Search / Modify");
         modifyItem.setClickHandler(getClickHandler(new OrgUpdatePanel()));
         
         KSMenuItemData locateItem = new KSMenuItemData("Browse");
         addSubItem(locateItem, "by Tree", new OrgLocateTree());
         addSubItem(locateItem, "by List", new OrgLocatePanel());
+        addSubItem(locateItem, "by Chart", new OrgLocateChart());
+        addSubItem(locateItem, "by Name", new OrgLocateName());
         
         menuItems.add(createItem);
         menuItems.add(modifyItem);
@@ -78,11 +80,7 @@ public class OrgMenu extends VerticalPanel{
         return new ClickHandler() {
             public void onClick(ClickEvent arg0) {
                 if (contentPanel.getWidget() != null) {
-                    try{
-                        contentPanel.remove(contentPanel.getWidget());
-                    } catch (Exception e) {
-                        // TODO: handle exception
-                    }
+                    contentPanel.remove(contentPanel.getWidget());
                 }
                 contentPanel.setWidget(w);
             }

@@ -5,8 +5,6 @@ import java.util.List;
 import org.kuali.student.common.ui.client.widgets.list.impl.KSRadioButtonListImpl;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 
@@ -142,6 +140,21 @@ public class KSRadioButtonList extends KSSelectItemWidgetAbstract {
      */
     public void setColumnSize(int cols){
         selectItemWidget.setColumnSize(cols);
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        selectItemWidget.setEnabled(b);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return selectItemWidget.isEnabled();
+    }
+
+    @Override
+    public void redraw() {
+        selectItemWidget.redraw();
     }
 }
 

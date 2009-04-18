@@ -24,19 +24,41 @@
 		<property name="order" value="0" />
 	</bean>
 
+	<!-- Datasources -->
 	<bean id="orgDataSource"
 		class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init"
 		destroy-method="close">
 		<property name="uniqueResourceName" value="orgDataSource" />
 		<property name="xaDataSourceClassName"
 			value="${jdbc.xaDataSourceClassName}" />
-		<property name="xaProperties" value="${propertiesPrefix.jdbc.xaDataSourceProperties}"/>
+		<property name="xaProperties" value="${propertiesPrefix.org.jdbc.xaDataSourceProperties}"/>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
+	</bean>
+
+	<bean id="emDataSource"
+		class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init"
+		destroy-method="close">
+		<property name="uniqueResourceName" value="emDataSource" />
+		<property name="xaDataSourceClassName"
+			value="${jdbc.xaDataSourceClassName}" />
+		<property name="xaProperties" value="${propertiesPrefix.em.jdbc.xaDataSourceProperties}"/>
+		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
+	</bean>
+
+	<bean id="messageDataSource"
+		class="com.atomikos.jdbc.AtomikosDataSourceBean" init-method="init"
+		destroy-method="close">
+		<property name="uniqueResourceName" value="messageDataSource" />
+		<property name="xaDataSourceClassName"
+			value="${jdbc.xaDataSourceClassName}" />
+		<property name="xaProperties" value="${propertiesPrefix.message.jdbc.xaDataSourceProperties}"/>
 		<property name="maxPoolSize" value="${jdbc.maxPoolSize}" />
 	</bean>
 
 	<!-- JPA EntityManagerFactory -->
 	<bean id="orgEntityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="Organization"/>
 		<property name="jpaVendorAdapter">
 			<bean class="${jpa.vendorAdapter}">
 				<property name="databasePlatform"
@@ -50,7 +72,42 @@
 		<property name="dataSource" ref="orgDataSource" />
 		<property name="jpaPropertyMap" value="${propertiesPrefix.jpa.properties}"/>
 	</bean>
+	
+	<bean id="emEntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="EnumerationManagement"/>
+		<property name="jpaVendorAdapter">
+			<bean class="${jpa.vendorAdapter}">
+				<property name="databasePlatform"
+					value="${jpa.databasePlatform}" />
+				<property name="showSql" value="${jpa.showSql}" />
+				<property name="generateDdl" value="${jpa.generateDdl}" />
+			</bean>
+		</property>
+		<property name="persistenceXmlLocation"
+			value="classpath:META-INF/enumeration-persistence.xml" />
+		<property name="dataSource" ref="emDataSource" />
+		<property name="jpaPropertyMap" value="${propertiesPrefix.jpa.properties}"/>
+	</bean>
 
+	<bean id="messageEntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitName" value="MessageManagement"/>
+		<property name="jpaVendorAdapter">
+			<bean class="${jpa.vendorAdapter}">
+				<property name="databasePlatform"
+					value="${jpa.databasePlatform}" />
+				<property name="showSql" value="${jpa.showSql}" />
+				<property name="generateDdl" value="${jpa.generateDdl}" />
+			</bean>
+		</property>
+		<property name="persistenceXmlLocation"
+			value="classpath:META-INF/messages-persistence.xml" />
+		<property name="dataSource" ref="messageDataSource" />
+		<property name="jpaPropertyMap" value="${propertiesPrefix.jpa.properties}"/>
+	</bean>
+
+	<!-- JTA Configuration -->
 	<bean id="AtomikosTxMgr"
 		class="com.atomikos.icatch.jta.UserTransactionManager"
 		init-method="init" destroy-method="close">
@@ -74,9 +131,21 @@
 
 	<tx:annotation-driven transaction-manager="JtaTxManager" />
 
+	<!-- JPA PostProcessing -->
 	<bean
 		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
+	<!-- Enumeration Service Config -->
+	<bean id="emDao"
+		class="org.kuali.student.core.enumerationmanagement.dao.impl.EnumerationManagementDAOImpl">
+	</bean>
+	
+	<bean id="emServiceImpl"
+		class="org.kuali.student.core.enumerationmanagement.service.impl.EnumerationManagementServiceImpl">
+		<property name="enumDAO" ref="emDao" />
+	</bean>
+
+	<!-- Organization Service Config -->
 	<bean id="orgDao"
 		class="org.kuali.student.core.organization.dao.impl.OrganizationDaoImpl">
 	</bean>
@@ -85,6 +154,11 @@
 		class="org.kuali.student.core.organization.service.impl.OrganizationServiceImpl">
 		<property name="organizationDao" ref="orgDao" />
 		<property name="searchManager" ref="orgSearchManager" />
+		<property name="dictionaryServiceDelegate" ref="dictionaryServiceDelegate"/>
+	</bean>
+
+	<bean id="dictionaryServiceDelegate" 
+		class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceSpringImpl">
 	</bean>
 	
 	<bean id="orgSearchManager"
@@ -93,6 +167,15 @@
 		<constructor-arg index="0" value="classpath:organization-search-config.xml" />
 	</bean>
 
+	<!-- Message Service Config -->
+	<bean id="messageDao"
+		class="org.kuali.student.core.messages.dao.impl.MessageManagementDAOImpl">
+	</bean>
+	
+	<bean id="messageServiceImpl"
+		class="org.kuali.student.core.messages.service.impl.MessageServiceImpl">
+		<property name="messageDAO" ref="messageDao" />
+	</bean>
 	
 	<!-- Preloaded data -->
 	<bean id="dataLoadListener" class="org.kuali.student.common.util.jpa.LoadSqlListener">

@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,8 +33,8 @@ import com.google.gwt.visualization.client.visualizations.Table.Options;
 public class KSSelectableTableListImpl extends KSSelectItemWidgetAbstract { 
     Table table;
     SimplePanel root = new SimplePanel();
-    Map<Integer, String> idMapping = new HashMap();
-    Map<String, Integer> rowMapping = new HashMap();
+    Map<Integer, String> idMapping = new HashMap<Integer, String>();
+    Map<String, Integer> rowMapping = new HashMap<String, Integer>();
     boolean loaded = false;
     boolean isMultipleSelect = true;
     int selRow = -1;
@@ -104,67 +107,91 @@ public class KSSelectableTableListImpl extends KSSelectItemWidgetAbstract {
     @Override
     public void onLoad() {               
         Runnable onLoadCallback = new Runnable() {
-          public void run() {     
-             DataTable data = DataTable.create(); 
-             
-            ListItems listItems = getListItems();
-            List<String> attrKeys = listItems.getAttrKeys();
-
-            for (String attr:attrKeys){
-                data.addColumn(ColumnType.STRING, attr);
-            }
-
-            int row = 0;
-            int col = 0;
-
-            
-            for (String id:listItems.getItemIds()){
-                data.addRow();
-                idMapping.put(row,id);
-                rowMapping.put(id,row);
-                for (String attr:attrKeys){
-                    String value = listItems.getItemAttribute(id, attr);
-                    data.setCell(row, col, value, value, null);
-                    col++;
-                }
-                row ++;
-                col=0;
-            }
-            
-            if (table == null){
-                table = new Table();                
-                table.addSelectHandler(new SelectHandler(){
-                    public void onSelect(SelectEvent event) {
-                        if (!isMultipleSelect){
-                            //Make it to only select one row
-                            JsArray<Selection> selections = table.getSelections();
-                            if (selections.length() > 1){
-                                Selection sel = (selections.get(0).getRow() == selRow ? selections.get(1):selections.get(0));
-                                selections = (JsArray<Selection>)JsArray.createArray();
-                                selections.set(0,sel);
-                                selRow = sel.getRow();
-                                table.setSelections(selections);
-                            } else if (selections.length() == 1){
-                                selRow = selections.get(0).getRow();
-                            } else {
-                                selRow = -1;
-                            }
-                        }
-                        fireChangeEvent();
-                    }                   
-                });
-            }
-
-            Options options = Options.create();
-            table.draw(data,options);
-            table.addStyleName(KSStyles.KS_SELECT_TABLE_PANEL);
-            root.setWidget(table);
-          }
+              public void run() {     
+                redraw();
+            };
         };
-
         AjaxLoader.loadVisualizationApi(onLoadCallback, Table.PACKAGE);
     }
     
+    @Override
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+                
+                @Override 
+                public void exec(T result){
+                    KSSelectableTableListImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
+         
+         super.setListItems(listItems);
+    }
+    
+    public void redraw() {
+        DataTable data = DataTable.create(); 
+
+        ListItems listItems = getListItems();
+        List<String> attrKeys = listItems.getAttrKeys();
+
+        for (String attr:attrKeys){
+            data.addColumn(ColumnType.STRING, attr);
+        }
+
+        int row = 0;
+        int col = 0;
+
+        
+        for (String id: listItems.getItemIds()){
+            data.addRow();
+            idMapping.put(row,id);
+            rowMapping.put(id,row);
+            for (String attr:attrKeys){
+                String value = listItems.getItemAttribute(id, attr);
+                data.setCell(row, col, value, value, null);
+                col++;
+            }
+            row ++;
+            col=0;
+        }
+        
+        if (table == null){
+            table = new Table();                
+            table.addSelectHandler(new SelectHandler(){
+                public void onSelect(SelectEvent event) {
+                    if (!isMultipleSelect){
+                        //Make it to only select one row
+                        JsArray<Selection> selections = table.getSelections();
+                        if (selections.length() > 1){
+                            Selection sel = (selections.get(0).getRow() == selRow ? selections.get(1):selections.get(0));
+                            selections = (JsArray<Selection>)JsArray.createArray();
+                            selections.set(0,sel);
+                            selRow = sel.getRow();
+                            table.setSelections(selections);
+                        } else if (selections.length() == 1){
+                            selRow = selections.get(0).getRow();
+                        } else {
+                            selRow = -1;
+                        }
+                    }
+                    fireChangeEvent();
+                }                   
+            });
+        }
+
+        Options options = Options.create();
+        table.draw(data,options);
+        table.addStyleName(KSStyles.KS_SELECT_TABLE_PANEL);
+        root.setWidget(table);
+        
+    }
+
     public void addStyleName(String style){
         table.addStyleName(style);
     }
@@ -172,5 +199,16 @@ public class KSSelectableTableListImpl extends KSSelectItemWidgetAbstract {
     protected void init(String name) {}
 
     public void onClick(ClickEvent event) {}
+
+    @Override
+    public void setEnabled(boolean b) {
+        // TODO figure out how to disable this sucker
+        
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; //TODO can't disable currently
+    }
     
 }

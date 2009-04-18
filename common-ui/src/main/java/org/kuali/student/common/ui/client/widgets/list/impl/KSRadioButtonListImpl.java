@@ -3,11 +3,14 @@ package org.kuali.student.common.ui.client.widgets.list.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSRadioButton;
 import org.kuali.student.common.ui.client.widgets.KSRadioButtonGroup;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,6 +31,8 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
     private KSRadioButtonGroup radioGroup = new KSRadioButtonGroup();
 
     private int maxCols = 1; //default max columns
+    
+    private boolean enabled = true;
 
     public KSRadioButtonListImpl() {
         radioGroup.addValueChangeHandler(new ValueChangeHandler<Boolean>(){
@@ -92,12 +97,10 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
             }
         }
     }
-
-    public void setListItems(ListItems listItems) {
-        super.setListItems(listItems);
-
+    
+    public void redraw(){
         radioButtons.clear();
-        int itemCount = listItems.getItemCount();
+        int itemCount = super.getListItems().getItemCount();
         int currCount = 0;
         int row = 0;
         int col = 0;
@@ -105,7 +108,7 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
         if (maxCols <= 2){
             //Row flow - increment row faster than column
             int maxRows = (itemCount / maxCols) + (itemCount % 2);
-            for (String id:listItems.getItemIds()){
+            for (String id:super.getListItems().getItemIds()){
                 currCount++;
                 row = (currCount % maxRows);
                 row = ((row == 0) ? maxRows:row) - 1;
@@ -116,7 +119,7 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
             }
         } else {
             //Column flow - increment column faster than row
-            for (String id:listItems.getItemIds()){
+            for (String id:super.getListItems().getItemIds()){
                 currCount++;
                 col = currCount % maxCols;
                 col = ((col == 0) ? maxCols:col) - 1;
@@ -126,7 +129,28 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
                 row += ((col + 1 )/ maxCols) * 1;
             }
         }
+    }
 
+    @Override
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+                
+                @Override 
+                public void exec(T result){
+                    KSRadioButtonListImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
+         
+         super.setListItems(listItems);
+
+         redraw();
     }
 
     private KSRadioButton createRadioButton(String id){
@@ -159,5 +183,20 @@ public class KSRadioButtonListImpl extends KSSelectItemWidgetAbstract implements
     @Override
     public void setColumnSize(int col) {
         maxCols = col;
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        enabled = b;
+        for (int i=0; i < radioButtons.getRowCount(); i++){
+            for (int j=0; j < radioButtons.getCellCount(i); j++){
+                ((KSRadioButton)radioButtons.getWidget(i,j)).setEnabled(b);
+            }
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }    
 }

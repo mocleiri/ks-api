@@ -3,9 +3,12 @@ package org.kuali.student.common.ui.client.widgets.list.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSCheckBox;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
+import org.kuali.student.core.dto.Idable;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,6 +26,7 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
     private List<String> selectedItems = new ArrayList<String>();
 
     private int maxCols = 1; //default max columns
+    private boolean enabled = true;
 
     public KSCheckBoxListImpl() {
         initWidget(checkBoxes);
@@ -70,12 +74,10 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
             }
         }
     }
-
-    public void setListItems(ListItems listItems) {
-        super.setListItems(listItems);
-
+    
+    public void redraw(){
         checkBoxes.clear();
-        int itemCount = listItems.getItemCount();
+        int itemCount = super.getListItems().getItemCount();
         int currCount = 0;
         int row = 0;
         int col = 0;
@@ -83,7 +85,7 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
         if (maxCols <= 2){
             //Row flow - increment row faster than column
             int maxRows = (itemCount / maxCols) + (itemCount % 2);
-            for (String id:listItems.getItemIds()){
+            for (String id:super.getListItems().getItemIds()){
                 currCount++;
                 row = (currCount % maxRows);
                 row = ((row == 0) ? maxRows:row) - 1;
@@ -94,7 +96,7 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
             }
         } else {
             //Column flow - increment column faster than row
-            for (String id:listItems.getItemIds()){
+            for (String id:super.getListItems().getItemIds()){
                 currCount++;
                 col = currCount % maxCols;
                 col = ((col == 0) ? maxCols:col) - 1;
@@ -104,6 +106,27 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
                 row += ((col + 1 )/ maxCols) * 1;
             }
         }
+    }
+
+    @Override
+    public <T extends Idable> void setListItems(ListItems listItems) {
+        if(listItems instanceof ModelListItems){
+            Callback<T> redrawCallback = new Callback<T>(){
+                
+                @Override 
+                public void exec(T result){
+                    KSCheckBoxListImpl.this.redraw();
+                }
+            };
+            ((ModelListItems<T>)listItems).addOnAddCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnRemoveCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnUpdateCallback(redrawCallback);
+            ((ModelListItems<T>)listItems).addOnBulkUpdateCallback(redrawCallback);
+        }
+        
+        super.setListItems(listItems);
+
+        redraw();
     }
 
     private KSCheckBox createCheckbox(String id){
@@ -136,6 +159,21 @@ public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements Cl
     @Override
     public void setColumnSize(int col) {
         maxCols = col;
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        enabled = b;
+        for (int i=0; i < checkBoxes.getRowCount(); i++){
+            for (int j=0; j < checkBoxes.getCellCount(i); j++){
+                ((KSCheckBox)checkBoxes.getWidget(i, j)).setEnabled(b);
+            }
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
 }

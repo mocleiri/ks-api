@@ -16,6 +16,8 @@ public interface KSCommonResources extends ImmutableResourceBundle{
     @Resource("org/kuali/student/common/ui/public/KSAccordionPanel.css")
 	public CssResource accordionPanelCss();
     @Resource("org/kuali/student/common/ui/public/KSBlockingProgressIndicator.css")
+    public CssResource breadcrumbCss();
+    @Resource("org/kuali/student/common/ui/public/KSBreadcrumb.css")
 	public CssResource blockingProgressIndicatorCss();
     @Resource("org/kuali/student/common/ui/public/KSButton.css")
 	public CssResource buttonCss();
@@ -32,7 +34,9 @@ public interface KSCommonResources extends ImmutableResourceBundle{
     @Resource("org/kuali/student/common/ui/public/KSFormLayout.css")
 	public CssResource formLayoutCss();
     @Resource("org/kuali/student/common/ui/public/KSHelpLink.css")
-	public CssResource helpLinkCss();
+	public CssResource headerCss();
+    @Resource("org/kuali/student/common/ui/public/Header.css")
+    public CssResource helpLinkCss();
     @Resource("org/kuali/student/common/ui/public/KSImage.css")
 	public CssResource imageCss();
     @Resource("org/kuali/student/common/ui/public/KSInfoDialogPanel.css")
