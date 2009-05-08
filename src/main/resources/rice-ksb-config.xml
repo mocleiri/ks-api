@@ -1,13 +1,13 @@
 <config>
 
-    <param name="module.name">ks-rice-ksb-client</param>
+    <param name="java.workspace.location">/java/projects</param>
 
     <param name="environment" override="false">dev</param>
-    <param name="app.code" override="false">ks-ksb</param>
-    <param name="http.port" override="false">8082</param>  
+    <param name="http.port" override="false">8083</param>  
+    <param name="app.context.name" override="false">ks-web-ksb</param>
     <param name="rice.ksb.loadKNSModuleConfiguration">false</param>
     <param name="rice.logging.configure">true</param>
-    <param name="log4j.settings.path">classpath:META-INF/log4j.properties</param>
+    <param name="log4j.settings.path">classpath:log4j.properties</param>
 
     <!-- Datasource Configuration -->
 
@@ -30,15 +30,11 @@
     <param name="rice.jpa.DatabasePlatform">org.hibernate.dialect.DerbyDialect</param>
     <param name="rice.jpa.UseSerialization">false</param>
 
-    <param name="org.datasource.url">jdbc:derby:target/derby/orgDB;create=true</param>
-    <param name="org.datasource.username">org</param>
-    <param name="org.datasource.password">org</param>
-
 <!--
     <param name="datasource.ojb.sequenceManager.className">org.apache.ojb.broker.util.sequence.SequenceManagerInMemoryImpl</param>
 -->
     <param name="datasource.ojb.platform">Derby</param>
-    <param name="datasource.url">jdbc:derby:target/derby/rice-db;create=true</param>
+    <param name="datasource.url">jdbc:derby:${java.workspace.location}/ks-core/core-web/target/rice-db;create=true</param>
     <param name="datasource.username">rice</param>
     <param name="datasource.password">r1c3</param>
     <param name="datasource.pool.validationQuery">values(1)</param>
@@ -61,6 +57,6 @@
     <param name="keystore.alias">rice</param>
     <param name="keystore.password">r1c3pw</param>
 
-    <param name="config.location">${user.home}/ks-rice-ksb-client-config.xml</param> 
+    <param name="config.location">${user.home}/ks-core-web-ksb-config.xml</param> 
     <param name="config.location">classpath:META-INF/common-config-defaults.xml</param>
 </config>
