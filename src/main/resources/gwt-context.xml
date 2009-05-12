@@ -11,6 +11,13 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="urlMap">
 			<map>
+				<entry
+					key="/org.kuali.student.core.organization.ui.OrgEntry/OrgRpcService">
+					<ref bean="orgRpcServiceGwtController" />
+				</entry>
+				<entry key="/org.kuali.student.core.organization.ui.OrgEntry/PersonRpc">
+					<ref bean="personRpcGwtServletController"/>
+				</entry>
 				<entry key="/org.kuali.student.lum.ui.requirements.Requirements/RequirementsService">
 					<ref bean="requirementsServiceGwtController"/>
 				</entry>
@@ -39,6 +46,16 @@
 		<property name="servletInstance" ref="LuServiceGwt"/>
 	</bean>
 	
+	<bean id="orgRpcServiceGwtController" class="org.kuali.student.common.ws.ServletWrappingController">
+		<property name="servletName" value="orgRpcServiceGwt" />
+		<property name="servletInstance" ref="orgRpcServiceGwt" />
+	</bean>
+	
+	<bean id="personRpcGwtServletController" class="org.kuali.student.common.ws.ServletWrappingController">
+		<property name="servletName" value="personRpcGwtServlet"/>
+		<property name="servletInstance" ref="personRpcGwtServlet"/>
+	</bean>
+	
 	<bean id="messageServiceGwtController" class="org.kuali.student.common.ws.ServletWrappingController">
 		<property name="servletName" value="messagesServiceGwt" />
 		<property name="servletInstance" ref="messagesServiceGwt" />
@@ -58,6 +75,15 @@
 		<property name="serviceImpl" ref="messageServiceImpl" />
 	</bean>
 
+	<bean id="orgRpcServiceGwt"
+		class="org.kuali.student.core.organization.ui.server.gwt.OrgRpcServiceGwt">
+		<property name="service" ref="orgClient" />
+	</bean>
+
+	<bean id="personRpcGwtServlet" class="org.kuali.student.core.person.ui.server.gwt.PersonRpcGwtServlet">
+		
+	</bean>
+	
 	<!-- Service Implementations -->
 	<bean id="requirementsServiceImpl" class="org.kuali.student.lum.ui.requirements.server.impl.RequirementsServiceImpl">
 		<property name="service" ref="luClient" />
@@ -84,4 +110,15 @@
 			value="http://localhost:8080/ks-lum-brms-web/LuService/LuService"/>
 	</bean>
 
+	<bean id="orgClient"
+		class="org.kuali.student.common.ws.beans.JaxWsClientFactoryBean">
+		<property name="wsdlLocation"
+			value="classpath:META-INF/wsdl/OrganizationService.wsdl" />
+		<property name="serviceEndpointInterface"
+			value="org.kuali.student.core.organization.service.OrganizationService" />
+		<property name="serviceQNameString"
+			value="{http://org.kuali.student/core/organization}OrganizationService" />
+		<property name="address" value="http://localhost:8080/ks-lum-brms-web/OrgService/OrgService"/>
+		
+	</bean>
 </beans>
