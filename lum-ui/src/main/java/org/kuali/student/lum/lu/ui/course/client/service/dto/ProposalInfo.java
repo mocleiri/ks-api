@@ -15,6 +15,8 @@
  */
 package org.kuali.student.lum.lu.ui.course.client.service.dto;
 
+import java.util.List;
+
 import org.kuali.student.core.dto.HasTypeState;
 import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.dto.RichTextInfo;
@@ -34,7 +36,8 @@ public class ProposalInfo implements Idable, HasTypeState {
     RichTextInfo rationale;
     String type = "clu";
     String state = "proposal";
-
+    List<ProposalReference> proposalReferences;
+    
     public String getId() {
         return id;
     }
@@ -125,6 +128,14 @@ public class ProposalInfo implements Idable, HasTypeState {
 
     public void setRationale(RichTextInfo rationale) {
         this.rationale = rationale;
+    }
+
+    public List<ProposalReference> getProposalReferences() {
+        return proposalReferences;
+    }
+
+    public void setProposalReferences(List<ProposalReference> proposalReferences) {
+        this.proposalReferences = proposalReferences;
     }
 
     

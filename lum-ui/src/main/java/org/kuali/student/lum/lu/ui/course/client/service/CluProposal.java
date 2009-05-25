@@ -15,8 +15,10 @@
  */
 package org.kuali.student.lum.lu.ui.course.client.service;
 
+import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.core.dto.HasTypeState;
 import org.kuali.student.core.dto.Idable;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.ui.course.client.service.dto.ProposalInfo;
@@ -27,10 +29,10 @@ import org.kuali.student.lum.lu.ui.course.client.service.dto.ProposalInfo;
  * @author Kuali Student Team
  *
  */
-public class CluProposal implements Idable{
+public class CluProposal implements Idable, HasTypeState{
 
     CluInfo cluInfo;
-    Map<String, CluInfo> activities;
+    List<CluInfo> activities;
     ProposalInfo proposalInfo;
     
     /**
@@ -58,11 +60,11 @@ public class CluProposal implements Idable{
         this.cluInfo = cluInfo;
     }
 
-    public Map<String, CluInfo> getActivities() {
+    public List<CluInfo> getActivities() {
         return activities;
     }
 
-    public void setActivities(Map<String, CluInfo> activities) {
+    public void setActivities(List<CluInfo> activities) {
         this.activities = activities;
     }
 
@@ -72,6 +74,38 @@ public class CluProposal implements Idable{
 
     public void setProposalInfo(ProposalInfo proposalInfo) {
         this.proposalInfo = proposalInfo;
+    }
+
+    /**
+     * @see org.kuali.student.core.dto.HasTypeState#getState()
+     */
+    @Override
+    public String getState() {
+        return proposalInfo.getState();
+    }
+
+    /**
+     * @see org.kuali.student.core.dto.HasTypeState#getType()
+     */
+    @Override
+    public String getType() {
+        return proposalInfo.getType();
+    }
+
+    /**
+     * @see org.kuali.student.core.dto.HasTypeState#setState(java.lang.String)
+     */
+    @Override
+    public void setState(String type) {
+        proposalInfo.setState(type);
+    }
+
+    /**
+     * @see org.kuali.student.core.dto.HasTypeState#setType(java.lang.String)
+     */
+    @Override
+    public void setType(String type) {
+        proposalInfo.setType(type);
     }
     
     
