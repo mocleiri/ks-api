@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.kuali.student.brms</groupId>
-	<artifactId>ks-brms-ws</artifactId>
+	<artifactId>ks-brms</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>KS BRMS WEB</name>
