@@ -14,7 +14,8 @@
 			http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <import resource="ks-nl-context.xml"/>
-    
+    <import resource="ks-spring-security.xml"/>
+        
 	<bean id="propertyConfigurer"
 		class="org.kuali.student.common.util.ModPropertyPlaceholderConfigurer">
 		<property name="locations">
