@@ -43,7 +43,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoader;
 
-@Daos({@Dao(value = "org.kuali.student.brms.rulemanagement.dao.impl.RuleManagementDAOImpl", testDataFile = "classpath:test-beans.xml")})
+@Daos({@Dao(value = "org.kuali.student.brms.rulemanagement.dao.impl.RuleManagementDAOImpl", testDataFile = "classpath:data-beans.xml")})
 @PersistenceFileLocation("classpath:META-INF/rulemanagement-persistence.xml")
 public class RuleExecutionServiceTest extends AbstractServiceTest {
 
@@ -67,7 +67,7 @@ public class RuleExecutionServiceTest extends AbstractServiceTest {
 	
     @BeforeClass
     public static void setUpOnce() throws Exception {
-		ApplicationContext testBeanContext = new ClassPathXmlApplicationContext("/test-beans.xml");
+		ApplicationContext testBeanContext = new ClassPathXmlApplicationContext("/data-beans.xml");
 		
 		BusinessRule businessRule1 = (BusinessRule) testBeanContext.getBean("funcBusRule1");
 		BusinessRule businessRule2 = (BusinessRule) testBeanContext.getBean("funcBusRule2");
@@ -79,9 +79,9 @@ public class RuleExecutionServiceTest extends AbstractServiceTest {
 		
 		factStructure1 = RuleManagementServiceAssembler.toFactStructureInfo(fs1);
 		
-		// Generate the Drools rule source code (DRL) and save it to the rule repository
 		ApplicationContext applicationContext = ContextLoader.getCurrentWebApplicationContext();
 
+		// Generate the Drools rule source code (DRL) and save it to the rule repository
 		ruleManagementService = (RuleManagementService) applicationContext.getBean("ruleManagementService");
 		ruleManagementService.updateBusinessRule(businessRuleId1, businessRuleInfo1);
 		ruleManagementService.updateBusinessRule(businessRuleId2, businessRuleInfo2);

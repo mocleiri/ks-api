@@ -17,6 +17,7 @@
 				<ref bean="funcBusRule1" />
 				<ref bean="funcBusRule2" />
 				<ref bean="funcBusRule3" />
+				<ref bean="funcBusRule1_active" />
 				<!-- <ref bean="funcBusRule3" />
 					<ref bean="funcBusRule4" />
 				-->
@@ -24,13 +25,60 @@
 		</property>
 	</bean>
 
-	<bean id="currentTime" class="java.util.Date" />
+    <bean id="gregorianCalendar1" class="java.util.GregorianCalendar">
+        <constructor-arg index="0" type="int" value="2010"/>
+        <constructor-arg index="1" type="int" value="0"/>
+        <constructor-arg index="2" type="int" value="1"/>
+        <constructor-arg index="3" type="int" value="12"/>
+        <constructor-arg index="4" type="int" value="0"/>
+        <constructor-arg index="5" type="int" value="0"/>
+    </bean>
+    <bean id="calendar1"
+        factory-bean="gregorianCalendar1"
+        factory-method="getTimeInMillis" />
 
-	<bean id="startTime" class="java.util.Date" />
-	<bean id="endTime" class="java.util.Date">
-		<!-- 2010-01-01 12:00 -->
-		<property name="time" value="1262376000325" />
-	</bean>
+    <bean id="gregorianCalendar2" class="java.util.GregorianCalendar">
+        <constructor-arg index="0" type="int" value="2011"/>
+        <constructor-arg index="1" type="int" value="0"/>
+        <constructor-arg index="2" type="int" value="1"/>
+        <constructor-arg index="3" type="int" value="12"/>
+        <constructor-arg index="4" type="int" value="0"/>
+        <constructor-arg index="5" type="int" value="0"/>
+    </bean>
+    <bean id="calendar2"
+        factory-bean="gregorianCalendar2"
+        factory-method="getTimeInMillis" />
+
+    <bean id="gregorianCalendar3" class="java.util.GregorianCalendar">
+        <constructor-arg index="0" type="int" value="2012"/>
+        <constructor-arg index="1" type="int" value="0"/>
+        <constructor-arg index="2" type="int" value="1"/>
+        <constructor-arg index="3" type="int" value="12"/>
+        <constructor-arg index="4" type="int" value="0"/>
+        <constructor-arg index="5" type="int" value="0"/>
+    </bean>
+    <bean id="calendar3"
+        factory-bean="gregorianCalendar3"
+        factory-method="getTimeInMillis" />
+
+    <bean id="currentTime" class="java.util.Date" />
+
+    <bean id="startTime" class="java.util.Date" />
+    <bean id="endTime" class="java.util.Date">
+        <!-- 2010-01-01 12:00 -->
+        <!--property name="time" value="1262376000325" /-->
+        <property name="time" ref="calendar1" />
+    </bean>
+    
+    <bean id="startTime2" class="java.util.Date">
+        <!-- 2010-02-01 12:00 -->
+        <property name="time" ref="calendar2" />
+    </bean>
+    <bean id="endTime2" class="java.util.Date">
+        <!-- 2010-01-01 12:00 -->
+        <property name="time" ref="calendar3" />
+    </bean>
+
 
 	<bean id="agendaType1"
 		class="org.kuali.student.brms.rulemanagement.entity.Agenda">
@@ -457,8 +505,9 @@
 			value="11223344-1122-1122-1112-100000000015" />
 		<property name="name" value="P3" />
 		<property name="desc"
-			value="enumeration of required pre-requisite courses" />
-		<property name="failureMessage" value="prop error message" />
+			value="Enumeration of required pre-requisite courses" />
+        <property name="successMessage" value="Pre-requisite course requirement met: $prop_intersection_met_set" />
+		<property name="failureMessage" value="Pre-requisite course requirement not met. $prop_intersection_diff_set of $prop_intersection_unmet_set is still required." />
 		<property name="comparisonDataTypeKey"
 			value="java.math.BigDecimal" />
 		<property name="leftHandSide" ref="leftHandSide4" />
@@ -471,8 +520,9 @@
 		<property name="id"
 			value="11223344-1122-1122-1112-100000000016" />
 		<property name="name" value="P4" />
-		<property name="desc" value="credits check" />
-		<property name="failureMessage" value="prop error message" />
+		<property name="desc" value="Credits check" />
+		<property name="successMessage" value="Credit check successful. Total credits: $prop_sum" />
+		<property name="failureMessage" value="Credit check failed. Sum is short by $prop_sum_diff" />
 		<property name="comparisonDataTypeKey"
 			value="java.math.BigDecimal" />
 		<property name="leftHandSide" ref="leftHandSide5" />
@@ -591,8 +641,8 @@
 		<property name="compiledId" value="" />
 		<property name="anchor" value="PSYC 300" />
 		<property name="businessRuleType" ref="businessRuleType1" />
-		<property name="effectiveDate" ref="startTime" />
-		<property name="expirationDate" ref="endTime" />
+        <property name="effectiveDate" ref="startTime" />
+        <property name="expirationDate" ref="endTime" />
 		<property name="state" value="DRAFT_IN_PROGRESS" />
 		<property name="ruleElements">
 			<list>
@@ -628,7 +678,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="RPAREN" />
-					<property name="ordinalPosition" value="1" />
+					<property name="ordinalPosition" value="3" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement34"
@@ -639,7 +689,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="OR" />
-					<property name="ordinalPosition" value="2" />
+					<property name="ordinalPosition" value="4" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement35"
@@ -650,7 +700,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="LPAREN" />
-					<property name="ordinalPosition" value="1" />
+					<property name="ordinalPosition" value="5" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement36"
@@ -661,7 +711,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="PROPOSITION" />
-					<property name="ordinalPosition" value="3" />
+					<property name="ordinalPosition" value="6" />
 					<property name="businessRule" ref="funcBusRule3" />
 					<property name="ruleProposition"
 						ref="ruleProposition32" />
@@ -674,7 +724,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="RPAREN" />
-					<property name="ordinalPosition" value="1" />
+					<property name="ordinalPosition" value="7" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement38"
@@ -685,7 +735,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="OR" />
-					<property name="ordinalPosition" value="2" />
+					<property name="ordinalPosition" value="8" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement39"
@@ -696,7 +746,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="LPAREN" />
-					<property name="ordinalPosition" value="1" />
+					<property name="ordinalPosition" value="9" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 				<bean id="ruleElement40"
@@ -707,7 +757,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="PROPOSITION" />
-					<property name="ordinalPosition" value="3" />
+					<property name="ordinalPosition" value="10" />
 					<property name="businessRule" ref="funcBusRule3" />
 					<property name="ruleProposition"
 						ref="ruleProposition33" />
@@ -720,7 +770,7 @@
 					<property name="desc" value="" />
 					<property name="businessRuleElemnetTypeKey"
 						value="RPAREN" />
-					<property name="ordinalPosition" value="1" />
+					<property name="ordinalPosition" value="11" />
 					<property name="businessRule" ref="funcBusRule3" />
 				</bean>
 			</list>
@@ -993,8 +1043,8 @@
 			<set>
 				<bean
 					class="org.kuali.student.brms.rulemanagement.entity.FactStructureTranslationKey">
-                    <property name="translationKey" value="key.proposition.column.sum" />
-                    <property name="value" value="resultColumn.credit" />
+					<property name="translationKey" value="key.proposition.column.sum" />
+					<property name="value" value="resultColumn.credit" />
 					<property name="factStructure" ref="factStructure331" />
 				</bean>
 			</set>
@@ -1005,6 +1055,197 @@
 	<bean id="rightHandSide33"
 		class="org.kuali.student.brms.rulemanagement.entity.RightHandSide">
 		<property name="expectedValue" value="6.0" />
+	</bean>
+
+	<!-- 1 of CPR 101 OR 1 of FA 001 ACTIVE-->
+	<bean id="funcBusRule1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.BusinessRule">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000041" />
+		<property name="originalRuleId"
+			value="11223344-1122-1122-1112-100000000001" />
+		<property name="name" value="Intermediate CPR" />
+		<property name="desc"
+			value="enrollment co-requisites for Intermediate CPR 201" />
+		<property name="successMessage" value="Rule 1 Success Message" />
+		<property name="failureMessage" value="Rule 1 Failure Message" />
+		<property name="compiledId" value="" />
+		<property name="anchor" value="CPR 201" />
+		<property name="businessRuleType" ref="businessRuleType2" />
+		<property name="state" value="ACTIVE" />
+        <property name="effectiveDate" ref="startTime2" />
+        <property name="expirationDate" ref="endTime2" />        
+		<property name="ruleElements">
+			<list>
+				<bean id="ruleElement1_active"
+					class="org.kuali.student.brms.rulemanagement.entity.RuleElement">
+					<property name="id"
+						value="11223344-1122-1122-1112-100000000042" />
+					<property name="name" value="PA" />
+					<property name="desc" value="" />
+					<property name="businessRuleElemnetTypeKey"
+						value="PROPOSITION" />
+					<property name="ordinalPosition" value="1" />
+					<property name="businessRule" ref="funcBusRule1_active" />
+					<property name="ruleProposition"
+						ref="ruleProposition1_active" />
+				</bean>
+				<bean id="ruleElement2_active"
+					class="org.kuali.student.brms.rulemanagement.entity.RuleElement">
+					<property name="id"
+						value="11223344-1122-1122-1112-100000000043" />
+					<property name="name" value="PB" />
+					<property name="desc" value="" />
+					<property name="businessRuleElemnetTypeKey"
+						value="OR" />
+					<property name="ordinalPosition" value="2" />
+					<property name="businessRule" ref="funcBusRule1_active" />
+				</bean>
+				<bean id="ruleElement3_active"
+					class="org.kuali.student.brms.rulemanagement.entity.RuleElement">
+					<property name="id"
+						value="11223344-1122-1122-1112-100000000044" />
+					<property name="name" value="PC" />
+					<property name="desc" value="" />
+					<property name="businessRuleElemnetTypeKey"
+						value="PROPOSITION" />
+					<property name="ordinalPosition" value="3" />
+					<property name="businessRule" ref="funcBusRule1_active" />
+					<property name="ruleProposition"
+						ref="ruleProposition2_active" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="ruleProposition1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.RuleProposition">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000045" />
+		<property name="name" value="P1" />
+		<property name="desc"
+			value="enumeration of required co-requisite courses" />
+		<property name="failureMessage" value="prop error message" />
+		<property name="comparisonDataTypeKey"
+			value="java.math.BigDecimal" />
+		<property name="leftHandSide" ref="leftHandSide1_active" />
+		<property name="comparisonOperatorTypeKey" value="EQUAL_TO" />
+		<property name="rightHandSide" ref="rightHandSide1_active" />
+	</bean>
+
+	<bean id="ruleProposition2_active"
+		class="org.kuali.student.brms.rulemanagement.entity.RuleProposition">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000047" />
+		<property name="name" value="P2" />
+		<property name="desc"
+			value="enumeration of required co-requisite courses" />
+		<property name="failureMessage" value="prop error message" />
+		<property name="comparisonDataTypeKey"
+			value="java.lang.java.math.BigDecimal" />
+		<property name="leftHandSide" ref="leftHandSide3_active" />
+		<property name="comparisonOperatorTypeKey" value="EQUAL_TO" />
+		<property name="rightHandSide" ref="rightHandSide3_active" />
+	</bean>
+
+	<bean id="leftHandSide1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.LeftHandSide">
+		<property name="yieldValueFunction" ref="yieldValueFunction1_active" />
+	</bean>
+
+	<bean id="leftHandSide3_active"
+		class="org.kuali.student.brms.rulemanagement.entity.LeftHandSide">
+		<property name="yieldValueFunction" ref="yieldValueFunction3_active" />
+	</bean>
+
+	<bean id="factStructure1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.FactStructure">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000060" />
+		<property name="factStructureId" value="1" />
+		<property name="factTypeKey" value="fact.cpr_prereq_criteria1" />
+		<property name="anchorFlag" value="false" />
+		<property name="staticFact" value="true" />
+		<property name="staticValue" value="CPR 101" />
+		<property name="staticValueDataType" value="java.lang.String" />
+		<property name="yieldValueFunction" ref="yieldValueFunction1_active" />
+	</bean>
+
+	<bean id="factStructure2_active"
+		class="org.kuali.student.brms.rulemanagement.entity.FactStructure">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000061" />
+		<property name="factStructureId" value="2" />
+		<property name="factTypeKey" value="fact.cpr_prereq_cluset" />
+		<property name="anchorFlag" value="false" />
+		<property name="staticFact" value="true" />
+		<property name="staticValue"
+			value="CPR 101, MATH 101, MATH 102" />
+		<property name="staticValueDataType" value="java.lang.String" />
+		<property name="yieldValueFunction" ref="yieldValueFunction1_active" />
+	</bean>
+
+	<bean id="factStructure2copy_active"
+		class="org.kuali.student.brms.rulemanagement.entity.FactStructure">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000161" />
+		<property name="factStructureId" value="2" />
+		<property name="factTypeKey" value="fact.cpr_prereq_cluset" />
+		<property name="anchorFlag" value="false" />
+		<property name="staticFact" value="true" />
+		<property name="staticValue"
+			value="CPR 101, MATH 101, MATH 102" />
+		<property name="staticValueDataType" value="java.lang.String" />
+		<property name="yieldValueFunction" ref="yieldValueFunction3_active" />
+	</bean>
+
+	<bean id="factStructure3_active"
+		class="org.kuali.student.brms.rulemanagement.entity.FactStructure">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000062" />
+		<property name="factStructureId" value="3" />
+		<property name="factTypeKey" value="fact.cpr_prereq_criteria2" />
+		<property name="anchorFlag" value="false" />
+		<property name="staticFact" value="true" />
+		<property name="staticValue" value="FA 001" />
+		<property name="staticValueDataType" value="java.lang.String" />
+		<property name="yieldValueFunction" ref="yieldValueFunction3_active" />
+	</bean>
+
+	<bean id="yieldValueFunction1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.YieldValueFunction">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000066" />
+		<property name="yieldValueFunctionType" value="INTERSECTION" />
+		<property name="facts">
+			<list>
+				<ref bean="factStructure1_active" />
+				<ref bean="factStructure2_active" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="yieldValueFunction3_active"
+		class="org.kuali.student.brms.rulemanagement.entity.YieldValueFunction">
+		<property name="id"
+			value="11223344-1122-1122-1112-100000000068" />
+		<property name="yieldValueFunctionType" value="INTERSECTION" />
+		<property name="facts">
+			<list>
+				<ref bean="factStructure3_active" />
+				<ref bean="factStructure2copy_active" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="rightHandSide1_active"
+		class="org.kuali.student.brms.rulemanagement.entity.RightHandSide">
+		<property name="expectedValue" value="1" />
+	</bean>
+
+	<bean id="rightHandSide3_active"
+		class="org.kuali.student.brms.rulemanagement.entity.RightHandSide">
+		<property name="expectedValue" value="1" />
 	</bean>
 
 </beans>
