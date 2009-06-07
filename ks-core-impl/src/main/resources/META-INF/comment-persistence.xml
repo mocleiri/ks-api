@@ -11,7 +11,10 @@
         <class>org.kuali.student.core.entity.RichText</class>
         <class>org.kuali.student.core.entity.TimeAmount</class>
 
-
+        <class>org.kuali.student.core.comment.entity.Comment</class>
+        <class>org.kuali.student.core.comment.entity.CommentAttribute</class>
+        <class>org.kuali.student.core.comment.entity.CommentType</class>
+        <class>org.kuali.student.core.comment.entity.CommentTypeAttribute</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
     </persistence-unit>
 </persistence>

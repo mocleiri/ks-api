@@ -16,7 +16,7 @@
 package org.kuali.student.core.comment.service.impl;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.kuali.student.common.test.spring.AbstractServiceTest;
@@ -24,7 +24,7 @@ import org.kuali.student.common.test.spring.Client;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.Daos;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
-import org.kuali.student.core.comment.dto.TagInfo;
+import org.kuali.student.core.comment.dto.CommentInfo;
 import org.kuali.student.core.comment.service.CommentService;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
@@ -51,9 +51,21 @@ public class TestCommentServiceImpl extends AbstractServiceTest {
     }
 
     @Test
-    public void testServiceConnection() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        TagInfo tagInfo = client.getTag("aaa");
-        assertNull(tagInfo);
+    public void testGetComment() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        CommentInfo commentInfo = client.getComment("COMMENT-1");
+        assertNotNull(commentInfo);
 
+        try {
+            commentInfo = client.getComment(null);
+            assertTrue(false);
+        } catch (MissingParameterException e) {
+            assertTrue(true);
+        }
+        try {
+            commentInfo = client.getComment("xxx-1");
+            assertTrue(false);
+        } catch (DoesNotExistException e) {
+            assertTrue(true);
+        }
     }
 }

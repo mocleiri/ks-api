@@ -15,7 +15,12 @@
  */
 package org.kuali.student.core.comment.service.impl;
 
+import org.kuali.student.core.comment.dto.CommentInfo;
+import org.kuali.student.core.comment.dto.RichTextInfo;
+import org.kuali.student.core.comment.entity.Comment;
+import org.kuali.student.core.entity.RichText;
 import org.kuali.student.core.service.impl.BaseAssembler;
+import org.springframework.beans.BeanUtils;
 
 /**
  * This is a description of what this class does - lindholm don't forget to fill this in.
@@ -25,4 +30,29 @@ import org.kuali.student.core.service.impl.BaseAssembler;
  */
 public class CommentServiceAssembler extends BaseAssembler {
 
+    public static CommentInfo toCommentInfo(Comment entity) {
+        CommentInfo dto = new CommentInfo();
+
+        BeanUtils.copyProperties(entity, dto,
+                new String[] { "commentText", "attributes", "type" });
+
+        dto.setCommentText(toRichTextInfo(entity.getCommentText()));
+        dto.setAttributes(toAttributeMap(entity.getAttributes()));
+        dto.setType(entity.getType().getId());
+
+        return dto;
+    }
+
+
+    public static RichTextInfo toRichTextInfo(RichText entity) {
+        if(entity==null){
+            return null;
+        }
+
+        RichTextInfo dto = new RichTextInfo();
+
+        BeanUtils.copyProperties(entity, dto, new String[] { "id" });
+
+        return dto;
+    }
 }

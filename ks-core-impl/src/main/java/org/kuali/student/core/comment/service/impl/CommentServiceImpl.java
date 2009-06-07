@@ -29,6 +29,7 @@ import org.kuali.student.core.comment.dto.TagCriteriaInfo;
 import org.kuali.student.core.comment.dto.TagInfo;
 import org.kuali.student.core.comment.dto.TagTypeInfo;
 import org.kuali.student.core.comment.dto.ValidationResultInfo;
+import org.kuali.student.core.comment.entity.Comment;
 import org.kuali.student.core.comment.service.CommentService;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
@@ -79,8 +80,9 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentInfo getComment(String commentId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        // TODO
-        return null;
+        checkForMissingParameter(commentId, "commentId");
+        Comment comment = commentDao.fetch(Comment.class, commentId);
+        return CommentServiceAssembler.toCommentInfo(comment);
     }
 
     /**
