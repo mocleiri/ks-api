@@ -43,6 +43,7 @@
         <module>ks-common-util</module>
         <module>ks-common-ui</module>
         <module>ks-common-test</module>
+        <module>ks-common-impl</module>
         <module>ks-core-api</module>
         <module>ks-core-impl</module>
         <module>ks-core-ui</module>

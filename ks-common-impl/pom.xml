@@ -3,11 +3,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.kuali.student.core</groupId>
-	<artifactId>ks-core-impl</artifactId>
+	<artifactId>ks-common-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>KS Core Impl</name>
-	<description>KS Core Impl</description>
+	<name>KS Common Impl</name>
+	<description>KS Common Impl</description>
 
 	<parent>
 		<groupId>org.kuali.student.core</groupId>
@@ -41,11 +41,6 @@
 		<dependency>
 			<groupId>org.kuali.student.core</groupId>
 			<artifactId>ks-core-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.kuali.student.core</groupId>
-			<artifactId>ks-common-impl</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
