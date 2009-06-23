@@ -15,6 +15,8 @@ http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 	<jaxws:endpoint id="luService"
 		implementorClass="org.kuali.student.lum.lu.service.impl.LuServiceImpl"
 		implementor="#luServiceImpl" address="/LuService" />
-
+	<jaxws:endpoint id="orgService"
+		implementorClass="org.kuali.student.core.organization.service.impl.OrganizationServiceImpl"
+		implementor="#orgServiceImpl" address="/OrgService" />
 
 </beans>
