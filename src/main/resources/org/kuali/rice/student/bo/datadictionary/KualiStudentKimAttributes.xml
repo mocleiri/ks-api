@@ -25,12 +25,9 @@
         p:shortLabel="Dept"
         p:maxLength="40"
         p:required="true" >
-    <property name="validationPattern">
-      <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
-    </property>
     <property name="control" >
       <bean parent="SelectControlDefinition"
-            p:valuesFinderClass="org.kuali.rice.student.lookup.keyvalues.DepartmentCommitteeValuesFinder"
+            p:valuesFinderClass="org.kuali.rice.student.lookup.keyvalues.DepartmentValuesFinder"
             p:includeKeyInLabel="false" />
     </property>
   </bean>
@@ -43,12 +40,9 @@
         p:shortLabel="College"
         p:maxLength="40"
         p:required="true" >
-    <property name="validationPattern">
-      <bean parent="AnyCharacterValidationPattern" p:allowWhitespace="true"/>
-    </property>
     <property name="control" >
       <bean parent="SelectControlDefinition"
-            p:valuesFinderClass="org.kuali.rice.student.lookup.keyvalues.CollegeCommitteeValuesFinder"
+            p:valuesFinderClass="org.kuali.rice.student.lookup.keyvalues.CollegeValuesFinder"
             p:includeKeyInLabel="false" />
     </property>
   </bean>
