@@ -11,7 +11,6 @@ import javax.xml.namespace.QName;
 import org.kuali.rice.core.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kns.lookup.keyvalues.KeyValuesBase;
 import org.kuali.rice.kns.web.ui.KeyLabelPair;
-import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
 import org.kuali.student.core.search.dto.QueryParamValue;
 import org.kuali.student.core.search.dto.Result;
@@ -39,7 +38,7 @@ public abstract class CocValuesFiinder extends KeyValuesBase {
 		List<QueryParamValue> queryParamValues = new ArrayList<QueryParamValue>(2);
 		QueryParamValue qpOrgType = new QueryParamValue();
 		qpOrgType.setKey("org.queryParam.relationType");
-		qpOrgType.setValue("kuali.org.Chartered");
+		qpOrgType.setValue("kuali.org.CurriculumChild");
 		queryParamValues.add(qpOrgType);
 		
 		qpOrgType = new QueryParamValue();

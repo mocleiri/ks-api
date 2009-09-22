@@ -5,34 +5,42 @@
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	
     <bean id="courseListContext" class="org.kuali.student.lum.nlt.naturallanguage.context.CourseListContextImpl">
-        <property name="luDao" ref="luDao" />
+        <property name="luService" ref="luServiceImpl" />
     </bean>
-    
-    <bean id="contextRegistry"
+
+    <bean id="contextRegistryLuStatement"
         class="org.kuali.student.lum.nlt.naturallanguage.ContextRegistry">
         <constructor-arg>
             <map>
                 <!-- Header Contexts-->
                 <entry key="kuali.luStatementType.prereqAcademicReadiness">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.HeaderContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
                 <entry key="kuali.luStatementType.coreqAcademicReadiness">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.HeaderContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
                 <entry key="kuali.luStatementType.enrollAcademicReadiness">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.HeaderContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
                 <entry key="kuali.luStatementType.antireqAcademicReadiness">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.HeaderContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
+            </map>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="contextRegistryReqComponent"
+        class="org.kuali.student.lum.nlt.naturallanguage.ContextRegistry">
+        <constructor-arg>
+            <map>
                 <!-- Pre-Req Contexts-->
                 <entry key="kuali.reqCompType.courseList.none">
                     <ref local="courseListContext"/>
@@ -48,12 +56,12 @@
                 </entry>
                 <entry key="kuali.reqCompType.grdCondCourseList">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.GradeConditionCourseListContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
                 <entry key="kuali.reqCompType.gradecheck">
                     <bean class="org.kuali.student.lum.nlt.naturallanguage.context.GradeCheckContextImpl">
-                        <property name="luDao" ref="luDao" />
+                        <property name="luService" ref="luServiceImpl" />
                     </bean>
                 </entry>
                 <!-- Co-Req Contexts -->
@@ -139,13 +147,13 @@
 
     <bean id="reqComponentTranslator"
         class="org.kuali.student.lum.nlt.naturallanguage.translators.ReqComponentTranslator">
-        <property name="contextRegistry" ref="contextRegistry" />
+        <property name="contextRegistry" ref="contextRegistryReqComponent" />
         <!--property name="language" value="en" /-->
     </bean>
 
     <bean id="statementTranslator"
         class="org.kuali.student.lum.nlt.naturallanguage.translators.StatementTranslator">
-        <property name="contextRegistry" ref="contextRegistry" />
+        <property name="contextRegistry" ref="contextRegistryLuStatement" />
         <property name="reqComponentTranslator" ref="reqComponentTranslator" />
         <property name="messageBuilder" ref="naturalLanguageMessageBuilder" />
         <!--property name="language" value="en" /-->
