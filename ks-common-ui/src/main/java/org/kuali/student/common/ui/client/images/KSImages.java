@@ -55,9 +55,13 @@ public interface KSImages  extends ImageBundle{
     @Resource("agt_action_success.png")
     AbstractImagePrototype okIcon();
     
+    // set the resource value to an image of a red stop sign with x
+    @Resource("agt_stop.png")
+    AbstractImagePrototype errorIcon();
+    
     // set the resource value to an image of a yellow triangle with exclamation point
     @Resource("messagebox_warning.png")
-    AbstractImagePrototype errorIcon();
+    AbstractImagePrototype warningIcon();
     
     @Resource("asterisk_orange.png")
     AbstractImagePrototype asterisk();

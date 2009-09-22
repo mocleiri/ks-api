@@ -1,41 +1,34 @@
 package org.kuali.student.common.ui.client.widgets.documenttool;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.kuali.student.common.ui.client.configurable.mvc.HasReferenceId;
 import org.kuali.student.common.ui.client.configurable.mvc.ToolView;
-import org.kuali.student.common.ui.client.images.KSImages;
-import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.service.DocumentRpcService;
-import org.kuali.student.common.ui.client.service.DocumentRpcServiceAsync;
-import org.kuali.student.common.ui.client.service.UploadStatusRpcService;
-import org.kuali.student.common.ui.client.service.UploadStatusRpcServiceAsync;
 import org.kuali.student.common.ui.client.dto.FileStatus;
 import org.kuali.student.common.ui.client.dto.UploadStatus;
 import org.kuali.student.common.ui.client.dto.FileStatus.FileTransferStatus;
 import org.kuali.student.common.ui.client.dto.UploadStatus.UploadTransferStatus;
+import org.kuali.student.common.ui.client.images.KSImages;
+import org.kuali.student.common.ui.client.mvc.Callback;
+import org.kuali.student.common.ui.client.service.DocumentRelationMockRpcService;
+import org.kuali.student.common.ui.client.service.DocumentRelationMockRpcServiceAsync;
+import org.kuali.student.common.ui.client.service.DocumentRpcService;
+import org.kuali.student.common.ui.client.service.DocumentRpcServiceAsync;
+import org.kuali.student.common.ui.client.service.UploadStatusRpcService;
+import org.kuali.student.common.ui.client.service.UploadStatusRpcServiceAsync;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.KSTextArea;
-import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonGroup;
-import org.kuali.student.common.ui.client.widgets.buttongroups.ConfirmCancelGroup;
 import org.kuali.student.common.ui.client.widgets.buttongroups.OkGroup;
-import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.ConfirmCancelEnum;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.OkEnum;
 import org.kuali.student.common.ui.client.widgets.layout.HorizontalBlockFlowPanel;
 import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
-import org.kuali.student.common.ui.client.widgets.KSTextBox;
-import org.kuali.student.core.comment.dto.CommentInfo;
-import org.kuali.student.core.document.dto.DocumentInfo;
-import org.kuali.student.core.dto.RichTextInfo;
+import org.kuali.student.core.dto.RefDocRelationInfoMock;
 import org.kuali.student.core.dto.StatusInfo;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -51,8 +44,6 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.widgetideas.client.ProgressBar;
 import com.google.gwt.widgetideas.client.ProgressBar.TextFormatter;
 
@@ -63,17 +54,13 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 	private String referenceType;
 	private String referenceState;
 
-	private final int POLL_INTERVAL = 2000; //FIXME put this back to 2000, low for testing ONLY
+	private final int POLL_INTERVAL = 2000;
 	
 	private DocumentRpcServiceAsync documentServiceAsync = GWT.create(DocumentRpcService.class);
-	private HorizontalBlockFlowPanel browsePanel = new HorizontalBlockFlowPanel();
 	private VerticalFlowPanel layout = new VerticalFlowPanel();
     private VerticalFlowPanel documentList = new VerticalFlowPanel();
     private VerticalFlowPanel uploadList = new VerticalFlowPanel();
     private KSButton addMore = new KSButton("Add Another");
-    private SimplePanel createPanel = new SimplePanel();
-    private boolean showingEditButtons = true;
-    private List<Document> documents = new ArrayList<Document>();
     private KSLabel loadingDocuments = new KSLabel("Loading Documents...");
     private FormPanel form = new FormPanel();
     
@@ -82,7 +69,6 @@ public class DocumentTool extends ToolView implements HasReferenceId{
     private KSLabel progressLabel = new KSLabel();
     private ProgressBar progressBar = new ProgressBar();
     private FlexTable fileProgressTable = new FlexTable();
-    //private 
     
     private OkGroup progressButtons = new OkGroup(new Callback<OkEnum>(){
 		@Override
@@ -93,9 +79,7 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 		}
     });  
     private UploadStatusRpcServiceAsync uploadStatusRpc = GWT.create(UploadStatusRpcService.class);
-    
-    private List<DocumentInfo> uploadedDocs = new ArrayList<DocumentInfo>();
-    private List<String> uploadedDocIds = new ArrayList<String>();
+    private DocumentRelationMockRpcServiceAsync documentRelationRpc = GWT.create(DocumentRelationMockRpcService.class);
 	
 	private OkGroup buttonPanel = new OkGroup(new Callback<OkEnum>(){
 
@@ -119,13 +103,12 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 
 					@Override
 					public void onSuccess(final String result) {
-						form.setAction(GWT.getModuleBaseURL()+"rpcservices/DocumentUpload?uploadId=" + result);
+						form.setAction(GWT.getModuleBaseURL()+"rpcservices/DocumentUpload?uploadId=" + result + "&referenceId=" + referenceId);
 						form.submit();
 						
 						progressLabel.setText("Uploading...");
 						Timer progressTimer = new Timer(){
 							private boolean maxSet = false;
-							private boolean idsAdded = false;
 							@Override
 							public void run() {
 								uploadStatusRpc.getUploadStatus(result, new AsyncCallback<UploadStatus>(){
@@ -170,13 +153,6 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 											resetUploadFormPanel();
 											
 											cancel();
-											//FIXME This is not the way it will work, this temporary to show doc links
-											//FIXME the refresh will query relations for this tool's referenceId and get the docs from there
-											//These ids probably will be used to create the doc relations here instead
-											if(!idsAdded){
-												uploadedDocIds.addAll(result.getCreatedDocIds());
-												idsAdded=true;
-											}
 											refreshDocuments();
 											
 										}
@@ -252,12 +228,6 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 	public DocumentTool(Enum<?> viewEnum, String viewName) {
 		super(viewEnum, viewName);
 	}
-	
-	//TODO: future constructor, need to define a service interface for document relations to be passed in so we can relate
-	//documents to a lu, etc, etc and get all document ids for an id 
-/*	public DocumentTool(Enum<?> viewEnum, String viewName, String categoryNameKey, DocumentRelationService relationService) {
-		super(viewEnum, viewName);
-	}*/
 
 	@Override
 	protected Widget createWidget() {
@@ -324,7 +294,7 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 		progressPanel.add(progressButtons);
 		progressPanel.setWidth("500px");
 		progressWindow.setWidget(progressPanel);
-		//refreshDocuments();
+
 		
 		return layout;
 	}
@@ -333,11 +303,6 @@ public class DocumentTool extends ToolView implements HasReferenceId{
 		uploadList.clear();
 		uploadList.add(new DocumentForm());
 		uploadList.add(addMore);
-	}
-	
-	//FIXME: remove after done testing
-	public Widget test(){
-		return createWidget();
 	}
 	
 	private class DocumentForm extends Composite{
@@ -396,103 +361,63 @@ public class DocumentTool extends ToolView implements HasReferenceId{
     @Override
     public void setVisible(boolean visible) {
         super.setVisible(visible);
+		if(referenceId != null && !(referenceId.isEmpty())){
+			buttonPanel.getButton(OkEnum.Ok).setEnabled(true);
+		}
+		else{
+			buttonPanel.getButton(OkEnum.Ok).setEnabled(false);
+		}
         refreshDocuments();
     }
 	
 	private void refreshDocuments(){
 		documentList.clear();
-        documentList.add(loadingDocuments);     
-        if(!uploadedDocIds.isEmpty()){
-        
-	        //FIXME: call to get doc relations here and then use that to get document meta information which will not
-	        //include the actual data in the future, INSTEAD of using this local id list
+        if(referenceId != null && !(referenceId.isEmpty())){
+        	documentList.add(loadingDocuments); 
 	        try {
-	        	
-				documentServiceAsync.getDocumentsByIdList(uploadedDocIds, new AsyncCallback<List<DocumentInfo>>(){
+	        	//FIXME: change to real doc relation stuff later
+	        	documentRelationRpc.getRefDocIdsForRef(referenceId, new AsyncCallback<List<RefDocRelationInfoMock>>(){
 	
 					@Override
 					public void onFailure(Throwable caught) {
 						caught.printStackTrace();
 						documentList.remove(loadingDocuments);
+						
 					}
 	
 					@Override
-					public void onSuccess(List<DocumentInfo> result) {
-						for(DocumentInfo info: result){
-							documentList.add(new Document(info));
+					public void onSuccess(List<RefDocRelationInfoMock> result) {
+						if(result != null && !(result.isEmpty())){	
+							for(RefDocRelationInfoMock info: result){
+								documentList.add(new Document(info));
+							}
 						}
 						documentList.remove(loadingDocuments);
 					}
-	
 				});
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        
         }
-        else{
-        	documentList.remove(loadingDocuments);
-        }
-        
 	}
-	
-/*    private void showDocumentsEditActions(boolean show){
-    	if(show){
-    		//FIXME do a check to see if the current person can edit for each comment in the list then show the actions, else
-    		//dont show them
-    		if(!showingEditButtons){
-	    		buttonPanel.setVisible(show);
-	    		createPanel.setWidget(createDocumentEditor(buttonPanel, browse));
-	    		for(Document d: documents){
-	        		d.showEditActions(show);
-	        	}
-	    		showingEditButtons = true;
-    		}
-    	}
-    	else{
-    		if(showingEditButtons){
-	    		buttonPanel.setVisible(show);
-	    		createPanel.remove(tableLayout);
-	    		for(Document d: documents){
-	        		d.showEditActions(show);
-	        	}
-	    		showingEditButtons = false;
-    		}
-    	}
-    	
-    }*/
 	
 	private class Document extends Composite{
         
         private SimplePanel content = new SimplePanel();
-        private VerticalFlowPanel editLayout = new VerticalFlowPanel();
         private VerticalFlowPanel viewLayout = new VerticalFlowPanel();
         private HorizontalBlockFlowPanel header = new HorizontalBlockFlowPanel();
         private VerticalFlowPanel headerTextContainer = new VerticalFlowPanel();
-        //private HorizontalBlockFlowPanel footer = new HorizontalBlockFlowPanel();
         private HorizontalBlockFlowPanel editActions = new HorizontalBlockFlowPanel();
-/*        private KSButton replaceFile = new KSButton("Replace File", new ClickHandler(){
-
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		private KSTextArea editor = new KSTextArea();
-		*/
         
         Image delete = KSImages.INSTANCE.deleteComment().createImage();
         
-        private Hyperlink name = new Hyperlink();
+        private HTML name = new HTML("No file exists");
         private HTML documentText = new HTML();
         private KSLabel fileType = new KSLabel();
         
+        private RefDocRelationInfoMock info;
         
-        
-        private DocumentInfo info;
-        
-        public Document(DocumentInfo info){
+        public Document(RefDocRelationInfoMock info){
             this.info = info;
 
             
@@ -500,22 +425,40 @@ public class DocumentTool extends ToolView implements HasReferenceId{
                 @Override
                 public void onClick(ClickEvent event) {
                 	 try {
-             			documentServiceAsync.deleteDocument(Document.this.info.getId(), new AsyncCallback<StatusInfo>(){
-
-             				@Override
-             				public void onFailure(Throwable caught) {
-             					//FIXME dont know what to do here
-             					refreshDocuments();
-             				}
+                		 //TODO this will fail if the document does not exist BUT the relation does, needs a check for existance
+                		 //before delete
+             			documentRelationRpc.deleteRefDocRelation(Document.this.info.getId(), new AsyncCallback<StatusInfo>(){
 
 							@Override
-							public void onSuccess(StatusInfo result) {
+							public void onFailure(Throwable caught) {
 								//FIXME dont know what to do here
-								uploadedDocIds.remove(Document.this.info.getId());
 								refreshDocuments();
 							}
 
-             			});
+							@Override
+							public void onSuccess(StatusInfo result) {
+		             			try {
+									documentServiceAsync.deleteDocument(Document.this.info.getDocumentId(), new AsyncCallback<StatusInfo>(){
+
+										@Override
+										public void onFailure(Throwable caught) {
+											//FIXME dont know what to do here
+											refreshDocuments();
+										}
+
+										@Override
+										public void onSuccess(StatusInfo result) {
+											refreshDocuments();
+										}
+
+									});
+								} catch (Exception e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							}
+						});
              		} catch (Exception e) {
              			e.printStackTrace();
              		}
@@ -527,7 +470,6 @@ public class DocumentTool extends ToolView implements HasReferenceId{
             setupDefaultStyles();
             headerTextContainer.add(name);
             headerTextContainer.add(fileType);
-            //editActions.add(edit);
             editActions.add(delete);
             header.add(headerTextContainer);
             header.add(editActions);
@@ -540,13 +482,10 @@ public class DocumentTool extends ToolView implements HasReferenceId{
         	content.addStyleName(KSStyles.KS_COMMENT_CONTAINER);
         	header.addStyleName(KSStyles.KS_COMMENT_HEADER);
         	headerTextContainer.addStyleName(KSStyles.KS_COMMENT_HEADER_LEFT);
-        	//edit.addStyleName(KSStyles.KS_COMMENT_IMAGE_BUTTON);
         	delete.addStyleName(KSStyles.KS_COMMENT_IMAGE_BUTTON);
         	editActions.addStyleName(KSStyles.KS_COMMENT_IMAGE_BUTTON_PANEL);
-        	name.addStyleName(KSStyles.KS_COMMENT_NAME);
         	documentText.addStyleName(KSStyles.KS_COMMENT_TEXT);
         	fileType.addStyleName(KSStyles.KS_COMMENT_DATE_CREATED);
-        	//editor.setStyleName(KSStyles.KS_COMMENT_INLINE_EDIT_EDITOR);
         }
         
         private void setupViewLayout(){
@@ -555,16 +494,20 @@ public class DocumentTool extends ToolView implements HasReferenceId{
             viewLayout.add(header);
             viewLayout.add(documentText); 
             
-            if(info.getFileName() != null){
-            	name.setText(info.getFileName());
-            	name.addClickHandler(new ClickHandler(){
+            if(info.getTitle() != null){
+            	//name.setText(info.getTitle());
+            	//TODO maybe not open up a new window for certain file types not expected to be viewed in browser
+            	name.setHTML("<a href=\"" + GWT.getModuleBaseURL()+"rpcservices/DocumentUpload?docId=" + info.getDocumentId() + "\" target=\"_blank\"><b>" + info.getTitle() + "</b></a>");
+/*            	name.addClickHandler(new ClickHandler(){
 
 					@Override
 					public void onClick(ClickEvent event) {
-						Window.open(GWT.getModuleBaseURL()+"rpcservices/DocumentUpload?docId=" + info.getId(), info.getName(), "resizable=yes,scrollbars=yes,menubar=no,location=yes,status=yes");
+						
+						
+						Window.open(GWT.getModuleBaseURL()+"rpcservices/DocumentUpload?docId=" + info.getDocumentId(), info.getTitle(), "resizable=yes,scrollbars=yes,menubar=no,location=yes,status=yes");
 						
 					}
-				});
+				});*/
             }
             
             if(info.getDesc() != null){

@@ -8,6 +8,7 @@ import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue;
 import org.kuali.student.common.ui.client.widgets.KSRequiredMarker;
 import org.kuali.student.common.ui.client.widgets.layout.HorizontalBlockFlowPanel;
+import org.kuali.student.core.validation.dto.ValidationResultContainer;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 import com.google.gwt.core.client.GWT;
@@ -210,6 +211,8 @@ public abstract class Section extends Composite implements ConfigurableLayoutSec
 
     public abstract void clear();
     public abstract void redraw();
+    
+    public abstract void processValidationResults(List<ValidationResultContainer> results);
 
     public FieldLabelType getLabelType() {
         return labelType;

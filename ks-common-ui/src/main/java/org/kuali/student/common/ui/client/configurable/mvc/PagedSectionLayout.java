@@ -1,12 +1,15 @@
 package org.kuali.student.common.ui.client.configurable.mvc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.kuali.student.common.ui.client.event.ActionEvent;
 import org.kuali.student.common.ui.client.event.SaveActionEvent;
+import org.kuali.student.common.ui.client.event.ValidateResultEvent;
+import org.kuali.student.common.ui.client.event.ValidateResultHandler;
 import org.kuali.student.common.ui.client.mvc.ActionCompleteCallback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.View;
@@ -15,9 +18,13 @@ import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.menus.KSBasicMenu;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
+import org.kuali.student.core.validation.dto.ValidationResultContainer;
+import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -69,6 +76,20 @@ public abstract class PagedSectionLayout extends Controller implements Configura
 		panel.add(menuPanel, DockPanel.WEST);
 		panel.add(contentPanel, DockPanel.CENTER);
 		panel.add(sectionButtonPanel, DockPanel.SOUTH); 
+		
+		
+		addApplicationEventHandler(ValidateResultEvent.TYPE, new ValidateResultHandler() {
+            @Override
+            public void onValidateResult(ValidateResultEvent event) {
+               List<ValidationResultContainer> list = event.getValidationResult();
+               Collection<View> sections = sectionViewMap.values();
+               for(View v: sections){
+            	   if(v instanceof SectionView){
+            		   ((SectionView) v).processValidationResults(list);
+            	   }
+               }
+            }
+        });
 	}
 	
 	private void init(){
@@ -84,7 +105,62 @@ public abstract class PagedSectionLayout extends Controller implements Configura
         menuPanel.add(toolMenu);
         menuPanel.add(sectionMenu);
 
-        sectionButtonPanel.add(nextButton);         
+        sectionButtonPanel.add(nextButton);
+        
+        //TEST CODE
+		List<ValidationResultContainer> vrList = new ArrayList<ValidationResultContainer>();
+		ValidationResultContainer vr1 = new ValidationResultContainer();
+		vr1.addMessage(ErrorLevel.ERROR, "Error Message 1");
+		vr1.addMessage(ErrorLevel.ERROR, "Error Message 2");
+		vr1.addMessage(ErrorLevel.WARN, "Warn Message");
+		vr1.addMessage(ErrorLevel.OK, "OK Message");
+		vr1.setElement("/officialIdentifier/longName");
+		
+		ValidationResultContainer vr2 = new ValidationResultContainer();
+		vr2.addError("Long Long Long Long Long Long Long Long Long Long Long Long Long Error Message 1");
+		vr2.addError("Error Message 2");
+		vr2.setElement("/officialIdentifier/shortName");
+		
+/*		ValidationResultContainer vr3 = new ValidationResultContainer();
+		vr3.addError("Error Message 1");
+		vr3.addError("Error Message 2");
+		vr3.setElement("/officialIdentifier/shortName");*/
+		
+		ValidationResultContainer vr4 = new ValidationResultContainer();
+		vr4.addError("Error Message 1");
+		vr4.addError("Error Message 2");
+		vr4.setElement("desc");
+		
+		ValidationResultContainer vr5 = new ValidationResultContainer();
+		vr5.addError("Error Message 1");
+		vr5.addError("Error Message 2");
+		vr5.setElement("marketingDesc");
+		
+		ValidationResultContainer vr6 = new ValidationResultContainer();
+		vr6.addError("Error Message 1");
+		vr6.addError("Error Message 2");
+		vr6.setElement("/officialIdentifier/division");
+		
+		ValidationResultContainer vr7 = new ValidationResultContainer();
+		vr7.addError("Error Message 1");
+		vr7.addError("Error Message 2");
+		vr7.setElement("/officialIdentifier/suffixCode");
+		
+		
+		vrList.add(vr1);
+		vrList.add(vr2);
+		//vrList.add(vr3);
+		vrList.add(vr4);
+		vrList.add(vr5);
+		vrList.add(vr6);
+		vrList.add(vr7);
+		
+		Collection<View> sections = sectionViewMap.values();
+        for(View v: sections){
+     	   if(v instanceof SectionView){
+     		   ((SectionView) v).processValidationResults(vrList);
+     	   }
+        }
 	}
 	
 	@Override

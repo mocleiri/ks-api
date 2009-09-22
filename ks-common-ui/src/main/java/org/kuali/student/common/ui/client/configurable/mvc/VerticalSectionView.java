@@ -1,9 +1,13 @@
 package org.kuali.student.common.ui.client.configurable.mvc;
 
+import java.util.List;
+
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Model;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
+import org.kuali.student.core.validation.dto.ValidationResultContainer;
+import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
@@ -113,4 +117,30 @@ public class VerticalSectionView extends SectionView {
             
         });
     }
+
+	@Override
+	public void processValidationResults(List<ValidationResultContainer> results) {
+		for(RowDescriptor r: rows){
+			r.clearValidationMessages();
+			for(FieldDescriptor f: r.getFields()){
+				for(ValidationResultContainer vc: results){
+					if(vc.getElement().equals(f.getFieldKey())){
+						r.setValidationMessages(vc.getValidationResults());
+					}
+				}
+			}
+		}
+/*		
+		for(FieldDescriptor f: fields){
+			for(ValidationResultContainer vc: results){
+				if(vc.getElement().equals(f.getFieldKey())){
+					
+				}
+			}
+		}*/
+		
+		for(Section s: sections){
+			s.processValidationResults(results);
+		}
+	}
 }

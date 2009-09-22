@@ -3,6 +3,7 @@ package org.kuali.student.common.ui.server.upload;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
@@ -27,12 +28,15 @@ import org.kuali.student.common.ui.client.dto.UploadStatus.UploadTransferStatus;
 import org.kuali.student.core.document.dto.DocumentBinaryInfo;
 import org.kuali.student.core.document.dto.DocumentInfo;
 import org.kuali.student.core.document.service.DocumentService;
+import org.kuali.student.core.dto.RefDocRelationInfoMock;
 import org.kuali.student.core.dto.RichTextInfo;
+import org.kuali.student.core.mock.service.DocumentRelationService;
 
 public class UploadServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	DocumentService documentService;
+	DocumentRelationService relationService;
 	
 	private class DocumentProgressListener implements ProgressListener{
 		
@@ -163,9 +167,18 @@ public class UploadServlet extends HttpServlet{
 			    			status.getCreatedDocIds().add(createdDoc.getId());
 			    			fileStatus.setDocId(createdDoc.getId());
 			    		}
+			    		
+			    		//TODO replace this with real stuff later
+			    		RefDocRelationInfoMock relationInfo = new RefDocRelationInfoMock();
+			    		relationInfo.setDesc(info.getDesc());
+			    		relationInfo.setRefId(request.getParameter("referenceId"));
+			    		relationInfo.setTitle(info.getFileName());
+			    		relationInfo.setDocumentId(info.getId());
+			    		relationService.createRefDocRelation(request.getParameter("referenceId"), createdDoc.getId(), relationInfo);
 		    		}
 		    		catch(Exception e){
 		    			fileError = true;
+		    			e.printStackTrace();
 		    			fileStatus.setStatus(FileTransferStatus.ERROR);
 		    		}
 		    		info = new DocumentInfo();
@@ -276,33 +289,50 @@ public class UploadServlet extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		ServletOutputStream op = response.getOutputStream();
-		try {
-			DocumentInfo info = documentService.getDocument(request.getParameter("docId"));
-			//File f = new File(info.getFileName());
-			byte[] fileBytes = Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
-			int length = fileBytes.length;
-	        
-	        ServletContext context = getServletConfig().getServletContext();
-	        String mimetype = context.getMimeType(info.getFileName());
-	        
-	        response.setContentType( (mimetype != null) ? mimetype : "application/octet-stream" );
-	        response.setContentLength(length);
-	        response.setHeader( "Content-Disposition", "attachment; filename=\"" + info.getFileName() + "\"" );
+			DocumentInfo info = null;
+			try {
+				info = documentService.getDocument(request.getParameter("docId"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(info != null && info.getDocumentBinaryInfo() != null && info.getDocumentBinaryInfo().getBinary() != null && 
+					!(info.getDocumentBinaryInfo().getBinary().isEmpty())){
+				
+				ServletOutputStream op = response.getOutputStream();
+				try {
+				
+					byte[] fileBytes = Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
+					int length = fileBytes.length;
+			        
+			        ServletContext context = getServletConfig().getServletContext();
+			        //TODO no mimetypes in info exist - switch check or future addition to DocumentInfo needed later
+			        String mimetype = context.getMimeType(info.getFileName());
+			        
+			        response.setContentType( (mimetype != null) ? mimetype : "application/octet-stream" );
+			        response.setContentLength(length);
+			        response.setHeader( "Content-Disposition", "attachment; filename=\"" + info.getFileName() + "\"" );
+		
+			        //
+			        //  Stream to the requester.
+			        //
+			        op.write(fileBytes,0,length);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				finally{
+			        op.flush();
+			        op.close();
+				}
 
-	        //
-	        //  Stream to the requester.
-	        //
-	        op.write(fileBytes,0,length);
- 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally{
-	        op.flush();
-	        op.close();
-		}
+			}
+			else{
+				response.setContentType("text/html");
+				PrintWriter out = response.getWriter();
+				out.println("Sorry, the file could not be retrieved.  It may not exist, or the server could not be contacted.");
+			}
         
 	}
 
@@ -313,5 +343,14 @@ public class UploadServlet extends HttpServlet{
 	public void setDocumentService(DocumentService documentService) {
 		this.documentService = documentService;
 	}
+
+	public DocumentRelationService getRelationService() {
+		return relationService;
+	}
+
+	public void setRelationService(DocumentRelationService relationService) {
+		this.relationService = relationService;
+	}
+	
 
 }

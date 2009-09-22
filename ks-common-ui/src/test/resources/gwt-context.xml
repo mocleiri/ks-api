@@ -28,5 +28,5 @@
 	<bean id="logServiceGwt"
 		class="org.kuali.student.common.ui.server.gwt.LogRpcGwtServlet">
 	</bean>
-	
+
 </beans>
