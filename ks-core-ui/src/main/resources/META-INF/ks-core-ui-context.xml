@@ -11,6 +11,7 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	
 	<bean id="systemPropertyConfigurer"
 		class="org.kuali.student.common.util.SystemPropertyConfigurer">
 		<property name="properties">
@@ -20,7 +21,12 @@
 		</property>
 	</bean>
 
-	<bean id="config" class="org.kuali.rice.core.config.spring.ConfigFactoryBean">
+
+	<bean class="org.kuali.student.common.util.ModPropertyPlaceholderConfigurer">
+		<property name="properties" ref="configProperties" />
+	</bean>
+
+	<bean id="config" class="org.kuali.student.rice.config.spring.NestedConfigFactoryBean" depends-on="systemPropertyConfigurer">
 		<property name="configLocations">
 			<list>
 				<value>classpath:META-INF/ks-core-ui-config.xml</value>
@@ -52,7 +58,7 @@
 	</bean>
 
     <import resource="classpath:org/kuali/rice/core/RiceJTASpringBeans.xml"/>
-    <import resource="classpath:org/kuali/rice/core/RiceDataSourceSpringBeans.xml" />
+    <import resource="classpath:org/kuali/rice/core/RiceDerbyDataSourceSpringBeans.xml" />
 
 	<bean id="rice" class="org.kuali.rice.core.config.RiceConfigurer" depends-on="propconfig">
 		<property name="dataSource" ref="riceDataSource" />
