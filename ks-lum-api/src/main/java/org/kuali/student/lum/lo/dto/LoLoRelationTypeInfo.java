@@ -16,10 +16,8 @@
 package org.kuali.student.lum.lo.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,30 +26,38 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
-import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.dto.HasAttributes;
-import org.kuali.student.core.dto.MetaInfo;
+import org.kuali.student.core.dto.Idable;
+import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
 
 /**
- * Information about a learning objective type.
+ * Information about a LO to LO relationship type.
  *
  * @Author KSContractMojo
  * @Author jimt
- * @Since Wed Oct 14 10:09:56 PDT 2009
- * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loTypeInfo+Structure+v1.0-rc2">LoTypeInfo</>
+ * @Since Wed Oct 14 10:09:59 PDT 2009
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loLoRelationTypeInfo+Structure+v1.0-rc2">LoLoRelationTypeInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoTypeInfo implements Serializable, Idable, HasAttributes {
+public class LoLoRelationTypeInfo implements Serializable, Idable, HasAttributes {
 
     private static final long serialVersionUID = 1L;
+
+    @XmlAttribute(name="key")
+    private String id;
 
     @XmlElement
     private String name;
 
     @XmlElement
-    private String desc;
+    private String description;
+
+    @XmlElement
+    private String revName;
+
+    @XmlElement
+    private String revDescription;
 
     @XmlElement
     private Date effectiveDate;
@@ -63,11 +69,19 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
     private Map<String, String> attributes;
 
-    @XmlAttribute(name="key")
-    private String id;
+    /**
+     * Unique identifier for the LO to LO relation type.
+     */
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
-     * Friendly name of the learning objective type
+     * Short name of the LO to LO relationship type. This is primarily to be used by developers and may end up translated in the end system.
      */
     public String getName() {
         return name;
@@ -78,18 +92,40 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Narrative description of the learning objective type
+     * Narrative description of the LO to LO relationship type.
      */
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**
-     * Date and time that this learning objective type became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
+     * Name for the reverse LO to LO relationship type. This is primarily to be used by developers and may end up translated in the end system.
+     */
+    public String getRevName() {
+        return revName;
+    }
+
+    public void setRevName(String revName) {
+        this.revName = revName;
+    }
+
+    /**
+     * Description of the reverse of the LO to LO relationship type
+     */
+    public String getRevDescription() {
+        return revDescription;
+    }
+
+    public void setRevDescription (String revDescription) {
+        this.revDescription = revDescription;
+    }
+
+    /**
+     * Date and time that this LO to LO relationship type became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -100,7 +136,7 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Date and time that this learning objective type expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
+     * Date and time that this LO to LO relationship type expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -122,16 +158,5 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
 
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
-    }
-
-    /**
-     * Unique identifier for a learning objective type.
-     */
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

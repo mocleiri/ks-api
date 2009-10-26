@@ -32,26 +32,33 @@ import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
 import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.dto.HasAttributes;
 import org.kuali.student.core.dto.MetaInfo;
+import org.kuali.student.core.dto.RichTextInfo;
 
 /**
- * Information about a learning objective type.
+ * Detailed information about a learning objective repository, including the root node.
  *
  * @Author KSContractMojo
  * @Author jimt
- * @Since Wed Oct 14 10:09:56 PDT 2009
- * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loTypeInfo+Structure+v1.0-rc2">LoTypeInfo</>
+ * @Since Wed Oct 14 10:09:45 PDT 2009
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loRepositoryInfo+Structure+v1.0-rc2">LoRepositoryInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoTypeInfo implements Serializable, Idable, HasAttributes {
+public class LoRepositoryInfo implements Serializable, Idable, HasAttributes {
 
     private static final long serialVersionUID = 1L;
+
+    @XmlAttribute(name="key")
+    private String id;
 
     @XmlElement
     private String name;
 
     @XmlElement
-    private String desc;
+    private RichTextInfo desc;
+
+    @XmlElement
+    private String rootLoId;
 
     @XmlElement
     private Date effectiveDate;
@@ -63,11 +70,11 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
     private Map<String, String> attributes;
 
-    @XmlAttribute(name="key")
-    private String id;
+    @XmlElement
+    private MetaInfo metaInfo;
 
     /**
-     * Friendly name of the learning objective type
+     * Friendly name of the repository
      */
     public String getName() {
         return name;
@@ -78,18 +85,29 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Narrative description of the learning objective type
+     * Narrative description of the learning objective repository
      */
-    public String getDesc() {
+    public RichTextInfo getDesc() {
         return desc;
     }
 
-    public void setDesc(String desc) {
+    public void setDesc(RichTextInfo desc) {
         this.desc = desc;
     }
 
     /**
-     * Date and time that this learning objective type became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
+     * Identifier for the root node of the learning objective repository. This is primarily present for repositories which are trees descendent from a singular node instead of looser collections.
+     */
+    public String getRootLoId() {
+        return rootLoId;
+    }
+
+    public void setRootLoId(String rootLoId) {
+        this.rootLoId = rootLoId;
+    }
+
+    /**
+     * Date and time that this learning objective repository became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -100,7 +118,7 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Date and time that this learning objective type expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
+     * Date and time that this learning objective repository expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -125,7 +143,18 @@ public class LoTypeInfo implements Serializable, Idable, HasAttributes {
     }
 
     /**
-     * Unique identifier for a learning objective type.
+     * Create and last update info for the structure. This is optional and treated as read only since the data is set by the internals of the service during maintenance operations.
+     */
+    public MetaInfo getMetaInfo() {
+        return metaInfo;
+    }
+
+    public void setMetaInfo(MetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
+    }
+
+    /**
+     * Unique identifier for a learning objective repository.
      */
     public String getId() {
         return id;

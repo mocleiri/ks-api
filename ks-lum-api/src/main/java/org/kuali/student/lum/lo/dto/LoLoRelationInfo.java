@@ -16,10 +16,8 @@
 package org.kuali.student.lum.lo.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,35 +26,31 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
-import org.kuali.student.core.dto.Idable;
-import org.kuali.student.core.dto.HasTypeState;
-import org.kuali.student.core.dto.HasAttributes;
 import org.kuali.student.core.dto.MetaInfo;
-import org.kuali.student.core.dto.RichTextInfo;
+import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
 
 /**
- * Detailed information about a learning objective
+ * 
  *
  * @Author KSContractMojo
  * @Author jimt
- * @Since Wed Oct 14 10:10:08 PDT 2009
- * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loInfo+Structure+v1.0-rc2">LoInfo</>
+ * @Since Wed Oct 14 10:10:12 PDT 2009
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loLoRelationInfo+Structure+v1.0-rc2">LoLoRelationInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes {
+public class LoLoRelationInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @XmlElement
-    private String name;
+    @XmlAttribute
+    private String id;
 
     @XmlElement
-    private RichTextInfo desc;
+    private String loId;
 
     @XmlElement
-    private String loRepositoryKey;
+    private String relatedLoId;
 
     @XmlElement
     private Date effectiveDate;
@@ -77,44 +71,30 @@ public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes
     @XmlAttribute
     private String state;
 
-    @XmlAttribute
-    private String id;
-
     /**
-     * Friendly name of the learning objective
+     * The page loId Structure does not exist. This is the "From" or "Parent" in the relation.
      */
-    public String getName() {
-        return name;
+    public String getLo() {
+        return loId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLo(String loId) {
+        this.loId = loId;
     }
 
     /**
-     * Narrative description of the learning objective
+     * The page loId Structure does not exist. This is the "To" or "Child" of the relation.
      */
-    public RichTextInfo getDesc() {
-        return desc;
+    public String getRelatedLo() {
+        return relatedLoId;
     }
 
-    public void setDesc(RichTextInfo desc) {
-        this.desc = desc;
+    public void setRelatedLo(String relatedLoId) {
+        this.relatedLoId = relatedLoId;
     }
 
-    /**
-     * Unique identifier for a learning objective repository. This value is immutable once set during creation.
-     */
-    public String getLoRepositoryKey() {
-        return loRepositoryKey;
-    }
-
-    public void setLoRepositoryKey(String loRepositoryKey) {
-        this.loRepositoryKey = loRepositoryKey;
-    }
-
-    /**
-     * Date and time that this learning objective became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
+	/**
+     * Date and time that this LO to LO relationship became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
     public Date getEffectiveDate() {
         return effectiveDate;
@@ -125,7 +105,7 @@ public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes
     }
 
     /**
-     * Date and time that this learning objective expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
+     * Date and time that this LO to LO relationship expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
     public Date getExpirationDate() {
         return expirationDate;
@@ -161,7 +141,7 @@ public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes
     }
 
     /**
-     * Unique identifier for a learning objective type.
+     * Unique identifier for the LO to LO relation type.
      */
     public String getType() {
         return type;
@@ -172,7 +152,7 @@ public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes
     }
 
     /**
-     * The current status of the learning objective. The values for this field are constrained to those in the loState enumeration. A separate setup operation does not exist for retrieval of the meta data around this value.
+     * Identifier for the current status of a LO to LO relationship. The values for this field are constrained to those in the luLuRelationState enumeration. A separate setup operation does not exist for retrieval of the meta data around this value.
      */
     public String getState() {
         return state;
@@ -183,7 +163,7 @@ public class LoInfo implements Serializable, Idable, HasTypeState, HasAttributes
     }
 
     /**
-     * Unique identifier for a learning objective record. This is optional, due to the identifier being set at the time of creation. Once the learning objective has been created, this should be seen as required.
+     * Unique identifier for a LO to LO relationship. This is optional, due to the identifier being set at the time of creation. Once the relation has been created, this should be seen as required.
      */
     public String getId() {
         return id;
