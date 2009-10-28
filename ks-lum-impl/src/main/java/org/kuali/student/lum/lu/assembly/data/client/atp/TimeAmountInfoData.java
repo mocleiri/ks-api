@@ -1,6 +1,6 @@
 package org.kuali.student.lum.lu.assembly.data.client.atp;
-import org.kuali.student.common.assembly.PropertyEnum;
 import org.kuali.student.lum.lu.assembly.data.client.ModifiableData;
+import org.kuali.student.lum.lu.assembly.data.client.PropertyEnum;
 public class TimeAmountInfoData extends ModifiableData {
 	private static final long serialVersionUID = 1L;
 

@@ -16,21 +16,24 @@ public class ModifiableData extends Data {
 		super.set(ModificationProperties.CREATED.getKey(), created);
 	}
 	public boolean isCreated() {
-		return super.get(ModificationProperties.CREATED.getKey());
+		Boolean result = super.get(ModificationProperties.CREATED.getKey());
+		return (result != null && (boolean) result);
 	}
 	
 	public void setUpdated(boolean updated) {
 		super.set(ModificationProperties.UPDATED.getKey(), updated);
 	}
 	public boolean isUpdated() {
-		return super.get(ModificationProperties.UPDATED.getKey());
+		Boolean result = super.get(ModificationProperties.UPDATED.getKey());
+		return (result != null && (boolean) result);
 	}
 	
 	public void setDeleted(boolean deleted) {
 		super.set(ModificationProperties.DELETED.getKey(), deleted);
 	}
 	public boolean isDeleted() {
-		return super.get(ModificationProperties.DELETED.getKey());
+		Boolean result = super.get(ModificationProperties.DELETED.getKey());
+		return (result != null && (boolean) result);
 	}
 	
 }

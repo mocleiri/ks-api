@@ -1,7 +1,7 @@
 package org.kuali.student.lum.lu.assembly.data.client.creditcourse;
 
-import org.kuali.student.common.assembly.PropertyEnum;
 import org.kuali.student.lum.lu.assembly.data.client.ModifiableData;
+import org.kuali.student.lum.lu.assembly.data.client.PropertyEnum;
 import org.kuali.student.lum.lu.assembly.data.client.atp.TimeAmountInfoData;
 
 public class CreditCourseActivity extends ModifiableData {
