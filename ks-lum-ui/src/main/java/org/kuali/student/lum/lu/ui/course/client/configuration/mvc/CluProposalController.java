@@ -21,12 +21,17 @@ import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.SaveActionHandler;
 import org.kuali.student.common.ui.client.event.ValidateResultEvent;
 import org.kuali.student.common.ui.client.event.ValidateResultHandler;
+import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.Model;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
 import org.kuali.student.common.ui.client.mvc.dto.ReferenceModel;
 import org.kuali.student.common.ui.client.widgets.KSButton;
+import org.kuali.student.common.ui.client.widgets.KSLabel;
+import org.kuali.student.common.ui.client.widgets.KSLightBox;
+import org.kuali.student.common.ui.client.widgets.buttongroups.OkGroup;
+import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.OkEnum;
 import org.kuali.student.core.validation.dto.ValidationResultContainer;
 import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
 import org.kuali.student.lum.lu.ui.course.client.service.CluProposalRpcService;
@@ -40,6 +45,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * This is a description of what this class does - Will Gomes don't forget to fill this in. 
@@ -277,6 +283,23 @@ public class CluProposalController extends PagedSectionLayout{
     }
     
     public void saveProposalClu(final SaveActionEvent saveActionEvent){
+    	final KSLightBox saveWindow = new KSLightBox();
+    	VerticalPanel vp = new VerticalPanel();
+    	final KSLabel saveProgress = new KSLabel("Saving...");
+    	final OkGroup buttonGroup = new OkGroup(new Callback<OkEnum>(){
+
+			@Override
+			public void exec(OkEnum result) {
+				saveWindow.hide();
+				
+			}
+		});
+    	buttonGroup.setWidth("250px");
+    	buttonGroup.getButton(OkEnum.Ok).setEnabled(false);
+    	buttonGroup.setContent(saveProgress);
+    	saveWindow.setWidget(buttonGroup);
+    	saveWindow.show();
+    	
         ((ModelDTO)cluProposalModel.get()).commit();
         
         if(cluProposalModel.get().get("cluInfo/id") == null){
@@ -284,12 +307,16 @@ public class CluProposalController extends PagedSectionLayout{
                 public void onFailure(Throwable caught) {
                     caught.printStackTrace();
                     Window.alert(caught.getMessage());
+                    saveProgress.setText("Save Failed!  Please Try Again.");
+                    buttonGroup.getButton(OkEnum.Ok).setEnabled(true);
                 }
 
                 public void onSuccess(CluProposalModelDTO result) {
                 	result.setAdaptersCreated(false);
                     cluProposalModel.put(result);
-                    saveActionEvent.doActionComplete();                    
+                    saveActionEvent.doActionComplete();
+                    saveProgress.setText("Save Successful");
+                    buttonGroup.getButton(OkEnum.Ok).setEnabled(true);
                 }
             });
             savedOnce = true;
@@ -299,13 +326,17 @@ public class CluProposalController extends PagedSectionLayout{
             cluProposalRpcServiceAsync.saveProposal(cluProposalModel.get(), new AsyncCallback<CluProposalModelDTO>(){
                 public void onFailure(Throwable caught) {
                     caught.printStackTrace();          
-                    Window.alert(caught.getMessage());                    
+                    Window.alert(caught.getMessage());
+                    saveProgress.setText("Save Failed!  Please Try Again.");
+                    buttonGroup.getButton(OkEnum.Ok).setEnabled(true);
                 }
 
                 public void onSuccess(CluProposalModelDTO result) {
                 	result.setAdaptersCreated(false);
                     cluProposalModel.put(result);
-                    saveActionEvent.doActionComplete();                    
+                    saveActionEvent.doActionComplete();  
+                    saveProgress.setText("Save Successful");
+                    buttonGroup.getButton(OkEnum.Ok).setEnabled(true);
                 }
             });
         }        
