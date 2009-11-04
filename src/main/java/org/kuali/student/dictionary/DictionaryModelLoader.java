@@ -31,7 +31,7 @@ public class DictionaryModelLoader implements DictionaryModel
  private SpreadsheetReader orchSpreadsheetReader;
 
  public DictionaryModelLoader (SpreadsheetReader dictReader,
-                                     SpreadsheetReader orchReader)
+                               SpreadsheetReader orchReader)
  {
   this.dictSpreadsheetReader = dictReader;
   this.orchSpreadsheetReader = orchReader;
@@ -502,6 +502,43 @@ public class DictionaryModelLoader implements DictionaryModel
    {
     list.add (orchObj);
    }
+  }
+  return list;
+ }
+
+ public List<MessageStructure> getMessageStructures ()
+ {
+  WorksheetReader worksheetReader =
+   dictSpreadsheetReader.getWorksheetReader ("MessageStructure");
+  List<MessageStructure> list =
+   new ArrayList (worksheetReader.getEstimatedRows ());
+  while (worksheetReader.next ())
+  {
+   MessageStructure struct = new MessageStructure ();
+   struct.setId (getFixup (worksheetReader, "id"));
+   if (struct.getId ().equals (""))
+   {
+    continue;
+   }
+   struct.setDescription (getFixup (worksheetReader, "description"));
+   if (struct.getDescription ().equals ("ignore this row"))
+   {
+    continue;
+   }
+
+   list.add (struct);
+   struct.setXmlObject (getFixup (worksheetReader, "XmlObject"));
+   struct.setShortName (getFixup (worksheetReader, "ShortName"));
+   struct.setName (getFixup (worksheetReader, "Name"));
+   struct.setType (getFixup (worksheetReader, "Type"));
+   struct.setRequired (getFixup (worksheetReader, "Required"));
+   struct.setCardinality (getFixup (worksheetReader, "Cardinality"));
+   struct.setXmlAttribute (getFixup (worksheetReader, "XMLAttribute"));
+   struct.setStatus (getFixup (worksheetReader, "status"));
+   struct.setComments (getFixup (worksheetReader, "comments"));
+
+
+
   }
   return list;
  }

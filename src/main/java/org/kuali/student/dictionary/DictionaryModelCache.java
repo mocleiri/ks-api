@@ -134,6 +134,20 @@ public class DictionaryModelCache implements DictionaryModel
   return orchObjs;
  }
 
+  private List<MessageStructure> messageStructures = null;
+
+ public List<MessageStructure> getMessageStructures ()
+ {
+ if (messageStructures == null)
+  {
+   messageStructures = spreadsheet.getMessageStructures ();
+  }
+  return messageStructures;
+ }
+
+
+
+
 
  
 }

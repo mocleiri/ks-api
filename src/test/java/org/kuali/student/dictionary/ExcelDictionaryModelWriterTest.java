@@ -67,7 +67,7 @@ public class ExcelDictionaryModelWriterTest implements TestConstants
  {
   System.out.println ("writeExcelDictionary");
   File file =
-   new File ("src/test/resources/dictionary/lu-dictionary-config-generated-excel.xml");
+   new File (RESOURCES_DIRECTORY + "lu-dictionary-config-generated-excel.xml");
   PrintStream out;
   try
   {

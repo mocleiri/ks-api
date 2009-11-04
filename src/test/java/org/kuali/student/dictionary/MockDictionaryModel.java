@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author nwright
  */
-public class MockDictionaryMoidel implements DictionaryModel
+public class MockDictionaryModel implements DictionaryModel
 {
 
  @Override
@@ -188,6 +188,12 @@ public class MockDictionaryMoidel implements DictionaryModel
  {
   return new ArrayList ();
  }
+
+ public List<MessageStructure> getMessageStructures ()
+ {
+  return new ArrayList ();
+ }
+
 
 
 }

@@ -73,12 +73,16 @@ public interface DictionaryModel
   */
  public List<CrossObjectConstraint> getCrossObjectConstraints ();
 
-  /**
+ /**
+  * get Message Structure Definitions
+  * @return
+  */
+ public List<MessageStructure> getMessageStructures ();
+
+ /**
   * get Orchestration Object Definitions
   * @return
   */
  public List<OrchObj> getOrchObjs ();
-
-
 
 }

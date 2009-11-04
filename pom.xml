@@ -23,6 +23,9 @@
  <version>0.0.1-SNAPSHOT</version>
  <packaging>maven-plugin</packaging>
  <name>KS Tools - Dictionary Generator</name>
+ <!--
+ This worked but caused it to be searched first for all the jars
+ which took a long time so I manually added teh codemodel jar instead
  <repositories>
   <repository>
    <id>maven2-repository.dev.java.net</id>
@@ -31,7 +34,7 @@
    <layout>default</layout>
   </repository>
  </repositories>
- 
+ -->
  <dependencies>
   <dependency>
    <groupId>com.sun.codemodel</groupId>
@@ -79,11 +82,13 @@
    <artifactId>gdata-collect</artifactId>
    <version>1.0</version>
   </dependency>
+  <!--
   <dependency>
    <groupId>org.kuali.student.lum</groupId>
    <artifactId>ks-lum-rice</artifactId>
    <version>0.0.1-SNAPSHOT</version>
   </dependency>
+  -->
   <dependency>
    <groupId>org.kuali.student.core</groupId>
    <artifactId>ks-core-api</artifactId>
@@ -92,6 +97,11 @@
   <dependency>
    <groupId>org.kuali.student.lum</groupId>
    <artifactId>ks-lum-api</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+   <groupId>org.kuali.student.core</groupId>
+   <artifactId>ks-common-ui</artifactId>
    <version>0.0.1-SNAPSHOT</version>
   </dependency>
  </dependencies>

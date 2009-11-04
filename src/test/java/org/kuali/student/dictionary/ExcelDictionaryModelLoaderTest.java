@@ -215,4 +215,34 @@ public class ExcelDictionaryModelLoaderTest implements TestConstants
   assertEquals (true, true);
  }
 
+ /**
+  * Test of info types method, of class SpreadsheetGeter.
+  */
+ @Test
+ public void testGetMessageStructures ()
+ {
+  System.out.println ("getOrchObjs");
+//  List<Type> expResult = new ArrayList ();
+  List<MessageStructure> result = instance.getMessageStructures ();
+//  for (MessageStructureField field : result)
+//  {
+//   System.out.println (field.getObjectField ());
+//  }
+  if (result.size () < 400)
+  {
+   fail ("fewer than expected >= 400 rows: " + result.size ());
+  }
+  for (MessageStructure ms : result)
+  {
+   System.out.print (ms.getId () + "\t");
+   System.out.print (ms.getXmlObject () + "\t");
+   System.out.print (ms.getShortName () + "\t");
+   System.out.print (ms.getName () + "\t");
+   System.out.print (ms.getType ());
+   System.out.println ("");
+  }
+  //assertEquals (135, result.size ());
+  assertEquals (true, true);
+ }
+
 }

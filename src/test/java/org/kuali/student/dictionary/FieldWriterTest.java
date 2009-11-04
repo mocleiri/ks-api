@@ -70,7 +70,7 @@ public class FieldWriterTest
   // The test fields don't match the spreadsheet info.
   ByteArrayOutputStream baos = new ByteArrayOutputStream ();
   PrintStream out = new PrintStream (baos);
-  DictionaryModel spreadsheet = new DictionaryModelCache (new MockDictionaryMoidel ());
+  DictionaryModel spreadsheet = new DictionaryModelCache (new MockDictionaryModel ());
   Dictionary dict = spreadsheet.getDictionary ().get (0);
   State state = spreadsheet.getStates ().get (0);
   FieldWriter instance = new FieldWriter (out, 0, spreadsheet, dict, state, false);

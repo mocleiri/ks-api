@@ -26,25 +26,25 @@ import java.util.List;
 public class DictionaryModelExpanded implements DictionaryModel
 {
 
- private DictionaryModel spreadsheet;
+ private DictionaryModel model;
  private DictionaryExpander expander;
 
  public DictionaryModelExpanded (DictionaryModel spreadsheet, DictionaryExpander expander)
  {
-  this.spreadsheet = spreadsheet;
+  this.model = spreadsheet;
   this.expander = expander;
  }
 
  @Override
  public List<Constraint> getConstraints ()
  {
-  return spreadsheet.getConstraints ();
+  return model.getConstraints ();
  }
 
  @Override
  public List<CrossObjectConstraint> getCrossObjectConstraints ()
  {
-  return spreadsheet.getCrossObjectConstraints ();
+  return model.getCrossObjectConstraints ();
  }
 
  private List<Dictionary> dicts = null;
@@ -62,7 +62,7 @@ public class DictionaryModelExpanded implements DictionaryModel
  @Override
  public List<Field> getFields ()
  {
-  return spreadsheet.getFields ();
+  return model.getFields ();
  }
 
  private List<State> states = null;
@@ -70,30 +70,35 @@ public class DictionaryModelExpanded implements DictionaryModel
  @Override
  public List<State> getStates ()
  {
-  return spreadsheet.getStates ();
+  return model.getStates ();
  }
 
  @Override
  public List<Type> getTypes ()
  {
-  return spreadsheet.getTypes ();
+  return model.getTypes ();
  }
 
  @Override
  public List<XmlType> getXmlTypes ()
  {
-  return spreadsheet.getXmlTypes ();
+  return model.getXmlTypes ();
  }
 
  @Override
  public List<String> getSourceNames ()
  {
-  return spreadsheet.getSourceNames ();
+  return model.getSourceNames ();
  }
 
  public List<OrchObj> getOrchObjs ()
  {
-  return spreadsheet.getOrchObjs ();
+  return model.getOrchObjs ();
+ }
+
+ public List<MessageStructure> getMessageStructures ()
+ {
+  return model.getMessageStructures ();
  }
 
 
