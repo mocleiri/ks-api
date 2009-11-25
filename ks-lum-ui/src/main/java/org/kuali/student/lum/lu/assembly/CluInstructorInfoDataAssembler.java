@@ -8,6 +8,7 @@ import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.assembly.client.SaveResult;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.lu.assembly.data.client.CluInstructorInfoData;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.CluInstructorInfoMetadata;
 import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 
 public class CluInstructorInfoDataAssembler implements Assembler<CluInstructorInfoData, CluInstructorInfo>{
@@ -42,8 +43,8 @@ public class CluInstructorInfoDataAssembler implements Assembler<CluInstructorIn
 	}
 
 	@Override
-	public Metadata getMetadata() throws AssemblyException {
-		return null;
+	public Metadata getMetadata(String type, String state) throws AssemblyException {
+		return new CluInstructorInfoMetadata().getMetadata(type, state);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import org.kuali.student.common.assembly.client.SaveResult;
 import org.kuali.student.core.dto.TimeAmountInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.lu.assembly.data.client.atp.TimeAmountInfoData;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.TimeAmountInfoMetadata;
 
 public class TimeAmountInfoAssembler implements Assembler<TimeAmountInfoData, TimeAmountInfo>{
 
@@ -42,8 +43,8 @@ public class TimeAmountInfoAssembler implements Assembler<TimeAmountInfoData, Ti
 	}
 
 	@Override
-	public Metadata getMetadata() throws AssemblyException {
-		return null;
+	public Metadata getMetadata(String type, String state) throws AssemblyException {
+		return new TimeAmountInfoMetadata().getMetadata(type, state);
 	}
 
 	@Override

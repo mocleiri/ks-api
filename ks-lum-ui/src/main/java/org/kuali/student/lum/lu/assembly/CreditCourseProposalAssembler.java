@@ -9,6 +9,7 @@ import org.kuali.student.common.assembly.Assembler;
 import org.kuali.student.common.assembly.client.AssemblyException;
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.Metadata;
+import org.kuali.student.common.assembly.client.QueryPath;
 import org.kuali.student.common.assembly.client.SaveResult;
 import org.kuali.student.common.assembly.client.Data.Property;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
@@ -33,6 +34,11 @@ import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseAc
 import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseFormat;
 import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseProposal;
 import org.kuali.student.lum.lu.assembly.data.client.proposal.ProposalInfoData;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseActivityMetadata;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseFormatMetadata;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseMetadata;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseProposalMetadata;
 import org.kuali.student.lum.lu.assembly.data.server.CluInfoHierarchy;
 import org.kuali.student.lum.lu.assembly.data.server.CluInfoHierarchy.ModificationState;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
@@ -51,6 +57,8 @@ public class CreditCourseProposalAssembler implements Assembler<CreditCourseProp
 	public static final String FORMAT_LU_TYPE = "kuali.lu.type.CreditCourseFormatShell";
 	public static final String ACTIVITY_RELATION_TYPE = "luLuRelationType.contains";
 	public static final String PROPOSAL_REFERENCE_TYPE = "kuali.proposal.referenceType.clu"; // <- what the service says, but the dictionary says: "kuali.referenceType.CLU";
+	public static final String PROPOSAL_TYPE_CREATE_COURSE = "kuali.proposal.type.course.create";
+	
 	private final String proposalState;
 	private CluInfoHierarchyAssembler cluHierarchyAssembler;
 	private final RichTextInfoAssembler richtextAssembler = new RichTextInfoAssembler();
@@ -227,142 +235,10 @@ public class CreditCourseProposalAssembler implements Assembler<CreditCourseProp
 	}
 
 	@Override
-	public Metadata getMetadata() throws AssemblyException {
-		Metadata result = new Metadata();
-		result.setDataType(CreditCourseProposal.class.getName());
-
-		// TODO read metadata from dictionary
-		result.getProperties().put(
-				CreditCourseProposal.Properties.TYPE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseProposal.Properties.STATE.getKey(),
-				getMockMetadata(String.class));
-
-		result.getProperties().put(
-				CreditCourseProposal.Properties.PROPOSAL.getKey(),
-				getProposalMetadata());
-		result.getProperties().put(
-				CreditCourseProposal.Properties.COURSE.getKey(),
-				getCreditCourseMetadata());
-
-		return result;
+	public Metadata getMetadata(String type, String state) throws AssemblyException {
+		// TODO overriding the specified type isn't a good thing, but in other cases the type needs to be specified by the caller 
+		return new CreditCourseProposalMetadata().getMetadata(PROPOSAL_TYPE_CREATE_COURSE, state);
 	}
-
-	private Metadata getCreditCourseMetadata() {
-		Metadata result = new Metadata();
-		result.setDataType(CreditCourse.class.getName());
-
-		// TODO read metadata from dictionary
-		result.getProperties().put(CreditCourse.Properties.ID.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(CreditCourse.Properties.TYPE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(CreditCourse.Properties.STATE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourse.Properties.COURSE_NUMBER_SUFFIX.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourse.Properties.COURSE_TITLE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(CreditCourse.Properties.DEPARTMENT.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourse.Properties.DESCRIPTION.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(CreditCourse.Properties.DURATION.getKey(),
-				getMockMetadata(TimeAmountInfoData.class));
-		result.getProperties().put(
-				CreditCourse.Properties.SUBJECT_AREA.getKey(),
-				getMockMetadata(String.class));
-		// TODO verify if this is a useful "dataType" for Data objects acting as
-		// a list
-		result.getProperties().put(
-				CreditCourse.Properties.TERMS_OFFERED.getKey(),
-				getMockMetadata(Data.class));
-		result.getProperties().put(
-				CreditCourse.Properties.TRANSCRIPT_TITLE.getKey(),
-				getMockMetadata(String.class));
-
-		result.getProperties().put(CreditCourse.Properties.FORMATS.getKey(),
-				getCreditCourseFormatMetadata());
-
-		return result;
-	}
-
-	private Metadata getCreditCourseFormatMetadata() {
-		Metadata result = new Metadata();
-		result.setDataType(CreditCourseFormat.class.getName());
-
-		// TODO read metadata from dictionary
-		result.getProperties().put(CreditCourseFormat.Properties.ID.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseFormat.Properties.STATE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseFormat.Properties.ACTIVITIES.getKey(),
-				getCreditCourseActivityMetadata());
-
-		return result;
-	}
-
-	private Metadata getCreditCourseActivityMetadata() {
-		Metadata result = new Metadata();
-		result.setDataType(CreditCourseActivity.class.getName());
-
-		// TODO read metadata from dictionary
-		result.getProperties().put(CreditCourseActivity.Properties.ID.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseActivity.Properties.STATE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseActivity.Properties.ACTIVITY_TYPE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				CreditCourseActivity.Properties.INTENSITY.getKey(),
-				getMockMetadata(TimeAmountInfoData.class));
-
-		return result;
-	}
-
-	private Metadata getProposalMetadata() {
-		Metadata result = new Metadata();
-		result.setDataType(ProposalInfoData.class.getName());
-
-		// TODO read metadata from dictionary
-		result.getProperties().put(ProposalInfoData.Properties.ID.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(ProposalInfoData.Properties.TYPE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(ProposalInfoData.Properties.STATE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				ProposalInfoData.Properties.RATIONALE.getKey(),
-				getMockMetadata(String.class));
-		result.getProperties().put(
-				ProposalInfoData.Properties.REFERENCE_TYPE.getKey(),
-				getMockMetadata(String.class));
-		// TODO verify if this is a useful "dataType" for Data objects acting as
-		// a list
-		result.getProperties().put(
-				ProposalInfoData.Properties.REFERENCES.getKey(),
-				getMockMetadata(Data.class));
-		result.getProperties().put(ProposalInfoData.Properties.TITLE.getKey(),
-				getMockMetadata(String.class));
-
-		return result;
-	}
-
-	private Metadata getMockMetadata(Class<?> dataType) {
-		Metadata result = new Metadata();
-		result.setDataType(dataType.getName());
-		// TODO mock more metadata, or go ahead and implement dictionary lookup
-		return result;
-	}
-
 
 	@Override
 	public SaveResult<CreditCourseProposal> save(CreditCourseProposal data)
@@ -437,7 +313,7 @@ public class CreditCourseProposalAssembler implements Assembler<CreditCourseProp
 			if (inputProposal.getId() == null) {
 //			if (inputProposal.getModifications().isCreated()) {
 				prop = new ProposalInfo();
-				prop.setType("kuali.proposal.type.course.create");
+				prop.setType(PROPOSAL_TYPE_CREATE_COURSE);
 				prop.setProposalReferenceType("kuali.proposal.referenceType.clu");
 			} else {
 				prop = proposalService.getProposal(inputProposal.getId());

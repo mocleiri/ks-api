@@ -61,8 +61,8 @@ public class UntypedCreditCourseProposalAssembler implements Assembler<Data, Cre
 	}
 
 	@Override
-	public Metadata getMetadata() throws AssemblyException {
-		return assembler.getMetadata();
+	public Metadata getMetadata(String type, String state) throws AssemblyException {
+		return assembler.getMetadata(type, state);
 	}
 
 	@Override

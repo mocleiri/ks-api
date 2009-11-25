@@ -19,7 +19,9 @@ import java.util.HashMap;
 
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.DataModel;
+import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.ui.client.service.BaseRpcServiceAsync;
+import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
 import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseProposal;
 import org.kuali.student.lum.lu.ui.course.client.configuration.mvc.CluProposalModelDTO;
 
@@ -59,5 +61,5 @@ public interface CluProposalRpcServiceAsync extends BaseRpcServiceAsync{
 	
 	public void getCreditCourseProposal(String id, AsyncCallback<Data> callback);
 	public void saveCreditCourseProposal(Data proposal, AsyncCallback<DataSaveResult> callback);
-    
+	public void getCreditCourseProposalMetadata(AsyncCallback<Metadata> callback);
 }

@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.DataModel;
+import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.ui.client.service.BaseRpcService;
 import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
 import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseProposal;
@@ -62,4 +63,5 @@ public interface CluProposalRpcService extends BaseRpcService{
     
 	public Data getCreditCourseProposal(String id) throws OperationFailedException;
 	public DataSaveResult saveCreditCourseProposal(Data proposal) throws OperationFailedException;
+	public Metadata getCreditCourseProposalMetadata() throws OperationFailedException;
 }

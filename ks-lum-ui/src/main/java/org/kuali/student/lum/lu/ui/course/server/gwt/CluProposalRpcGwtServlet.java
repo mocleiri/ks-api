@@ -43,6 +43,7 @@ import org.kuali.rice.kim.service.PermissionService;
 import org.kuali.student.common.assembly.client.AssemblyException;
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.DataModel;
+import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.assembly.client.SaveResult;
 import org.kuali.student.common.assembly.client.SimpleModelDefinition;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
@@ -1730,6 +1731,18 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 			logger.error("Unable to retrieve credit course proposal", e);
 			e.printStackTrace();
 			throw new OperationFailedException("Unable to save credit course proposal");
+		}
+	}
+
+	@Override
+	public Metadata getCreditCourseProposalMetadata()
+			throws OperationFailedException {
+		try {
+			initAssemblers();
+			return creditCourseProposalAssembler.getMetadata(null, "draft");
+		} catch (Exception e) {
+			logger.error("Unable to retrieve metadata for credit course proposal", e);
+			throw new OperationFailedException("Unable to retrieve metadata for credit course proposal");
 		}
 	}
 

@@ -122,7 +122,7 @@ public class CluInfoHierarchyAssembler implements Assembler<CluInfoHierarchy, Vo
 	}
 
 	@Override
-	public Metadata getMetadata() throws AssemblyException {
+	public Metadata getMetadata(String type, String state) throws AssemblyException {
 		throw new UnsupportedOperationException("Assembler is not type/state specific");
 	}
 
