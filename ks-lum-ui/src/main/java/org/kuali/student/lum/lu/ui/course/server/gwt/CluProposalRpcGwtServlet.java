@@ -40,7 +40,6 @@ import org.kuali.rice.kew.webservice.StandardResponse;
 import org.kuali.rice.kim.KimAuthenticationProvider;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.PermissionService;
-import org.kuali.student.common.assembly.client.AssemblyException;
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.assembly.client.SaveResult;
@@ -68,7 +67,7 @@ import org.kuali.student.core.proposal.dto.ProposalInfo;
 import org.kuali.student.core.proposal.service.ProposalService;
 import org.kuali.student.lum.lo.dto.LoInfo;
 import org.kuali.student.lum.lo.service.LearningObjectiveService;
-import org.kuali.student.lum.lu.assembly.UntypedCreditCourseProposalAssembler;
+import org.kuali.student.lum.lu.assembly.CreditCourseProposalAssembler;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.dto.LuStatementInfo;
@@ -1686,11 +1685,11 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 //        return model;
 //    }
     
-    private UntypedCreditCourseProposalAssembler creditCourseProposalAssembler;
+    private CreditCourseProposalAssembler creditCourseProposalAssembler;
     private synchronized void initAssemblers() {
     	if (creditCourseProposalAssembler == null) {
     		// TODO change how the state is set/passed in to the proposal assembler, if at all
-    		creditCourseProposalAssembler = new UntypedCreditCourseProposalAssembler("draft");
+    		creditCourseProposalAssembler = new CreditCourseProposalAssembler("draft");
     		creditCourseProposalAssembler.setLuService(service);
     		creditCourseProposalAssembler.setProposalService(proposalService);
     	}
@@ -1700,7 +1699,7 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 		try {
 			initAssemblers();
 			return creditCourseProposalAssembler.get(id);
-		} catch (AssemblyException e) {
+		} catch (Exception e) {
 			logger.error("Unable to retrieve credit course proposal", e);
 			e.printStackTrace();
 			throw new OperationFailedException("Unable to retrieve credit course proposal");
@@ -1724,7 +1723,7 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 			} else {
 				return new DataSaveResult(s.getValidationResults(), s.getValue());
 			}
-		} catch (AssemblyException e) {
+		} catch (Exception e) {
 			logger.error("Unable to retrieve credit course proposal", e);
 			e.printStackTrace();
 			throw new OperationFailedException("Unable to save credit course proposal");

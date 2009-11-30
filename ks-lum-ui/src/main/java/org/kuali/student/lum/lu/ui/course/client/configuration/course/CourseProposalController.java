@@ -42,7 +42,6 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.OkGroup;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.OkEnum;
 import org.kuali.student.core.validation.dto.ValidationResultContainer;
 import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
-import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseProposal;
 import org.kuali.student.lum.lu.ui.course.client.configuration.mvc.LuConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.service.CluProposalRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CluProposalRpcServiceAsync;

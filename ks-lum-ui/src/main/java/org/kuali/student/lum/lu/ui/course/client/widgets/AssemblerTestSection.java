@@ -15,12 +15,12 @@ import org.kuali.student.common.ui.client.configurable.mvc.SectionView;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
-import org.kuali.student.lum.lu.assembly.data.client.RichTextInfoData;
-import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourse;
-import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseActivity;
-import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseFormat;
-import org.kuali.student.lum.lu.assembly.data.client.creditcourse.CreditCourseProposal;
-import org.kuali.student.lum.lu.assembly.data.client.proposal.ProposalInfoData;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.RichTextInfoHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseActivityHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseFormatHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseProposalHelper;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseProposalInfoHelper;
 import org.kuali.student.lum.lu.ui.course.client.service.CluProposalRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CluProposalRpcServiceAsync;
 import org.kuali.student.lum.lu.ui.course.client.service.DataSaveResult;
@@ -140,9 +140,9 @@ public class AssemblerTestSection extends SectionView {
 		private void createNew() {
 			output.setText("");
 			status.setText("Creating new proposal");
-			CreditCourseProposal prop = createCreditCourseProposal();
+			CreditCourseProposalHelper prop = createCreditCourseProposal();
 			status.setText("Saving new proposal");
-			service.saveCreditCourseProposal(prop, new AsyncCallback<DataSaveResult>() {
+			service.saveCreditCourseProposal(prop.getData(), new AsyncCallback<DataSaveResult>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -151,7 +151,7 @@ public class AssemblerTestSection extends SectionView {
 
 				@Override
 				public void onSuccess(DataSaveResult result) {
-					CreditCourseProposal created = (CreditCourseProposal) result.getValue();
+					CreditCourseProposalHelper created = CreditCourseProposalHelper.wrap(result.getValue());
 					if (created != null) {
 						lastCreatedId = created.getProposal().getId();
 						output.setText("");
@@ -174,7 +174,7 @@ public class AssemblerTestSection extends SectionView {
 				mods = new Data();
 				d.set("modifications", mods);
 			}
-			mods.set("isUpdated", true);
+			mods.set("updated", true);
 		}
 		private void modifyLastSaved() {
 			status.setText("Retrieving saved proposal");
@@ -260,7 +260,7 @@ public class AssemblerTestSection extends SectionView {
 				}
 				output.setText(output.getText() + sb.toString());
 			}
-			dumpProposal((CreditCourseProposal)result.getValue());
+			dumpProposal(result.getValue());
 		}
 		private void dumpProposal(Data prop) {
 			if (prop== null) {
@@ -305,53 +305,58 @@ public class AssemblerTestSection extends SectionView {
 			return result;
 		}
 		
-		private CreditCourseProposal createCreditCourseProposal() {
+		private CreditCourseProposalHelper createCreditCourseProposal() {
 			int idx = Random.nextInt();
-			CreditCourseProposal result = new CreditCourseProposal();
-			result.addChangeCallback(new ChangeCallback() {
+			CreditCourseProposalHelper result = CreditCourseProposalHelper.wrap(new Data());
+			result.getData().addChangeCallback(new ChangeCallback() {
 				@Override
 				public void onChange(ChangeType type, QueryPath path) {
 					GWT.log(type.toString() + " " + path.toString(), null);
 				}
 			});
-			ProposalInfoData prop = new ProposalInfoData();
-			prop.setState("draft");
+
+			result.setState("draft");
+
+			CreditCourseProposalInfoHelper prop = CreditCourseProposalInfoHelper.wrap(new Data());
 			prop.setTitle("Assembler Test Proposal " + idx);
 			prop.setRationale("rationale " + idx);
-			prop.getModifications().setCreated(true);
+			setRuntimeFlag(prop.getData(), "created", true);
 			result.setProposal(prop);
 			
-			CreditCourse course = new CreditCourse();
+			CreditCourseHelper course = CreditCourseHelper.wrap(new Data());
 			course.setSubjectArea("SUBJ");
 			course.setCourseNumberSuffix(getSuffix(idx));
 			course.setTranscriptTitle("transcript title " + idx);
 			course.setState("draft");
 			course.setDescription(asRichText("description blah blah blah"));
 			course.setCourseTitle("course title " + idx);
-			course.getModifications().setCreated(true);
+			setRuntimeFlag(course.getData(), "created", true);
 			result.setCourse(course);
 			
-			CreditCourseFormat format = new CreditCourseFormat();
+			CreditCourseFormatHelper format = CreditCourseFormatHelper.wrap(new Data());
 			format.setState("draft");
-			format.getModifications().setCreated(true);
-			course.addFormat(format);
+			setRuntimeFlag(format.getData(), "created", true);
+			// TODO helpers should probably have an addXYZ() method for each list, so we can lazily create the lists under the hood
+			course.setFormats(new Data());
+			course.getFormats().add(format.getData());
 			
-			CreditCourseActivity activity = new CreditCourseActivity();
+			CreditCourseActivityHelper activity = CreditCourseActivityHelper.wrap(new Data());
 			activity.setActivityType("kuali.lu.type.activity.Lecture");
 			activity.setState("draft");
-			activity.getModifications().setCreated(true);
-			format.addActivity(activity);
+			setRuntimeFlag(activity.getData(), "created", true);
+			format.setActivities(new Data());
+			format.getActivities().add(activity.getData());
 			
-			activity = new CreditCourseActivity();
+			activity = CreditCourseActivityHelper.wrap(new Data());
 			activity.setActivityType("kuali.lu.type.activity.Lab");
 			activity.setState("draft");
-			activity.getModifications().setCreated(true);
-			format.addActivity(activity);
+			setRuntimeFlag(activity.getData(), "created", true);
+			format.getActivities().add(activity.getData());
 			
 			return result;
 		}
-		private RichTextInfoData asRichText(String s) {
-			RichTextInfoData result = new RichTextInfoData();
+		private RichTextInfoHelper asRichText(String s) {
+			RichTextInfoHelper result = RichTextInfoHelper.wrap(new Data());
 			result.setPlain(s);
 			result.setFormatted("<b>" + s + "</b>");
 			return result;
@@ -520,4 +525,14 @@ public class AssemblerTestSection extends SectionView {
 		}
 	}
 
+	
+	private static void setRuntimeFlag(Data d, String key, Boolean value) {
+		Data runtime = d.get("_runtimeData");
+		if (runtime == null) {
+			runtime = new Data();
+			d.set("_runtimeData", runtime);
+		}
+		runtime.set(key, value);
+	}
+	
 }
