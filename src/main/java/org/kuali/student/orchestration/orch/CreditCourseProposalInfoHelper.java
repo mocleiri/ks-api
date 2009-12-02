@@ -18,6 +18,7 @@ package org.kuali.student.orchestration.orch;
 
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.lum.lu.assembly.data.client.PropertyEnum;
+import org.kuali.student.orchestration.base.MetaInfoHelper;
 
 
 public class CreditCourseProposalInfoHelper
@@ -32,6 +33,7 @@ public class CreditCourseProposalInfoHelper
 		RATIONALE ("rationale"),
 		REFERENCE_TYPE ("referenceType"),
 		REFERENCES ("references"),
+		META_INFO ("metaInfo"),
 		_RUNTIME_DATA ("_runtimeData");
 		
 		private final String key;
@@ -138,6 +140,18 @@ public class CreditCourseProposalInfoHelper
 	public Data getReferences ()
 	{
 		return (Data) data.get (Properties.REFERENCES.getKey ());
+	}
+	
+	
+	public void setMetaInfo (MetaInfoHelper value)
+	{
+		data.set (Properties.META_INFO.getKey (), (value == null) ? null : value.getData ());
+	}
+	
+	
+	public MetaInfoHelper getMetaInfo ()
+	{
+		return MetaInfoHelper.wrap ((Data) data.get (Properties.META_INFO.getKey ()));
 	}
 	
 	

@@ -18,12 +18,11 @@ package org.kuali.student.orchestration.orch;
 
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.Metadata;
-import org.kuali.student.common.assembly.client.QueryPath;
 import org.kuali.student.orchestration.ConstraintMetadataBank;
-import org.kuali.student.orchestration.orch.CreditCourseProposalHelper.Properties;
+import org.kuali.student.orchestration.orch.FeeInfoHelper.Properties;
 
 
-public class CreditCourseProposalMetadata
+public class FeeInfoMetadata
 {
 	
 	public boolean matches (String inputType, String inputState, String dictType, String dictState)
@@ -46,70 +45,66 @@ public class CreditCourseProposalMetadata
 		Metadata childMeta;
 		Metadata listMeta;
 		
-		// metadata for Proposal
+		// metadata for FeeType
 		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.PROPOSAL.getKey (), childMeta);
-		childMeta.setDataType (Data.DataType.DATA);
-		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
+		mainMeta.getProperties ().put (Properties.FEE_TYPE.getKey (), childMeta);
+		childMeta.setDataType (Data.DataType.STRING);
+		childMeta.setWriteAccess (Metadata.WriteAccess.NEVER);
 		if (this.matches (type, state, "(default)", "(default)"))
 		{
 			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
 		}
-		new CreditCourseProposalInfoMetadata ().loadChildMetadata (childMeta, type, state);
 		
-		// metadata for Course
+		// metadata for FeeAmount
 		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.COURSE.getKey (), childMeta);
-		childMeta.setDataType (Data.DataType.DATA);
-		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		if (this.matches (type, state, "(default)", "(default)"))
-		{
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
-		}
-		new CreditCourseMetadata ().loadChildMetadata (childMeta, type, state);
-		
-		// metadata for Fees
-		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.FEES.getKey (), childMeta);
-		childMeta.setDataType (Data.DataType.LIST);
-		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		if (this.matches (type, state, "(default)", "(default)"))
-		{
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("repeating"));
-		}
-		listMeta = new Metadata ();
-		listMeta.setDataType (Data.DataType.DATA);
-		listMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		childMeta.getProperties ().put (QueryPath.getWildCard (), listMeta);
-		new FeeInfoMetadata ().loadChildMetadata (listMeta, type, state);
-		
-		// metadata for State
-		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.STATE.getKey (), childMeta);
+		mainMeta.getProperties ().put (Properties.FEE_AMOUNT.getKey (), childMeta);
 		childMeta.setDataType (Data.DataType.STRING);
 		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		childMeta.setDefaultValue (new Data.StringValue ("draft"));
 		if (this.matches (type, state, "(default)", "(default)"))
 		{
 			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("required"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("kuali.state"));
 		}
 		
-		// metadata for Type
+		// metadata for Taxable
 		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.TYPE.getKey (), childMeta);
+		mainMeta.getProperties ().put (Properties.TAXABLE.getKey (), childMeta);
 		childMeta.setDataType (Data.DataType.STRING);
-		childMeta.setWriteAccess (Metadata.WriteAccess.ON_CREATE);
+		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
 		if (this.matches (type, state, "(default)", "(default)"))
 		{
 			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("course.proposal.types"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("required"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("proposal.types"));
 		}
+		
+		// metadata for FeeDesc
+		childMeta = new Metadata ();
+		mainMeta.getProperties ().put (Properties.FEE_DESC.getKey (), childMeta);
+		childMeta.setDataType (Data.DataType.STRING);
+		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
+		if (this.matches (type, state, "(default)", "(default)"))
+		{
+			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
+		}
+		
+		// metadata for InternalNotation
+		childMeta = new Metadata ();
+		mainMeta.getProperties ().put (Properties.INTERNAL_NOTATION.getKey (), childMeta);
+		childMeta.setDataType (Data.DataType.STRING);
+		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
+		if (this.matches (type, state, "(default)", "(default)"))
+		{
+			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
+		}
+		
+		// metadata for _runtimeData
+		childMeta = new Metadata ();
+		mainMeta.getProperties ().put (Properties._RUNTIME_DATA.getKey (), childMeta);
+		childMeta.setDataType (Data.DataType.DATA);
+		childMeta.setWriteAccess (Metadata.WriteAccess.NEVER);
+		if (this.matches (type, state, "(default)", "(default)"))
+		{
+			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
+		}
+		new RuntimeDataMetadata ().loadChildMetadata (childMeta, type, state);
 		
 	}
 }
