@@ -20,6 +20,9 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.kuali.student.common.assembly.client.LookupMetadata;
+import org.kuali.student.common.assembly.client.LookupParamMetadata;
+import org.kuali.student.common.assembly.client.LookupResultMetadata;
 import org.kuali.student.core.dao.SearchableDao;
 import org.kuali.student.core.search.dto.QueryParamInfo;
 import org.kuali.student.core.search.dto.QueryParamValue;
@@ -27,6 +30,12 @@ import org.kuali.student.core.search.dto.Result;
 import org.kuali.student.core.search.dto.ResultCell;
 import org.kuali.student.core.search.dto.ResultColumnInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
+import org.kuali.student.core.search.newdto.SearchParam;
+import org.kuali.student.core.search.newdto.SearchRequest;
+import org.kuali.student.core.search.newdto.SearchResult;
+import org.kuali.student.core.search.newdto.SearchResultCell;
+import org.kuali.student.core.search.newdto.SearchResultRow;
+import org.kuali.student.core.search.newdto.SortDirection;
 
 public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 		implements SearchableDao {
@@ -122,6 +131,140 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 				results.add(result);
 			}
 		
+		}
+		return results;
+	}
+
+	@Override
+	public SearchResult search(SearchRequest searchRequest,
+			Map<String, String> queryMap, LookupMetadata lookupMetadata) {
+		String searchKey = searchRequest.getSearchKey();
+		
+		//retrieve the SELECT statement from search type definition
+		String queryString = queryMap.get(searchKey);
+		String optionalQueryString = "";
+		
+		//add in optional
+		List<SearchParam> searchParamsTemp = new ArrayList<SearchParam>(searchRequest.getParams());
+		for(SearchParam searchParam : searchParamsTemp){
+			for(LookupParamMetadata paramMetadata:lookupMetadata.getParams()){
+				if(paramMetadata.isOptional()&&paramMetadata.getKey().equals(searchParam.getKey())){
+					if(!optionalQueryString.isEmpty()){
+						optionalQueryString += " AND ";
+					}
+					
+					//if optional query parameter has only a column name then create proper search expression
+					String condition = queryMap.get(searchParam.getKey());
+					if (condition.trim().contains(":")) {
+						optionalQueryString += queryMap.get(searchParam.getKey());
+					} else {
+						//comparison should be case insensitive and include wild card 
+						//FIXME SQL injection can occur here
+						optionalQueryString += 
+							"LOWER(" + queryMap.get(searchParam.getKey()) + ") LIKE '%' || LOWER('" + searchParam.getValue() + "') || '%'"; 
+						searchRequest.getParams().remove(searchParam);
+					}
+				}
+			}
+		}
+		
+		//Add in the where clause or And clause if needed for the optional criteria
+		if(!optionalQueryString.isEmpty()){
+			if(!queryString.toUpperCase().contains(" WHERE ")){
+				queryString += " WHERE ";
+			}
+			else {
+				queryString += " AND ";
+			}
+		}
+		
+		//Do ordering
+		String orderByClause = "";		
+		if(!queryString.toUpperCase().contains("ORDER BY")&&searchRequest.getSortColumn()!=null){
+			//make sure the sort column is a real result column
+			for(LookupResultMetadata results : lookupMetadata.getResults()){
+				if(results.getKey().equals(searchRequest.getSortColumn())){
+					orderByClause = " ORDER BY "+results.getKey()+" ";
+					if(searchRequest.getSortDirection()!=null&&searchRequest.getSortDirection()==SortDirection.DESC){
+						orderByClause += "DESC ";
+					}else{
+						orderByClause += "ASC ";
+					}
+				}
+			}
+		}
+		
+		//Create the query
+		String finalQueryString = queryString + optionalQueryString + orderByClause;
+		
+		Query query = em.createQuery(finalQueryString);
+		
+		//Set the pagination information (eg. only return 25 rows starting at row 100)
+		if(searchRequest.getStartAt()!=null){
+			query.setFirstResult(searchRequest.getStartAt().intValue());
+		}
+		if(searchRequest.getMaxResults()!=null){
+			query.setMaxResults(searchRequest.getMaxResults().intValue());
+		}
+		
+		//replace all the "." notation with "_" since the "."s in the ids of the queries will cause problems with the jpql  
+		if(searchRequest.getParams()!=null){
+			for (SearchParam searchParam : searchRequest.getParams()) {
+				query.setParameter(searchParam.getKey().replace(".", "_"), searchParam
+						.getValue());
+			}
+		}
+
+		// Turn into results
+		List<SearchResultRow> results = convertToResults(query.getResultList(),lookupMetadata);
+
+		SearchResult searchResult = new SearchResult();
+		searchResult.setRows(results);
+		searchResult.setSortColumn(searchRequest.getSortColumn());
+		searchResult.setSortDirection(searchRequest.getSortDirection());
+		searchResult.setStartAt(searchRequest.getStartAt());
+		if(searchRequest.getNeededTotalResults()){
+			//Get count of total rows if needed
+			String countQueryString = "SELECT COUNT(*) FROM ("+queryString + optionalQueryString+")";
+			Query countQuery = em.createQuery(countQueryString);
+			if(searchRequest.getParams()!=null){
+				for (SearchParam searchParam : searchRequest.getParams()) {
+					countQuery.setParameter(searchParam.getKey().replace(".", "_"), searchParam
+							.getValue());
+				}
+			}
+			Integer totalResults = (Integer) countQuery.getSingleResult();
+			searchResult.setTotalResults(totalResults);
+		}
+
+		return searchResult;
+	}
+
+	private List<SearchResultRow> convertToResults(List<?> queryResults,
+			LookupMetadata lookupMetadata) {
+		List<SearchResultRow> results = new ArrayList<SearchResultRow>();
+
+		if(queryResults!=null){
+			//Copy the query results to a Result object
+			for(Object queryResult:queryResults){
+				SearchResultRow result = new SearchResultRow();
+				int i=0;
+				for (LookupResultMetadata resultColumn : lookupMetadata.getResults()) {
+			
+					SearchResultCell resultCell = new SearchResultCell();
+					resultCell.setKey(resultColumn.getKey());
+					
+					if(queryResult.getClass().isArray()){
+						resultCell.setValue(((Object[])queryResult)[i].toString());
+					}else{
+						resultCell.setValue(queryResult.toString());
+					}
+					
+					result.getCells().add(resultCell);
+					i++;
+				}
+				results.add(result);
+			}
 		}
 		return results;
 	}

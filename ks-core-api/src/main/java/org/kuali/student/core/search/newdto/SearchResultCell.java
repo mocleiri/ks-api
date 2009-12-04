@@ -1,6 +1,10 @@
-package org.kuali.student.common.assembly.client.search;
+package org.kuali.student.core.search.newdto;
 
-public class SearchResultColumn {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public class SearchResultCell {
 	private String value;
 	private String key;
 

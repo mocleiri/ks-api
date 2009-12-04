@@ -1,8 +1,12 @@
-package org.kuali.student.common.assembly.client.search;
+package org.kuali.student.core.search.newdto;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SearchRequest {
 	private String searchKey;//TODO How to figure out which service to call? maybe we just look through each service the assembler has and find the key
 	private List<SearchParam> params;
@@ -10,6 +14,8 @@ public class SearchRequest {
 	private SortDirection sortDirection;
 	private Integer startAt;
 	private Integer maxResults;
+	private Boolean neededTotalResults;
+	
 	public String getSearchKey() {
 		return searchKey;
 	}
@@ -17,6 +23,9 @@ public class SearchRequest {
 		this.searchKey = searchKey;
 	}
 	public List<SearchParam> getParams() {
+		if(params == null){
+			params = new ArrayList<SearchParam>();
+		}
 		return params;
 	}
 	public void setParams(List<SearchParam> params) {
@@ -45,6 +54,12 @@ public class SearchRequest {
 	}
 	public void setMaxResults(Integer maxResults) {
 		this.maxResults = maxResults;
+	}
+	public Boolean getNeededTotalResults() {
+		return neededTotalResults;
+	}
+	public void setNeededTotalResults(Boolean neededTotalResults) {
+		this.neededTotalResults = neededTotalResults;
 	}
 	
 }

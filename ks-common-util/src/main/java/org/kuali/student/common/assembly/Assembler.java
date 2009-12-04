@@ -5,8 +5,8 @@ import java.util.List;
 import org.kuali.student.common.assembly.client.AssemblyException;
 import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.assembly.client.SaveResult;
-import org.kuali.student.common.assembly.client.search.SearchRequest;
-import org.kuali.student.common.assembly.client.search.SearchResult;
+import org.kuali.student.core.search.newdto.SearchRequest;
+import org.kuali.student.core.search.newdto.SearchResult;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 /*
  *	ASSEMBLERREVIEW

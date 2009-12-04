@@ -1,7 +1,11 @@
-package org.kuali.student.common.assembly.client.search;
+package org.kuali.student.core.search.newdto;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SearchResult {
 	private Integer startAt;
 	private Integer totalResults;
@@ -21,6 +25,9 @@ public class SearchResult {
 		this.totalResults = totalResults;
 	}
 	public List<SearchResultRow> getRows() {
+		if (rows == null) {
+			rows = new ArrayList<SearchResultRow>(0);
+		}
 		return rows;
 	}
 	public void setRows(List<SearchResultRow> rows) {

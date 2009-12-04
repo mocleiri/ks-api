@@ -7,8 +7,6 @@ import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.AssemblyException;
 import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.assembly.client.SaveResult;
-import org.kuali.student.common.assembly.client.search.SearchRequest;
-import org.kuali.student.common.assembly.client.search.SearchResult;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
@@ -20,6 +18,8 @@ import org.kuali.student.core.organization.assembly.data.server.OrgInfoData;
 import org.kuali.student.core.organization.assembly.data.server.OrgInfoData.ModificationState;
 import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
+import org.kuali.student.core.search.newdto.SearchRequest;
+import org.kuali.student.core.search.newdto.SearchResult;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 public class OrgProposalAssembler implements Assembler<Data, Org>{
@@ -156,7 +156,5 @@ public class OrgProposalAssembler implements Assembler<Data, Org>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
-
    
 }
