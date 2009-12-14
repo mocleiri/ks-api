@@ -57,6 +57,10 @@ public class LoCategory extends MetaEntity implements AttributeOwner<LoCategoryA
 	@JoinColumn(name = "LO_REPO_ID")
 	private LoRepository loRepository;
 
+	@ManyToOne
+	@JoinColumn(name = "LO_CATEGORY_TYPE_ID")
+	private LoCategoryType loCategoryType;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EFF_DT")
 	private Date effectiveDate;
@@ -115,6 +119,14 @@ public class LoCategory extends MetaEntity implements AttributeOwner<LoCategoryA
 	 */
 	public LoRepository getLoRepository() {
 		return loRepository;
+	}
+
+	public LoCategoryType getLoCategoryType() {
+		return loCategoryType;
+	}
+
+	public void setLoCategoryType(LoCategoryType loCategoryType) {
+		this.loCategoryType = loCategoryType;
 	}
 
 	public Date getEffectiveDate() {

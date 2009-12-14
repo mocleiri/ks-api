@@ -25,6 +25,7 @@ import org.kuali.student.common.ui.client.service.SecurityRpcService;
 import org.kuali.student.common.ui.client.service.SecurityRpcServiceAsync;
 import org.kuali.student.core.messages.dto.MessageList;
 import org.kuali.student.lum.lu.ui.main.client.controller.LUMApplicationManager;
+import org.kuali.student.lum.lu.ui.main.client.theme.LumTheme;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -48,7 +49,7 @@ public class LUMMainEntryPoint implements EntryPoint{
         final ApplicationContext context = new ApplicationContext();
         Application.setApplicationContext(context);
 
-        final String injectString = this.getCssString();
+        final String injectString = LumTheme.INSTANCE.getLumCss().getCssString();
         StyleInjector.injectStylesheet(injectString);   
 
         try {
@@ -114,7 +115,7 @@ public class LUMMainEntryPoint implements EntryPoint{
         });
     }
 
-    public String getCssString(){
+/*    public String getCssString(){
         String injectString = "";
          for(ResourcePrototype r: LumResources.INSTANCE.getResources()){
              if(r instanceof CssResource){
@@ -124,7 +125,7 @@ public class LUMMainEntryPoint implements EntryPoint{
              }
          }
          return injectString;
-    }
+    }*/
     
     
 

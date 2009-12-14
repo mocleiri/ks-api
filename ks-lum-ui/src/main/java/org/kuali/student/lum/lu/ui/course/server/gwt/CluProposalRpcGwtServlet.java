@@ -103,6 +103,10 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 	final Logger logger = Logger.getLogger(CluProposalRpcGwtServlet.class);
 
     private static final long serialVersionUID = 1L;
+
+    // ID of only user ('admin') who can initiate a CluDocument workflow
+    private static final String DEFAULT_USER_ID = "3";
+
     private static final String WF_TYPE_CLU_DOCUMENT = "CluDocument";
     private static final String WF_TYPE_CLU_COLLABORATOR_DOCUMENT =  "CluCollaboratorDocument";
     private static final String PROPOSAL_REFERENCE_TYPE = "kuali.proposal.referenceType.clu";
@@ -1280,8 +1284,6 @@ public class CluProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServic
 	    }
 	}
 
-	
-	
 	private String getCurrentUser() {
 		String username = SecurityUtils.getCurrentUserId();
 		if(username==null&&this.getThreadLocalRequest().getSession().getAttribute("backdoorId")!=null){
