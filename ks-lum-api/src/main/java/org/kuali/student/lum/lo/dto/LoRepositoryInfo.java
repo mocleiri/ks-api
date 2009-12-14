@@ -39,17 +39,14 @@ import org.kuali.student.core.dto.RichTextInfo;
  *
  * @Author KSContractMojo
  * @Author jimt
- * @Since Wed Oct 14 10:09:45 PDT 2009
- * @See <a href="https://test.kuali.org/confluence/display/KULSTR/loRepositoryInfo+Structure+v1.0-rc2">LoRepositoryInfo</>
+ * @Since Tue Dec 08 10:01:01 PST 2009
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTU/loRepositoryInfo+Structure+v1.0-rc2">LoRepositoryInfo</>
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoRepositoryInfo implements Serializable, Idable, HasAttributes {
 
     private static final long serialVersionUID = 1L;
-
-    @XmlAttribute(name="key")
-    private String id;
 
     @XmlElement
     private String name;
@@ -72,6 +69,9 @@ public class LoRepositoryInfo implements Serializable, Idable, HasAttributes {
 
     @XmlElement
     private MetaInfo metaInfo;
+
+    @XmlAttribute(name="key")
+    private String id;
 
     /**
      * Friendly name of the repository
