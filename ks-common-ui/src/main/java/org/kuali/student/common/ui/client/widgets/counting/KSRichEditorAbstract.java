@@ -19,6 +19,7 @@ package org.kuali.student.common.ui.client.widgets.counting;
 
 import org.kuali.student.common.ui.client.widgets.RichTextEditor;
 
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RichTextArea;
 
 /** 

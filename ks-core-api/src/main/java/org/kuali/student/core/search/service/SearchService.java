@@ -32,8 +32,6 @@ import org.kuali.student.core.search.dto.Result;
 import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
 import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
-import org.kuali.student.core.search.newdto.SearchRequest;
-import org.kuali.student.core.search.newdto.SearchResult;
 @WebService(name = "SearchService", targetNamespace = "http://student.kuali.org/wsdl/search")
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 public interface SearchService {
@@ -147,9 +145,5 @@ public interface SearchService {
     @RequestWrapper(className="org.kuali.student.core.search.service.jaxws.GetSearchCriteriaType", targetNamespace="http://student.kuali.org/wsdl/search")    
     @ResponseWrapper(className="org.kuali.student.core.search.service.jaxws.GetSearchCriteriaTypeResponse", targetNamespace="http://student.kuali.org/wsdl/search")
     public SearchCriteriaTypeInfo getSearchCriteriaType(@WebParam(name="searchCriteriaTypeKey")String searchCriteriaTypeKey) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
-
-    @RequestWrapper(className="org.kuali.student.core.search.service.jaxws.Search", targetNamespace="http://student.kuali.org/wsdl/search")    
-    @ResponseWrapper(className="org.kuali.student.core.search.service.jaxws.SearchResponse", targetNamespace="http://student.kuali.org/wsdl/search")
-	public SearchResult search(SearchRequest searchRequest);
 
 }

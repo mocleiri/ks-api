@@ -7,7 +7,7 @@ import org.kuali.student.common.ui.client.configurable.mvc.TabbedSectionLayout;
 import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.SaveActionHandler;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.CollectionModel;
+import org.kuali.student.common.ui.client.mvc.Model;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.View;
 import org.kuali.student.common.ui.client.mvc.WorkQueue;
@@ -35,7 +35,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class OrgProposalController extends TabbedSectionLayout{
 
-    private CollectionModel<org.kuali.student.common.ui.client.mvc.DataModel> orgProposalModel; 
+    private Model<org.kuali.student.common.assembly.client.DataModel> orgProposalModel; 
     private WorkQueue modelRequestQueue;
     private static KSTitleContainerImpl container = new KSTitleContainerImpl("Organization Management", "Create, Modify and Browse","");
     private KSTabPanel tabPanel = new KSTabPanel();
@@ -104,24 +104,23 @@ public class OrgProposalController extends TabbedSectionLayout{
 	    private void createNewOrgModel(final ModelRequestCallback callback, final Callback<Boolean> workCompleteCallback){
 	      
 	        if (orgProposalModel == null){
-	            orgProposalModel = new CollectionModel<org.kuali.student.common.ui.client.mvc.DataModel>();
+	            orgProposalModel = new Model<org.kuali.student.common.assembly.client.DataModel>();
 
-	            // TODO revise how the org proposal model's metadata is retrieved
-//	            orgProposalRpcServiceAsync.getOrgProposalModelDefinition(OrgConfigurerFactory.ORG_PROPOSAL_MODEL, 
-//	                new AsyncCallback<org.kuali.student.common.ui.client.mvc.DataModel>(){
-//
-//	                    @Override
-//	                    public void onFailure(Throwable caught) {
-//	                        Window.alert("Failed to get model definition.");                        
-//	                    }
-//
-//	                    @Override
-//	                    public void onSuccess(org.kuali.student.common.ui.client.mvc.DataModel result) {
-//	                        orgProposalModel.put(result);
-//	                        callback.onModelReady(orgProposalModel);
-//	                        workCompleteCallback.exec(true);
-//	                    }                
-//	            });
+	            orgProposalRpcServiceAsync.getOrgProposalModelDefinition(OrgConfigurerFactory.ORG_PROPOSAL_MODEL, 
+	                new AsyncCallback<org.kuali.student.common.assembly.client.DataModel>(){
+
+	                    @Override
+	                    public void onFailure(Throwable caught) {
+	                        Window.alert("Failed to get model definition.");                        
+	                    }
+
+	                    @Override
+	                    public void onSuccess(org.kuali.student.common.assembly.client.DataModel result) {
+	                        orgProposalModel.put(result);
+	                        callback.onModelReady(orgProposalModel);
+	                        workCompleteCallback.exec(true);
+	                    }                
+	            });
 	                        
 	        } 
 

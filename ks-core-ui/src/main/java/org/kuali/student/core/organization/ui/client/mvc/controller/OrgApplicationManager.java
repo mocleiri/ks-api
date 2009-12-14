@@ -1,6 +1,5 @@
 package org.kuali.student.core.organization.ui.client.mvc.controller;
 
-import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.DelegatingViewComposite;
 import org.kuali.student.common.ui.client.mvc.View;
@@ -33,7 +32,7 @@ public class OrgApplicationManager extends Controller{
 //                initBlankCluProposalView(LUConstants.PROPOSAL_TYPE_COURSE_CREATE, LUConstants.CLU_TYPE_CREDIT_COURSE);
                 initOrgView();
                 //FIXME: This is a quick fix, need better way to reset view
-                orgProposalController.showDefaultView(NO_OP_CALLBACK);  
+                orgProposalController.showDefaultView();  
 
                 return createOrgView;
             default:
@@ -61,9 +60,9 @@ public class OrgApplicationManager extends Controller{
     }
 
     @Override
-    public void showDefaultView(final Callback<Boolean> onReadyCallback) {
+    public void showDefaultView() {
         initOrgView();
-        showView(ORGViews.CREATE_ORG, onReadyCallback);
+        showView(ORGViews.CREATE_ORG);
         
     }
     

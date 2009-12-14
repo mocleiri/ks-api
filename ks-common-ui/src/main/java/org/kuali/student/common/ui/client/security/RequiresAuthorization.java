@@ -14,6 +14,7 @@
  */
 package org.kuali.student.common.ui.client.security;
 
+import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 
 /**
  * Implement this interface for any view that requires authorization checks.

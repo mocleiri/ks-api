@@ -20,6 +20,7 @@ import org.kuali.student.common.ui.client.widgets.suggestbox.IdableSuggestOracle
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -119,6 +120,26 @@ public class KSSuggestBox extends SuggestBox{
     	}
     }
     
+    public void setValue(String id, final Callback<IdableSuggestion> callback) {
+    	if(id == null || id.equals("")){
+        	currentSuggestion = new IdableSuggestion();
+        	currentSuggestion.setId("");
+        	currentSuggestion.setDisplayString("");
+        	currentSuggestion.setReplacementString("");
+    	}
+    	else
+    	{
+	        oracle.getSuggestionByIdSearch(id, new Callback<IdableSuggestion>(){
+	
+	            @Override
+	            public void exec(IdableSuggestion result) {
+	                currentSuggestion = result;
+	                KSSuggestBox.this.setText((currentSuggestion == null) ? "" : currentSuggestion.getReplacementString());
+	                callback.exec(result);
+	            }
+	        });
+    	}
+    }
     
     @Override
     public void setValue(String id, boolean fireEvents) {

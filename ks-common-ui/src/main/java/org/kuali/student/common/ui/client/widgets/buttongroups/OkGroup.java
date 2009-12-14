@@ -17,6 +17,7 @@ package org.kuali.student.common.ui.client.widgets.buttongroups;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.OkEnum;
+import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.YesNoEnum;
 import org.kuali.student.common.ui.client.widgets.buttonlayout.ButtonRow;
 
 import com.google.gwt.event.dom.client.ClickEvent;

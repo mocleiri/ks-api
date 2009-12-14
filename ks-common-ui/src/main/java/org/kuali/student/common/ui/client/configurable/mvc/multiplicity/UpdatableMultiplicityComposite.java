@@ -40,7 +40,7 @@ public abstract class UpdatableMultiplicityComposite extends MultiplicityComposi
      */
     @Override
     public MultiplicityItem getItemDecorator() {
-        RemovableItemWithHeader item = new RemovableItemWithHeader();
+        RemovableItem item = new RemovableItem();
         item.setItemLabel(itemLabel);            
 
         return item;
@@ -51,7 +51,7 @@ public abstract class UpdatableMultiplicityComposite extends MultiplicityComposi
      */
     public Widget generateAddWidget() {
         Label addWidget =  new Label(addItemLabel);
-        addWidget.addStyleName("KS-Multiplicity-Link-Label");
+        addWidget.addStyleName("KS-Multiplicity-Labels");
         addWidget.addClickHandler(new ClickHandler(){
             public void onClick(ClickEvent event) {
                 addItem();

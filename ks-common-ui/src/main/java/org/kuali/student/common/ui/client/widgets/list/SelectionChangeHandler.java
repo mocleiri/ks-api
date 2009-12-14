@@ -15,6 +15,7 @@
 package org.kuali.student.common.ui.client.widgets.list;
 
 import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Handler for selection change for SelectItemWidget. 

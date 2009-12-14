@@ -14,6 +14,9 @@
  */
 package org.kuali.student.common.ui.client.mvc;
 
+import org.kuali.student.common.assembly.client.QueryPath;
+import org.kuali.student.core.dto.Idable;
+
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
@@ -22,8 +25,8 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author Kuali Student Team
  * @param <T>
  */
-public class ModelChangeEvent extends GwtEvent<ModelChangeHandler> {
-    public static final Type<ModelChangeHandler> TYPE = new Type<ModelChangeHandler>();
+public class ModelChangeEvent<T> extends GwtEvent<ModelChangeHandler<T>> {
+    public static final Type<ModelChangeHandler<?>> TYPE = new Type<ModelChangeHandler<?>>();
 
     /**
      * The actions that can be performed on a model.
@@ -35,7 +38,8 @@ public class ModelChangeEvent extends GwtEvent<ModelChangeHandler> {
     }
 
     private final Action action;
-    private final Model source;
+    private final T value;
+    private final QueryPath path;
     
     /**
      * Constructs a new ModelChangeEvent with an action and a value
@@ -43,19 +47,31 @@ public class ModelChangeEvent extends GwtEvent<ModelChangeHandler> {
      * @param action
      * @param value
      */
-    public ModelChangeEvent(Action action, Model source) {
+    public ModelChangeEvent(Action action, T value) {
         this.action = action;
-        this.source = source;
+        this.value = value;
+        this.path = null;
+    }
+    /**
+     * Constructs a new ModelChangeEvent with an action and a QueryPath
+     * 
+     * @param action
+     * @param path the path that was changed
+     */
+    public ModelChangeEvent(Action action, QueryPath path) {
+        this.action = action;
+        this.path = path;
+        this.value = null;
     }
 
     @Override
-    protected void dispatch(ModelChangeHandler handler) {
+    protected void dispatch(ModelChangeHandler<T> handler) {
         handler.onModelChange(this);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Type<ModelChangeHandler> getAssociatedType() {
+    public Type<ModelChangeHandler<T>> getAssociatedType() {
         return (Type) TYPE;
     }
 
@@ -69,11 +85,15 @@ public class ModelChangeEvent extends GwtEvent<ModelChangeHandler> {
     }
 
     /**
-     * Returns the model from which this event originated
+     * Returns the object with which the event is associated
      * 
-     * @return the model from which this event originated
+     * @return
      */
-    public Model getSource() {
-    	return this.source;
+    public T getValue() {
+        return this.value;
     }
+	public QueryPath getPath() {
+		return path;
+	}
+
 }

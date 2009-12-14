@@ -15,22 +15,16 @@
  */
 package org.kuali.student.common.assembly.client;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
- * 
+ *
  * @author nwright
  */
-public class LookupQosMetadata implements Serializable
+public class LookupQosMetadata
 {
-
- /**
-  *
-  */
- private static final long serialVersionUID = 1L;
  private Integer startAt;
  private Integer maxResults;
+
+
 
  public Integer getStartAt ()
  {
@@ -52,59 +46,7 @@ public class LookupQosMetadata implements Serializable
   this.maxResults = maxResults;
  }
 
- public class SortMetadata
- {
 
-  public SortMetadata ()
-  {
-  }
 
-  private String resultColumnKey;
-
-  public String getResultColumnKey ()
-  {
-   return resultColumnKey;
-  }
-
-  public void setResultColumnKey (String resultColumnKey)
-  {
-   this.resultColumnKey = resultColumnKey;
-  }
-
-  private boolean descending;
-
-  public boolean isDescending ()
-  {
-   return descending;
-  }
-
-  public void setDescending (boolean descending)
-  {
-   this.descending = descending;
-  }
-
- }
-
- protected List<SortMetadata> sorts;
-
- /**
-  * Get the value of sorts
-  *
-  * @return the value of sorts
-  */
- public List<SortMetadata> getSorts ()
- {
-  return sorts;
- }
-
- /**
-  * Set the value of sorts
-  *
-  * @param sorts new value of sorts
-  */
- public void setSorts (List<SortMetadata> sorts)
- {
-  this.sorts = sorts;
- }
 
 }

@@ -14,12 +14,17 @@
  */
 package org.kuali.student.common.ui.client.configurable.mvc;
 
+import java.util.List;
+
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.CollectionModel;
+import org.kuali.student.common.ui.client.mvc.Model;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
+import org.kuali.student.core.validation.dto.ValidationResultContainer;
+import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -37,7 +42,7 @@ public class VerticalSectionView extends SectionView {
 	
 	private Class<? extends ModelDTO> modelDTOType;
 	
-	private CollectionModel<ModelDTO> model = null;
+	private Model<ModelDTO> model = null;
 		
 	public VerticalSectionView(Enum<?> viewEnum, String name, Class<? extends ModelDTO> modelDTOType) {	    
 		super(viewEnum, name);
@@ -45,44 +50,37 @@ public class VerticalSectionView extends SectionView {
 	    this.modelDTOType = modelDTOType; 
 	}
 		
-	@Override
-	public void beforeShow(final Callback<Boolean> onReadyCallback){
-	    super.beforeShow(new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
-				if (!loaded){
-			    	panel.add(generateTitlePanel());
-			        panel.add(sectionTitle);
-			        panel.add(instructionsLabel);
-			        for(Section ns: sections){
-			            ns.redraw();
-			        }
-			        for(RowDescriptor r: rows){
-			            panel.add(r);
-			        }
-			        
-			        loaded = true;
-			    }
+	public void beforeShow(){
+	    super.beforeShow();
+	    if (!loaded){
+	    	panel.add(generateTitlePanel());
+	        panel.add(sectionTitle);
+	        panel.add(instructionsLabel);
+	        for(Section ns: sections){
+	            ns.redraw();
+	        }
+	        for(RowDescriptor r: rows){
+	            panel.add(r);
+	        }
+	        
+	        loaded = true;
+	    }
 
-		        //Request model and redraw view
-			    getController().requestModel(modelDTOType, new ModelRequestCallback<CollectionModel<ModelDTO>>(){
-		            public void onModelReady(CollectionModel<ModelDTO> m) {
-		                //if (model != m){
-		                    model = m;
-		                    redraw();
-		                    onReadyCallback.exec(true);
-		                //}                    
-		            }
+        //Request model and redraw view
+	    getController().requestModel(modelDTOType, new ModelRequestCallback<ModelDTO>(){
+            public void onModelReady(Model<ModelDTO> m) {
+                //if (model != m){
+                    model = m;
+                    redraw();
+                //}                    
+            }
 
-		            @Override
-		            public void onRequestFail(Throwable cause) {
-		                Window.alert("Failed to get model: " + getName());
-		                onReadyCallback.exec(false);
-		            }
-		            
-		        });	}
-	    	
-	    });
+            @Override
+            public void onRequestFail(Throwable cause) {
+                Window.alert("Failed to get model: " + getName());
+            }
+            
+        });
 	}
 	
     @Override	
@@ -119,8 +117,8 @@ public class VerticalSectionView extends SectionView {
     }
     
     public void updateView(){
-	    getController().requestModel(modelDTOType, new ModelRequestCallback<CollectionModel<ModelDTO>>(){
-            public void onModelReady(CollectionModel<ModelDTO> m) {
+	    getController().requestModel(modelDTOType, new ModelRequestCallback<ModelDTO>(){
+            public void onModelReady(Model<ModelDTO> m) {
                     updateView(m.get());
             }
 

@@ -23,14 +23,14 @@ package org.kuali.student.common.ui.client.mvc;
  * @param <T>
  *            the type of model being requested
  */
-public interface ModelRequestCallback<T extends Model> {
+public interface ModelRequestCallback<T> {
     /**
      * Called when the model is available
      * 
      * @param model
      *            the model that was requested
      */
-    public void onModelReady(T model);
+    public void onModelReady(Model<T> model);
 
     /**
      * Called when the controller was unable to provide the model

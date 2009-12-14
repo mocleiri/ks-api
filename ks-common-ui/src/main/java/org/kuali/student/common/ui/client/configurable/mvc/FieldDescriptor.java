@@ -14,13 +14,11 @@
  */
 package org.kuali.student.common.ui.client.configurable.mvc;
 
-import org.kuali.student.common.assembly.client.Metadata;
 import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBinding;
 import org.kuali.student.common.ui.client.configurable.mvc.binding.MultiplicityCompositeBinding;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityComposite;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue;
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue.Type;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.RichTextEditor;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
@@ -40,9 +38,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class FieldDescriptor {
     private String fieldKey;
     private String fieldLabel;
-    @Deprecated
     private ModelDTOValue.Type fieldType;
-    private Metadata metadata;
     private Widget fieldWidget;
     private PropertyBinding propertyBinding;
     private PropertyBinding widgetBinding;
@@ -58,14 +54,13 @@ public class FieldDescriptor {
      * @param fieldType
      * @param fieldWidget
      */
-    @Deprecated
     public FieldDescriptor(String fieldKey, String fieldLabel, ModelDTOValue.Type fieldType, Widget fieldWidget) {
         this.fieldKey = fieldKey;
         this.fieldLabel = fieldLabel;
         this.fieldType = fieldType;
         this.fieldWidget = fieldWidget;
     }
-    @Deprecated
+    
     public FieldDescriptor(String fieldKey, String fieldLabel, ModelDTOValue.Type fieldType, Widget fieldWidget, RequiredEnum requiredState) {
         this.fieldKey = fieldKey;
         this.fieldLabel = fieldLabel;
@@ -73,78 +68,21 @@ public class FieldDescriptor {
         this.fieldWidget = fieldWidget;
         this.requiredState = requiredState;
     }
-    @Deprecated
+    
     public FieldDescriptor(String fieldKey, String fieldLabel, ModelDTOValue.Type fieldType, RequiredEnum requiredState) {
         this.fieldKey = fieldKey;
         this.fieldLabel = fieldLabel;
         this.fieldType = fieldType;
         this.requiredState = requiredState;
     }
-    @Deprecated
+
     public FieldDescriptor(String fieldKey, String fieldLabel, ModelDTOValue.Type fieldType) {
         this.fieldKey = fieldKey;
         this.fieldLabel = fieldLabel;
         this.fieldType = fieldType;
     }
     
-    public FieldDescriptor(String fieldKey, String fieldLabel, Metadata metadata) {
-    	this.fieldKey = fieldKey;
-    	this.fieldLabel = fieldLabel;
-    	this.metadata = metadata;
-    	// to provide backward compatibility for now
-    	setOldDtoType(metadata);
-    }
 
-    private void setOldDtoType(Metadata metadata) {
-    	if (metadata != null) {
-    		switch (metadata.getDataType()) {
-    		case BOOLEAN:
-    			this.fieldType = Type.BOOLEAN;
-    			break;
-    			
-    		case BYTE:
-    			this.fieldType = Type.BYTE;
-    			break;
-    			
-    		case CHARACTER:
-    			this.fieldType = Type.CHARACTER;
-    			break;
-    			
-    		case DATE:
-    		case TRUNCATED_DATE:
-    			this.fieldType = Type.DATE;
-    			break;
-    			
-    		case DOUBLE:
-    			this.fieldType = Type.DOUBLE;
-    			break;
-    			
-    		case FLOAT:
-    			this.fieldType = Type.FLOAT;
-    			break;
-    			
-    		case INTEGER:
-    			this.fieldType = Type.INTEGER;
-    			break;
-    			
-    		case LONG:
-    			this.fieldType = Type.LONG;
-    			break;
-    			
-    		case STRING:
-    			this.fieldType = Type.STRING;
-    			break;
-    			
-    		case DATA:
-    			this.fieldType = Type.MODELDTO;
-    			break;
-    			
-    		case LIST:
-    			this.fieldType = Type.LIST;
-    			break;
-    		}
-    	}
-    }
     public RequiredEnum getRequiredState() {
 		return requiredState;
 	}
@@ -174,18 +112,13 @@ public class FieldDescriptor {
     }
     
     protected Widget createFieldWidget() {
-    	if (metadata == null) {
-    		// backwards compatibility for old ModelDTO code
-	    	// for now, default to textbox if not specified
-	    	Widget result = new KSTextBox();
-	    	if(fieldKey != null){
-	    		String style = this.fieldKey.replaceAll("/", "-");
-	    		result.addStyleName(style);
-	    	}
-	    	return result;
-    	} else {
-    		return DefaultWidgetFactory.getInstance().getWidget(this);
+    	// for now, default to textbox if not specified
+    	Widget result = new KSTextBox();
+    	if(fieldKey != null){
+    		String style = this.fieldKey.replaceAll("/", "-");
+    		result.addStyleName(style);
     	}
+    	return result;
     }
     
     public void setPropertyBinding(PropertyBinding binding){
@@ -261,15 +194,6 @@ public class FieldDescriptor {
 
 	public void setHasHadFocus(boolean hasHadFocus) {
 		this.hasHadFocus = hasHadFocus;
-	}
-	public Metadata getMetadata() {
-		return metadata;
-	}
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
-	public void setFieldWidget(Widget fieldWidget) {
-		this.fieldWidget = fieldWidget;
 	}
     
     

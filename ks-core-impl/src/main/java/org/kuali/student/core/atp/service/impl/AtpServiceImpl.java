@@ -51,8 +51,6 @@ import org.kuali.student.core.search.dto.Result;
 import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
 import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
-import org.kuali.student.core.search.newdto.SearchRequest;
-import org.kuali.student.core.search.newdto.SearchResult;
 import org.kuali.student.core.search.service.impl.SearchManager;
 import org.kuali.student.core.validation.dto.ValidationResultContainer;
 import org.springframework.transaction.annotation.Transactional;
@@ -619,12 +617,6 @@ public class AtpServiceImpl implements AtpService {
 			OperationFailedException {
 		checkForMissingParameter(searchResultTypeKey, "searchResultTypeKey");
 		return searchManager.getSearchTypesByResult(searchResultTypeKey);
-	}
-
-	@Override
-	public SearchResult search(SearchRequest searchRequest) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

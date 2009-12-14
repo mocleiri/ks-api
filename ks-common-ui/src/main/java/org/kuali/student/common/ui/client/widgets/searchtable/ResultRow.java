@@ -14,7 +14,9 @@
  */
 package org.kuali.student.common.ui.client.widgets.searchtable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.kuali.student.core.dto.Idable;

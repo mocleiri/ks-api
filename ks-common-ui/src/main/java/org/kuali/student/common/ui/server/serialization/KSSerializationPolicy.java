@@ -14,8 +14,10 @@
  */
 package org.kuali.student.common.ui.server.serialization;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.impl.LegacySerializationPolicy;
 import com.google.gwt.user.server.rpc.impl.StandardSerializationPolicy;

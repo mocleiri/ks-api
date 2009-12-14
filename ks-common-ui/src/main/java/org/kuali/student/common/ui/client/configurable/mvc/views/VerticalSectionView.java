@@ -14,11 +14,11 @@
  */
 package org.kuali.student.common.ui.client.configurable.mvc.views;
 
+import org.kuali.student.common.assembly.client.DataModel;
 import org.kuali.student.common.ui.client.configurable.mvc.RowDescriptor;
 import org.kuali.student.common.ui.client.configurable.mvc.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionView;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 
 import com.google.gwt.user.client.Window;
@@ -46,45 +46,37 @@ public class VerticalSectionView extends SectionView {
         this.modelId = modelId; 
     }
         
-    @Override
-    public void beforeShow(final Callback<Boolean> onReadyCallback){
-        super.beforeShow(new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
-		        if (!loaded){
-		            panel.add(generateTitlePanel());
-		            panel.add(sectionTitle);
-		            panel.add(instructionsLabel);
-		            for(Section ns: sections){
-		                ns.redraw();
-		            }
-		            for(RowDescriptor r: rows){
-		                panel.add(r);
-		            }
-		            
-		            loaded = true;
-		        }
+    public void beforeShow(){
+        super.beforeShow();
+        if (!loaded){
+            panel.add(generateTitlePanel());
+            panel.add(sectionTitle);
+            panel.add(instructionsLabel);
+            for(Section ns: sections){
+                ns.redraw();
+            }
+            for(RowDescriptor r: rows){
+                panel.add(r);
+            }
+            
+            loaded = true;
+        }
 
-		        //Request model and redraw view
-		        getController().requestModel(modelId, new ModelRequestCallback<DataModel>(){
+        //Request model and redraw view
+        getController().requestModel(modelId, new ModelRequestCallback<DataModel>(){
 
-		            @Override
-		            public void onRequestFail(Throwable cause) {
-		                Window.alert("Failed to get model: " + getName());
-		                onReadyCallback.exec(false);
-		            }
+            @Override
+            public void onRequestFail(Throwable cause) {
+                Window.alert("Failed to get model: " + getName());
+            }
 
-		            @Override
-		            public void onModelReady(DataModel m) {
-		                model = m;
-		                redraw();
-		                onReadyCallback.exec(true);
-		            }
-		            
-		        });
-			}
+            @Override
+            public void onModelReady(org.kuali.student.common.ui.client.mvc.Model<DataModel> m) {
+                model = m.get();
+                redraw();                                   
+            }
+            
         });
-
     }
     
     @Override   
@@ -113,9 +105,8 @@ public class VerticalSectionView extends SectionView {
     public void updateView(){
         getController().requestModel(modelId, new ModelRequestCallback<DataModel>(){
             @Override
-            public void onModelReady(DataModel m) {
-            	// TODO review this, shouldn't it assign this.model = m?
-                updateView(m);                
+            public void onModelReady(org.kuali.student.common.ui.client.mvc.Model<DataModel> m) {
+                updateView(m.get());                
             }
 
         

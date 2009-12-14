@@ -24,7 +24,7 @@ public interface View {
      * Called by controller before the view is displayed to allow lazy initialization or any other preparatory work to be
      * done.
      */
-    public void beforeShow(Callback<Boolean> onReadyCallback);
+    public void beforeShow();
 
     /**
      * Called by the controller before the view is hidden to allow the view to perform cleanup or request confirmation from

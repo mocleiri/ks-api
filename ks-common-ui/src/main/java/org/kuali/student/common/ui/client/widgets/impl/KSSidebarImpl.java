@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import org.kuali.student.common.ui.client.widgets.KSFloatPanel;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
+import org.kuali.student.common.ui.client.widgets.KSSidebar;
 import org.kuali.student.common.ui.client.widgets.KSSidebarAbstract;
 import org.kuali.student.common.ui.client.widgets.KSStyles;
 import org.kuali.student.common.ui.client.widgets.KSFloatPanel.FloatLocation;

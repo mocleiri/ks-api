@@ -18,8 +18,6 @@ import org.kuali.student.core.organization.assembly.data.server.OrgInfoData;
 import org.kuali.student.core.organization.assembly.data.server.OrgInfoData.ModificationState;
 import org.kuali.student.core.organization.dto.OrgInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
-import org.kuali.student.core.search.newdto.SearchRequest;
-import org.kuali.student.core.search.newdto.SearchResult;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 public class OrgProposalAssembler implements Assembler<Data, Org>{
@@ -52,13 +50,8 @@ public class OrgProposalAssembler implements Assembler<Data, Org>{
         return null;
     }
 
-    @Deprecated
-    public Metadata getMetadata() throws AssemblyException {
-    	// TODO remove this method
-    	return null;
-    }
     @Override
-    public Metadata getMetadata(String type, String state) throws AssemblyException {
+    public Metadata getMetadata() throws AssemblyException {
         // TODO Neerav Agrawal - THIS METHOD NEEDS JAVADOCS
         return null;
     }
@@ -150,11 +143,7 @@ public class OrgProposalAssembler implements Assembler<Data, Org>{
        
         return org;
     }
+    
 
-	@Override
-	public SearchResult search(SearchRequest searchRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
    
 }

@@ -2,6 +2,8 @@ package org.kuali.student.common.ui.client.theme;
 
 import org.kuali.student.common.ui.client.widgets.KSImage;
 
+import com.google.gwt.user.client.ui.Image;
+
 public interface CommonImages {
 
     public KSImage getHelpIcon();
@@ -12,6 +14,10 @@ public interface CommonImages {
     public KSImage getEditCommentIcon();
     public KSImage getDeleteCommentIcon();
     public KSImage getSpacer();
-    public KSImage getSearchIcon();
-    public KSImage getProgressSpinner();
+	public KSImage getCurriculumManagementImage();
+	public KSImage getSearchIcon();
+	public KSImage getDropDownIconBlack();
+	public KSImage getDropDownIconWhite();
+	public KSImage getDropDownIconCustom();
+	public KSImage getLightBulbIcon();
 }

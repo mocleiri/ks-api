@@ -14,6 +14,8 @@
  */
 package org.kuali.student.common.ui.client.images;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ImageBundle;
 
 @Deprecated

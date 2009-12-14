@@ -3,6 +3,9 @@ package org.kuali.student.common.ui.theme.custom.client;
 import org.kuali.student.common.ui.client.theme.CommonImages;
 import org.kuali.student.common.ui.client.widgets.KSImage;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.Image;
+
 public class CommonImagesImpl implements CommonImages{
 	@Override
 	public KSImage getAsterisk() {
@@ -45,14 +48,39 @@ public class CommonImagesImpl implements CommonImages{
 		return null;
 	}
 
-    @Override
-    public KSImage getSearchIcon() {
-        return null;
-    }
+	@Override
+	public KSImage getCurriculumManagementImage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
-	public KSImage getProgressSpinner() {
-		return new KSImage(KSClientBundle.INSTANCE.spinner());
+	public KSImage getDropDownIconBlack() {
+		return null;
+	}
+
+	@Override
+	public KSImage getDropDownIconCustom() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KSImage getDropDownIconWhite() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KSImage getLightBulbIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KSImage getSearchIcon() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

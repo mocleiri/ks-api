@@ -14,8 +14,8 @@
  */
 package org.kuali.student.common.ui.client.configurable.mvc.binding;
 
+import org.kuali.student.common.assembly.client.DataModel;
 import org.kuali.student.common.assembly.client.QueryPath;
-import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.widgets.RichTextEditor;
 
 public class RichTextBinding implements ModelWidgetBinding<RichTextEditor>{
@@ -34,12 +34,11 @@ public class RichTextBinding implements ModelWidgetBinding<RichTextEditor>{
         model.set(qPath, object.getHTML());
 
         //TODO: Should these defaults be set in server assembly defaults?
-        //Commenting type and state as it is not required for rich text
-//        qPath = QueryPath.parse(richTextRoot + "type");        
-//        model.set(qPath, "kuali.not.applicable");
-//        
-//        qPath = QueryPath.parse(richTextRoot + "state");
-//        model.set(qPath, "(n/a)");
+        qPath = QueryPath.parse(richTextRoot + "type");        
+        model.set(qPath, "kuali.not.applicable");
+        
+        qPath = QueryPath.parse(richTextRoot + "state");
+        model.set(qPath, "(n/a)");
     }
 
     @Override

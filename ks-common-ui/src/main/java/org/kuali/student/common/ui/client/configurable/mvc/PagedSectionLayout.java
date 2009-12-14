@@ -15,6 +15,7 @@
 package org.kuali.student.common.ui.client.configurable.mvc;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.ValidateResultEvent;
 import org.kuali.student.common.ui.client.event.ValidateResultHandler;
 import org.kuali.student.common.ui.client.mvc.ActionCompleteCallback;
-import org.kuali.student.common.ui.client.mvc.Callback;
+import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.View;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
 import org.kuali.student.common.ui.client.widgets.KSButton;
@@ -32,9 +33,12 @@ import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.menus.KSBasicMenu;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
 import org.kuali.student.core.validation.dto.ValidationResultContainer;
+import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -154,7 +158,7 @@ public abstract class PagedSectionLayout extends LayoutController implements Con
                     currSectionIdx = newMenuItemIdx;
                     toolMenu.clearSelected();
                     sectionButtonPanel.setVisible(true);
-    			    showView(section.getViewEnum(), NO_OP_CALLBACK);
+    			    showView(section.getViewEnum());
 			    }
 			}
 		});
@@ -176,7 +180,7 @@ public abstract class PagedSectionLayout extends LayoutController implements Con
                 currSectionIdx = -1;
                 sectionMenu.clearSelected();
                 sectionButtonPanel.setVisible(false);
-                showView(tool.getViewEnum(), NO_OP_CALLBACK);
+                showView(tool.getViewEnum());
             }
         }); 
         
@@ -266,28 +270,18 @@ public abstract class PagedSectionLayout extends LayoutController implements Con
      * @see org.kuali.student.common.ui.client.mvc.Controller#showDefaultView()
      */
     @Override
-    public void showDefaultView(final Callback<Boolean> onReadyCallback) {
+    public void showDefaultView() {
         if (!loaded){
             init();
             loaded = true;
         }
                    
-        showView(defaultView, onReadyCallback);
+        showView(defaultView);
     }
     
-    public void showStartSection(final Callback<Boolean> onReadyCallback){
-        startSectionView.beforeShow(new Callback<Boolean>() {
-
-			@Override
-			public void exec(Boolean result) {
-				if (result) {
-					startSectionWindow.show();
-				}
-				onReadyCallback.exec(result);
-			}
-        	
-        });        
-        
+    public void showStartSection(){
+        startSectionView.beforeShow();        
+        startSectionWindow.show();
     }
     
     public SectionView getStartSection(){

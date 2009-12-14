@@ -2,7 +2,6 @@ package org.kuali.student.core.organization.assembly.data.client;
 
 import org.kuali.student.common.assembly.client.Data;
 
-@Deprecated
 public class ModificationData extends Data {
 	public enum Properties implements PropertyEnum {
 		CREATED("isCreated"), DELETED("isDeleted"), UPDATED("isUpdated"), VERSIONS("versions");

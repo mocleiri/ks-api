@@ -58,7 +58,7 @@
     <repositories>
         <repository>
             <id>kuali.release</id>
-            <url>http://archiva.kuali.umd.edu/repository/release</url>
+            <url>https://test.kuali.org/maven</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -436,9 +436,7 @@
 		<repository>
 			<id>kuali.release</id>
 			<name>Internal Release Repository</name>
-			<url>
-				dav:http://archiva.kuali.umd.edu/repository/release
-			</url>
+			<url>scp://test.kuali.org:/opt/m2/repository</url>
 		</repository>
 		<snapshotRepository>
 			<id>kuali.snapshots</id>
@@ -450,7 +448,7 @@
 		<site>
 			<id>ks.site</id>
 			<url>
-                dav:https://student.kuali.org:8443/student/site/core/${project.version}
+                scp://student.kuali.org:/opt/www/student/site/core/${project.version}
 			</url>
 		</site>
 	</distributionManagement>

@@ -12,10 +12,13 @@ import org.kuali.student.common.ui.client.event.ValidateResultHandler;
 import org.kuali.student.common.ui.client.mvc.ActionCompleteCallback;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.View;
+import org.kuali.student.common.ui.client.mvc.HasActionState.ActionState;
 import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
 import org.kuali.student.common.ui.client.widgets.KSButton;
+import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.containers.KSTitleContainerImpl;
+import org.kuali.student.common.ui.client.widgets.menus.KSBasicMenu;
 import org.kuali.student.common.ui.client.widgets.menus.KSListPanel;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
 import org.kuali.student.common.ui.client.widgets.menus.impl.KSListMenuImpl;
@@ -26,8 +29,11 @@ import org.kuali.student.core.validation.dto.ValidationResultContainer;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -109,6 +115,7 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 		}
 		
 		public void init(){
+			menu.addStyleName("KS-TabbedSectionLayout-Menu");
 			menu.setItems(topLevelMenuItems);
 		}
 		
@@ -149,7 +156,7 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 				    if (currSectionIdx != newMenuItemIdx){
 	                    currSectionIdx = newMenuItemIdx;
 	                    sectionButtonPanel.setVisible(true);
-	    			    showView(section.getViewEnum(), NO_OP_CALLBACK);
+	    			    showView(section.getViewEnum());
 				    }
 				}
 			});
@@ -206,11 +213,9 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 			
 		}
 
-		public void beforeShow(final Callback<Boolean> onReadyCallback) {
-			if(!shown) {
-				onReadyCallback.exec(true);
-			} else {
-				showView(tabDefaultView, onReadyCallback);
+		public void beforeShow() {
+			if(!shown){
+				showView(tabDefaultView);
 			}
 		}
 	}
@@ -285,13 +290,13 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 	}
 
 	@Override
-	public void showDefaultView(final Callback<Boolean> onReadyCallback) {
+	public void showDefaultView() {
         if (!loaded){
             init();
             loaded = true;
         }
                    
-        showView(defaultView, onReadyCallback);
+        showView(defaultView);
 	}
 
 	@Override
@@ -332,7 +337,7 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 
 			@Override
 			public void exec(String result) {
-				layout.beforeShow(NO_OP_CALLBACK);
+				layout.beforeShow();
 			}
 			
 		});
@@ -358,7 +363,7 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 			@Override
 			public void exec(String result) {
 				//layout.beforeShow();
-				showView(tool.getViewEnum(), NO_OP_CALLBACK);
+				showView(tool.getViewEnum());
 			}
 			
 		});
@@ -370,16 +375,9 @@ public class TabbedSectionLayout extends LayoutController implements Configurabl
 		
 	}
 	
-    public void showStartSection(final Callback<Boolean> onReadyCallback){
-        startSectionView.beforeShow(new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
-				if (result) {
-					startSectionWindow.show();
-				}
-				onReadyCallback.exec(result);
-			}
-        });
+    public void showStartSection(){
+        startSectionView.beforeShow();
+        startSectionWindow.show();
     }
     
     public SectionView getStartSection(){

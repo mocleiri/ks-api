@@ -24,11 +24,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamFactory;
 
-/**
- * Deprecated.  Metadata should be accessed through the orchestration/assembler layer.
- *
- */
-@Deprecated
 public class DictionaryLoader {
    
     public static void loadDictionary() {

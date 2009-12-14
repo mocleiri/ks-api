@@ -68,7 +68,7 @@ public abstract class MultiplicityComposite extends SimpleMultiplicityComposite 
             headerPanel.addStyleName("KS-Multiplicity-Item-Header");
             KSLabel headerLabel = new KSLabel(itemLabel + " " + itemCount);
             headerPanel.add(headerLabel);
-            if (updateable) {
+            if (showDelete) {
                 headerPanel.add(generateRemoveWidget(listItem, this));
             }
 
