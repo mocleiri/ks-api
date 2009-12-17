@@ -141,45 +141,60 @@
 }
 .KS-LOMoveUpButton{
     background: url("images/LOMoveUpButton.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LOMoveUpButtonDisabled{
     background: url("images/LOMoveUpButtonDisabled.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LOMoveDownButton{
     background: url("images/LOMoveDownButton.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LOMoveDownButtonDisabled{
     background: url("images/LOMoveDownButtonDisabled.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LOIndentButton{
     background: url("images/LOIndentLeft.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LOIndentButtonDisabled{
     background: url("images/LOIndentLeft.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
+}
+.KS-LOOutdentButton{
+    background: url("images/LOOutdent.png") no-repeat 2px 2px;
+    width: 22px;
+    height:22px;
+}
+.KS-LOOutdentButtonDisabled{
+    background: url("images/LOOutdentDisabled.png") no-repeat 2px 2px;
+    width: 22px;
+    height:22px;
 }
 .KS-LODeleteButton{
     background: url("images/LODeleteButton.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
 .KS-LODeleteButtonDisabled{
     background: url("images/LODeleteButtonDisabled.png") no-repeat 2px 2px;
-    width: 20px;
-    height:20px;
+    width: 22px;
+    height:22px;
 }
-
+.KS-LOBuilder-New{
+	color: blue;
+	font-size: 70%;
+	cursor: pointer;
+	
+}
 
 .cluInfo-officialIdentifier-longName{}
 .cluInfo-officialIdentifier-division{}
