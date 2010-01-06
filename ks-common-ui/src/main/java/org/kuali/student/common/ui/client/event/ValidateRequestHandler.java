@@ -12,17 +12,10 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package org.kuali.student.common.ui.client.widgets.list;
+package org.kuali.student.common.ui.client.event;
 
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.user.client.ui.Widget;
+import org.kuali.student.common.ui.client.mvc.UncheckedApplicationEventHandler;
 
-/**
- * Handler for selection change for SelectItemWidget. 
- * 
- * @author Kuali Student Team
- *
- */
-public interface SelectionChangeHandler extends EventHandler {
-    public void onSelectionChange(SelectionChangeEvent event);
+public interface ValidateRequestHandler extends UncheckedApplicationEventHandler {
+    public void onValidateRequest(ValidateRequestEvent event);
 }

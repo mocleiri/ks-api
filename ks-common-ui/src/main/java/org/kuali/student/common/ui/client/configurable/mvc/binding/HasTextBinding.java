@@ -42,15 +42,6 @@ public class HasTextBinding implements ModelWidgetBinding<HasText>{
                 case STRING:
                     model.set(qPath, value);
                     break;
-                case CHARACTER:
-                    if(value.length() == 1){
-                        Character character = new Character(value.charAt(0));
-                        model.set(qPath, character);
-                    }
-                    else{
-                        throw new UnsupportedOperationException("Characters can only be set with Strings containing 1 character");
-                    }
-                    break;
                 case INTEGER:
                     if (value != null && value.length() > 0){
                         model.set(qPath, Integer.parseInt(value));
@@ -64,9 +55,6 @@ public class HasTextBinding implements ModelWidgetBinding<HasText>{
                     break;
                 case DOUBLE:
                     model.set(qPath, Double.parseDouble(value));
-                    break;
-                case BYTE:
-                    model.set(qPath, Byte.parseByte(value));
                     break;
                 case BOOLEAN:
                     if(value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")){

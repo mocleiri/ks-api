@@ -23,6 +23,7 @@ import org.kuali.student.common.ui.client.widgets.layout.HorizontalBlockFlowPane
 import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
+import org.kuali.student.common.ui.client.widgets.list.SelectionChangeEvent;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
 import org.kuali.student.common.ui.client.widgets.searchtable.SearchBackedTable;
 import org.kuali.student.core.search.dto.QueryParamValue;
@@ -301,11 +302,12 @@ public class SearchPanel extends Composite{
 			paramSelector.addSelectionChangeHandler(new SelectionChangeHandler(){
 
 				@Override
-				public void onSelectionChange(KSSelectItemWidgetAbstract w) {
-					String id = w.getSelectedItem();
+				public void onSelectionChange(SelectionChangeEvent event) {
+					String id = ((KSSelectItemWidgetAbstract)event.getWidget()).getSelectedItem();
 					widget = listItems.getWidget(id);
 					widgetPanel.setWidget(widget);
 					key = id;
+					
 				}
 			});
 			layout.add(paramSelector);
