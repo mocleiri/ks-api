@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.base;
+package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
 
 
 import org.kuali.student.common.assembly.client.Data;
 import org.kuali.student.common.assembly.client.Metadata;
-import org.kuali.student.common.assembly.client.QueryPath;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.ConstraintMetadataBank;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.LookupMetadataBank;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.RecursionCounter;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.CluFeeInfoHelper.Properties;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.FindCourseHelper.Properties;
 
 
-public class CluFeeInfoMetadata
+public class FindCourseMetadata
 {
 	
 	public boolean matches (String inputType, String inputState, String dictType, String dictState)
@@ -54,30 +54,15 @@ public class CluFeeInfoMetadata
 		Metadata childMeta;
 		Metadata listMeta;
 		
-		// metadata for cluFeeRecordInfoList
+		// metadata for CourseId
 		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.CLU_FEE_RECORD_INFO_LIST.getKey (), childMeta);
-		childMeta.setDataType (Data.DataType.LIST);
+		mainMeta.getProperties ().put (Properties.COURSE_ID.getKey (), childMeta);
+		childMeta.setDataType (Data.DataType.STRING);
 		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
+		childMeta.setLookupMetadata (LookupMetadataBank.LOOKUP_BANK.get ("kuali.lu.lookup.creditCoursesAndProposals".toLowerCase ()));
+		childMeta.setLookupContextPath (null);
 		if (this.matches (type, state, "(default)", "(default)"))
 		{
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("optional"));
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("repeating"));
-		}
-		listMeta = new Metadata ();
-		listMeta.setDataType (Data.DataType.DATA);
-		listMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		childMeta.getProperties ().put (QueryPath.getWildCard (), listMeta);
-		new CluFeeRecordInfoMetadata ().loadChildMetadata (listMeta, type, state, recursions);
-		
-		// metadata for attributes
-		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.ATTRIBUTES.getKey (), childMeta);
-		childMeta.setDataType (Data.DataType.DATA);
-		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
-		if (this.matches (type, state, "(default)", "(default)"))
-		{
-			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("optional"));
 			childMeta.getConstraints ().add (ConstraintMetadataBank.BANK.get ("single"));
 		}
 		
