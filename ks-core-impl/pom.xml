@@ -51,8 +51,6 @@
 			<groupId>org.kuali.rice</groupId>
 			<artifactId>rice-api</artifactId>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.kuali.student.core</groupId>
 			<artifactId>ks-common-test</artifactId>
@@ -60,6 +58,11 @@
 			<scope>test</scope>
 		</dependency>
 		
+        <dependency>
+          <groupId>org.kuali.student.brms</groupId>
+          <artifactId>ks-brms-execution-impl</artifactId>
+          <version>${ks-brms.version}</version>
+        </dependency>
 	</dependencies>
 
 	<profiles>
