@@ -26,10 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.student.common.ui.client.application.Application;
-import org.kuali.student.common.ui.client.configurable.mvc.HasModelDTOValue;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSDropDown;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
@@ -61,6 +58,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -74,7 +72,7 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
  * @author Kuali Rice Team (kuali-rice@googlegroups.com)
  *
  */
-public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
+public class LOCategoryBuilder extends Composite implements HasValue<List<LoCategoryInfo>> {
 
     private String type;
     private String state;
@@ -103,6 +101,8 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
         picker = new LOCategoryPicker();
         categoryList = new LOCategoryList();
 
+        initializeCategoryTypeMap();
+        
         initWidget(root);
 
         final VerticalPanel selectedPanel = new VerticalPanel();
@@ -171,9 +171,8 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
             public void onSuccess(List<LoCategoryTypeInfo> result) {
                 final LOCategoryTypeInfoList list = new LOCategoryTypeInfoList(result);
                 typesDropDown.setListItems(list);
-                if (categoryTypeMap == null) {
-                    loadCategoryTypes(result);                    
-                }
+                loadCategoryTypes(result);                    
+                
                 KSThinTitleBar titleBar = new KSThinTitleBar("Create New Category " + picker.getText());//+ enteredWord);
                 main.add(titleBar);
                 main.add(new KSLabel("Select a Type"));
@@ -226,6 +225,23 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
         });
     }
 
+    private void initializeCategoryTypeMap() {
+    	if (null == categoryTypeMap) {
+	        loRpcServiceAsync.getLoCategoryTypes(new AsyncCallback<List<LoCategoryTypeInfo>>() {
+	
+		        @Override
+		        public void onFailure(Throwable caught) {
+		            Window.alert("getLoCategoryTypes failed " + caught.getMessage());
+		        }
+		
+		        @Override
+		        public void onSuccess(List<LoCategoryTypeInfo> result) {
+	                loadCategoryTypes(result);                    
+		        }
+	        });
+	    }
+    }
+    
     private void loadCategoryTypes(List<LoCategoryTypeInfo> categoryTypes) {
         if (categoryTypeMap == null) {
             categoryTypeMap = new HashMap<String, LoCategoryTypeInfo>();
@@ -270,13 +286,13 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
     }
 
     @Override
-    public void setValue(ModelDTOValue modelDTOValue) {
-        categoryList.setValue(modelDTOValue);
+    public void setValue(List<LoCategoryInfo> categories) {
+        categoryList.setValue(categories);
 
     }
 
     @Override
-    public void setValue(ModelDTOValue value, boolean fireEvents) {
+    public void setValue(List<LoCategoryInfo> value, boolean fireEvents) {
         setValue(value);
     }
 
@@ -284,23 +300,15 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
      * @see com.google.gwt.user.client.ui.HasValue#getValue()
      */
     @Override
-    public ModelDTOValue getValue() {
+    public List<LoCategoryInfo> getValue() {
         return categoryList.getValue();
-    }
-
-    /**
-     * @see org.kuali.student.common.ui.client.configurable.mvc.HasModelDTOValue#updateModelDTO(org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue)
-     */
-    @Override
-    public void updateModelDTOValue() {
-        categoryList.updateModelDTOValue();
     }
 
     /**
      * @see com.google.gwt.event.logical.shared.HasValueChangeHandlers#addValueChangeHandler(com.google.gwt.event.logical.shared.ValueChangeHandler)
      */
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ModelDTOValue> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<LoCategoryInfo>> handler) {
         return categoryList.addValueChangeHandler(handler);
     }
 
@@ -459,7 +467,7 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
      public class LOCategoryList extends Composite {
          
          private static final String CATEGORY_TYPE_SEPARATOR = " - ";
-         protected List<ModelDTO> modelDTOList = new ArrayList<ModelDTO>();
+         protected List<LoCategoryInfo> categories = new ArrayList<LoCategoryInfo>();
          VerticalPanel main = new VerticalPanel();
 
          FlexTable categoryTable = new FlexTable();
@@ -482,7 +490,7 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
 
          }
 
-         public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ModelDTOValue> handler) {
+         public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<LoCategoryInfo>> handler) {
              return null;
          }
 
@@ -497,10 +505,14 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
 
              categoryTable.clear();
 
-             for (int i = 0; i < modelDTOList.size(); i++) {
-                 String name = ((ModelDTOValue.StringType)modelDTOList.get(i).get("name")).get();
-                 String typeKey = ((ModelDTOValue.StringType)modelDTOList.get(i).get("type")).get();
-                 String typeName = categoryTypeMap.get(typeKey).getName();
+             for (int i = 0; i < categories.size(); i++) {
+                 String name = categories.get(i).getName();
+                 String typeKey = categories.get(i).getType();
+                 // TODO - need to somehow ensure that categoryTypeMap is initialized before redraw() 
+                 String typeName = "ERROR: uninitialized categoryTypeMap";
+                 if (null != categoryTypeMap) {
+                     typeName = categoryTypeMap.get(typeKey).getName();
+                 } 
                  categoryTable.setWidget(row, col++, new KSLabel(name + CATEGORY_TYPE_SEPARATOR + typeName));
                  KSLabel deleteLabel = new KSLabel("[x]");
                  deleteLabel.addStyleName("KS-LOBuilder-Search-Link");
@@ -511,32 +523,12 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
              }
          }
 
-         public ModelDTOValue getValue() {
-             ModelDTOValue.ListType value = new ModelDTOValue.ListType();
-
-             // fill the list of ModelDTO to ModelDTOValue.ModelDTOType 
-             List<ModelDTOValue> valueList = new ArrayList<ModelDTOValue>();
-             for(ModelDTO dto:modelDTOList){
-                 ModelDTOValue.ModelDTOType dtoValue = new ModelDTOValue.ModelDTOType();
-                 dtoValue.set(dto);
-                 valueList.add(dtoValue);
-             }
-             value.set(valueList);
-
-             return value;
+         public List<LoCategoryInfo> getValue() {
+             return categories;
          }
 
-         public void setValue(ModelDTOValue value) {
-             ModelDTOValue.ListType list = (ModelDTOValue.ListType) value;
-             modelDTOList = new ArrayList<ModelDTO>();
-             // fill the ModelDTOValue.ModelDTOType to List<ModelDTO>
-             // when the server hasn't been called yet, there's not list in LoModelDTO
-             if (null != list) {
-                 for(ModelDTOValue dto : list.get()){
-                     ModelDTOValue.ModelDTOType dtoType = (ModelDTOValue.ModelDTOType)dto;
-                     modelDTOList.add(dtoType.get());
-                 }
-             }
+         public void setValue(List<LoCategoryInfo> categories) {
+             this.categories = categories;
              redraw();            
          }
 
@@ -546,11 +538,11 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
              text = text.substring(0,a);
 
              int i = 0;
-             for (ModelDTO dto : modelDTOList) {
-                 String name = ((ModelDTOValue.StringType)dto.get("name")).get();
+             for (LoCategoryInfo catInfo : categories) {
+                 String name = catInfo.getName();
 
                  if (name.equals(text)) {
-                     modelDTOList.remove(i);
+                     categories.remove(i);
                      break;
                  }
                  i++;                              
@@ -559,26 +551,10 @@ public class LOCategoryBuilder extends Composite implements HasModelDTOValue {
          }
 
          public void addItem(LoCategoryInfo category) {
-             ModelDTO modelDTO = new ModelDTO();
-             ModelDTOValue.StringType nameValue = new ModelDTOValue.StringType();
-             nameValue.set(category.getName());            
-             modelDTO.put("name", nameValue);
 
-             ModelDTOValue.StringType idValue = new ModelDTOValue.StringType();
-             idValue.set(category.getId());            
-             modelDTO.put("id", idValue);
-
-             ModelDTOValue.StringType stateValue = new ModelDTOValue.StringType();
-             stateValue.set(category.getState());            
-             modelDTO.put("state", stateValue);
-
-             ModelDTOValue.StringType typeValue = new ModelDTOValue.StringType();
-             typeValue.set(category.getType());            
-             modelDTO.put("type", typeValue);
-
-             modelDTOList.add(modelDTO);
+             categories.add(category);
 
              redraw();
          }
-     }        
+     }
 }

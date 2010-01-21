@@ -115,7 +115,7 @@ public class LearningObjectiveServiceAssembler extends BaseAssembler {
         LoInfo dto = new LoInfo();
 
         BeanUtils.copyProperties(entity, dto,
-                new String[] { "desc", "attributes", "type", "loCategory" });
+                new String[] { "desc", "attributes", "type" });
         dto.setDesc(toRichTextInfo(entity.getDescr()));
         dto.setMetaInfo(toMetaInfo(entity.getMeta(), entity.getVersionInd()));
         dto.setAttributes(toAttributeMap(entity.getAttributes()));

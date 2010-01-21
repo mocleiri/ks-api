@@ -84,6 +84,7 @@ public class CourseAssembler implements Assembler<Data, CluInfoHierarchy> {
     public static final String FORMAT_RELATION_TYPE = "luLuRelationType.hasCourseFormat";
     public static final String ACTIVITY_RELATION_TYPE = "luLuRelationType.contains";
 
+	private SingleUseLoInfoAssembler loAssembler;
     private final RichTextInfoAssembler richtextAssembler = new RichTextInfoAssembler();
     private final TimeAmountInfoAssembler timeamountAssembler = new TimeAmountInfoAssembler();
     private final CluIdentifierInfoAssembler cluIdentifierAssembler = new CluIdentifierInfoAssembler();
@@ -113,7 +114,9 @@ public class CourseAssembler implements Assembler<Data, CluInfoHierarchy> {
 
             luData.setRuleInfos(getRules(id));
 
-            luData.setLoModelDTO(new LoModelDTO(getLoInfoPersistenceBean().getLos(id)));
+		    // TODO - need a SingleUseLoListAssembler that calls SingleUseLoAssembler once for each LO
+		    // associated with the course
+    		result.setCourseSpecificLOs(getSingleUseLoAssembler().get(course.getId()));
 
         } catch (Exception e) {
             throw new AssemblyException(
@@ -190,7 +193,13 @@ public class CourseAssembler implements Assembler<Data, CluInfoHierarchy> {
 
             saveRules(courseId, (LuData)input);
 
-            saveLearningObjectives(courseId, (LuData) input);
+            // save the Learning Objective(s)
+            // TODO - Need a SingleUseLoListAssembler w/ standard save() method that in turn calls
+            // a new single-LO save() method in SingleUseLoAssembler
+            SaveResult<Data> loResult = getSingleUseLoAssembler().save(courseId, course.getCourseSpecificLOs());
+            if (loResult.getValidationResults() != null){
+                validationResults.addAll(loResult.getValidationResults());
+            }
 
             result.setValidationResults(validationResults);
             
@@ -609,10 +618,6 @@ public class CourseAssembler implements Assembler<Data, CluInfoHierarchy> {
             throw new AssemblyException("Unable to save cluClu Joint Relationship", e);
         }
 
-    }
-
-    private void saveLearningObjectives(String courseId, LuData data) throws Exception {
-        getLoInfoPersistenceBean().updateLos(courseId, data.getLoModelDTO());
     }
 
     private void saveClus(CluInfoHierarchy input, String parentId) throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DependentObjectsExistException {
@@ -1081,6 +1086,15 @@ public class CourseAssembler implements Assembler<Data, CluInfoHierarchy> {
         }
         return null;
     }
+
+	private SingleUseLoInfoAssembler getSingleUseLoAssembler() {
+		if (loAssembler == null) {
+			loAssembler = new SingleUseLoInfoAssembler();
+			loAssembler.setLoService(loService);
+			loAssembler.setLuService(luService);
+		}
+		return loAssembler;
+	}
 
     public LuService getLuService() {
         return luService;

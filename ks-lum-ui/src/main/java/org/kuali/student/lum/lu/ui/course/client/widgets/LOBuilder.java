@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.student.common.ui.client.application.Application;
-import org.kuali.student.common.ui.client.configurable.mvc.HasModelDTOValue;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTO;
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue;
 import org.kuali.student.common.ui.client.theme.Theme;
 import org.kuali.student.common.ui.client.widgets.KSImage;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
@@ -37,9 +34,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -50,11 +47,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *
  * Users can then re-organize LOs on the screen including altering the sequence and creating sub LOs
  *
- * @author Kuali Rice Team (kuali-rice@googlegroups.com)
- *
+ * @author Kuali Student Team
  *
  */
-public class LOBuilder extends Composite  implements HasModelDTOValue {
+public class LOBuilder extends Composite implements HasValue<List<OutlineNode<LOPicker>>> {
     
     private static String type;
     private static String state;
@@ -75,13 +71,9 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
     LearningObjectiveList loList;
     KSLabel instructions ;
 
-    private static final int NUM_INITIAL_LOS = 5;
-
-
 
     protected LOBuilder() {
         //TODO: should this be an error?  Can we set realistic defaults?
-
     }
 
     public LOBuilder(String luType, String luState, String luGroup) {
@@ -151,67 +143,78 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
         main.add(searchMainPanel);
         main.add(instructions);
         main.add(loPanel);
-
     }
     
+	/**
+	 * @see com.google.gwt.user.client.ui.HasValue#setValue(java.lang.Object, boolean)
+	 */
+	@Override
+	public void setValue(List<OutlineNode<LOPicker>> value, boolean fireEvents) {
+		setValue(value, false);
+	}
+	
+    /**
+     * @see com.google.gwt.user.client.ui.HasValue#setValue(java.lang.Object)
+     */
     @Override
-    public void setValue(ModelDTOValue modelDTOValue) {
-        loList.setValue(modelDTOValue);
-
-    }
-
-    @Override
-    public void setValue(ModelDTOValue value, boolean fireEvents) {
-        // setValue(value, fireEvents); // methinks this would blow the stack :)
-        setValue(value);
+    public void setValue(List<OutlineNode<LOPicker>> data) {
+        loList.setValue(data);
     }
 
     /**
      * @see com.google.gwt.user.client.ui.HasValue#getValue()
      */
     @Override
-    public ModelDTOValue getValue() {
+    public List<OutlineNode<LOPicker>> getValue() {
         return loList.getValue();
-    }
-
-    /**
-     * @see org.kuali.student.common.ui.client.configurable.mvc.HasModelDTOValue#updateModelDTO(org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue)
-     */
-    @Override
-    public void updateModelDTOValue() {
-        loList.updateModelDTOValue();
     }
 
     /**
      * @see com.google.gwt.event.logical.shared.HasValueChangeHandlers#addValueChangeHandler(com.google.gwt.event.logical.shared.ValueChangeHandler)
      */
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ModelDTOValue> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<OutlineNode<LOPicker>>> handler) {
         return loList.addValueChangeHandler(handler);
     }
-
 
     private static String getLabel(String labelKey) {
         return Application.getApplicationContext().getUILabel(messageGroup, type, state, labelKey);
     }
 
-    public static class LearningObjectiveList extends Composite /*implements HasModelDTOValue*/{
-        protected List<ModelDTO> modelDTOList = new ArrayList<ModelDTO>();
-        OutlineNodeModel outlineModel = new OutlineNodeModel();
+    /**
+	 * @return the type
+	 */
+	public static String getType() {
+		return type;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public static String getState() {
+		return state;
+	}
+
+	/**
+	 * @return the messageGroup
+	 */
+	public static String getMessageGroup() {
+		return messageGroup;
+	}
+
+	public static class LearningObjectiveList extends Composite {
+        OutlineNodeModel<LOPicker> outlineModel = new OutlineNodeModel<LOPicker>();
         OutlineManager outlineComposite = new OutlineManager();
         VerticalPanel mainPanel = new VerticalPanel();
         
         public LearningObjectiveList(){
             mainPanel.add(outlineComposite);
-            KSLabel addnew = new KSLabel("Add new Learnging Objective");
+            KSLabel addnew = new KSLabel("Add new Learning Objective");
             addnew.addStyleName("KS-LOBuilder-New");
             mainPanel.add(addnew);
             addnew.addClickHandler(new ClickHandler(){
                 public void onClick(ClickEvent event) {
                     setValue(getValue()); 
-                  //  List<String> list = new ArrayList<String>();
-                   // list.add("");
-                  //  addSelectedLOs(list);
                     appendLO("");
                     reDraw();
                 }
@@ -230,7 +233,9 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
             addSelectedLOs(list);
         }
 
-        public ModelDTOValue getValue() {
+        public List<OutlineNode<LOPicker>> getValue() {
+        	return outlineModel.getOutlineNodes();
+        	/*
             ModelDTOValue.ListType list = new ModelDTOValue.ListType();
             modelDTOList = new ArrayList<ModelDTO>();
             // get from outline model
@@ -268,8 +273,13 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
             list.set(valueList);
 
             return list;
+            */
         }
-        public void setValue(ModelDTOValue value) {
+        
+        public void setValue(List<OutlineNode<LOPicker>> value) {
+        	outlineModel.clearNodes();
+        	outlineModel.getOutlineNodes().addAll(value);
+        	/*
             ModelDTOValue.ListType list = (ModelDTOValue.ListType) value;
             modelDTOList = new ArrayList<ModelDTO>();
             // fill the ModelDTOValue.ModelDTOType to List<ModelDTO>
@@ -280,51 +290,28 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
 	                modelDTOList.add(dtoType.get());
 	            }
             }
+            */
             reDraw();
         }
-        private ModelDTO getBlankLOInFirstLevel(){
-            for(ModelDTO dto:modelDTOList){
-                String strvalue = ((ModelDTOValue.StringType)dto.get("value")).get();
-                int level = ((ModelDTOValue.IntegerType)dto.get("level")).get();
-                if(level == 0){// first level
-                    if(strvalue == null || strvalue.equals("")){
-                        return dto;
-                    }
-                }
-            }
-            
-            return null;
-        }
+        
         private void appendLO(String loValue){
-            ModelDTO modelDTO = new ModelDTO();
-            ModelDTOValue.StringType str = new ModelDTOValue.StringType();
-            str.set(loValue);
-            modelDTO.put("value", str);
-
-            ModelDTOValue.IntegerType intT = new ModelDTOValue.IntegerType();
-            intT.set(new Integer( modelDTOList.size()));
-            modelDTO.put("sequence",intT);
+            OutlineNode<LOPicker> aNode = new OutlineNode<LOPicker>();
+            LOPicker newPicker = new LOPicker(messageGroup, type, state);
             
-            intT = new ModelDTOValue.IntegerType();
-            intT.set(0);
-            modelDTO.put("level",intT);
+            newPicker.setLOText(loValue);
+            aNode.setUserObject(newPicker);
+            aNode.setModel(outlineModel);
             
-            modelDTOList.add(modelDTO);
+            outlineModel.addOutlineNode(aNode);
         }
         public void addSelectedLOs(List<String> loDescription) {
-            for(String strValue:loDescription){
-            //    ModelDTO modelDTO = getBlankLOInFirstLevel();
-              //  if(modelDTO == null){
-                    appendLO(strValue);
-              //  }else{
-                //    ModelDTOValue.StringType str = new ModelDTOValue.StringType();
-                  //  str.set(strValue);
-                  //  modelDTO.put("value", str);
-               // }
+            for (String strValue : loDescription){
+                appendLO(strValue);
             }
             reDraw();
         }
         private void reDraw(){
+    	/*
           outlineModel.clearNodes();
           for (int i = 0; i < modelDTOList.size(); i++) {
             OutlineNode aNode = new OutlineNode();
@@ -348,22 +335,13 @@ public class LOBuilder extends Composite  implements HasModelDTOValue {
             aNode.setIndentLevel(level);
             outlineModel.addOutlineNode(aNode);
           }
-
+		*/
           outlineComposite.render();
-          
         }
-        public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ModelDTOValue> handler) {
-//            for (HasModelDTOValue widget : modelDTOValueWidgets) {
-  //              widget.addValueChangeHandler(handler);
-    //        }
+        public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<OutlineNode<LOPicker>>> handler) {
             return new NOOPListValueChangeHandler();
         }
-        public void updateModelDTOValue() {
-        	// M3 - update?
-        }
 
-//        public void setValue(ModelDTOValue value, boolean fireEvents) {
-//        }
             
         private class NOOPListValueChangeHandler implements HandlerRegistration {
             public void removeHandler() {

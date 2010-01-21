@@ -90,7 +90,7 @@ public class SingleUseLoMetadata
 		
 		// metadata for Category
 		childMeta = new Metadata ();
-		mainMeta.getProperties ().put (Properties.CATEGORY.getKey (), childMeta);
+		mainMeta.getProperties ().put (Properties.CATEGORIES.getKey (), childMeta);
 		childMeta.setDataType (Data.DataType.LIST);
 		childMeta.setWriteAccess (Metadata.WriteAccess.ALWAYS);
 		if (this.matches (type, state, "(default)", "(default)"))

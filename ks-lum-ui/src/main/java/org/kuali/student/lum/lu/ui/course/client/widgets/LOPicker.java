@@ -15,7 +15,9 @@
  */
 package org.kuali.student.lum.lu.ui.course.client.widgets;
 
-import org.kuali.student.common.ui.client.mvc.dto.ModelDTOValue;
+import java.util.List;
+
+import org.kuali.student.lum.lo.dto.LoCategoryInfo;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -37,10 +39,10 @@ public class LOPicker extends HorizontalPanel{
         super.add(loTextBox);
         super.add(loCategoryBuilder);
     }
-    public void setLOCategory(ModelDTOValue modelDTOValue){
-        loCategoryBuilder.setValue(modelDTOValue);
+    public void setLOCategories(List<LoCategoryInfo> categories){
+        loCategoryBuilder.setValue(categories);
     }
-    public ModelDTOValue getLoCategory(){
+    public List<LoCategoryInfo> getLoCategories(){
         return loCategoryBuilder.getValue();
     }
     public String getLOText(){

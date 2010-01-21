@@ -87,5 +87,8 @@ public class RichTextInfoHelper
 		return (String) data.get (Properties.FORMATTED.getKey ());
 	}
 	
+	public boolean equalStrVals(RichTextInfoHelper rtih) {
+		return  null != rtih && rtih.getPlain().equals(this.getPlain()) && rtih.getFormatted().equals(this.getFormatted());
+	}
 }
 

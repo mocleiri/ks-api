@@ -41,6 +41,7 @@ import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSDropDown;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
+import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.commenttool.CommentPanel;
 import org.kuali.student.common.ui.client.widgets.documenttool.DocumentTool;
 import org.kuali.student.common.ui.client.widgets.list.HasSelectionChangeHandlers;
@@ -51,6 +52,8 @@ import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
 import org.kuali.student.common.ui.client.widgets.list.impl.SimpleListItems;
 import org.kuali.student.common.ui.client.widgets.search.AdvancedSearchWindow;
 import org.kuali.student.common.ui.client.widgets.search.SearchPanel;
+import org.kuali.student.common.ui.client.widgets.search.SelectedResults;
+import org.kuali.student.common.ui.client.widgets.search.SuggestBoxWAdvSearch;
 import org.kuali.student.common.ui.client.widgets.selectors.KSSearchComponent;
 import org.kuali.student.common.ui.client.widgets.selectors.SearchComponentConfiguration;
 import org.kuali.student.common.ui.client.widgets.suggestbox.SearchSuggestOracle;
@@ -71,7 +74,8 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCours
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseProposalInfoConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.FeeInfoConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.LearningObjectiveConstants;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.removeinm4.HasModelDTOValueWidgetBinding;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.SingleUseLoConstants;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.removeinm4.LOBuilderBinding;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseRequisitesSectionView;
 import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
 import org.kuali.student.lum.lu.ui.course.client.configuration.mvc.LuConfigurer.LuSections;
@@ -476,15 +480,17 @@ public class CourseConfigurer
         VerticalSectionView section = initSectionView(LuSections.LEARNING_OBJECTIVES, LUConstants.LEARNING_OBJECTIVES_LABEL_KEY); 
 
         VerticalSection los = initSection(null, NO_DIVIDER);    
-        // addField(los, LEARNING_OBJECTIVES, null, new LOBuilder(type, state, groupName));
-        LOBuilder builder = new LOBuilder(type, state, groupName);
-        addField(los, LEARNING_OBJECTIVES, null, builder);
+        FieldDescriptor fd = addField(los,
+        								CreditCourseConstants.COURSE_SPECIFIC_L_OS,
+        								null,
+        								new LOBuilder(type, state, groupName),
+        								CreditCourseProposalConstants.COURSE);
+        
+        // have to do this here, because decision on binding is done in ks-core,
+        // and we obviously don't want ks-core referring to LOBuilder
+        fd.setWidgetBinding(LOBuilderBinding.INSTANCE);
+        
         los.addStyleName("KS-LUM-Section-Divider");
-        // So, how stinky is this HACK?
-        { // TODO - get rid of this in M4!!!
-	        assert (los.getFields().size() == 1 && los.getFields().get(0).getFieldWidget() instanceof LOBuilder); 
-	        los.getFields().get(0).setWidgetBinding(HasModelDTOValueWidgetBinding.INSTANCE);
-        }
         
         section.addSection(los);
         return section;        
@@ -1005,16 +1011,18 @@ public class CourseConfigurer
         return SectionTitle.generateH5Title(getLabel(labelKey));
     }
     
-    private void addField(Section section, String fieldKey, String fieldLabel) {
-    	addField(section, fieldKey, fieldLabel, null, null);
+    // TODO - when DOL is pushed farther down into LOBuilder,
+    // revert these 4 methods to returning void again.
+    private FieldDescriptor addField(Section section, String fieldKey, String fieldLabel) {
+    	return addField(section, fieldKey, fieldLabel, null, null);
     }
-    private void addField(Section section, String fieldKey, String fieldLabel, Widget widget) {
-    	addField(section, fieldKey, fieldLabel, widget, null);
+    private FieldDescriptor addField(Section section, String fieldKey, String fieldLabel, Widget widget) {
+    	return addField(section, fieldKey, fieldLabel, widget, null);
     }
-    private void addField(Section section, String fieldKey, String fieldLabel, String parentPath) {
-        addField(section, fieldKey, fieldLabel, null, parentPath);
+    private FieldDescriptor addField(Section section, String fieldKey, String fieldLabel, String parentPath) {
+        return addField(section, fieldKey, fieldLabel, null, parentPath);
     }
-    private void addField(Section section, String fieldKey, String fieldLabel, Widget widget, String parentPath) {
+    private FieldDescriptor addField(Section section, String fieldKey, String fieldLabel, Widget widget, String parentPath) {
         QueryPath path = QueryPath.concat(parentPath, fieldKey);
     	Metadata meta = modelDefinition.getMetadata(path);
     	
@@ -1023,7 +1031,6 @@ public class CourseConfigurer
     		fd.setFieldWidget(widget);
     	}
     	section.addField(fd);
+    	return fd;
     }
-    
-    
 }
