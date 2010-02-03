@@ -14,13 +14,24 @@
  */
 package org.kuali.student.core.organization.ui.server.gwt;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.student.common.assembly.client.AssemblyException;
-import org.kuali.student.common.assembly.client.Data;
-import org.kuali.student.common.assembly.client.SaveResult;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import org.kuali.student.common.ui.client.service.DataSaveResult;
 import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
+import org.kuali.student.core.assembly.data.AssemblyException;
+import org.kuali.student.core.assembly.data.Data;
+import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.core.assembly.data.SaveResult;
+import org.kuali.student.core.assembly.dictionary.MetadataServiceImpl;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
@@ -41,13 +52,24 @@ import org.kuali.student.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.core.organization.dto.OrgTypeInfo;
 import org.kuali.student.core.organization.service.OrganizationService;
-import org.kuali.student.core.organization.ui.client.service.DataSaveResult;
+import org.kuali.student.core.organization.dynamic.Field;
+import org.kuali.student.core.organization.dynamic.Fields;
+import org.kuali.student.core.organization.dynamic.MultipleField;
+import org.kuali.student.core.organization.dynamic.Section;
+import org.kuali.student.core.organization.dynamic.SectionConfig;
+import org.kuali.student.core.organization.dynamic.SectionView;
+import org.kuali.student.core.organization.ui.client.mvc.model.FieldInfo;
+import org.kuali.student.core.organization.ui.client.mvc.model.FieldInfoImpl;
+import org.kuali.student.core.organization.ui.client.mvc.model.MultipleFieldInfoImpl;
+import org.kuali.student.core.organization.ui.client.mvc.model.SectionConfigInfo;
+import org.kuali.student.core.organization.ui.client.mvc.model.SectionViewInfo;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcService;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 public class OrgRpcGwtServlet extends BaseRpcGwtServletAbstract<OrganizationService> implements OrgRpcService{
 
 	private static final long serialVersionUID = 1L;
+	public static final String CONFIGURE_XML_PATH = "C:/org_configure.xml";
 
     @Override
     public StatusInfo removePositionRestrictionFromOrg(String orgId, String orgPersonRelationTypeKey){
@@ -494,11 +516,16 @@ public class OrgRpcGwtServlet extends BaseRpcGwtServletAbstract<OrganizationServ
         return null;
     }	
     private OrgProposalAssembler orgProposalAssembler;
+    
+    public void setOrgProposalAssembler(OrgProposalAssembler orgProposalAssembler){
+        this.orgProposalAssembler=orgProposalAssembler;
+    }
+    
     private synchronized void initAssemblers() {
         if (orgProposalAssembler == null) {
-            // TODO change how the state is set/passed in to the proposal assembler, if at all
             orgProposalAssembler = new OrgProposalAssembler();
             orgProposalAssembler.setOrgService(service);
+            MetadataServiceImpl metadataServiceImpl = new MetadataServiceImpl("/org-orchestration-dictionary.xml");
             
         }
     }
@@ -545,6 +572,108 @@ public class OrgRpcGwtServlet extends BaseRpcGwtServletAbstract<OrganizationServ
         }
         return null;
      
+    }
+
+    @Override
+    public Metadata getOrgMetaData() {
+        try {
+            initAssemblers();
+            return orgProposalAssembler.getMetadata(null,"draft");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+//            throw new OperationFailedException("Unable to retrieve metadata for org");
+        }
+        return null;
+    }
+
+
+    @Override
+    public SectionConfigInfo getSectionConfig() {
+        // TODO Neerav Agrawal - THIS METHOD NEEDS JAVADOCS
+        SectionConfigInfo sectionConfigInfo = new SectionConfigInfo();
+        String packageName = SectionConfig.class.getPackage().getName();
+        JAXBContext jc;
+        try {
+            jc = JAXBContext.newInstance( packageName );
+            Unmarshaller u = jc.createUnmarshaller();
+            SectionConfig sectionConfig = null;
+            try{
+                sectionConfig = (SectionConfig)((JAXBElement)u.unmarshal(
+                    new FileInputStream( CONFIGURE_XML_PATH ))).getValue();
+            }
+            catch(FileNotFoundException e){
+                InputStream in = OrgRpcGwtServlet.class.getResourceAsStream("/org_configure.xml");
+                sectionConfig = (SectionConfig)((JAXBElement)u.unmarshal(in)).getValue();
+            }
+            List<SectionView> sectionViews = sectionConfig.getSectionView();
+            List<SectionViewInfo> sectionViewInfoList = new ArrayList<SectionViewInfo>();
+            for(SectionView sectionView:sectionViews){
+                SectionViewInfo sectionViewInfo = new SectionViewInfo();
+                sectionViewInfo.setViewName(sectionView.getViewName());
+                sectionViewInfo.setTab(sectionView.getTab());
+                sectionViewInfo.setMenu(sectionView.getMenu());
+                Section section = sectionView.getSection();
+                sectionViewInfo.setSectionName(section.getSectionName());
+                sectionViewInfo.setSectionEnum(section.getEnum());
+                Fields fields = sectionView.getFields();
+                if (fields != null) {
+                    List<Field> fieldList = fields.getField();
+
+                    List<MultipleField> multipleFieldList = fields.getMultipleField();
+                    List<FieldInfo> fieldInfoList = new ArrayList<FieldInfo>();
+                    for (Field field : fieldList) {
+                        FieldInfo fieldInfo = new FieldInfoImpl();
+                        fieldInfo.setLabel(field.getLabel());
+                        fieldInfo.setKey(field.getKey());
+                        fieldInfo.setWidget(field.getWidget());
+                        fieldInfoList.add(fieldInfo);
+                    }
+                    for (MultipleField multipleField : multipleFieldList) {
+                        MultipleFieldInfoImpl fieldInfo = new MultipleFieldInfoImpl();
+                        fieldInfo.setKey(multipleField.getKey());
+                        fieldInfo.setLabel(multipleField.getItemLabel());
+                        fieldInfo.setAddItemLabel(multipleField.getAddItemLabel());
+                        List<Field> fieldMultiList = multipleField.getFields().getField();
+                        List<FieldInfo> fieldMultiInfoList = new ArrayList<FieldInfo>();
+                        for (Field field : fieldMultiList) {
+                            FieldInfo fieldMultiInfo = new FieldInfoImpl();
+                            fieldMultiInfo.setLabel(field.getLabel());
+                            fieldMultiInfo.setKey(field.getKey());
+                            fieldMultiInfo.setWidget(field.getWidget());
+                            fieldMultiInfoList.add(fieldMultiInfo);
+                        }
+                        fieldInfo.setFields(fieldMultiInfoList);
+                        fieldInfoList.add(fieldInfo);
+                    }
+
+                    sectionViewInfo.setfields(fieldInfoList);
+                }
+                sectionViewInfoList.add(sectionViewInfo);
+                
+            }
+           sectionConfigInfo.setSectionViewInfoList(sectionViewInfoList);
+            
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        } 
+
+        return sectionConfigInfo;
+    }
+
+    @Override
+    public Data fetchOrg(Data orgSearch) {
+        try {
+            initAssemblers();
+            return orgProposalAssembler.fetchOrgInfo(orgSearch);
+//            return orgProposalAssembler.getMetadata(null,"draft");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+//            throw new OperationFailedException("Unable to retrieve metadata for org");
+        }
+        return null;
+
     }
     
 }

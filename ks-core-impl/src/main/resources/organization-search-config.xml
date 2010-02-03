@@ -57,12 +57,20 @@
 				</search:queryParam>		
 				<search:queryParam id="org.queryParam.orgOptionalShortName" optional="true">
 					<dict:fieldDescriptor>
-						<dict:name>Organization Name</dict:name>
+						<dict:name>Organization Short Name</dict:name>
 						<dict:desc>Short organization name.</dict:desc>
 						<dict:dataType>string</dict:dataType>
 						<dict:readOnly>true</dict:readOnly>
 					</dict:fieldDescriptor>
 				</search:queryParam>									
+				<search:queryParam id="org.queryParam.startswith.orgOptionalShortName" optional="true">
+					<dict:fieldDescriptor>
+						<dict:name>Starts with Organization Short Name</dict:name>
+						<dict:desc>Starts With Short organization name.</dict:desc>
+						<dict:dataType>string</dict:dataType>
+						<dict:readOnly>true</dict:readOnly>
+					</dict:fieldDescriptor>
+				</search:queryParam>
 				<search:queryParam id="org.queryParam.orgOptionalType" optional="true">
 					<dict:fieldDescriptor>
 						<dict:name>Org Type</dict:name>
@@ -545,6 +553,9 @@
 				</entry>	
 				<entry key="org.queryParam.orgOptionalShortName">
 					<value>org.shortName</value>
+				</entry>
+				<entry key="org.queryParam.startswith.orgOptionalShortName">
+				    <value>org.shortName like :org_queryParam_startswith_orgOptionalShortName || '%'</value>
 				</entry>	
 				<entry key="org.queryParam.orgOptionalLongName">
 					<value>org.longName</value>

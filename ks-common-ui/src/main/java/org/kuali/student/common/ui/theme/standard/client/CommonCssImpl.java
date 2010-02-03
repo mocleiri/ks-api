@@ -12,12 +12,22 @@ public class CommonCssImpl implements CommonCss {
        String injectString = "";
         for(ResourcePrototype r: KSClientBundle.INSTANCE.getResources()){
             if(r instanceof CssResource){
-                if(((CssResource)r).getText() != null){
+                if(((CssResource)r).getText() != null && !((CssResource)r).getName().contains("resetCss") && !((CssResource)r).getName().contains("fontCss")){
                     injectString = injectString + "\n" + (((CssResource)r).getText());
                 }
             }
         }
         return injectString;
+	}
+
+	@Override
+	public String getResetCssString() {
+		return ((CssResource)KSClientBundle.INSTANCE.getResource("resetCss")).getText();
+	}
+	
+	@Override
+	public String getInitializeCssString() {
+		return ((CssResource)KSClientBundle.INSTANCE.getResource("fontCss")).getText();
 	}
 
 }

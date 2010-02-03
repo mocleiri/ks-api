@@ -14,6 +14,7 @@
  */
 package org.kuali.student.core.dictionary.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.List;
 
@@ -121,7 +122,9 @@ public class DictionaryBeanDefinitionParser extends AbstractSingleBeanDefinition
     	if(element.hasAttributes()){
     		for(int i = 0;i<element.getAttributes().getLength();i++){
         		Attr attr = (Attr) element.getAttributes().item(i);
-        		if(!"id".equals(attr.getName())&&!"parent".equals(attr.getName())){
+        		if("abstract".equals(attr.getName())){
+        			builder.setAbstract(true);
+        		}else if(!"id".equals(attr.getName())&&!"parent".equals(attr.getName())){
         			builder.addPropertyValue(attr.getName(), attr.getValue());
         		}
     		}
@@ -167,9 +170,21 @@ public class DictionaryBeanDefinitionParser extends AbstractSingleBeanDefinition
 	                        String fieldName=resolveFieldName(element.getLocalName(),node.getLocalName());
 	                        builder.addPropertyValue(fieldName, childBean);
 	                    }else{
+	                    	
+	                    	
 	                   		//Set the text value
 	                		String fieldName=resolveFieldName(element.getLocalName(),node.getLocalName());
-	                		builder.addPropertyValue(fieldName, node.getTextContent());
+
+	                		if(Node.ELEMENT_NODE == node.getNodeType()&&"date".equals(((Element)node).getSchemaTypeInfo().getTypeName())){
+	                			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	                			try {
+									builder.addPropertyValue(fieldName, df.parse(node.getTextContent()));
+								} catch (Exception e) {
+									logger.error("Cannot convert date, must be in format 'YYYY-MM-DD' :"+node.getTextContent(),e);
+								}
+	                		}else{
+	                			builder.addPropertyValue(fieldName, node.getTextContent());
+	                		}
 	                    }
 	                }
 	            }

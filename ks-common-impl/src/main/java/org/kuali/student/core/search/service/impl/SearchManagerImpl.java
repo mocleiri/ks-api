@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.student.common.assembly.client.LookupMetadata;
-import org.kuali.student.common.assembly.client.LookupParamMetadata;
-import org.kuali.student.common.assembly.client.LookupResultMetadata;
+import org.kuali.student.core.assembly.data.Data;
+import org.kuali.student.core.assembly.data.LookupMetadata;
+import org.kuali.student.core.assembly.data.LookupParamMetadata;
+import org.kuali.student.core.assembly.data.LookupResultMetadata;
 import org.kuali.student.core.dao.SearchableDao;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
@@ -78,6 +79,13 @@ public class SearchManagerImpl implements SearchManager{
 					LookupParamMetadata param = new LookupParamMetadata();
 					param.setKey(queryParamInfo.getKey());
 					param.setOptional(queryParamInfo.isOptional());
+					if (queryParamInfo.getFieldDescriptor() != null &&
+					        queryParamInfo.getFieldDescriptor().getDataType() != null) {
+					    String queryParamDataType = queryParamInfo.getFieldDescriptor().getDataType();
+					    if (queryParamDataType != null && queryParamDataType.equals("date")) {
+		                    param.setDataType(Data.DataType.DATE);
+					    }
+					}
 					params.add(param);
 				}
 				lookupMetaData.setParams(params);

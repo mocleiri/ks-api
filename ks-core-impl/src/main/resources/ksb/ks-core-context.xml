@@ -55,6 +55,7 @@
 		<property name="messageFiles">
 			<list>
 				<value>classpath:org\kuali\student\common\ui\gwt-messages.xml</value>
+				<value>classpath:org\kuali\student\core\ui\gwt-messages.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -168,6 +169,13 @@
     <bean id="atpServiceImpl"
         class="org.kuali.student.core.atp.service.impl.AtpServiceImpl">
         <property name="atpDao" ref="atpDao" />
+        <property name="searchManager" ref="atpSearchManager"/>
+    </bean>
+    
+    <bean id="atpSearchManager"
+        class="org.kuali.student.core.search.service.impl.SearchManagerImpl"
+        autowire="byType">
+        <constructor-arg index="0" value="classpath:atp-search-config.xml" />
     </bean>
 
     <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
@@ -197,7 +205,7 @@
 
 	<bean id="emDao"
 		class="org.kuali.student.core.enumerationmanagement.dao.impl.EnumerationManagementDAOImpl">
-        <property name="entityManager" ref="emEntityManager" />
+        <property name="em" ref="emEntityManager" />
 	</bean>
 
 	<bean id="emServiceImpl"
@@ -420,6 +428,9 @@
 				<entry key="Atp">
 					<value>classpath:ks-atp.sql</value>
 				</entry>
+				<entry key="EnumerationManagement">
+					<value>classpath:ks-em.sql</value>
+				</entry>
            	</map>
         </property>
  	</bean>
@@ -455,7 +466,5 @@
 				method="afterThrowing" throwing="ex" />
 		</aop:aspect>
 	</aop:config>
-
-	<import resource="classpath:ks-spring-security.xml" />
 
 </beans>

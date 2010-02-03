@@ -111,11 +111,32 @@ public interface KSClientBundle extends ImmutableResourceBundle{
 	public CssResource titleContainerCss();
 	@Resource("org/kuali/student/common/ui/theme/standard/public/css/KSWrapper.css")
 	public CssResource wrapperCss();
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/KSLandingPage.css")
+	public CssResource landingPageCss();
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/KSActionItemList.css")
+	public CssResource actionItemListCss();
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/KSSearchBox.css")
+	public CssResource searchBoxCss();
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/GwtDefault.css")
+	public CssResource gwtDefaultCss();
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/KSSection.css")
+	public CssResource sectionCss();
 	
-	 //Common Images***************************************************
+	//Reset Css
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/Reset.css")
+	public CssResource resetCss();
+	
+	//Font & Settings Css
+	@Resource("org/kuali/student/common/ui/theme/standard/public/css/InitFonts.css")
+	public CssResource fontCss();
+	
+	//Common Images***************************************************
 	
 	@Resource("org/kuali/student/common/ui/theme/standard/public/images/common/kru_logo2.gif")
 	public ImageResource headerImage();
+	
+	@Resource("org/kuali/student/common/ui/theme/standard/public/images/common/gradcap-1.png")
+	public ImageResource curriculumManagementImage();
 	
 	@Resource("org/kuali/student/common/ui/theme/standard/public/images/common/spacer.gif")
 	public ImageResource spacer();
@@ -154,6 +175,15 @@ public interface KSClientBundle extends ImmutableResourceBundle{
     @Resource("org/kuali/student/common/ui/theme/standard/public/images/common/fileclose.png")
     public ImageResource deleteComment();
     
+    @Resource("org/kuali/student/common/ui/theme/standard/public/images/common/dropdown_black.gif")
+    public ImageResource dropdownBlack();
+    
+    @Resource("org/kuali/student/common/ui/theme/standard/public/images/common/dropdown_white.gif")
+    public ImageResource dropdownWhite();
+    
+    @Resource("org/kuali/student/common/ui/theme/standard/public/images/common/dropdown_blue.gif")
+    public ImageResource dropdownCustom();
+    
     @Resource("org/kuali/student/common/ui/theme/standard/public/images/common/magnifier-right.png")
     public ImageResource rightMagnifierIcon();
 
@@ -167,7 +197,7 @@ public interface KSClientBundle extends ImmutableResourceBundle{
     public ImageResource questionIcon();
 
     //Rich Text Editor Images***************************************************
-
+    
     @Resource("org/kuali/student/common/ui/theme/standard/public/images/richTextEditor/bold.gif")
     public ImageResource bold();
 

@@ -14,15 +14,21 @@
  */
 package org.kuali.student.core.dao.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Query;
 
-import org.kuali.student.common.assembly.client.LookupMetadata;
-import org.kuali.student.common.assembly.client.LookupParamMetadata;
-import org.kuali.student.common.assembly.client.LookupResultMetadata;
+import org.kuali.student.core.assembly.data.Data;
+import org.kuali.student.core.assembly.data.LookupMetadata;
+import org.kuali.student.core.assembly.data.LookupParamMetadata;
+import org.kuali.student.core.assembly.data.LookupResultMetadata;
 import org.kuali.student.core.dao.SearchableDao;
 import org.kuali.student.core.search.dto.QueryParamInfo;
 import org.kuali.student.core.search.dto.QueryParamValue;
@@ -40,16 +46,50 @@ import org.kuali.student.core.search.newdto.SortDirection;
 public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 		implements SearchableDao {
 
+    private static SimpleDateFormat df = new SimpleDateFormat("EEE MMM dd hh:mm:ss zzz yyyy");
 
+    private String getParameterDataType(SearchTypeInfo searchTypeInfo,
+            QueryParamValue paramValue) {
+        String dataType = null;
+        List<QueryParamInfo> queryParameterInfos = 
+            (searchTypeInfo == null || searchTypeInfo.getSearchCriteriaTypeInfo() == null)? null :
+            searchTypeInfo.getSearchCriteriaTypeInfo().getQueryParams();
+        String parameterKey = paramValue.getKey();
+        // go through the list of search type parameters and look for the parameter with a key
+        // that matches that of "paramValue".  Onces a match is found gets the data type.
+        if (queryParameterInfos != null) {
+            for (QueryParamInfo queryParameterInfo : queryParameterInfos) {
+                if (parameterKey.equals(queryParameterInfo.getKey())) {
+                    dataType =
+                        (queryParameterInfo == null ||
+                                queryParameterInfo.getFieldDescriptor() == null)?
+                                        null : queryParameterInfo.getFieldDescriptor().getDataType();
+                    break;
+                }
+            }
+        }
+        return dataType;
+    }
 
 	@Override
 	public List<Result> searchForResults(String searchTypeKey,
 			Map<String, String> queryMap, SearchTypeInfo searchTypeInfo,
 			List<QueryParamValue> queryParamValues) {
-
+		
+		if(queryParamValues == null){
+			queryParamValues = new ArrayList<QueryParamValue>();
+		}
+		
+		boolean isNative = false;
+		
 		//retrieve the SELECT statement from search type definition
 		String queryString = queryMap.get(searchTypeKey);
 		String optionalQueryString = "";
+		
+		if(queryString.toUpperCase().startsWith("NATIVE:")){
+			queryString = queryString.substring("NATIVE:".length());
+			isNative = true;
+		}
 		
 		//add in optional
 		List<QueryParamValue> queryParamValuesTemp = new ArrayList<QueryParamValue>(queryParamValues);
@@ -63,7 +103,7 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 					//if optional query parameter has only a column name then create proper search expression
 					String condition = queryMap.get(queryParamValue.getKey());
 					if (condition.trim().contains(":")) {
-						optionalQueryString += queryMap.get(queryParamValue.getKey());
+					    optionalQueryString += queryMap.get(queryParamValue.getKey());
 					} else {
 						//comparison should be case insensitive and include wild card
 						optionalQueryString += 
@@ -94,13 +134,35 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 			queryString += optionalQueryString + orderByClause;
 		}
 		
-		Query query = em.createQuery(queryString);
+		Query query;
+		if(isNative){
+			query = em.createNativeQuery(queryString);
+		}else{
+			query = em.createQuery(queryString);
+		}
 		
 		//replace all the "." notation with "_" since the "."s in the ids of the queries will cause problems with the jpql  
 		if(queryParamValues!=null){
 			for (QueryParamValue queryParamValue : queryParamValues) {
-				query.setParameter(queryParamValue.getKey().replace(".", "_"), queryParamValue
-						.getValue());
+			    String parameterDataType = getParameterDataType(searchTypeInfo, queryParamValue);
+			    String parameterKey = queryParamValue.getKey().replace(".", "_");
+			    Object parameterValue = null;
+			    if (parameterDataType != null && parameterDataType.equals("date")) {
+                    Calendar cal = null;
+                    String dateString = (String) queryParamValue.getValue();
+                    if (dateString != null) {
+                        int mo = Integer.parseInt(dateString.substring(0, 2)) -1;
+                        int dt = Integer.parseInt(dateString.substring(3, 5));
+                        int yr = Integer.parseInt(dateString.substring(6, 10));
+                        cal = new GregorianCalendar(yr, mo, dt);
+                        parameterValue = new java.sql.Date(cal.getTime().getTime());
+                    } else {
+                        parameterValue = null;
+                    }
+			    } else {
+			        parameterValue = queryParamValue.getValue();
+			    }
+                query.setParameter(parameterKey, parameterValue);
 			}
 		}
 
@@ -140,9 +202,16 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 			Map<String, String> queryMap, LookupMetadata lookupMetadata) {
 		String searchKey = searchRequest.getSearchKey();
 		
+		boolean isNative = false;
+		
 		//retrieve the SELECT statement from search type definition
 		String queryString = queryMap.get(searchKey);
 		String optionalQueryString = "";
+		
+		if(queryString.toUpperCase().startsWith("NATIVE:")){
+			queryString = queryString.substring("NATIVE:".length());
+			isNative = true;
+		}
 		
 		//add in optional
 		List<SearchParam> searchParamsTemp = new ArrayList<SearchParam>(searchRequest.getParams());
@@ -205,7 +274,13 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 		//Create the query
 		String finalQueryString = queryString + optionalQueryString + orderByClause;
 		System.out.println("Executing query: "+finalQueryString);
-		Query query = em.createQuery(finalQueryString);
+		
+		Query query;
+		if(isNative){
+			query = em.createNativeQuery(finalQueryString);
+		}else{
+			query = em.createQuery(finalQueryString);
+		}
 		
 		//Set the pagination information (eg. only return 25 rows starting at row 100)
 		if(searchRequest.getStartAt()!=null){
@@ -218,8 +293,27 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 		//replace all the "." notation with "_" since the "."s in the ids of the queries will cause problems with the jpql  
 		if(searchRequest.getParams()!=null){
 			for (SearchParam searchParam : searchRequest.getParams()) {
-				query.setParameter(searchParam.getKey().replace(".", "_"), searchParam
-						.getValue());
+			    List<LookupParamMetadata> metaParams = lookupMetadata.getParams();
+			    Data.DataType paramDataType;
+			    Object queryParamValue = null;
+			    paramDataType = null;
+			    if (metaParams != null) {
+			        for (LookupParamMetadata metaParam : metaParams) {
+			            if (metaParam.getKey() != null && metaParam.getKey().equals(searchParam.getKey())) {
+			                paramDataType = metaParam.getDataType();
+			            }
+			        }
+			    }
+			    if (paramDataType == Data.DataType.DATE) {
+			        try {
+                        queryParamValue = df.parse((String)searchParam.getValue());
+                    } catch (ParseException e) {
+                        throw new RuntimeException("Failed to parse date value " + searchParam.getValue());
+                    }
+			    } else {
+			        queryParamValue = searchParam.getValue();
+			    }
+			    query.setParameter(searchParam.getKey().replace(".", "_"), queryParamValue);
 			}
 		}
 
@@ -231,13 +325,18 @@ public class AbstractSearchableCrudDaoImpl extends AbstractCrudDaoImpl
 		searchResult.setSortColumn(searchRequest.getSortColumn());
 		searchResult.setSortDirection(searchRequest.getSortDirection());
 		searchResult.setStartAt(searchRequest.getStartAt());
-		if(searchRequest.getNeededTotalResults()){
+		if(searchRequest.getNeededTotalResults()!=null&&searchRequest.getNeededTotalResults()){
 			//Get count of total rows if needed
 			String regex = "^[Ss][Ee][Ll][Ee][Cc][Tt]\\s*([^,\\s]+).*?[Ff][Rr][Oo][Mm]";
 			String replacement = "SELECT COUNT($1) FROM";
 			String countQueryString = (queryString + optionalQueryString).replaceAll(regex, replacement);
 			System.out.println("Executing query: "+countQueryString);
-			Query countQuery = em.createQuery(countQueryString);
+			Query countQuery;
+			if(isNative){
+				countQuery = em.createNativeQuery(countQueryString);
+			}else{
+				countQuery = em.createQuery(countQueryString);
+			}
 			if(searchRequest.getParams()!=null){
 				for (SearchParam searchParam : searchRequest.getParams()) {
 					countQuery.setParameter(searchParam.getKey().replace(".", "_"), searchParam

@@ -15,7 +15,6 @@
 package org.kuali.student.core.organization.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.kuali.student.common.validator.Validator;
 import org.kuali.student.core.dictionary.dto.ObjectStructure;
 import org.kuali.student.core.dictionary.service.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
-import org.kuali.student.core.enumerable.dto.EnumeratedValue;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
@@ -865,13 +863,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 
 	@Override
-	public List<EnumeratedValue> getEnumeration(String enumerationKey,
-			String enumContextKey, String contextValue, Date contextDate) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ObjectStructure getObjectStructure(String objectTypeKey) {
 		return dictionaryServiceDelegate.getObjectStructure(objectTypeKey);
 	}
@@ -922,7 +913,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 
 	/**
-	 * Check for missing parameter and thow localized exception if missing
+	 * Check for missing parameter and throw localized exception if missing
 	 *
 	 * @param param
 	 * @param parameter name
@@ -961,10 +952,8 @@ public class OrganizationServiceImpl implements OrganizationService {
 	}
 
 	@Override
-	public SearchResult search(SearchRequest searchRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public SearchResult search(SearchRequest searchRequest) throws MissingParameterException {
+        checkForMissingParameter(searchRequest, "searchRequest");
+        return searchManager.search(searchRequest, organizationDao);
 	}
-
-
 }

@@ -12,6 +12,11 @@ public interface CommonImages {
     public KSImage getEditCommentIcon();
     public KSImage getDeleteCommentIcon();
     public KSImage getSpacer();
-    public KSImage getSearchIcon();
+	public KSImage getCurriculumManagementImage();
+	public KSImage getSearchIcon();
+	public KSImage getDropDownIconBlack();
+	public KSImage getDropDownIconWhite();
+	public KSImage getDropDownIconCustom();
+	public KSImage getLightBulbIcon();
     public KSImage getProgressSpinner();
 }
