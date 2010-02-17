@@ -261,6 +261,7 @@
 				<xsd:element name="validChars"
 					type="validCharsConstraint" minOccurs="0" maxOccurs="1">
 				</xsd:element>
+				<!--  This is to dependency requirement on other fields -->
 				<xsd:element name="require" type="requireConstraint"
 					minOccurs="0" maxOccurs="unbounded">
 				</xsd:element>

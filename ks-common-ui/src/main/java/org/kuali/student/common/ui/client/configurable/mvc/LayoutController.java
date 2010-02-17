@@ -138,11 +138,10 @@ public abstract class LayoutController extends Controller implements Configurabl
             
             //ConstraintSetupFactory sectionbc = new SectionContraintSetupFactory(section,bc.getDataProvider(currentModel));
             //Validator val = new Validator(sectionbc, true);
-            Validator val = new Validator(bc, true);
-            val.addMessages(Application.getApplicationContext().getMessages());
-            val.setSkipFields(skip);
-            List<ValidationResultContainer> results = val.validateTypeStateObject(currentModel, objStructure);
-            e.addValidationResult(results);// filled by calling the real validate code
+            Validator val = new Validator();
+
+//            List<ValidationResultContainer> results = val.validateTypeStateObject(currentModel, objStructure);
+//           e.addValidationResult(results);// filled by calling the real validate code
         }
         fireApplicationEvent(e);
 
