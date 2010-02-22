@@ -224,27 +224,15 @@
 			<groupId>com.atlassian.maven.plugins</groupId>
 			<artifactId>maven-clover2-plugin</artifactId>
             <configuration>
-              <license><![CDATA[rQQrPasjfItwAkMJKkmNMCxgroOBLImTnqHdkoJrjKCIWJb
-mj2Krd<9J9nD6sR<IqbMLA7P2L01abPDWMorvjKhHqZHUh0
-RPoRTSOrOpmOqPrmMPqXVqOqoOQQrrnOrotXvWxXwUTWuVN
-xUpvTWwxxuUvQnmqmUUnosomvnsmmmmmUUnosomvnsmmmmm
-UULkfsbopfqvWlcW1ofwlkXUUn]]>
-              </license>
+             <historyDir>${settings.localRepository}/${project.groupId}/${project.artifactId}/clover/history</historyDir>
+             <excludes>
+               <include>**/ui/client/**/*.java</include>             
+             </excludes>
 	        </configuration>
  		</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-		      	<plugin>
-        			<artifactId>maven-release-plugin</artifactId>
-				    <configuration>
-					    <username>${maven.release.username}</username>
-				        <password>${maven.release.password}</password>
-			    	    <arguments>-Dmaven.test.skip=true</arguments>
-			        	<preparationGoals>clean install</preparationGoals>
-				        <goals>clean deploy</goals>
-				    </configuration>
-      			</plugin>
     			<plugin>
 			        <artifactId>maven-eclipse-plugin</artifactId>
 			        <configuration>
@@ -1058,18 +1046,4 @@ UULkfsbopfqvWlcW1ofwlkXUUn]]>
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
-    <scm>
-      <connection>scm:svn:https://test.kuali.org/svn/student/deploymentlab/branches/1.0.0-m3</connection>
-      <developerConnection>scm:svn:https://test.kuali.org/svn/student/deploymentlab/branches/1.0.0-m3</developerConnection>
-      <url>https://test.kuali.org/svn/student/deploymentlab/branches/1.0.0-m3</url>
-    </scm>
-    <distributionManagement>
-      <repository>
-        <uniqueVersion>true</uniqueVersion>
-        <id>internal</id>
-        <name>Kuali Student Repository</name>
-        <url>file://C:/maven2</url>
-        <layout>default</layout>
-      </repository>
-    </distributionManagement>
 </project>
