@@ -66,9 +66,9 @@ public abstract class BaseAssembler<TargetType, SourceType> implements Assembler
     @Override
     public Metadata getMetadata(String idType, String id, String type, String state) throws AssemblyException {
         Metadata metadata = metadataService.getMetadata(getDataType(), type, state);
-        AttributeSet qualification = getQualification(idType, id);
         Boolean authorized = null;
         if (StringUtils.isNotBlank(id) && checkDocumentLevelPermissions()) {
+            AttributeSet qualification = getQualification(idType, id);
         	String currentUser = SecurityUtils.getCurrentUserId();
 	        authorized = Boolean.valueOf(permissionService.isAuthorizedByTemplateName(currentUser, namespace,
 	                EDIT_DOCUMENT_PERM, null, qualification));
@@ -170,7 +170,7 @@ public abstract class BaseAssembler<TargetType, SourceType> implements Assembler
      * 
      * This method should return the qualification name for the document type
      * 
-     * @return the qualification name, i.e. "proposalId" 
+     * @return the qualifications in at AttributeSet
      */
     protected abstract AttributeSet getQualification(String idType, String id);
     public void setPermissionService(PermissionService permissionService) {

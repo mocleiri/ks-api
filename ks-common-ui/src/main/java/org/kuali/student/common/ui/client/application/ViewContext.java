@@ -12,7 +12,7 @@ import org.kuali.student.common.ui.client.service.AuthorizationRpcService.Permis
 public class ViewContext {
 	public enum IdType {
 		// FIXME: remove hard coded strings below for KIM constants
-		PROPOSAL_ID("proposalId"), DOCUMENT_ID("documentNumber"), OBJECT_ID("objectId");
+		KS_KEW_OBJECT_ID("kualiStudentObjectWorkflowId"), DOCUMENT_ID("documentNumber"), OBJECT_ID("objectId");
         
 		final String stringValue;
 
