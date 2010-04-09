@@ -96,13 +96,13 @@
 		        <entry key="lrc.search.resultComponent">
 		            <value>SELECT rc.id, rc.name, rc.type FROM ResultComponent rc </value>
 		        </entry>
-		        
+        
 				<entry key="lrc.queryParam.resultComponent.id">
 					<value>rc.id = :lrc_queryParam_resultComponent_id</value>
 				</entry>
 				
 				<entry key="lrc.queryParam.resultComponent.type">
-					<value>rc.type.id = :lrc_queryParam_resultComponent_type</value>
+					<value>rc.type.id IN (:lrc_queryParam_resultComponent_type)</value>
 				</entry>
 			</map>
 		</property>

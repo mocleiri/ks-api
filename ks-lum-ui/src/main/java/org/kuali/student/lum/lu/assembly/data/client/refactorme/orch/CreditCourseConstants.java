@@ -34,6 +34,7 @@ public interface CreditCourseConstants
 	public static final String CROSS_LISTINGS = "crossListings";
 	public static final String VERSIONS = "versions";
 	public static final String GRADING_OPTIONS = "gradingOptions";
+	public static final String OUTCOME_OPTIONS = "outcomeOptions";
 	public static final String JOINTS = "joints";
 	public static final String FINAL_RESULTS = "finalResults";
 	public static final String FEES = "fees";

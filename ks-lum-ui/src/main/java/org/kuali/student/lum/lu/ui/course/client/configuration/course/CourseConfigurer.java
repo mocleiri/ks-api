@@ -421,7 +421,7 @@ import com.google.gwt.user.client.ui.Widget;
 	    protected VerticalSection generateLearningResultsSection() {
 	    	VerticalSection lrSection = initSection(getH3Title(LUConstants.LEARNING_RESULTS_LABEL_KEY), WITH_DIVIDER);
 	    	LRBuilder lrBuilder = new LRBuilder(type, state, groupName, modelDefinition);
-	    	addField(lrSection, CreditCourseConstants.COURSE_SPECIFIC_LOS, null, lrBuilder, CreditCourseProposalConstants.COURSE);
+	    	addField(lrSection, CreditCourseConstants.OUTCOME_OPTIONS, null, lrBuilder, CreditCourseProposalConstants.COURSE);
 	    	return lrSection;
 	    }
 	    
@@ -594,7 +594,7 @@ import com.google.gwt.user.client.ui.Widget;
 	
 	        @Override
 	        public Widget createItem() {
-            String path = QueryPath.concat(parentPath, String.valueOf(getAddItemKey())).toString();
+	            String path = QueryPath.concat(parentPath, String.valueOf(getAddItemKey())).toString();
 	            GroupSection ns = new GroupSection();
 	            addField(ns, CreditCourseJointsConstants.COURSE_ID, getLabel(LUConstants.COURSE_NUMBER_OR_TITLE_LABEL_KEY), null, path);
 	            return ns;

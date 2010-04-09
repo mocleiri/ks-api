@@ -1774,9 +1774,9 @@
 								<property name="hidden" value="false"/>
 							</bean>
 							<bean parent="result" autowire-candidate="default" dependency-check="default" autowire="default" lazy-init="default">
-								<property name="key" value="lu.resultColumn.luOptionalType"/>
-								<property name="name" value="Type"/>
-								<property name="desc" value="Course or proposal."/>
+								<property name="key" value="lu.resultColumn.luOptionalState"/>
+								<property name="name" value="State"/>
+								<property name="desc" value="Course or proposal state."/>
 								<property name="dataType" value="STRING"/>
 								<property name="hidden" value="false"/>
 							</bean>
@@ -3267,7 +3267,6 @@
 			<list>
 				<ref bean="constraint.single" />
 				<ref bean="constraint.required" />
-				<ref bean="constraint.single" />
 				<ref bean="constraint.unit.types" />
 			</list>
 		</property>
@@ -3441,6 +3440,7 @@
 				<ref bean="course.campusLocations" />
 				<ref bean="course.primaryInstructor" />
 				<ref bean="course.courseSpecificLOs" />
+				<ref bean="course.outcomeOptions" />
 				<ref bean="course._runtimeData" />
 			</list>
 		</property>
@@ -3588,7 +3588,6 @@
 		</property>
 	</bean>
 	
-	
 	<bean id="course.gradingOptions" parent="dataFieldDescriptor">
 		<property name="name" value="gradingOptions" />
 		<property name="writeAccess" value="ALWAYS" />
@@ -3605,6 +3604,84 @@
 		</property>
 		<property name="additionalLookups">
 			<list />
+		</property>
+	</bean>
+
+	<bean id="course.outcomeOptions" parent="dataFieldDescriptor">
+		<property name="name" value="outcomeOptions" />
+		<property name="writeAccess" value="ALWAYS" />
+		<property name="onChangeRefreshMetadata" value="false" />
+		<property name="dataObjectStructure" ref="outcomeOptions" />
+		<property name="dataType" value="DATA" />
+		<property name="constraints">
+			<list>
+				<ref bean="constraint.repeating" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="outcomeOptions" parent="outcomeOptions-parent" />
+	<bean id="outcomeOptions-parent" abstract="true" parent="dataObjectStructure">
+		<property name="name" value="outcomeOptions" />
+		<property name="fields">
+			<list>
+				<ref bean="outcomeOptions.outcomeType" />
+				<ref bean="outcomeOptions.outcomeCreditValue" />
+				<ref bean="outcomeOptions.outcomeMaxCredits" />
+			</list>
+		</property>
+	</bean>
+	<bean id="outcomeOptions.outcomeType" parent="dataFieldDescriptor">
+		<property name="name" value="outcomeType" />
+		<property name="writeAccess" value="NEVER" />
+		<property name="onChangeRefreshMetadata" value="false" />
+		<property name="dataType" value="STRING" />		
+		<property name="constraints">
+			<list>
+				<ref bean="constraint.required" />
+				<ref bean="constraint.single" />				
+			</list>
+		</property>
+		<property name="initialLookup" >
+			<ref bean="kuali.lookup.lrcoutcometypes" />
+		</property>
+		<property name="additionalLookups" >
+			<list />
+		</property>
+	</bean>
+	<bean id="outcomeOptions.outcomeCreditValue" parent="dataFieldDescriptor">
+		<property name="name" value="outcomeCreditValue" />
+		<property name="writeAccess" value="NEVER" />
+		<property name="onChangeRefreshMetadata" value="false" />
+		<property name="dataType" value="STRING" />
+		<property name="defaultValue" value="" />
+		<property name="constraints">
+			<list>
+				<ref bean="constraint.single" />
+				<ref bean="constraint.non-negative.integer" />
+				<bean parent="constraint">
+					<property name="serverSide" value="false" />
+					<property name="minLength" value="1" />
+					<property name="maxLength" value="2" />
+					<property name="minValue" value="0" />
+					<property name="maxValue" value="40" />
+				</bean>
+				<ref bean="constraint.required" />
+				<ref bean="constraint.decimal" />
+			</list>
+		</property>
+		</bean>
+		<bean id="outcomeOptions.outcomeMaxCredits" parent="dataFieldDescriptor">
+		<property name="name" value="outcomeMaxCredits" />
+		<property name="writeAccess" value="NEVER" />
+		<property name="onChangeRefreshMetadata" value="false" />
+		<property name="dataType" value="STRING" />
+		<property name="defaultValue" value="" />
+		<property name="constraints">
+			<list>
+				<ref bean="constraint.optional" />
+				<ref bean="constraint.single" />				
+			</list>
 		</property>
 	</bean>
 
@@ -6421,4 +6498,62 @@
 		<property name="resultSortKey" value="enumeration.resultColumn.sortKey" />
 		<property name="usage" value="DEFAULT" />
 	</bean>
+
+    <bean id="kuali.lookup.lrcoutcometypes" parent="lookup">
+        <property name="id" value="kuali.lookup.lrcoutcometypes" />
+        <property name="searchTypeId" value="lrc.search.resultComponent" />
+        <property name="name" value="All Outcome Types" />
+        <property name="desc" value="Returns the list of all Outcome Types" />
+        <property name="widget" value="DROP_DOWN"/>
+        <property name="searchParamIdKey" value="lrc.queryParam.resultComponent.id" />
+        <property name="resultReturnKey" value="lrc.resultColumn.resultComponent.id" />
+        <property name="resultDisplayKey" value="lrc.resultColumn.resultComponent.name" />
+        <property name="resultSortKey" value="lrc.resultColumn.resultComponent.name" />
+        <property name="params">
+            <list>
+                <bean parent="param">
+                    <property name="key" value="lrc.queryParam.resultComponent.id" />
+                    <property name="writeAccess" value="NEVER" />
+                    <property name="dataType" value="STRING" />
+                    <property name="optional" value="true" />
+                    <property name="name" value="Result Component ID" />
+                    <property name="desc" value="The ID of the Outcome Result Component" />
+                    <property name="caseSensitive" value="true" />
+                </bean>
+                <bean parent="param">
+                    <property name="key" value="lrc.queryParam.resultComponent.type" />
+                    <property name="writeAccess" value="NEVER" />
+                    <property name="dataType" value="STRING" />
+                    <property name="optional" value="true" />
+					<property name="defaultValueList">
+						<list>
+							<value>kuali.resultComponentType.credit.degree.fixed</value>
+							<value>kuali.resultComponentType.credit.degree.range</value>
+						</list>
+					</property>                   
+                    <property name="name" value="Result Component Type" />
+                    <property name="desc" value="Filter for Outcome Component Types" />
+                    <property name="caseSensitive" value="false" />
+                </bean>
+            </list>
+        </property>
+        <property name="results">
+            <list>
+                <bean parent="result">
+                    <property name="key" value="lrc.resultColumn.resultComponent.id" />
+                    <property name="name" value="Outcome Type Key" />
+                    <property name="desc" value="Outcome Type Key" />
+                    <property name="dataType" value="STRING" />
+                    <property name="hidden" value="false" />
+                </bean>
+                <bean parent="result">
+                    <property name="key" value="lrc.resultColumn.resultComponent.name" />
+                    <property name="name" value="Outcome Type Name" />
+                    <property name="desc" value="Outcome Type Name" />
+                    <property name="dataType" value="STRING" />
+                    <property name="hidden" value="false" />
+                </bean>
+            </list>
+        </property>
+    </bean>
 </beans>

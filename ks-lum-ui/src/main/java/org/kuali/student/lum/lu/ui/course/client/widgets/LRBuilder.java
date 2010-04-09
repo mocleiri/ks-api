@@ -8,14 +8,13 @@ import org.kuali.student.common.ui.client.configurable.mvc.sections.GroupSection
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.VerticalSection;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
-import org.kuali.student.common.ui.client.widgets.KSDropDown;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.list.KSCheckBoxList;
 import org.kuali.student.common.ui.client.widgets.list.impl.SimpleListItems;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseConstants;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseCourseSpecificLOsConstants;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseLearningResultsConstants;
 import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -25,9 +24,6 @@ public class LRBuilder extends Composite {
 
 	public static final String COURSE = "course";
 	public static final String LEARNING_RESULTS = "learningresults";
-	public static final String COURSE_SPECIFIC_L_OS = "courseSpecificLOs";
-	//public static final String ACTIVITY_TYPE = "activityType";
-
 	
     private boolean WITH_DIVIDER = true;
     private boolean NO_DIVIDER = false;
@@ -51,24 +47,22 @@ public class LRBuilder extends Composite {
 	}
 
     private VerticalSection generateLearningResultsSection() {
-        QueryPath path = QueryPath.concat(null, COURSE + "/" + COURSE_SPECIFIC_L_OS + "/" + "*" + "/" + CreditCourseCourseSpecificLOsConstants.INCLUDED_SINGLE_USE_LO + "/" + "description");
-    	Metadata meta = modelDefinition.getMetadata(path);
 
     	VerticalSection learningResultsSection = initSection(getH3Title(LUConstants.LEARNING_RESULTS_LABEL_KEY), WITH_DIVIDER);
 //        addField(learningResultsSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_ASSESSMENT_SCALE_LABEL_KEY), new LearingResultAssessmentScaleType(), path.toString());
     	addField(learningResultsSection, COURSE + "/" + CreditCourseConstants.GRADING_OPTIONS, getLabel(LUConstants.LEARNING_RESULT_ASSESSMENT_SCALE_LABEL_KEY));
-        addField(learningResultsSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_LABEL_KEY), new LearningResultOutcomeList(COURSE + "/" + LEARNING_RESULTS));
+        addField(learningResultsSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_LABEL_KEY), new LearningResultOutcomeList(COURSE + "/" + CreditCourseConstants.OUTCOME_OPTIONS));
         
     	VerticalSection regiOptionsSection = initSection(SectionTitle.generateH3Title("Student Registration")/*getH3Title(LUConstants.LEARNING_RESULT_STUDENT_REGI_OPTIONS_LABEL_KEY)*/, WITH_DIVIDER);
         LearningResultStudentRegiOptions regiOptions = new LearningResultStudentRegiOptions();
-        addField(regiOptionsSection,  COURSE + "/" + LEARNING_RESULTS, "Audit", regiOptions.GetAuditCheckBox(), path.toString());
-        addField(regiOptionsSection, COURSE + "/" + LEARNING_RESULTS, "Pass Fail Transcript Grade", regiOptions.GetPassFailCheckBox(), path.toString());
+        addField(regiOptionsSection,  COURSE + "/" + LEARNING_RESULTS, "Audit", regiOptions.GetAuditCheckBox(), null /* FIXME */);
+        addField(regiOptionsSection, COURSE + "/" + LEARNING_RESULTS, "Pass Fail Transcript Grade", regiOptions.GetPassFailCheckBox(), null /* FIXME */);
         learningResultsSection.addSection(regiOptionsSection);
         
         return learningResultsSection;
     }
 
-    public class LearningResultGradingScaleList extends UpdatableMultiplicityComposite {
+    /*public class LearningResultGradingScaleList extends UpdatableMultiplicityComposite {
     	private final String parentPath;
         public LearningResultGradingScaleList(String parentPath){
         	super(StyleType.TOP_LEVEL);
@@ -85,7 +79,7 @@ public class LRBuilder extends Composite {
 
             return lrSection;
         }
-    }
+    }*/
 
     public class LearningResultOutcomeList extends UpdatableMultiplicityComposite {
     	private final String parentPath;
@@ -94,25 +88,27 @@ public class LRBuilder extends Composite {
         	this.parentPath = parentPath;
             setAddItemLabel(getLabel(LUConstants.ADD_LEARNING_RESULT_OUTCOME_LABEL_KEY));
             setItemLabel(getLabel(LUConstants.LEARNING_RESULT_OUTCOME_LABEL_KEY));
+            setMinEmptyItems(1);
         }
 
         public Widget createItem() {
-        	String path = QueryPath.concat(parentPath, String.valueOf(itemCount-1)).toString();
+            String path = QueryPath.concat(parentPath, String.valueOf(getAddItemKey())).toString();
             GroupSection lrSection = new GroupSection();
-            addField(lrSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_TYPE_LABEL_KEY), new LearingResultOutcomeType(), path);
+
+        	addField(lrSection, CreditCourseLearningResultsConstants.OUTCOME_TYPE, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_TYPE_LABEL_KEY),null, path);
             lrSection.nextLine();
             KSTextBox creditValueTextbox = new KSTextBox();
-            addField(lrSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_CREDIT_VALUE_LABEL_KEY), creditValueTextbox, path);
+            addField(lrSection, CreditCourseLearningResultsConstants.OUTCOME_CREDIT_VALUE, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_CREDIT_VALUE_LABEL_KEY), creditValueTextbox, path);
             lrSection.nextLine();
-            KSTextBox maxCreditsTextbox = new KSTextBox();
-            addField(lrSection, COURSE + "/" + LEARNING_RESULTS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_MAX_CREDITS_LABEL_KEY), maxCreditsTextbox, path);
-            lrSection.nextLine();
-
+          //  KSTextBox maxCreditsTextbox = new KSTextBox();
+          //  addField(lrSection, CreditCourseLearningResultsConstants.OUTCOME_MAX_CREDITS, getLabel(LUConstants.LEARNING_RESULT_OUTCOME_MAX_CREDITS_LABEL_KEY), maxCreditsTextbox, path);
+          //  lrSection.nextLine();
+            
             return lrSection;
         }
     }
 
-	public class LearingResultAssessmentScaleType extends KSDropDown{
+	/*public class LearingResultAssessmentScaleType extends KSDropDown{
 	    public LearingResultAssessmentScaleType(){
 	        SimpleListItems activityTypes = new SimpleListItems();
 	
@@ -126,21 +122,8 @@ public class LRBuilder extends Composite {
 	        super.setListItems(activityTypes);
 	        this.selectItem("kuali.lr.scale.type.PassFail");
 	    }
-	}
-	
-	public class LearingResultOutcomeType extends KSDropDown{
-	    public LearingResultOutcomeType(){
-	        SimpleListItems activityTypes = new SimpleListItems();
-	
-	        activityTypes.addItem("kuali.lr.scale.type.CreditHoursFixed", "Credit Hours Fixed");
-	        activityTypes.addItem("kuali.lr.scale.type.CreditHoursVariable", "Credit Hours Variable");
-	        activityTypes.addItem("kuali.lr.scale.type.CreditHoursMultiple", "Credit Hours Multiple");
-	
-	        super.setListItems(activityTypes);
-	        this.selectItem("kuali.lr.scale.type.CreditHoursFixed");
-	    }
-	}
-	
+	}*/
+
 	public class LearningResultStudentRegiOptions extends KSCheckBoxList{
 		KSCheckBoxList auditCheckBox = new KSCheckBoxList();
 		KSCheckBoxList passFailCheckBox = new KSCheckBoxList();
@@ -162,8 +145,6 @@ public class LRBuilder extends Composite {
 	    	return passFailCheckBox;
 	    }
 	}
-
-    
     
     private VerticalSection initSection(SectionTitle title, boolean withDivider) {
         VerticalSection section = new VerticalSection();
