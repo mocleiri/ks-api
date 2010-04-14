@@ -1,11 +1,11 @@
-/*
- * Copyright 2009 The Kuali Foundation Licensed under the
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
  * obtain a copy of the License at
- * 
+ *
  * http://www.osedu.org/licenses/ECL-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
@@ -17,8 +17,6 @@ package org.kuali.student.security.spring;
 
 import org.kuali.rice.core.config.Config;
 import org.kuali.rice.core.config.ConfigContext;
-import org.kuali.rice.kim.KimAuthenticationProvider;
-import org.kuali.rice.kim.KimAuthenticationProvider.UserWithId;
 import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
 import org.kuali.rice.kim.service.IdentityService;
 import org.springframework.security.GrantedAuthority;
@@ -29,7 +27,7 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.security.util.AuthorityUtils;
 
 /**
- * This is a description of what this class does - Rich don't forget to fill this in. 
+ * This is a description of what this class does. 
  * 
  * @author Kuali Student Team
  *
@@ -80,10 +78,10 @@ public class KSRiceDefaultUserDetailsService implements UserDetailsService{
         // When a UsernameNotFoundException is thrown, spring security will proceed to the next AuthenticationProvider on the list.
         // When Rice is running and username is not found in KIM, we want authentication to stop and allow the user to enter the correct username.
         // to do this we need to throw a AccountStatusException and not UsernameNotFoundException.
-            System.out.println("kimPrincipalInfo is null ");
+            //System.out.println("kimPrincipalInfo is null ");
             throw new KimUserNotFoundException("Invalid username or password");  
         }
-        ksuser = new KimAuthenticationProvider.UserWithId(username, password, enabled, true, true, nonlocked, authorities);
+        ksuser = new UserWithId(username, password, enabled, true, true, nonlocked, authorities);
         ksuser.setUserId(userId);
         return ksuser;
     }
