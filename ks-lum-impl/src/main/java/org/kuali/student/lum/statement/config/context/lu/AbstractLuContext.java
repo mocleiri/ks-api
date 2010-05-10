@@ -19,16 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.brms.statement.entity.ReqComponent;
 import org.kuali.student.brms.statement.naturallanguage.AbstractContext;
 import org.kuali.student.brms.statement.naturallanguage.util.ReqComponentTypes;
+import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.dto.CluSetInfo;
 import org.kuali.student.lum.lu.service.LuService;
 
 public abstract class AbstractLuContext<T> extends AbstractContext<T> {
-    LuService luService;
+    private LuService luService;
 
 	/**
 	 * <p>These common shared tokens are needed since velocity doesn't 
@@ -47,6 +47,7 @@ public abstract class AbstractLuContext<T> extends AbstractContext<T> {
 	 * Constructor.
 	 */
 	public AbstractLuContext() {
+		this.luService = null;
 	}
 
 	/**

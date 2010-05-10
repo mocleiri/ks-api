@@ -16,33 +16,32 @@
 package org.kuali.student.lum.lu.ui.tools.client.widgets;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.common.ui.client.application.ViewContext;
+import org.kuali.student.common.ui.client.application.ViewContext.IdType;
 import org.kuali.student.common.ui.client.configurable.mvc.WidgetConfigInfo;
+import org.kuali.student.common.ui.client.event.ChangeViewActionEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
+import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.HasDataValue;
 import org.kuali.student.common.ui.client.mvc.HasFocusLostCallbacks;
 import org.kuali.student.common.ui.client.mvc.TranslatableValueWidget;
 import org.kuali.student.common.ui.client.widgets.KSErrorDialog;
-import org.kuali.student.core.assembly.data.Data.Value;
+import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
 import org.kuali.student.core.assembly.data.LookupMetadata;
 import org.kuali.student.core.assembly.data.LookupParamMetadata;
+import org.kuali.student.core.assembly.data.Data.Value;
+import org.kuali.student.lum.lu.ui.main.client.controller.LUMApplicationManager.LUMViews;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import org.kuali.student.common.ui.client.application.ViewContext;
-import org.kuali.student.common.ui.client.application.ViewContext.IdType;
-import org.kuali.student.common.ui.client.event.ChangeViewActionEvent;
-import org.kuali.student.common.ui.client.mvc.Controller;
-import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
-import org.kuali.student.lum.lu.ui.home.client.view.FindPanel;
-import org.kuali.student.lum.lu.ui.main.client.controller.LUMApplicationManager.LUMViews;
 
 public class KSBrowser extends Composite implements HasFocusLostCallbacks,
                                                     HasValueChangeHandlers<String>,
@@ -56,12 +55,10 @@ public class KSBrowser extends Composite implements HasFocusLostCallbacks,
  private List<LookupParamMetadata> cascadingChildParameters;
  private WidgetConfigInfo config;
  private VerticalFlowPanel layout = new VerticalFlowPanel ();
- private Controller controller;
 
  public KSBrowser (LookupMetadata fieldLookup, Controller controller)
  {
   this.fieldLookup = fieldLookup;
-  this.controller = controller;
   if (this.fieldLookup == null)
   {
    KSErrorDialog errorDialog = new KSErrorDialog ();

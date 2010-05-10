@@ -28,11 +28,12 @@ import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.MetaInfoHelper;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluHelper;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluSetHelper;
-import org.kuali.student.lum.lu.dto.CluInfo;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluSetRangeHelper;
 import org.kuali.student.lum.lu.dto.CluSetInfo;
+import org.kuali.student.lum.lu.dto.MembershipQueryInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.lu.ui.tools.client.widgets.itemlist.CluSetRangeModelUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(rollbackFor={Throwable.class})
@@ -148,7 +149,7 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
             try {
                 //FIXME should user be specifying the type
                 //TODO remove when done testing
-                cluSetInfo.setType("Test type");
+                cluSetInfo.setType("kuali.cluSet.type.creditCourse");
                 // end of test code
                 updatedCluSetInfo = luService.createCluSet(cluSetInfo.getType(), cluSetInfo);
             } catch (Exception e) {
@@ -180,19 +181,10 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         if (cluSetInfo != null) {
 //          result.setClus
             if (cluSetInfo.getCluIds() != null) {
-                Data clusData = null;
+                result.setClus(new Data());
                 for (String cluId : cluSetInfo.getCluIds()) {
-                    CluInfo cluInfo = null;
-                    CluHelper cluHelper = CluHelper.wrap(new Data());
-                    cluInfo = luService.getClu(cluId);
-                    if (cluInfo != null) {
-                        cluHelper.setId(cluInfo.getId());
-                        cluHelper.setName(cluInfo.getOfficialIdentifier().getCode());
-                    }
-                    clusData = (clusData == null)? new Data() : clusData;
-                    clusData.add(cluHelper.getData());
+                    result.getClus().add(cluId);
                 }
-                result.setClus(clusData);
             }
             result.setDescription(richTextToString(cluSetInfo.getDescr()));
             result.setEffectiveDate(cluSetInfo.getEffectiveDate());
@@ -203,6 +195,8 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
             result.setOrganization(cluSetInfo.getAdminOrg());
             result.setState(cluSetInfo.getState());
             result.setType(cluSetInfo.getType());
+            result.setCluRangeParams(CluSetRangeModelUtil.INSTANCE.toData(
+                    cluSetInfo.getMembershipQuery()));
         }
         return result;
     }
@@ -213,13 +207,15 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         List<String> cluIds = null;
         
         cluSetInfo.setId(cluSetHelper.getId());
-        for (Data.Property p : clusData) {
-        	if(!"_runtimeData".equals(p.getKey())){
-	            CluHelper cluHelper = CluHelper.wrap((Data)p.getValue());
-	            cluIds = (cluIds == null)? new ArrayList<String>(3) :
-	                cluIds;
-	            cluIds.add(cluHelper.getId());
-        	}
+        if (clusData != null) {
+            for (Data.Property p : clusData) {
+                if(!"_runtimeData".equals(p.getKey())){
+                    String cluId = p.getValue();
+                    cluIds = (cluIds == null)? new ArrayList<String>(3) :
+                        cluIds;
+                    cluIds.add(cluId);
+                }
+            }
         }
         if (cluIds != null) {
             cluSetInfo.setCluIds(cluIds);
@@ -228,6 +224,7 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         cluSetInfo.setDescr(toRichTextInfo(cluSetHelper.getDescription()));
         cluSetInfo.setEffectiveDate(cluSetHelper.getEffectiveDate());
         cluSetInfo.setExpirationDate(cluSetHelper.getExpirationDate());
+        cluSetInfo.setMembershipQuery(toMembershipQueryInfo(cluSetHelper.getCluRangeParams()));
         
         // TODO cluSetInfo.setMembershipQuery(membershipQuery)
 //        TODO should metainfo be set here? cluSetInfo.setMetaInfo(cluSetHelper.getMetaInfo());
@@ -236,6 +233,10 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         cluSetInfo.setState(cluSetHelper.getState());
         cluSetInfo.setType(cluSetHelper.getType());
         return cluSetInfo;
+    }
+    
+    private MembershipQueryInfo toMembershipQueryInfo(CluSetRangeHelper cluSetRangeHelper) {
+        return CluSetRangeModelUtil.INSTANCE.toMembershipQueryInfo(cluSetRangeHelper.getData());
     }
     
     private RichTextInfo toRichTextInfo(String text) {

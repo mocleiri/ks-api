@@ -36,6 +36,7 @@ import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.ConfigurableLayout;
+import org.kuali.student.common.ui.client.configurable.mvc.layouts.Configurer;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityItem;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.UpdatableMultiplicityComposite;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.GroupSection;
@@ -77,7 +78,6 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.LearningObj
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.removeinm4.LOBuilderBinding;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseRequisitesSectionView;
 import org.kuali.student.lum.lu.ui.course.client.configuration.LUConstants;
-import org.kuali.student.lum.lu.ui.course.client.configuration.viewclu.ViewCluConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.widgets.CollaboratorTool;
 import org.kuali.student.lum.lu.ui.course.client.widgets.FeeMultiplicity;
 import org.kuali.student.lum.lu.ui.course.client.widgets.LOBuilder;
@@ -98,7 +98,7 @@ import com.google.gwt.user.client.ui.Widget;
 	 *
 	 */
 	public class CourseConfigurer
-	 implements CreditCourseProposalConstants,
+	 implements Configurer, CreditCourseProposalConstants,
 	 CreditCourseProposalInfoConstants,
 	 CreditCourseConstants,
 	 CreditCourseFormatConstants,
@@ -139,7 +139,7 @@ import com.google.gwt.user.client.ui.Widget;
 	    	this.modelDefinition = modelDefinition;
 	    }
 	
-	    public void configureCourseProposal(ConfigurableLayout layout) {
+	    public void configure(ConfigurableLayout layout) {
 	    	groupName = LUConstants.COURSE_GROUP_NAME;
 	
 	        addCluStartSection(layout);
@@ -169,24 +169,11 @@ import com.google.gwt.user.client.ui.Widget;
 		
 	        //Tool Tabs
 	        layout.addTool(new CollaboratorTool(CourseSections.PEOPLE_PERMISSOMS, LUConstants.SECTION_AUTHORS_AND_COLLABORATORS, 
-	        		getH2Title(LUConstants.SECTION_AUTHORS_AND_COLLABORATORS)));
+	        	getH2Title(LUConstants.SECTION_AUTHORS_AND_COLLABORATORS)));
 	        layout.addTool(new CommentPanel(CourseSections.COMMENTS, getLabel(LUConstants.TOOL_COMMENTS_LABEL_KEY)));
 	        layout.addTool(new DocumentTool(CourseSections.DOCUMENTS, getLabel(LUConstants.TOOL_DOCUMENTS_LABEL_KEY)));
 	    }
-	
-	    public SectionView generateSummarySection(){
-	        VerticalSectionView section = initSectionView(CourseSections.SUMMARY, LUConstants.SUMMARY_LABEL_KEY);
-	
-	    	section.enableValidation(false);
-	        section.addSection(generateSummaryBrief(getH3Title(LUConstants.BRIEF_LABEL_KEY)));
-	        section.addSection(generateSummaryDetails(getH3Title(LUConstants.FULL_VIEW_LABEL_KEY)));
-	        return section;
-	    }
-	
-	    protected VerticalSection generateSummaryDetails(SectionTitle title) {
-	       return  ViewCluConfigurer.generateSummaryDetails(title);
-		}
-	
+		
 	    protected VerticalSection generateSummaryBrief(SectionTitle title) {
 	        VerticalSection section = new VerticalSection(title);
 	        section.addStyleName(LUConstants.STYLE_SECTION_DIVIDER);
@@ -241,10 +228,12 @@ import com.google.gwt.user.client.ui.Widget;
 	     * @return
 	     */
 	    protected SectionView generateCourseRequisitesSection() {
-	        CourseRequisitesSectionView section = new CourseRequisitesSectionView(CourseSections.COURSE_REQUISITES, getLabel(LUConstants.REQUISITES_LABEL_KEY));
+	        CourseRequisitesSectionView section = new CourseRequisitesSectionView(CourseSections.COURSE_REQUISITES, getLabel(LUConstants.REQUISITES_LABEL_KEY), CLU_PROPOSAL_MODEL);
 	        //Setting the section title after initializing the widget won't do anything
 	        section.setSectionTitle(SectionTitle.generateH1Title(getLabel(LUConstants.REQUISITES_LABEL_KEY)));
 	        addField(section, SEARCH + "/" + "findCourse");
+            addField(section, SEARCH + "/" + "findCluSet");
+            addField(section, SEARCH + "/" + "findProgram");
 	        return section;
 	    }
 	
@@ -302,8 +291,8 @@ import com.google.gwt.user.client.ui.Widget;
 	        GroupSection courseNumber = new GroupSection(getH3Title(LUConstants.IDENTIFIER_LABEL_KEY));
 	        courseNumber.addStyleName(LUConstants.STYLE_SECTION);
 	        courseNumber.addStyleName(LUConstants.STYLE_SECTION_DIVIDER);
-	        addField(courseNumber, COURSE + "/" + SUBJECT_AREA, null);
-	        addField(courseNumber, COURSE + "/" + COURSE_NUMBER_SUFFIX, null);
+	        addField(courseNumber, COURSE + "/" + SUBJECT_AREA, getLabel(LUConstants.SUBJECT_CODE_LABEL_KEY));
+	        addField(courseNumber, COURSE + "/" + COURSE_NUMBER_SUFFIX, getLabel(LUConstants.COURSE_NUMBER_LABEL_KEY));
 	
 	        // TODO - hide cross-listed, offered jointly and version codes initially, with
 	        // clickable label to disclose them

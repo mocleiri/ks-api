@@ -63,7 +63,7 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
     }
     
     public Data getGradingOptions(String cluId) throws AssemblyException {
-        Data resultData = new Data();
+        Data outcomeData = new Data();
 
         try {
             List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
@@ -72,7 +72,7 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
                     if(cluResult.getType().equals(GRADE_RESULT_TYPE)) {
                         for(ResultOptionInfo option : cluResult.getResultOptions()) {
                             String typeKey = option.getResultComponentId();
-                            resultData.add(typeKey);
+                            outcomeData.add(typeKey);
                         }
                     }
                 }
@@ -81,7 +81,7 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
             throw new AssemblyException("Unable to load learning results for course", e);
         }
         
-        return resultData;
+        return outcomeData;
     }
 
     public Data getOutcomeOptions(String cluId) throws AssemblyException {                 
@@ -95,13 +95,13 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
                     if (cluResult.getType().equals(CREDIT_RESULT_TYPE)) {
                         for(ResultOptionInfo option : cluResult.getResultOptions()) {
                             LearningResultOutcomeHelper outcome = LearningResultOutcomeHelper.wrap(new Data());
+                            outcome.setOutcomeId(option.getId());
                             outcome.setOutcomeType(option.getResultComponentId());
                             outcomeData.add(outcome.getData());                        
                         }                    
                     }
                 }
             }
-            
         } catch(Exception e) {
             throw new AssemblyException("Unable to load learning results for course", e);
         }       
@@ -127,53 +127,56 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
     }
    
     public SaveResult<Data> saveGradingOptions(Data input, String cluId) throws AssemblyException {
-        // Expect to get the following from the client:
-        // Example: ResultComponent.type='kuali.resultComponentType.credit.degree.fixed',
-        //          ResultComponent.id='kuali.creditType.credit.degree.10'
-
         try {
             SaveResult<Data> result = new SaveResult<Data>();
             result.setValue(input);
             
             CreditCourseHelper creditCourseHelper = CreditCourseHelper.wrap(input);
-            //String cluId = creditCourseHelper.getId();
             
-            CluResultInfo cluResultInfo = new CluResultInfo();
-            cluResultInfo.setCluId(cluId);
-            cluResultInfo.setState(STATE);
-    
             // Grading options
             List<ResultOptionInfo> gradeResultOptions = new ArrayList<ResultOptionInfo>();
-            if(creditCourseHelper.getGradingOptions() != null) {
+            if(creditCourseHelper.getGradingOptions() != null && creditCourseHelper.getGradingOptions().size() > 0) {
                 for (Data.Property p : creditCourseHelper.getGradingOptions()) {
                     if(!CreditCourseHelper.Properties._RUNTIME_DATA.getKey().equals(p.getKey())){
                         String resultType = p.getValue();
                         ResultOptionInfo roi = new ResultOptionInfo();
                         roi.setResultComponentId(resultType);
                         roi.setState(STATE);
+                        roi.setDesc(getDesc("Grade outcome option created"));
+                        roi.setEffectiveDate(new Date());
                         gradeResultOptions.add(roi);
                     }
                 }
-                
-                List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
-                if(cluResultList == null || cluResultList.isEmpty()) {
-	                // Create or update clu result
-                    cluResultInfo.setResultOptions(gradeResultOptions);
-                    luService.createCluResult(cluId, GRADE_RESULT_TYPE, cluResultInfo);
-                } else {
-                	// Should only be one CluResultInfo
-                	for(CluResultInfo cri : cluResultList) {
-	                    cri = luService.getCluResult(cri.getId());
-	                    cri.setResultOptions(gradeResultOptions);
-	                    if(cri.getType().equals(GRADE_RESULT_TYPE)) {
-	                        luService.updateCluResult(cri.getId(), cri);
+            }
+
+            List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
+            boolean update = false;
+            if(cluResultList != null) {
+                for (CluResultInfo cluResult : cluResultList) {
+                    if(cluResult.getType().equals(GRADE_RESULT_TYPE)) {
+	                    if(cluResult.getType().equals(GRADE_RESULT_TYPE)) {
+	                    	cluResult.setDesc(getDesc("Grade outcome options updated"));
+	                    	cluResult.setResultOptions(gradeResultOptions);
+	                        luService.updateCluResult(cluResult.getId(), cluResult);
+	                        update = true;
 	                    }
-                	}
+                    }
                 }
-            }    
+            }
+            
+            if(update == false && !gradeResultOptions.isEmpty()) {
+            	// Should only be one CluResultInfo
+                // Create clu result
+                CluResultInfo cluResultInfo = new CluResultInfo();
+                cluResultInfo.setCluId(cluId);
+                cluResultInfo.setState(STATE);
+                cluResultInfo.setDesc(getDesc("Grade outcome options created"));
+                cluResultInfo.setEffectiveDate(new Date());
+                cluResultInfo.setResultOptions(gradeResultOptions);
+                luService.createCluResult(cluId, GRADE_RESULT_TYPE, cluResultInfo);
+            }
             
             return result;
-            
         } catch(Exception e) {
             throw new AssemblyException("Unable to save learning result grades for course", e);
         }
@@ -192,63 +195,72 @@ public class LearningResultAssembler implements Assembler<Data, Void> {
             CreditCourseHelper creditCourseHelper = CreditCourseHelper.wrap(input);
 
             // Outcome options
-            if(creditCourseHelper.getOutcomeOptions() != null) {
-                
+            boolean createUpdateDelete = false;
+            if(creditCourseHelper.getOutcomeOptions() != null && creditCourseHelper.getOutcomeOptions().size() > 0) {
                 for (Data.Property p : creditCourseHelper.getOutcomeOptions()) {                    
                     if(!CreditCourseHelper.Properties._RUNTIME_DATA.equals(p.getKey())){
-                        
                         if (AssemblerUtils.isCreated((Data)p.getValue())) {
                             String resultType = ((Data)p.getValue()).get("outcomeType");
                             ResultOptionInfo roi = new ResultOptionInfo();
                             roi.setResultComponentId(resultType);
-                            roi.setState(STATE);                           
+                            roi.setState(STATE);
+                            roi.setDesc(getDesc("Credit outcome option created"));
                             roi.setEffectiveDate(new Date());
-                            outcomeTypeResultOptions.add(roi);                               
+                            outcomeTypeResultOptions.add(roi);
+                            createUpdateDelete = true;
                         } else if (AssemblerUtils.isDeleted((Data)p.getValue())) {
-                            continue;
+                            createUpdateDelete = true;
                         } else if (AssemblerUtils.isUpdated((Data)p.getValue())) {
+                            String id = ((Data)p.getValue()).get("outcomeId");
                             String resultType = ((Data)p.getValue()).get("outcomeType");
                             ResultOptionInfo roi = new ResultOptionInfo();
+                            roi.setId(id);
                             roi.setResultComponentId(resultType);
                             roi.setState(STATE);
-                            roi.setEffectiveDate(new Date());                            
-                            outcomeTypeResultOptions.add(roi);    
+                            roi.setDesc(getDesc("Credit outcome option updated"));
+                            outcomeTypeResultOptions.add(roi);
+                            createUpdateDelete = true;
                         }                         
-                                                
                     }                                                         
                 }
                 
-                boolean update = false;
-                List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
-                for (CluResultInfo cluResult : cluResultList) {
-                    if(cluResult.getType().equals(CREDIT_RESULT_TYPE)) {
-                        RichTextInfo desc = new RichTextInfo();
-                        desc.setPlain("Temporary description");
-                        cluResult.setDesc(desc);                  
-                        cluResult.setResultOptions(outcomeTypeResultOptions);                        
-                        luService.updateCluResult(cluResult.getId(), cluResult);
-                        update = true;
-                    }
-                }                
-                
-                if(update == false) {
-                    CluResultInfo cluResultInfo = new CluResultInfo();
-                    cluResultInfo.setCluId(cluId);       
-                    cluResultInfo.setState(STATE);
-                    RichTextInfo desc = new RichTextInfo();
-                    desc.setPlain("Temporary description");
-                    cluResultInfo.setDesc(desc);
-                    cluResultInfo.setResultOptions(outcomeTypeResultOptions);
-                    luService.createCluResult(cluId, CREDIT_RESULT_TYPE, cluResultInfo);
-                }             
+                if(createUpdateDelete) {
+	                boolean update = false;
+	                List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
+	                if(cluResultList != null) {
+		                for (CluResultInfo cluResult : cluResultList) {
+		                    if(cluResult.getType().equals(CREDIT_RESULT_TYPE)) {
+	                        	cluResult.setDesc(getDesc("Credit outcome options updated"));
+		                        cluResult.setResultOptions(outcomeTypeResultOptions);
+		                        luService.updateCluResult(cluResult.getId(), cluResult);
+		                        update = true;
+		                    }
+		                }
+	                }
+	                
+	                if(update == false && !outcomeTypeResultOptions.isEmpty()) {
+	                    CluResultInfo cluResultInfo = new CluResultInfo();
+	                    cluResultInfo.setCluId(cluId);       
+	                    cluResultInfo.setState(STATE);
+	                    cluResultInfo.setDesc(getDesc("Credit outcome options created"));
+	                    cluResultInfo.setEffectiveDate(new Date());
+	                    cluResultInfo.setResultOptions(outcomeTypeResultOptions);
+	                    luService.createCluResult(cluId, CREDIT_RESULT_TYPE, cluResultInfo);
+	                }             
+	            }
             }
-            
             return result;
         } catch(Exception e) {
             throw new AssemblyException("Unable to save learning result outcomes for course", e);
         }
     }
 
+    private RichTextInfo getDesc(String text) {
+        RichTextInfo desc = new RichTextInfo();
+        desc.setPlain(text);
+        return desc;
+    }
+    
     @Override
     public List<ValidationResultInfo> validate(Data input)
             throws AssemblyException {

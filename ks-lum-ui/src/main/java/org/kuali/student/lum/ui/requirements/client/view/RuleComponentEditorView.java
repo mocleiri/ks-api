@@ -16,12 +16,9 @@
 package org.kuali.student.lum.ui.requirements.client.view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.kuali.student.brms.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.brms.statement.dto.ReqComponentInfo;
@@ -42,6 +39,7 @@ import org.kuali.student.common.ui.client.widgets.list.ListItems;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeEvent;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
 import org.kuali.student.common.ui.client.widgets.search.KSPicker;
+import org.kuali.student.common.ui.client.widgets.search.SelectedResults;
 import org.kuali.student.core.assembly.data.LookupMetadata;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.lum.ui.requirements.client.controller.CourseReqManager;
@@ -104,7 +102,6 @@ public class RuleComponentEditorView extends ViewComposite {
     private ListItems listItemReqCompTypes;                 	//list of advanced Requirement Component Types
     private List<ReqComponentTypeInfo> advReqCompTypeList;     	//list of advanced Requirement Component Types
     private List<Object> reqCompWidgets = new ArrayList<Object>();
-    private Map<String, String> cluSetsData = new HashMap<String, String>();
     private static int tempCounterID = 2000;
     private List<ReqCompPicker> valueWidgets = new ArrayList<ReqCompPicker>();    
     private List<FieldDescriptor> fieldsWithLookup = new ArrayList<FieldDescriptor>();  //contains definition of lookups
@@ -394,7 +391,7 @@ public class RuleComponentEditorView extends ViewComposite {
         btnCancelView.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {                
                 //if rule has not been created, cancel should return user back to initial rules summary screen
-                if (model.getValue().getNaturalLanguage() == null) {
+                if (editedStatementVO.getReqComponentVOs().size() == 0) {
                     ((CourseReqManager)getController()).removeRule(model.getValue());                    
                     getController().showView(PrereqViews.RULES_LIST, Controller.NO_OP_CALLBACK);                    
                 } else {                
@@ -477,19 +474,25 @@ public class RuleComponentEditorView extends ViewComposite {
     	for (Object reqCompWidget : reqCompWidgets) {            	
         	String name = "";
         	String value = "";
+        	String fieldLabel = ""; //FIXME: we need to have universal basic widget that contains its label
+        	Boolean valid = false;
         	if (reqCompWidget.getClass().getName().contains("KSTextBox")) {
         		name = ((KSTextBox)reqCompWidget).getName();
         		value = ((KSTextBox)reqCompWidget).getText();
+        		valid = !value.trim().isEmpty();  //FIXME: missing proper validation
         	} else if (reqCompWidget.getClass().getName().contains("ReqCompPicker")) {
         		name = ((ReqCompPicker)reqCompWidget).getName();
-        		value = ((ReqCompPicker)reqCompWidget).getValue().get();            		
+        		value = ((ReqCompPicker)reqCompWidget).getValue().get();
+        		valid = ((ReqCompPicker)reqCompWidget).getValidEntry();
+        		fieldLabel = ((ReqCompPicker)reqCompWidget).getFieldName();  
         	}
         	
             ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
             fieldInfo.setId(name);
             fieldInfo.setValue(value);
 
-            if (checkField(fieldInfo) == false) {
+            if (!valid) {
+                Window.alert("Please enter valid value in the field: " + (fieldLabel.isEmpty() ? getFieldName(fieldInfo) : fieldLabel));
             	editedFields.clear();
                 return false;
             }
@@ -511,36 +514,21 @@ public class RuleComponentEditorView extends ViewComposite {
         return true;    	
     }
 
-    private boolean checkField(ReqCompFieldInfo fieldInfo) {
-
-        String fieldValue = fieldInfo.getValue();
-
-        if (fieldValue.trim().isEmpty()) {
-            Window.alert("Please enter all fields");
-            return false;
-        }
+    private String getFieldName(ReqCompFieldInfo fieldInfo) {
 
         if (fieldInfo.getId().equals("reqCompFieldType.clu")) {
-            if (fieldValue.contains(",")) {
-                Window.alert("Please enter only one course");
-            }
-            return true;
+            return "Course";
+        } else if (fieldInfo.getId().equals("reqCompFieldType.cluSet")) {
+            return "Courses";
+        } else if (fieldInfo.getId().equals("reqCompFieldType.requiredCount")) {
+            return "count";
+        } else if (fieldInfo.getId().equals("reqCompFieldType.gpa")) {
+            return "GPA";
+        } else if (fieldInfo.getId().equals("reqCompFieldType.totalCredits")) {
+            return "Total Credits";
         }
 
-        if (fieldInfo.getId().equals("reqCompFieldType.cluSet")) {
-            String cluSetId = cluSetsData.get(fieldValue);
-            if (cluSetId != null) {
-                fieldInfo.setValue(cluSetId);
-                return true;
-            }
-            if (fieldValue.contains(",")) {
-                Window.alert("Please enter only one course set");
-            } else {
-                Window.alert("Cannot find course set '" + fieldValue + "'");
-            }
-            return false;
-        }
-        return true;
+        return "";
     }
 
     private void displayReqComponentText(String reqInfoDesc, SimplePanel parentWidget, final List<ReqCompFieldInfo> fields) {
@@ -611,7 +599,7 @@ public class RuleComponentEditorView extends ViewComposite {
             }
 
             if (tag.equals("reqCompFieldType.clu")) {
-            	final ReqCompPicker valueWidget = configureCourseSearch();
+            	final ReqCompPicker valueWidget = configureCourseSearch(fieldLabel);
                 valueWidgets.add(valueWidget);
                 String cluIdsInClause = getSpecificFieldValue(fields, tag);
                 
@@ -642,37 +630,31 @@ public class RuleComponentEditorView extends ViewComposite {
             }
 
             if (tag.equals("reqCompFieldType.cluSet")) {
-                final KSTextBox valueWidget = new KSTextBox();
+                
+				//need a better way to determine what pickers to use for given req. component type field
+                final ReqCompPicker valueWidget;  
+                if ((editedReqComp.getRequiredComponentType().getId().equals("kuali.reqCompType.programList.enroll.oneof")) || 
+                        (editedReqComp.getRequiredComponentType().getId().equals("kuali.reqCompType.programList.enroll.none"))) {
+                    valueWidget = configureProgramCluSetSearch(fieldLabel);
+                } else {
+                    valueWidget = configureCourseCluSetSearch(fieldLabel);
+                }
+                valueWidgets.add(valueWidget);
+                String cluSetIdsInClause = getSpecificFieldValue(fields, tag);
+                
+                String[] cluIds = (cluSetIdsInClause == null)? null : cluSetIdsInClause.split("(, *)");                
+                //retrieve clu code to display for user
+                if ((cluIds != null) && (tagCount < cluIds.length) && (cluIds[tagCount].length() > 0)) {
+                    valueWidget.setValue(cluIds[tagCount]);
+                }
                 reqCompWidgets.add(valueWidget);
                 valueWidget.setName(tag);
-                valueWidget.setText(getSpecificFieldValue(fields, tag));
-                valueWidget.setWidth("250px");
+                valueWidget.setWidth("100px");
                 valueWidget.setStyleName("KS-Textbox-Fix");
-                valueWidget.addStyleName("KS-Rules-FlexPanelFix");
                 VerticalPanel tempPanel = new VerticalPanel();
-                tempPanel.setStyleName("KS-Rules-FlexPanelFix");
+                tempPanel.addStyleName("KS-Rules-FlexPanelFix");
                 tempPanel.add(valueWidget);
-                final SearchDialog searchDialog = new SearchDialog(getController(), cluSetsData);
-                searchDialog.addCourseAddHandler(new ClickHandler() {
-                    public void onClick(ClickEvent event) {
-                        String origFieldValue = valueWidget.getText();
-                        int fieldValueCount = 0;
-                        origFieldValue = (origFieldValue == null)? "" : origFieldValue;
-                        StringBuilder newFieldValue = new StringBuilder("");
-                        SortedSet<String> newValues = new TreeSet<String>();
-                        newValues.addAll(Arrays.asList(origFieldValue.split(", +")));
-                        newValues.addAll(searchDialog.getSelections());
-                        for (String newValue : newValues) {
-                            if (fieldValueCount > 0 && newFieldValue.toString().trim().length() > 0) {
-                                newFieldValue.append(", ");
-                            }
-                            newFieldValue.append(newValue);
-                            fieldValueCount++;
-                        }
-                        valueWidget.setText(newFieldValue.toString());
-                    }
-                });
-                tempPanel.add(searchDialog);
+                
                 if (i > 1) {
                     SimplePanel verticalSpacer = new SimplePanel();
                     verticalSpacer.setHeight("30px");
@@ -687,24 +669,7 @@ public class RuleComponentEditorView extends ViewComposite {
         }
         parentWidget.setWidget(innerReqComponentTextPanel);
     }
-    
-    public static class ReqCompPicker extends KSPicker {
-
-    	private String name;
-
-		public ReqCompPicker(LookupMetadata inLookupMetadata, List<LookupMetadata> additionalLookupMetadata) {
-			super(inLookupMetadata, additionalLookupMetadata);
-		}
-    	
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}   	
-    }
-    
+       
     private ReqCompFieldInfo getReqCompFieldInfo(List<ReqCompFieldInfo> fields, String key) {
         ReqCompFieldInfo result = null;
         if (fields == null) {
@@ -720,16 +685,16 @@ public class RuleComponentEditorView extends ViewComposite {
 
     private String getSpecificFieldValue(List<ReqCompFieldInfo> fields, String key) {
         ReqCompFieldInfo reqCompFieldInfo = getReqCompFieldInfo(fields, key);
-        String result = null;
+        String fieldValue = null;
 
         //if we are showing new req. comp. type then show empty fields
         if (reqCompFieldInfo == null) {
             return "";
         }
 
-        result = reqCompFieldInfo.getValue();
-        result = (result == null)? "" : result;
-        return result;
+        fieldValue = reqCompFieldInfo.getValue();
+        fieldValue = (fieldValue == null)? "" : fieldValue;
+        return fieldValue;
     }
 
     /* create a new Req. Component Type based on user selection or empty at first */
@@ -766,10 +731,6 @@ public class RuleComponentEditorView extends ViewComposite {
     	}
     }
 
-    public void setCluSetsData(Map<String, String> cluSetsData) {
-        this.cluSetsData = cluSetsData;
-    }
-    
     private String getRuleTypeName() {
     	String luStatementTypeKey = getSelectedStatementType();
         if (luStatementTypeKey.contains("enroll")) return "Enrollment Restriction";
@@ -825,15 +786,76 @@ public class RuleComponentEditorView extends ViewComposite {
 	        }
 	    };  
     }
-      
-    private ReqCompPicker configureCourseSearch() { 
+          
+    public static class ReqCompPicker extends KSPicker {
+
+        private String name;
+        private Boolean validEntry = true;     //only when user enters existing clu, cluset etc. this is true
+        private String fieldName;
+
+        public ReqCompPicker(LookupMetadata inLookupMetadata, List<LookupMetadata> additionalLookupMetadata, String fieldName) {
+            super(inLookupMetadata, additionalLookupMetadata);
+            
+            this.fieldName = fieldName;
+            
+            this.addBasicSelectionTextChangeCallback(new Callback<String>() {
+                @Override
+                public void exec(String result) {
+                    //validEntry = false;
+                }
+            });
+            
+            this.addBasicSelectionCompletedCallback(new Callback<SelectedResults>() {
+                @Override
+                public void exec(SelectedResults result) {
+                    validEntry = (result.getReturnKey().isEmpty() ? false : true);                    
+                }
+            });
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public String getFieldName() {
+            return fieldName;
+        }        
+
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+        public Boolean getValidEntry() {
+            return validEntry;
+        }        
+    }
+    
+    private ReqCompPicker configureCourseSearch(String tag) { 
     	for (FieldDescriptor fieldMetadata : fieldsWithLookup) {
     		if (fieldMetadata.getMetadata().getName().equals("findCourse")) {
-    			return new ReqCompPicker(fieldMetadata.getMetadata().getInitialLookup(), fieldMetadata.getMetadata().getAdditionalLookups()); 	
+    			return new ReqCompPicker(fieldMetadata.getMetadata().getInitialLookup(), fieldMetadata.getMetadata().getAdditionalLookups(), tag); 	
     		}
     	}
     	return null;	
     }
+    
+    private ReqCompPicker configureProgramCluSetSearch(String tag) { 
+        for (FieldDescriptor fieldMetadata : fieldsWithLookup) {
+            if (fieldMetadata.getMetadata().getName().equals("findProgram")) {
+                return new ReqCompPicker(fieldMetadata.getMetadata().getInitialLookup(), fieldMetadata.getMetadata().getAdditionalLookups(), tag);  
+            }
+        }
+        return null;    
+    }    
+    
+    private ReqCompPicker configureCourseCluSetSearch(String tag) { 
+        for (FieldDescriptor fieldMetadata : fieldsWithLookup) {
+            if (fieldMetadata.getMetadata().getName().equals("findCluSet")) {
+                return new ReqCompPicker(fieldMetadata.getMetadata().getInitialLookup(), fieldMetadata.getMetadata().getAdditionalLookups(), tag);   
+            }
+        }
+        return null;    
+    }    
 
 	public void setEditedStatementVO(StatementVO editedStatementVO) {
 		this.editedStatementVO = editedStatementVO;

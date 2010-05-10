@@ -87,7 +87,6 @@ import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 import org.kuali.student.lum.lu.dto.LuTypeInfo;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.lu.ui.course.server.gwt.LuRuleInfoPersistanceBean;
-import org.kuali.student.lum.ui.requirements.client.model.ReqComponentVO;
 import org.kuali.student.lum.ui.requirements.client.model.RuleInfo;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,7 +137,6 @@ public class CourseAssembler extends BaseAssembler<Data, CluInfoHierarchy> {
 			luData.setData(course.getData());
 
 			result.setGradingOptions(getLearningResultAssembler().getGradingOptions(id));
-//			result.setGradingOptions(getLearningResultAssembler().get(id));
 			result.setOutcomeOptions(getLearningResultAssembler().getOutcomeOptions(id));
 
 			luData.setRuleInfos(getRules(id));
@@ -542,7 +540,10 @@ public class CourseAssembler extends BaseAssembler<Data, CluInfoHierarchy> {
 			}
 			cluId.setDivision(course.getSubjectArea());
 			cluId.setShortName(course.getTranscriptTitle());
-
+			//Get the level as the first character in the number pluss "00"
+			if(course.getCourseNumberSuffix()!=null&&!course.getCourseNumberSuffix().isEmpty()){
+				cluId.setLevel(course.getCourseNumberSuffix().substring(0,1)+"00");
+			}
 			courseClu.setExpectedFirstAtp(course.getFirstExpectedOffering());
 
 			String instrId = course.getPrimaryInstructor();
@@ -1270,9 +1271,7 @@ public class CourseAssembler extends BaseAssembler<Data, CluInfoHierarchy> {
 		if (luData.getRuleInfos() != null && !luData.getRuleInfos().isEmpty()) {
 			Data statements = new Data();
 			for (RuleInfo r : luData.getRuleInfos()) {
-				for (ReqComponentVO c : r.getStatementVO().getReqComponentVOs()) {
-					statements.add(c.getTypeDesc());
-				}
+			   statements.add(r.getNaturalLanguage());	
 			}
 			data.set("statements",statements);
 		}

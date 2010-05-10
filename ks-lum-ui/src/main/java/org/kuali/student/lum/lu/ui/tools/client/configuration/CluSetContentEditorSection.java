@@ -24,11 +24,10 @@ import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBi
 import org.kuali.student.common.ui.client.configurable.mvc.sections.BaseSection;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.ValidationMessagePanel;
-import org.kuali.student.common.ui.client.widgets.field.layout.FieldElement;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
-import org.kuali.student.common.ui.client.widgets.KSLabel;
+import org.kuali.student.common.ui.client.widgets.field.layout.FieldElement;
 import org.kuali.student.common.ui.client.widgets.list.KSCheckBoxList;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeEvent;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
@@ -36,30 +35,29 @@ import org.kuali.student.common.ui.client.widgets.list.impl.SimpleListItems;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluSetHelper;
-import org.kuali.student.lum.lu.ui.tools.client.widgets.AddCluLightBox;
+import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluSetRangeHelper;
 import org.kuali.student.lum.lu.ui.tools.client.widgets.WarningDialog;
 import org.kuali.student.lum.lu.ui.tools.client.widgets.itemlist.ItemListFieldBinding;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CluSetContentEditorSection extends BaseSection {
-    
+
     private VerticalPanel layout = new VerticalPanel();
     private CluSetEditOptionList cluSetEditOptions;
-    private AddCluLightBox addApprovedCourseLightBox;
+//    private AddCluLightBox addApprovedCourseLightBox;
     private String modelId;
-    
-    
+
+
     public CluSetContentEditorSection(String modelId) {
         init(modelId);
     }
-    
+
     public CluSetContentEditorSection(SectionTitle title, String modelId) {
         this.sectionTitle = title;
         this.instructions.setVisible(false);
@@ -67,7 +65,7 @@ public class CluSetContentEditorSection extends BaseSection {
         layout.add(this.message);
         init(modelId);
     }
-    
+
     public CluSetContentEditorSection(SectionTitle title, String instructions, String modelId){
         this.sectionTitle = title;
         this.setInstructions(instructions);
@@ -75,7 +73,7 @@ public class CluSetContentEditorSection extends BaseSection {
         layout.add(this.message);
         init(modelId);
     }
-    
+
     private void init(String modelId) {
         this.modelId = modelId;
         layout.add(this.sectionTitle);
@@ -92,20 +90,17 @@ public class CluSetContentEditorSection extends BaseSection {
                         for(final FieldDescriptor f: fields){
                             // TODO distinguish between Approved CLUs and Proposed CLUs
                             // TODO implement course ranges
-                            if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD) ||
+                            if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SETS_FIELD)) {
+                            } else if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD)
 //                                  f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD) ||
-                                    f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SETS_FIELD) ||
-                                    f.getFieldKey().equals("CourseRanges")) {
+                                    ) {
                                 final String path = f.getFieldKey();
                                 final QueryPath qPath = QueryPath.parse(path);
-                                Data valueData = dataModel.get(qPath);
-                                final List<?> items = 
-                                    ((ItemListFieldBinding<?>) 
-                                            f.getModelWidgetBinding()).getItemList(valueData);
+                                Data clusData = dataModel.get(qPath);
                                 // Warn the user if check box is being unchecked but there are items associated with
-                                // the edit option 
+                                // the edit option
                                 if (!cluSetEditOptions.getSelectedItems().contains(f.getFieldKey()) &&
-                                        items != null && !items.isEmpty()) {
+                                        clusNotEmpty(clusData)) {
                                     if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD)) {
                                         final WarningDialog warningDialog = new WarningDialog(
                                                 "Delete Courses",
@@ -130,6 +125,14 @@ public class CluSetContentEditorSection extends BaseSection {
                                         warningDialog.show();
                                     }
                                 }
+                            } else if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SET_RANGE_FIELD)) {
+                                final String path = f.getFieldKey();
+                                final QueryPath qPath = QueryPath.parse(path);
+                                Data valueData = dataModel.get(qPath);
+                                CluSetRangeHelper cluSetRangeHelper = CluSetRangeHelper.wrap(valueData);
+                                if (!cluSetEditOptions.getSelectedItems().contains(f.getFieldKey())) {
+                                    
+                                }
                             }
                         }
                         redraw();
@@ -138,7 +141,7 @@ public class CluSetContentEditorSection extends BaseSection {
             }
         });
     }
-    
+
     @Override
     protected void addFieldToLayout(FieldDescriptor fieldDescriptor) {
         FieldElement field = new FieldElement(fieldDescriptor);
@@ -155,7 +158,7 @@ public class CluSetContentEditorSection extends BaseSection {
         fieldLayout.addStyleName("clearfix");
         fieldContainer.setStyleName("ks-form-module-fields");
     }
-    
+
     @Override
     protected void removeSectionFromLayout(BaseSection section) {
         layout.remove(section);
@@ -165,7 +168,7 @@ public class CluSetContentEditorSection extends BaseSection {
     protected void addSectionToLayout(BaseSection section) {
         layout.add(section);
     }
-    
+
     private void getModel(final Callback<DataModel> callback) {
         LayoutController controller = LayoutController.findParentLayout(this);
         if (controller != null) {
@@ -184,7 +187,7 @@ public class CluSetContentEditorSection extends BaseSection {
             });
         }
     }
-    
+
     @Override
     public void redraw() {
         getModel(new Callback<DataModel>() {
@@ -201,47 +204,52 @@ public class CluSetContentEditorSection extends BaseSection {
                     addSectionToLayout((BaseSection)ns);
                 }
                 layout.add(cluSetEditOptions);
-                
+
                 for(final FieldDescriptor f: fields){
                     // TODO distinguish between Approved CLUs and Proposed CLUs
                     // TODO implement course ranges
-                    if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD) ||
-//                            f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD) ||
-                            f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SETS_FIELD) ||
-                            f.getFieldKey().equals("CourseRanges")) {
+                    if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SETS_FIELD)) {
                         String path = f.getFieldKey();
                         final QueryPath qPath = QueryPath.parse(path);
                         Data valueData = dataModel.get(qPath);
-                        final List<?> items = 
-                            ((ItemListFieldBinding<?>) 
+                        final List<?> items =
+                            ((ItemListFieldBinding<?>)
                                     f.getModelWidgetBinding()).getItemList(valueData);
                         // field is being edited if there are data in this field
                         if (items != null && !items.isEmpty()) {
                             cluSetEditOptions.selectItem(path);
                         }
-
+                    } else if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD)) {
+                        String path = f.getFieldKey();
+                        final QueryPath qPath = QueryPath.parse(path);
+                        Data clusData = dataModel.get(qPath);
+                        if (clusNotEmpty(clusData)) {
+                            cluSetEditOptions.selectItem(path);
+                        }
                         if (isFieldBeingEdited(f, dataModel)) {
                             // if the field being edited is add courses
                             if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLUS_FIELD)) {
-                                if (addApprovedCourseLightBox != null) {
-                                    KSLabel addCluLink = new KSLabel("Add Course");
-                                    addCluLink.setStyleName("KS-Rules-Search-Link");
-                                    addFieldToLayout(f);
-                                    layout.add(addCluLink);
-                                    addCluLink.addClickHandler(new ClickHandler() {
-                                        @Override
-                                        public void onClick(ClickEvent event) {
-                                            addApprovedCourseLightBox.clearSelections();
-                                            addApprovedCourseLightBox.show();
-                                        }
-                                    });
-                                }
+                                addFieldToLayout(f);
                             }
                             if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SETS_FIELD)) {
                                 Hyperlink addLink = new Hyperlink("Add CLU Set", "addCluSet");
                                 addFieldToLayout(f);
                                 layout.add(addLink);
                             }
+                        }
+                    } else if (f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SET_RANGE_FIELD) ||
+                            f.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SET_RANGE_EDIT_FIELD)) {
+                        List<FieldDescriptor> fields = getFields();
+                        FieldDescriptor cluSetRangeField = null;
+                        if (fields != null) {
+                            for (FieldDescriptor field : fields) {
+                                if (field.getFieldKey().equals(ToolsConstants.CLU_SET_CLU_SET_RANGE_FIELD)) {
+                                    cluSetRangeField = field;
+                                }
+                            }
+                        }
+                        if (isFieldBeingEdited(cluSetRangeField, dataModel)) {
+                            addFieldToLayout(f);
                         }
                     } else {
                         addFieldToLayout(f);
@@ -250,15 +258,31 @@ public class CluSetContentEditorSection extends BaseSection {
                 //Fire validation request here?
             }
         });
-        
+
     }
     
+    private boolean clusNotEmpty(Data clusData) {
+        boolean clusExist = false;
+        if (clusData != null) {
+            for (Data.Property p : clusData) {
+                if(!"_runtimeData".equals(p.getKey())){
+                    String cluId = p.getValue();
+                    if (cluId != null && !cluId.trim().isEmpty()) {
+                        clusExist = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return clusExist;
+    }
+
     private boolean nullSafeEquals(String str1, String str2) {
         String tempStr1 = (str1 == null)? "" : str1;
         String tempStr2 = (str2 == null)? "" : str2;
         return (tempStr1.equals(tempStr2));
     }
-    
+
     private boolean isFieldBeingEdited(FieldDescriptor f, DataModel dataModel) {
         boolean result = false;
         List<String> selectedEditOptionIds = cluSetEditOptions.getSelectedItems();
@@ -272,34 +296,30 @@ public class CluSetContentEditorSection extends BaseSection {
         }
         return result;
     }
-    
+
     @Override
     public void clear() {
-        
+
     }
 
     @Override
     protected void addWidgetToLayout(Widget w) {
         layout.add(w);
     }
-    
+
     public class CluSetEditOptionList extends KSCheckBoxList{
         public CluSetEditOptionList(){
             SimpleListItems editOptions = new SimpleListItems();
 
-            editOptions.addItem(ToolsConstants.CLU_SET_CLUS_FIELD, "Approved Courses");
+            editOptions.addItem(ToolsConstants.CLU_SET_CLUS_FIELD, "Courses");
             // TODO distinguish between Approved CLUs and Proposed CLUs
             // TODO implement course ranges
 //            editOptions.addItem("ProposedCourses", "Proposed Courses");
             editOptions.addItem(ToolsConstants.CLU_SET_CLU_SETS_FIELD, "CLU Sets");
-            editOptions.addItem("CourseRanges", "Course Ranges (Course numbers, common learning objectives, etc)");
+            editOptions.addItem(ToolsConstants.CLU_SET_CLU_SET_RANGE_FIELD, "Course Ranges (Course numbers, common learning objectives, etc)");
 
             super.setListItems(editOptions);
         }
     }
-    
-    public void setAddApprovedCourseWidget(AddCluLightBox addApprovedCourseLightBox) {
-        this.addApprovedCourseLightBox = addApprovedCourseLightBox;
-    }
-    
+
 }

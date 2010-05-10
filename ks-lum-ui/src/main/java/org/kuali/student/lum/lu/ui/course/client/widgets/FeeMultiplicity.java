@@ -22,10 +22,8 @@ import java.util.Iterator;
 
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
-import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBinding;
 import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBindingSupport;
 import org.kuali.student.common.ui.client.configurable.mvc.binding.MultiplicityItemBinding;
-import org.kuali.student.common.ui.client.configurable.mvc.binding.SectionBinding;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityItem;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.UpdatableMultiplicityComposite;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.GroupSection;
@@ -223,7 +221,7 @@ public class FeeMultiplicity extends UpdatableMultiplicityComposite {
     		if (FeeInfoConstants.FIXED_RATE_FEE.equals(rateType)) {
 	            FeeMultiplicity.this.addField(fieldSection, fixedPath + modelIdx + "/amount", "Amount", null, parentPath );
     		} else if (FeeInfoConstants.MULTIPLE_RATE_FEE.equals(rateType)) {
-	            FeeMultiplicity.this.addField(fieldSection, multiplePath + modelIdx + "/amount", "Amount", new MultipleFeeList(parentPath + "/" + multiplePath), parentPath );
+	            FeeMultiplicity.this.addField(fieldSection, multiplePath + modelIdx + "/amount", "Amount", new MultipleFeeList(parentPath + "/" + multiplePath + modelIdx + "/amount"), parentPath );
     		} else if (FeeInfoConstants.PER_CREDIT_FEE.equals(rateType)) {
 	            FeeMultiplicity.this.addField(fieldSection, perCreditPath + modelIdx + "/amount", "Amount (PerCredit)", null, parentPath );
     		} else if (FeeInfoConstants.VARIABLE_RATE_FEE.equals(rateType)) {
@@ -325,7 +323,7 @@ public class FeeMultiplicity extends UpdatableMultiplicityComposite {
         public Widget createItem() {
             String path = QueryPath.concat(parentPath, String.valueOf(itemCount-1)).toString();
             GroupSection ns = new GroupSection();
-            addField(ns, "another Fee", getLabel(LUConstants.FEE), null, path );
+            addField(ns, "amount", getLabel(LUConstants.FEE), null, path );
             
             return ns;
         }

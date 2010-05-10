@@ -21,11 +21,9 @@ import java.util.List;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.ViewComposite;
-import org.kuali.student.common.ui.client.theme.Theme;
 import org.kuali.student.common.ui.client.widgets.KSActionItemList;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLandingPage;
-import org.kuali.student.common.ui.client.widgets.KSSearchBox;
 import org.kuali.student.common.ui.client.widgets.NavigationHandler;
 import org.kuali.student.common.ui.client.widgets.StylishDropDown;
 import org.kuali.student.common.ui.client.widgets.KSActionItemList.ListLocation;
@@ -36,14 +34,13 @@ import org.kuali.student.lum.lu.ui.main.client.theme.LumTheme;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class KSLumLandingPage extends ViewComposite{
-	private KSLandingPage landingPageShell = new KSLandingPage("Curriculum Management", LumTheme.INSTANCE.getLumImages().getCurriculumManagementImage(), 
+	private KSLandingPage landingPageShell = new KSLandingPage("Curriculum Management", LumTheme.INSTANCE.getLumImages().getCurriculumManagementImage(),
 			"Find a learning unit to <b>view</b>, <b>modify</b>, or <b>retire.</b>");
 
 	private VerticalPanel layout = new VerticalPanel();
@@ -52,19 +49,17 @@ public class KSLumLandingPage extends ViewComposite{
 	private KSLabel searchLabel = new KSLabel("Search");
 	private KSActionItemList recentlyViewedList = new KSActionItemList("Recently Viewed");
 	private KSActionItemList tasklistItemsList = new KSActionItemList("Tasklist Items");
-	private KSSearchBox searchBox = new KSSearchBox();
+	//private KSSearchBox searchBox = new KSSearchBox();  //use KSPicker
 	private ListBox luTypeSelector = new ListBox();
 	private StylishDropDown proposeDropDown = new StylishDropDown(
-			"Propose New Curriculum", 
-			LumTheme.INSTANCE.getLumImages().getAddProposalImage(), 
+			"Propose New Curriculum",
+			LumTheme.INSTANCE.getLumImages().getAddProposalImage(),
 			MenuImageLocation.LEFT);
-	
+
 	//TODO fix these widgets
 	private KSLabel subDescription = new KSLabel("Or manage a group of them.");
 	//Unknown behavior for analyze
-	private KSLabel analyzeCurriculum = new KSLabel("Analyze Curriculum");
-	//private KSLabel newCurriculum = new KSLabel("Propose New Curriculum");
-	
+
     public class LumLandingPageHandler extends NavigationHandler{
 		public LumLandingPageHandler(Enum<?> navEnum) {
 			super(KSLumLandingPage.this.getController(), navEnum);
@@ -75,9 +70,9 @@ public class KSLumLandingPage extends ViewComposite{
 			//TODO do we need to do anything before navigation on this page?
 			callback.exec(true);
 		}
-    	
+
     }
-	
+
 	public KSLumLandingPage(Controller controller){
 		super(controller, "Curriculum Management");
 		layout.add(searchLabel);
@@ -85,37 +80,37 @@ public class KSLumLandingPage extends ViewComposite{
 		createLuTypeSelector();
 		searchPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		searchPanel.add(luTypeSelector);
-		searchPanel.add(searchBox);
-		
-		
+		//searchPanel.add(searchBox);     //use KSPicker
+
+
 		layout.add(searchPanel);
 		recentlyViewedList.add("The Novel", "Course Proposal", new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}}, ListLocation.TOP);
 		recentlyViewedList.add("Introduction to Geology", "Course Proposal", new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}}, ListLocation.TOP);
 		tasklistItemsList.add("The Novel", "Course Proposal", new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}}, ListLocation.TOP);
 		tasklistItemsList.add("Introduction to Geology", "Course Proposal", new ClickHandler(){
 
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO Auto-generated method stub
-				
+
 			}}, ListLocation.TOP);
 		actionItemPanel.add(recentlyViewedList);
 		actionItemPanel.add(tasklistItemsList);
@@ -126,16 +121,16 @@ public class KSLumLandingPage extends ViewComposite{
 		createProposeDropDown();
 		landingPageShell.addTitlePanelWidget(proposeDropDown);
 		this.initWidget(landingPageShell);
-		
+
 		proposeDropDown.addStyleName("KS-LPNavigation-DropDown");
 		searchLabel.addStyleName("KS-LumLandingPage-SearchLabel");
 		searchPanel.addStyleName("KS-LumLandingPage-SearchPanel");
 		actionItemPanel.addStyleName("KS-LumLandingPage-ActionItemPanel");
 		landingPageShell.addStyleName("KS-LumLandingPage");
 	}
-	
+
 	private void createProposeDropDown() {
-		
+
 		List<KSMenuItemData> proposeItems = new ArrayList<KSMenuItemData>();
     	proposeItems.add(new KSMenuItemData("Courses"){{
     		addSubItem(new KSMenuItemData("Academic Course", new LumLandingPageHandler(LUMViews.CREATE_COURSE)));
@@ -158,7 +153,7 @@ public class KSLumLandingPage extends ViewComposite{
         		addSubItem(new KSMenuItemData("Professional Certificate", new LumLandingPageHandler(LUMViews.HOME_MENU)));
     		}});
     	}});
-    	
+
     	proposeItems.add(new KSMenuItemData("Experiential Learning"){{
     		addSubItem(new KSMenuItemData("Externship", new LumLandingPageHandler(LUMViews.HOME_MENU)));
     		addSubItem(new KSMenuItemData("Internship", new LumLandingPageHandler(LUMViews.HOME_MENU)));
@@ -168,24 +163,24 @@ public class KSLumLandingPage extends ViewComposite{
 	}
 
 	private void createLuTypeSelector(){
-		
+
 		//TODO
 		luTypeSelector.addItem("Courses", "TODO");
 		luTypeSelector.addItem("TODO", "TODO");
 		luTypeSelector.addItem("TODO", "TODO");
 		luTypeSelector.addItem("TODO", "TODO");
 	}
-	
+
 	private void setupSearchParams(){
 		//TODO
 		//searchBox.addRequiredSearchParameter("luType", luTypeSelector.getValue(luTypeSelector.getSelectedIndex()));
 	}
-	
+
 	public KSActionItemList getRecentlyViewedList(){
-		
+
 		return recentlyViewedList;
 	}
-	
+
 	public KSActionItemList getTasklistItemsList(){
 		return tasklistItemsList;
 	}
