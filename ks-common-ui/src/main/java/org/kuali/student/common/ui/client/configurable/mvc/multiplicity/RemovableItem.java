@@ -75,10 +75,10 @@ public class RemovableItem extends MultiplicityItem {
             itemPanel.add(generateRemoveWidget());
             loaded = true;
         }
-
-        if (item instanceof Section){
+//redraw() removed
+/*        if (item instanceof Section){
             ((Section)item).redraw();
-        }
+        }*/
     }
 
 }

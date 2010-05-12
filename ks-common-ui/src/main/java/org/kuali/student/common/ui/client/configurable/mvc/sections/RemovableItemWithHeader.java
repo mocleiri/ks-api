@@ -101,9 +101,9 @@ public class RemovableItemWithHeader extends MultiplicityItem{
 	    	layout.add(body);
 		}
 		
-        if (this.getItemWidget() instanceof Section){
+/*        if (this.getItemWidget() instanceof Section){
             ((Section)this.getItemWidget()).redraw();
-        }
+        }*/
 		
 	}
 

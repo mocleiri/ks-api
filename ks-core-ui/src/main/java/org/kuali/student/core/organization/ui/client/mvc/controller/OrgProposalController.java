@@ -26,7 +26,6 @@ import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.TabbedSectionLayout;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.BaseSection;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
-import org.kuali.student.common.ui.client.configurable.mvc.sections.BaseSection.FieldInfo;
 import org.kuali.student.common.ui.client.configurable.mvc.views.SectionView;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.common.ui.client.event.ModifyActionEvent;
@@ -61,6 +60,7 @@ import org.kuali.student.core.assembly.data.Data.StringValue;
 import org.kuali.student.core.assembly.data.Data.Value;
 import org.kuali.student.core.organization.ui.client.mvc.model.SectionConfigInfo;
 import org.kuali.student.core.organization.ui.client.mvc.view.CommonConfigurer;
+
 import org.kuali.student.core.organization.ui.client.mvc.view.CommonConfigurer.SectionsEnum;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcService;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcServiceAsync;
@@ -85,7 +85,7 @@ public class OrgProposalController extends TabbedSectionLayout{
     private CommonConfigurer commonConfigurer = new CommonConfigurer();
     final KSLightBox progressWindow = new KSLightBox();
     boolean flag = false;
-
+    
     public static final String ORG_INFO_PATH		= "orgInfo";
     public static final String POSITION_PATH		= "OrgPositionRestrictionInfo";
     public static final String PERSON_PATH			= "orgPersonRelationInfo";
@@ -95,8 +95,7 @@ public class OrgProposalController extends TabbedSectionLayout{
     public static final String SEARCH_TAB_NAME		= getLabel("orgSearchTab");
     public static final String QUALIFICATION_ORG_ID	= "orgId";
     public static final String ORG_PROPOSAL_MODEL	= "orgProposalModel";
-
-
+    
     OrgRpcServiceAsync orgProposalRpcServiceAsync = GWT.create(OrgRpcService.class);
     public OrgProposalController(){
 
@@ -203,12 +202,10 @@ public class OrgProposalController extends TabbedSectionLayout{
                             // display error message
                             for(Section section : sections){
                                 if(section instanceof BaseSection){
-                                    Map<String, FieldInfo> pathFieldInfoMap = ((BaseSection)section).getPathFieldInfoMap();
-                                    FieldInfo info = pathFieldInfoMap.get(fieldKey);
-
+                                    
                                     ValidationResultInfo vr = new ValidationResultInfo();
                                     vr.setError(getLabel("orgFieldCantBeEmpty"));
-                                    info.processValidationResult(vr);
+                                    section.getField(fieldKey).getFieldElement().processValidationResult(vr);
                                 }
                             }
                         }
@@ -603,7 +600,8 @@ public class OrgProposalController extends TabbedSectionLayout{
                          commonConfigurer.positionTable.fetchPosition();
                      }
                      if (currentView instanceof VerticalSectionView){
-                         ((VerticalSectionView) currentView).redraw();
+                    	 //TODO check removing ok
+                         //((VerticalSectionView) currentView).redraw();
                      }
                      if (saveActionEvent.isAcknowledgeRequired()){
                          saveMessage.setText(getLabel("orgSaveOk"));

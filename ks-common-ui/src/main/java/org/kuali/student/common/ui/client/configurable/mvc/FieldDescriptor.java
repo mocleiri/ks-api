@@ -22,8 +22,12 @@ import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.HasDataValue;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.RichTextEditor;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.FieldElement;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.MessageKeyInfo;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.core.assembly.data.MetadataInterrogator;
+import org.kuali.student.core.assembly.data.QueryPath;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.HasValue;
@@ -32,50 +36,73 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * This is a field descriptor widget that defines ui fields.  
  * 
- *   a form field.
- * 
  * @author Kuali Student Team
  *
  */
 public class FieldDescriptor {
     private String fieldKey;
-    private String fieldLabel;
     private Metadata metadata;
-    private Widget fieldWidget;
-    private ModelWidgetBinding modelWidgetBinding;
+    @SuppressWarnings("unchecked")
+	private ModelWidgetBinding modelWidgetBinding;
     private Callback<Boolean> validationRequestCallback;
-    private RequiredEnum requiredState = RequiredEnum.NOT_MARKED;
     private boolean dirty = false;
     private boolean hasHadFocus = false;
-    private String modelId; 
+    private FieldElement fieldElement;
+    private String modelId;
     
-    public FieldDescriptor(String fieldKey, String fieldLabel, Metadata metadata) {
+    public FieldDescriptor(String fieldKey, MessageKeyInfo messageKey, Metadata metadata) {
     	this.fieldKey = fieldKey;
-    	this.fieldLabel = fieldLabel;
     	this.metadata = metadata;
+    	if(messageKey == null){
+    		messageKey = new MessageKeyInfo("");
+    	}
+    	fieldElement = new FieldElement(fieldKey, messageKey);
+    	setupField();
     }
-
-    public RequiredEnum getRequiredState() {
-		return requiredState;
-	}
-
-	public void setRequiredState(RequiredEnum requiredState) {
-		this.requiredState = requiredState;
-	}
+    
+    public FieldDescriptor(String fieldKey, MessageKeyInfo messageKey, Metadata metadata, Widget fieldWidget){
+    	this.fieldKey = fieldKey;
+    	this.metadata = metadata;
+    	if(messageKey == null){
+    		messageKey = new MessageKeyInfo("");
+    	}
+    	fieldElement = new FieldElement(fieldKey, messageKey, fieldWidget);
+    	setupField();
+    }
+    
+    public FieldDescriptor(String fieldKey, MessageKeyInfo messageKey, Widget fieldWidget){
+    	this.fieldKey = fieldKey;
+    	if(messageKey == null){
+    		messageKey = new MessageKeyInfo("");
+    	}
+    	fieldElement = new FieldElement(fieldKey, messageKey, fieldWidget);
+    }
+    
+    private void setupField(){
+    	if(metadata != null){
+	    	fieldElement.setRequired(MetadataInterrogator.isRequired(metadata));
+	    	//TODO setup the constraint text here
+    	}
+    }
+    
+    public FieldElement getFieldElement(){
+    	return fieldElement;
+    }
 
 	public String getFieldKey() {
         return fieldKey;
     }
 
     public String getFieldLabel() {
-        return fieldLabel;
+        return fieldElement.getFieldName();
     }
-   
+    
     public Widget getFieldWidget(){
-        if (fieldWidget == null){
-            fieldWidget = createFieldWidget();
+        if (fieldElement.getFieldWidget() == null){
+            Widget w = createFieldWidget();
+            fieldElement.setWidget(w);
         }
-        return fieldWidget;
+        return fieldElement.getFieldWidget();
     }
     
     protected Widget createFieldWidget() {
@@ -89,31 +116,32 @@ public class FieldDescriptor {
 	    	}
 	    	return result;
     	} else {
-    		return DefaultWidgetFactory.getInstance().getWidget(this);
+    		Widget result = DefaultWidgetFactory.getInstance().getWidget(this);
+	    	if(fieldKey != null){
+	    		String style = this.fieldKey.replaceAll("/", "-");
+	    		result.addStyleName(style);
+	    	}
+    		return result;
     	}
     }
-    
+
     public ModelWidgetBinding<?> getModelWidgetBinding() {
         if(modelWidgetBinding == null){
-            if(fieldWidget instanceof RichTextEditor){
+            if(fieldElement.getFieldWidget() instanceof RichTextEditor){
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.RichTextBinding.INSTANCE;
-            }else if(fieldWidget instanceof MultiplicityComposite){
+            }else if(fieldElement.getFieldWidget() instanceof MultiplicityComposite){
         		modelWidgetBinding = MultiplicityCompositeBinding.INSTANCE;
-        	}else if (fieldWidget instanceof HasText) {
+        	}else if (fieldElement.getFieldWidget()instanceof HasText) {
         	    modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasTextBinding.INSTANCE;
-            } else if (fieldWidget instanceof KSSelectItemWidgetAbstract){
+            } else if (fieldElement.getFieldWidget() instanceof KSSelectItemWidgetAbstract){
                 modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.SelectItemWidgetBinding.INSTANCE;
-            } else if (fieldWidget instanceof HasDataValue){
+            } else if (fieldElement.getFieldWidget() instanceof HasDataValue){
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasDataValueBinding.INSTANCE;
-            } else if (fieldWidget instanceof HasValue){
+            } else if (fieldElement.getFieldWidget() instanceof HasValue){
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasValueBinding.INSTANCE;
             }
         }
         return modelWidgetBinding;
-    }
-
-    public void setWidgetBinding(ModelWidgetBinding widgetBinding) {        
-        this.modelWidgetBinding = widgetBinding;
     }
 
     public void setValidationCallBack(Callback<Boolean> callback){
@@ -145,7 +173,7 @@ public class FieldDescriptor {
 		this.metadata = metadata;
 	}
 	public void setFieldWidget(Widget fieldWidget) {
-		this.fieldWidget = fieldWidget;
+		this.fieldElement.setWidget(fieldWidget);
 	}
 	public String getModelId() {
 		return modelId;
@@ -154,5 +182,8 @@ public class FieldDescriptor {
 		this.modelId = modelId;
 	}
     
+    public void setWidgetBinding(ModelWidgetBinding widgetBinding) {        
+        this.modelWidgetBinding = widgetBinding;
+    }
     
 }

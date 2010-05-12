@@ -71,10 +71,10 @@ public class DisplayItem extends MultiplicityItem {
             itemPanel.addStyleName("KS-Multiplicity-Display-Item");
             loaded = true;
         }
-
-        if (item instanceof Section){
+//redraw() removed, probably not needed here 
+/*        if (item instanceof Section){
             ((Section)item).redraw();
-        }
+        }*/
     }
 
 	

@@ -13,15 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.field.layout.layouts;
+package org.kuali.student.common.ui.client.configurable.mvc.sections;
 
-import org.kuali.student.common.ui.client.widgets.KSButton;
-
-import com.google.gwt.user.client.ui.Composite;
-
-public class ButtonContainer extends Composite{
-
-	public void addButton(KSButton button){
+//needs to be removed
+@Deprecated
+public class MultiplicitySection extends VerticalSection{
+	public MultiplicitySection(){
 
 	}
 }

@@ -20,12 +20,19 @@ import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.BaseSection;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
+import org.kuali.student.common.ui.client.mvc.DataModel;
+import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.View;
 import org.kuali.student.common.ui.client.mvc.history.HistoryStackFrame;
+
+import com.google.gwt.user.client.Window;
 
 
 public abstract class SectionView extends BaseSection implements View{
 
+    protected String modelId;
+    protected DataModel model;
+	
     private Enum<?> viewEnum;
     private String viewName;
 
@@ -41,13 +48,11 @@ public abstract class SectionView extends BaseSection implements View{
     	super.setLayoutController(controller);
         this.viewEnum = viewEnum;
         this.viewName = viewName;
-        sectionTitle = SectionTitle.generateH2Title(getName());
     }
 
     public SectionView(Enum<?> viewEnum, String viewName) {
         this.viewEnum = viewEnum;
         this.viewName = viewName;
-        sectionTitle = SectionTitle.generateH2Title(getName());
     }
         
     /** 
@@ -119,5 +124,28 @@ public abstract class SectionView extends BaseSection implements View{
     public void onHistoryEvent(HistoryStackFrame frame) {
         // do nothing
     }
+    
+	public void updateView() {
+        getController().requestModel(modelId, new ModelRequestCallback<DataModel>(){
+            @Override
+            public void onModelReady(DataModel m) {
+            	// TODO review this, shouldn't it assign this.model = m?
+            	SectionView.this.model = m;
+                updateWidgetData(m);                
+            }
+
+        
+            @Override
+            public void onRequestFail(Throwable cause) {
+                Window.alert("Failed to get model");
+            }            
+        });
+		
+	}	
+	
+	public void updateView(DataModel m) {
+		this.model = m;
+         updateWidgetData(m);             
+	}
 
 }

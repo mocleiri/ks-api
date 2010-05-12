@@ -107,12 +107,14 @@ public class RemovableItemWithHeader extends MultiplicityItem {
             itemPanel.add(item);
             
             loaded = true;
+            headerLabel.setText(itemLabel + " " + getItemKey());
         }
 
-        headerLabel.setText(itemLabel + " " + getItemKey());
-        if (item instanceof Section){
+        
+        //redraw() removed
+/*        if (item instanceof Section){
             ((Section)item).redraw();
-        }
+        }*/
     }
 
     public void setItemLabel(String itemLabel) {

@@ -22,6 +22,7 @@ import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
+import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonGroup;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ConfirmCancelGroup;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations.ButtonEnum;
@@ -69,6 +70,12 @@ public class AdvancedSearchWindow {
             }
             return null;  
         }
+
+		@Override
+		public ButtonStyle getStyle() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
     
     class ActionCancelGroup extends ButtonGroup<ActionCancelEnum> {
