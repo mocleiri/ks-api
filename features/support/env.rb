@@ -53,3 +53,4 @@ require 'webrat/core/matchers'
 #require 'database_cleaner'
 #DatabaseCleaner.strategy = :truncation
 
+

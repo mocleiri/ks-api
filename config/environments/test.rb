@@ -28,11 +28,10 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 config.gem 'firewatir', :version => '1.6.5'
-config.gem 'cucumber-rails', :version => '0.2.3'
-config.gem 'database_cleaner', :version => '0.4.0'
-config.gem 'savon', :version => '0.7.2'
+config.gem 'savon', :version => '0.7.5'
 config.gem 'culerity', :version => '0.2.7'
 config.gem 'Selenium', :version => '1.1.14'
-config.gem 'selenium-client', :version => '1.2.17'
+config.gem 'selenium-client', :version => '1.2.18'
 config.gem 'mechanize', :version => '0.9.3'
 config.gem 'spreadsheet'
+config.gem 'css_parser'
