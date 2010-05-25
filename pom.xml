@@ -13,19 +13,18 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.kuali.student</groupId>
   <artifactId>ks</artifactId>
-  <version>1.0.0-rc3-SNAPSHOT</version>
+  <version>1.1.0-poc-1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Kuali Student</name>
   <modules>
     <module>ks-security</module>
     <module>ks-core</module>
-    <module>brms</module>
     <module>ks-lum</module>
     <module>ks-web</module>
   </modules>
   <scm>
-    <connection>scm:svn:https://test.kuali.org/svn/student/branches/ks-1.0.x</connection>
-    <developerConnection>scm:svn:https://test.kuali.org/svn/student/branches/ks-1.0.x</developerConnection>
+    <connection>scm:svn:https://test.kuali.org/svn/student/branches/ks-poc-1.1.x-br</connection>
+    <developerConnection>scm:svn:https://test.kuali.org/svn/student/branches/ks-poc-1.1.x-br</developerConnection>
   </scm>
   <distributionManagement>
     <repository>
