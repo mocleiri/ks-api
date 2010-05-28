@@ -1,9 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.kuali.student.core</groupId>
   <artifactId>ks-common-ui</artifactId>
-  <version>1.1.0-poc-1-SNAPSHOT</version>
-  <packaging>jar</packaging>
   <name>KS Common UI</name>
   <description>KS common-ui</description>
   <parent>
@@ -60,54 +57,54 @@
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-api</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-rice</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-api</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-util</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-util</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-test</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-impl</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-rice</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-rice-lessdep</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
@@ -134,11 +131,11 @@
   <profiles>
     <profile>
       <!--
-				mvn -P build-codehaus-gwt org.codehaus.mojo:gwt-maven-plugin:1.1:generateAsync 
+				mvn -P build-codehaus-gwt org.codehaus.mojo:gwt-maven-plugin:1.1:generateAsync
 				Run above command to processe java files that match service pattern and write GWT *ServuceAsync.java
-				files to the default generateDirectory: target/generate-sources/gwt. Generated Async.java files have 
+				files to the default generateDirectory: target/generate-sources/gwt. Generated Async.java files have
 				the same package as the Service.java it's derived from You can copy the generated file to the same
-				directory as the Service file. Important Note: this only generates files when the Service extends RemoteService. 
+				directory as the Service file. Important Note: this only generates files when the Service extends RemoteService.
 				It ignores Services that extend BaseRpcService
 			-->
       <id>build-codehaus-gwt</id>

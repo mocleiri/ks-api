@@ -1,9 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.kuali.student.core</groupId>
   <artifactId>ks-core-ui</artifactId>
-  <version>1.1.0-poc-1-SNAPSHOT</version>
-  <packaging>jar</packaging>
   <name>KS Core UI</name>
   <description>KS Core UI</description>
   <parent>
@@ -11,9 +8,6 @@
     <artifactId>ks-core</artifactId>
     <version>1.1.0-poc-1-SNAPSHOT</version>
   </parent>
-  <properties>
-    <ks-core.version>1.1.0-poc-1-SNAPSHOT</ks-core.version>
-  </properties>
   <build>
     <plugins>
       <plugin>
@@ -72,13 +66,13 @@
       <!-- Required dependencies for testing core-ui -->
       <dependencies>
         <dependency>
-          <!-- 
+          <!--
 						Jax-ws impl dependency so client isn't created using jaxws bundled w/jdk 1.6,
-						which has problems finding exception beans. 
+						which has problems finding exception beans.
 					-->
           <groupId>org.kuali.student.core</groupId>
           <artifactId>ks-cxf</artifactId>
-          <version>${ks-core.version}</version>
+          <version>${project.version}</version>
           <type>pom</type>
           <scope>runtime</scope>
         </dependency>
@@ -92,7 +86,7 @@
         <dependency>
           <groupId>org.kuali.student.core</groupId>
           <artifactId>ks-core-impl</artifactId>
-          <version>${ks-core.version}</version>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.apache.derby</groupId>
@@ -117,31 +111,31 @@
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-ui</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-util</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-common-ui</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-api</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-api</artifactId>
-      <version>1.1.0-poc-1-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>

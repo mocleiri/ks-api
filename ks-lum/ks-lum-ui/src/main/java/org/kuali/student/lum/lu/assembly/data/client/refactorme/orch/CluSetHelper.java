@@ -33,7 +33,9 @@ public class CluSetHelper {
         EFFECTIVE_DATE ("effectiveDate"),
         EXPIRATION_DATE ("expirationDate"),
         CLUS ("clus"),
+        CLUSETS ("clusets"),
         CLU_SET_RANGE ("clusetRange"),
+        CLU_SET_RANGE_VIEW_DETAILS ("cluSetRangeViewDetails"),
         META_INFO ("metaInfo"),
         NAME ("name"),
         STATE ("state"),
@@ -142,6 +144,17 @@ public class CluSetHelper {
         }
         return clusData;
     }
+    public void setCluSets(Data value) {
+        data.set(Properties.CLUSETS.getKey(), value);
+    }
+    public Data getCluSets() {
+        Data cluSetData = data.get(Properties.CLUSETS.getKey());
+        if (cluSetData == null) {
+            cluSetData = new Data();
+            setCluSets(cluSetData);
+        }
+        return cluSetData;
+    }
     public void setCluRangeParams(Data value) {
         data.set(Properties.CLU_SET_RANGE.getKey(), value);
     }
@@ -152,6 +165,17 @@ public class CluSetHelper {
             setCluRangeParams(cluRangeParamsData);
         }
         return new CluSetRangeHelper(cluRangeParamsData);
+    }
+    public void setCluRangeViewDetails(Data value) {
+        data.set(Properties.CLU_SET_RANGE_VIEW_DETAILS.getKey(), value);
+    }
+    public Data getCluRangeViewDetails() {
+        Data cluSetRangeViewDetailsData = data.get(Properties.CLU_SET_RANGE_VIEW_DETAILS.getKey());
+        if (cluSetRangeViewDetailsData == null) {
+            cluSetRangeViewDetailsData = new Data();
+            setClus(cluSetRangeViewDetailsData);
+        }
+        return cluSetRangeViewDetailsData;
     }
 
 }

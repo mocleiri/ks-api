@@ -26,6 +26,11 @@ import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.SaveResult;
 import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;
+import org.kuali.student.core.exceptions.MissingParameterException;
+import org.kuali.student.core.search.dto.SearchRequest;
+import org.kuali.student.core.search.dto.SearchResult;
+import org.kuali.student.core.search.dto.SearchResultCell;
+import org.kuali.student.core.search.dto.SearchResultRow;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.MetaInfoHelper;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CluSetHelper;
@@ -178,6 +183,29 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         return result;
     }
     
+    private List<String> getMembershipQuerySearchResult(MembershipQueryInfo query) throws MissingParameterException {
+        if(query == null) {
+            return null;
+        }
+        SearchRequest sr = new SearchRequest();
+        sr.setSearchKey(query.getSearchTypeKey());
+        sr.setParams(query.getQueryParamValueList());
+
+        SearchResult result = luService.search(sr);
+        
+        List<String> cluIds = new ArrayList<String>();
+        List<SearchResultRow> rows = result.getRows();
+        for(SearchResultRow row : rows) {
+            List<SearchResultCell> cells = row.getCells();
+            for(SearchResultCell cell : cells) {
+                if(cell.getKey().equals("lu.resultColumn.cluId")) {
+                    cluIds.add(cell.getValue());
+                }
+            }
+        }
+        return cluIds;
+    }
+
     private CluSetHelper toCluSetHelper(CluSetInfo cluSetInfo) throws Exception {
         Data data = new Data();
         Data cluSetDetailData = new Data();
@@ -189,6 +217,22 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
                 result.setClus(new Data());
                 for (String cluId : cluSetInfo.getCluIds()) {
                     result.getClus().add(cluId);
+                }
+            }
+            if (cluSetInfo.getCluSetIds() != null) {
+                result.setCluSets(new Data());
+                for (String cluSetId : cluSetInfo.getCluSetIds()) {
+                    result.getCluSets().add(cluSetId);
+                }
+            }
+            if (cluSetInfo.getMembershipQuery() != null) {
+                MembershipQueryInfo mq = cluSetInfo.getMembershipQuery();
+                List<String> cluRangeCluIds = getMembershipQuerySearchResult(mq);
+                if (cluRangeCluIds != null) {
+                    result.setCluRangeViewDetails(new Data());
+                    for (String cluRangeCluId : cluRangeCluIds) {
+                        result.getCluRangeViewDetails().add(cluRangeCluId);
+                    }
                 }
             }
             result.setDescription(richTextToString(cluSetInfo.getDescr()));
@@ -209,7 +253,9 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
     private CluSetInfo toCluSetInfo(CluSetHelper cluSetHelper) {
         CluSetInfo cluSetInfo = new CluSetInfo();
         Data clusData = cluSetHelper.getClus();
+        Data cluSetsData = cluSetHelper.getCluSets();
         List<String> cluIds = null;
+        List<String> cluSetIds = null;
         
         cluSetInfo.setId(cluSetHelper.getId());
         if (clusData != null) {
@@ -224,6 +270,19 @@ public class CluSetManagementAssembler extends BaseAssembler<Data, Void> {
         }
         if (cluIds != null) {
             cluSetInfo.setCluIds(cluIds);
+        }
+        if (cluSetsData != null) {
+            for (Data.Property p : cluSetsData) {
+                if(!"_runtimeData".equals(p.getKey())){
+                    String cluSetId = p.getValue();
+                    cluSetIds = (cluSetIds == null)? new ArrayList<String>(3) :
+                        cluSetIds;
+                    cluSetIds.add(cluSetId);
+                }
+            }
+        }
+        if (cluSetIds != null) {
+            cluSetInfo.setCluSetIds(cluSetIds);
         }
         cluSetInfo.setAdminOrg(cluSetHelper.getOrganization());
         cluSetInfo.setDescr(toRichTextInfo(cluSetHelper.getDescription()));
