@@ -1,53 +1,69 @@
-jim
-bonnie
-dan
-linda
-brian
-susan
-sarah
-joe
-warren
-lesley
-rick
-peter
-clark
-natasha
-natalie
-jennifer
-jane
-john
-kevin
-brad
-mary
-jerry
-larry
-matt
-howard
-sandy
-betty
-wilma
-candace
-harry
-hal
-jordon
-kent
-jerome
-eva
-anthony
-wally
-perry
-elaine
-ryan
+Chris Eaton
+Peter Marshall
+Kenneth Baimbridge
+Brian Bemmels
+William Ramey
+Catherine Pang
+Gary Brayer
+Brian Leander
+Gordon Bates
+Mike Feeley
+Susan Allen
+Ian McKendry
+Lee Groat
+Wayne Nagata
+Wade Bingle
+Rob Kiefl
+Sally Osborne
+Boris Gorzalka
+Lang Wu
+Sean Graham
+Samson Nashon
+Ian Cavers
+Nancy Cook
+Aman Sehra
+Jie Zou
+Tyseer Aboulnasr
+Mary Anne Bobinski
+Barbara Evans
+Nancy Gallini
+Murray Isman
+Jack Saddler
+Charles Shuler
+Robert Sindelar
+Gavin Stuart
+Edward Grant
+Simon Peacock
+Michael Blades
+Elliott Burnell
+Mark Thachuk
 
-Regular Expression for Find and Replace:
+
+
+
+
+
 <user>
-	<principalId>$1</principalId>
+	<principalId>$1$2</principalId>
 	<password>$1</password>
-	<empId>$1-empId</empId>
-	<principalName>$1</principalName>
+	<empId>$1$2-empId</empId>
+	<principalName>$1$2</principalName>
 	<givenName>$1</givenName>
-	<lastName>$1</lastName>
-	<campusCode>UV</campusCode>
+	<lastName>$2</lastName>
+	<campusCode>EA</campusCode>
 	<affiliationTypeCode>AFLT</affiliationTypeCode>
 	<active>True</active>
 </user>
+
+JEdit Regular Expression BeanShell for Find and Replace:
+"<user>\n" + 
+"  <principalId>" + _1.toLowerCase() + _2.toLowerCase() + "</principalId>\n" + 
+"  <password>" + _1.toLowerCase() + _2.toLowerCase() + "</password>\n" +
+"  <empId>" + _1.toLowerCase() + _2.toLowerCase() + "-empId" + "</empId>\n" +
+"  <principalName>" + _1.toLowerCase() + _2.toLowerCase() + "</principalName>\n" + 
+"  <givenName>" + _1 + "</givenName>\n" +
+"  <lastName>" + _2 + "</lastName>\n" +
+"  <campusCode>UV</campusCode>\n" +
+"  <affiliationTypeCode>AFLT</affiliationTypeCode>\n" +
+"  <active>True</active>\n" +
+"</user>"

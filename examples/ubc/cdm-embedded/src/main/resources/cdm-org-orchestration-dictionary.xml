@@ -360,6 +360,7 @@
 			</list>
 		</property>
 	</bean>
+	<!--
 	<bean id="orgInfo.longName" parent="dataFieldDescriptor">
 		<property name="name" value="longName" />
 		<property name="writeAccess" value="ALWAYS" />
@@ -375,5 +376,6 @@
 				</bean>
 			</list>
 		</property>
-	</bean>	
+	</bean>
+	-->	
 </beans>

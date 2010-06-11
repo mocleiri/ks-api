@@ -5,10 +5,11 @@
   	
   	<entry-point class="org.kuali.student.lum.lu.ui.main.client.LUMMainEntryPoint"/>
   	
+  	<!-- 
     <replace-with class="ca.ubc.student.kuali.lum.lu.ui.client.CdmButtonImpl">
         <when-type-is class="org.kuali.student.common.ui.client.widgets.impl.KSButtonImpl"/>
     </replace-with>
-
+    -->
     <replace-with class="org.kuali.student.lum.lu.ui.course.client.configuration.course.CdmCourseConfigurer">
         <when-type-is class="org.kuali.student.lum.lu.ui.course.client.configuration.course.CourseConfigurer"/>
     </replace-with>
