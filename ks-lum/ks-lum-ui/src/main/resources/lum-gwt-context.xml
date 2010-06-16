@@ -282,14 +282,36 @@
 	</bean>
 
 	<bean id="CluProposalRpcGwtServlet"
-		class="org.kuali.student.lum.lu.ui.course.server.gwt.CreditCourseProposalRpcGwtServlet">
-		<property name="assembler" ref="creditCourseProposalAssemblerFilterManager"/>
+		class="org.kuali.student.lum.lu.ui.course.server.gwt.poc.CreditCourseProposalRpcGwtServlet">
 		<property name="simpleDocService" ref="simpleDocActionsClient" />
 		<property name="workflowUtilityService" ref="workflowUtilityClient" />
 		<property name="permissionService" ref="permissionServiceClient" />
 		<property name="identityService" ref="identityServiceClient" />
+		<property name="courseService" ref="courseClient" />
+		<property name="proposalService" ref="proposalClient"/>
+		<property name="transformationManager" ref="courseTransformationManager"/>
 		<property name="modifyCourseManager" ref="modifyCreditCourseProposalManager"/>
 	</bean>
+	
+	<!-- Setup filters for transformation manager -->
+	<bean id="courseTransformationManager" class="org.kuali.student.core.assembly.transform.TransformationManager">
+		<property name="metadataService" ref="metadataServiceImplPOC"/>
+		<property name="filters">
+			<list>
+				<ref bean="idTranslatorFilter" />
+				<ref bean="courseProposalFilter" />
+			</list>
+		</property>		
+	</bean>
+	
+	<bean id="idTranslatorFilter" class="org.kuali.student.core.assembly.transform.IdTranslatorFilter">
+		<constructor-arg ref="idTranslator" />
+	</bean>
+	
+	<bean id="courseProposalFilter" class="org.kuali.student.lum.lu.ui.course.server.gwt.poc.CourseProposalFilter">
+		<property name="proposalService" ref="proposalClient"/>
+	</bean>
+	
 
 	<bean id="modifyCreditCourseProposalManager" class="org.kuali.student.lum.lu.assembly.ModifyCreditCourseProposalManager">
 		<property name="creditCourseAssembler" ref="courseAssemblerFilterManager"/>

@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.util;
+package org.kuali.student.core.assembly.transform;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.DataBeanMapper;
 import org.kuali.student.core.assembly.data.Data.Key;
 import org.kuali.student.core.assembly.data.Data.Property;
 import org.kuali.student.core.assembly.data.Data.StringKey;

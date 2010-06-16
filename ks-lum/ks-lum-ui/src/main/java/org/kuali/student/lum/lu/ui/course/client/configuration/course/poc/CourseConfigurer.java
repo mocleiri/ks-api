@@ -160,7 +160,7 @@ public class CourseConfigurer extends AbstractCourseConfigurer {
 
 		VerticalSection titleRationale = initSection(getH3Title(getLabel(LUConstants.PROPOSAL_TITLE_SECTION_LABEL_KEY)), WITH_DIVIDER);
 		addField(titleRationale, COURSE_TITLE , generateMessageInfo(LUConstants.PROPOSAL_TITLE_LABEL_KEY));
-		//addField(titleRationale, PROPOSAL + "/" + RATIONALE, generateMessageInfo(LUConstants.PROPOSAL_RATIONALE_LABEL_KEY));
+		addField(titleRationale, "proposalRationale", generateMessageInfo(LUConstants.PROPOSAL_RATIONALE_LABEL_KEY));
 
 		section.addSection(titleRationale);
 
