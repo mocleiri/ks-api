@@ -564,8 +564,6 @@ public class RuleComponentEditorView extends ViewComposite {
             return "count";
         } else if (fieldInfo.getId().equals(ReqComponentFieldTypes.GPA_KEY.getKey())) {
             return "GPA";
-        } else if (fieldInfo.getId().equals(ReqComponentFieldTypes.TOTAL_CREDIT_KEY.getKey())) {
-            return "Total Credits";
         }
 
         return "";
@@ -962,8 +960,8 @@ public class RuleComponentEditorView extends ViewComposite {
             }
             tagCounts.put(tag, tagCount);
 
-            if ((tag.equals(ReqComponentFieldTypes.REQUIRED_COUNT_KEY.getKey())) || 
-            		(tag.equals(ReqComponentFieldTypes.GPA_KEY.getKey())) || (tag.equals(ReqComponentFieldTypes.TOTAL_CREDIT_KEY.getKey()))) {
+            if (tag.equals(ReqComponentFieldTypes.REQUIRED_COUNT_KEY.getKey()) || 
+            		tag.equals(ReqComponentFieldTypes.GPA_KEY.getKey())) {
                 final KSTextBox valueWidget = new KSTextBox();
                 reqCompWidgets.add(valueWidget);
                 valueWidget.setName(tag);

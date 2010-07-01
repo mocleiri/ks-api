@@ -123,18 +123,60 @@ public class TestStatementServiceImplForCourse {
         String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-12", "KUALI.CATALOG", "en");
         assertEquals("Must not have successfully completed any credits from (MATH152, MATH180)", nl);
     }
+    
+    @Test
+    public void testTranslateReqComponent_credits_max1() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.courseset.credits.completed.max'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-13", "KUALI.CATALOG", "en");
+        assertEquals("Must successfully complete no more than 1 credit from (MATH152, MATH180)", nl);
+    }
+
+    @Test
+    public void testTranslateReqComponent_credits_max2() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.courseset.credits.completed.max'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-14", "KUALI.CATALOG", "en");
+        assertEquals("Must successfully complete no more than 2 credits from (MATH152, MATH180)", nl);
+    }    
 
     @Test
     public void testTranslateReqComponent_gradecheck() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        //req. type: 'kuali.reqCompType.gradecheck'
-        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-13", "KUALI.CATALOG", "en");
+        //req. type: 'kuali.reqCompType.course.courseset.gpa.min'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-15", "KUALI.CATALOG", "en");
         assertEquals("Must have earned a minimum GPA of 3.5 in (MATH152, MATH180)", nl);
     }
 
     @Test
+    public void testTranslateReqComponent_grade_min() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.courseset.grade.min'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-16", "KUALI.CATALOG", "en");
+        assertEquals("Must have earned a minimum grade of letter B in (MATH152, MATH180)", nl);
+    }   
+    
+    @Test
+    public void testTranslateReqComponent_grade_max() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.courseset.grade.max'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-17", "KUALI.CATALOG", "en");
+        assertEquals("Must not have earned a maximum grade of letter C or higher in (MATH152, MATH180)", nl);
+    }         
+        
+    @Test
+    public void testTranslateReqComponent_perm_org() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.permission.org.required'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-18", "KUALI.CATALOG", "en");
+        assertEquals("Permission of English Department required", nl);
+    }
+    
+    @Test
+    public void testTranslateReqComponent_perm_instructor() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+        //req. type: 'kuali.reqCompType.course.permission.instructor.required'
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-19", "KUALI.CATALOG", "en");
+        assertEquals("Permission of instructor required", nl);
+    }       
+    
+    @Test
     public void testTranslateReqComponent_allN_CluSetOfClusets() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
         //req. type: 'kuali.reqCompType.course.courseset.completed.all'
-        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-14", "KUALI.CATALOG", "en");
+        String nl = statementService.getNaturalLanguageForReqComponent("REQCOMP-20", "KUALI.CATALOG", "en");
         assertEquals("Must have successfully completed all courses from (MATH152, MATH221, MATH180, MATH200, MATH215)", nl);
     }
 

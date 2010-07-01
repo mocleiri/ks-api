@@ -75,13 +75,11 @@
 	                    <ref local="cluSetContext"/>
                     </list>
                 </entry>
-                <entry key="kuali.reqCompType.grdCondCourseList">
+                <entry key="kuali.reqCompType.course.courseset.credits.completed.max">
                     <list>
-	                    <bean class="org.kuali.student.lum.statement.config.context.lu.GradeConditionCourseListContextImpl">
-					        <property name="luService" ref="luServiceImpl" />
-	                    </bean>
+	                    <ref local="cluSetContext"/>
                     </list>
-                </entry>
+                </entry>                
                 <entry key="kuali.reqCompType.course.courseset.gpa.min">
                     <list>
                         <ref local="cluSetContext"/>
@@ -99,7 +97,28 @@
                     <list>
 	                    <ref local="cluSetContext"/>
                     </list>
+                </entry>              
+                <entry key="kuali.reqCompType.course.courseset.grade.min">
+                    <bean class="org.kuali.student.lum.statement.config.context.lu.GradeConditionCourseListContextImpl">
+				        <property name="luService" ref="luServiceImpl" />
+                    </bean>
+                </entry>       
+                <entry key="kuali.reqCompType.course.courseset.grade.max">
+                    <bean class="org.kuali.student.lum.statement.config.context.lu.GradeConditionCourseListContextImpl">
+				        <property name="luService" ref="luServiceImpl" />
+                    </bean>
+                </entry>  
+                <entry key="kuali.reqCompType.course.permission.org.required">
+                    <bean class="org.kuali.student.lum.statement.config.context.lu.OrgPermConditionCourseListContextImpl">
+				        <property name="luService" ref="luServiceImpl" />
+                    </bean>
+                </entry>  
+                <entry key="kuali.reqCompType.course.permission.instructor.required">
+                    <bean class="org.kuali.student.lum.statement.config.context.lu.InstructorPermConditionCourseListContextImpl">
+				        <property name="luService" ref="luServiceImpl" />
+                    </bean>
                 </entry>
+
                 <!-- Program Contexts -->
                 <entry key="kuali.reqCompType.programList.enroll.oneof">
                     <list>
@@ -110,7 +129,7 @@
                     <list>
 	                    <ref local="cluSetContext"/>
                     </list>
-                </entry>
+                </entry> 
 
                 <!-- New Program Contexts-->
                 <entry key="kuali.reqCompType.program.programset.completed.nof">

@@ -41,8 +41,12 @@ public enum ReqComponentFieldTypes {
 	OPERATOR_KEY("reqCompFieldType.operator"),
 	COUNT_TYPE_KEY("reqCompFieldType.countType"),
 	INCLUSION_FILTER_TYPE_KEY("reqCompFieldType.inclusionFilter.type"),
-	INCLUSION_FILTER_VALUE_KEY("reqCompFieldType.inclusionFilter.value");
-
+	INCLUSION_FILTER_VALUE_KEY("reqCompFieldType.inclusionFilter.value"),
+    GRADE_TYPE_KEY("reqCompFieldType.gradeType"),
+    GRADE_KEY("reqCompFieldType.grade"),	
+    ORG_PERMISSION_KEY("reqCompFieldType.orgid"),
+    INSTRUCTOR_PERMISSION_KEY("reqCompFieldType.personid");    
+    
 	private String key;
 	
 	ReqComponentFieldTypes(String key) {
