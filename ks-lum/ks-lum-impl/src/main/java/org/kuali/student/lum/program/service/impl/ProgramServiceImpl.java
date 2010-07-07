@@ -1,8 +1,12 @@
 package org.kuali.student.lum.program.service.impl;
 
 import java.util.List;
+
+import javax.jws.WebService;
+
 import org.apache.log4j.Logger;
 import org.kuali.student.core.dictionary.poc.dto.ObjectStructureDefinition;
+import org.kuali.student.core.dictionary.service.poc.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
@@ -17,7 +21,9 @@ import org.kuali.student.core.search.dto.SearchRequest;
 import org.kuali.student.core.search.dto.SearchResult;
 import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
+import org.kuali.student.core.search.service.impl.SearchManager;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.lum.program.dao.ProgramDao;
 import org.kuali.student.lum.program.dto.CredentialProgramInfo;
 import org.kuali.student.lum.program.dto.HonorsProgramInfo;
 import org.kuali.student.lum.program.dto.LuTypeInfo;
@@ -26,9 +32,49 @@ import org.kuali.student.lum.program.dto.MinorDisciplineInfo;
 import org.kuali.student.lum.program.dto.ProgramRequirementInfo;
 import org.kuali.student.lum.program.dto.ProgramVariationInfo;
 import org.kuali.student.lum.program.service.ProgramService;
+import org.springframework.transaction.annotation.Transactional;
 
+@WebService(endpointInterface = "org.kuali.student.lum.program.service.ProgramService", serviceName = "ProgramService", portName = "ProgramService", targetNamespace = "http://student.kuali.org/wsdl/program")
+@Transactional(rollbackFor={Throwable.class})
 public class ProgramServiceImpl implements ProgramService{
 	final static Logger LOG = Logger.getLogger(ProgramServiceImpl.class);
+
+	private DictionaryService dictionaryService;
+    private SearchManager searchManager;
+    private ProgramAssembler programAssembler;
+    private ProgramDao programDao;
+
+	public DictionaryService getDictionaryService() {
+		return dictionaryService;
+	}
+
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+	public SearchManager getSearchManager() {
+		return searchManager;
+	}
+
+	public void setSearchManager(SearchManager searchManager) {
+		this.searchManager = searchManager;
+	}
+
+	public ProgramAssembler getProgramAssembler() {
+		return programAssembler;
+	}
+
+	public void setProgramAssembler(ProgramAssembler programAssembler) {
+		this.programAssembler = programAssembler;
+	}
+
+	public ProgramDao getProgramDao() {
+		return programDao;
+	}
+
+	public void setProgramDao(ProgramDao programDao) {
+		this.programDao = programDao;
+	}
 
 	@Override
 	public CredentialProgramInfo createCredentialProgram(
@@ -400,6 +446,6 @@ public class ProgramServiceImpl implements ProgramService{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 
 }
