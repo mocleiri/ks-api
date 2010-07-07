@@ -59,18 +59,20 @@
   }
   .columnAscending {
   	  background: #686868;
-	  background-image:url("./images/up_arrow_white.png");
+	  
+	  background-image:url("./images/common/up_arrow_white.png");
 	  background-position:center;
 	  background-repeat:no-repeat;
   }
   .columnDescending {
   	  background: #686868;
-	  background-image:url("./images/down_arrow_white.png");
+	  background-image:url("./images/common/down_arrow_white.png");
 	  background-position:center;
 	  background-repeat:no-repeat;
   }
 
   </ui:style>
+  <!-- background-image:url("./images/up_arrow_white.png"); -->
   <g:HTMLPanel  styleName='{style.outer}'>
       <table  cellSpacing='0' cellPadding='0'>
         <tr><td class='{style.tableColumnHeader}'> 
