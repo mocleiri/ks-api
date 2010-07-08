@@ -202,7 +202,7 @@
         <property name="language" value="en" />
     </bean>
 
-    <bean id="statementTestDictionary" class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceSpringImpl" autowire-candidate="false">
+    <bean id="statementTestDictionary" class="org.kuali.student.core.dictionary.service.impl.old.DictionaryServiceSpringImpl" autowire-candidate="false">
         <constructor-arg index="0" value="classpath:statement-dictionary-config.xml" />
     </bean>
 

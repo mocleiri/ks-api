@@ -115,7 +115,7 @@
   </bean>
 
   <bean id="lumDictionary"
-    class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceSpringImpl">
+    class="org.kuali.student.core.dictionary.service.impl.old.DictionaryServiceSpringImpl">
     <constructor-arg index="0"
       value="${ks.lum.dictionary.serviceContextLocations}" />
   </bean>
@@ -460,7 +460,7 @@
   </bean>
 
   <bean id="dictionaryService"
-    class="org.kuali.student.core.dictionary.service.impl.poc.DictionaryServiceImpl">
+    class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceImpl">
     <constructor-arg index="0"
       value="classpath:ks-courseInfo-dictionary-context.xml" />
   </bean>

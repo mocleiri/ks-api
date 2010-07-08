@@ -37,7 +37,7 @@ import org.kuali.student.common.test.spring.Client;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.Daos;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
-import org.kuali.student.core.dictionary.dto.FieldDescriptor;
+import org.kuali.student.core.dictionary.old.dto.FieldDescriptor;
 import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;

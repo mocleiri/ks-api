@@ -5,8 +5,8 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.dictionary.poc.dto.ObjectStructureDefinition;
-import org.kuali.student.core.dictionary.service.poc.DictionaryService;
+import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
+import org.kuali.student.core.dictionary.service.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;

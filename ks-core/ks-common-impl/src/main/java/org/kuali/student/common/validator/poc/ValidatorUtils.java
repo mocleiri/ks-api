@@ -17,9 +17,9 @@ package org.kuali.student.common.validator.poc;
 
 import java.util.Date;
 
-import org.kuali.student.core.dictionary.poc.dto.DataType;
-import org.kuali.student.core.dictionary.poc.dto.FieldDefinition;
-import org.kuali.student.core.dictionary.poc.dto.ObjectStructureDefinition;
+import org.kuali.student.core.dictionary.dto.DataType;
+import org.kuali.student.core.dictionary.dto.FieldDefinition;
+import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
 
 public class ValidatorUtils {
 

@@ -28,8 +28,8 @@ import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
 import org.kuali.student.common.validator.Validator;
-import org.kuali.student.core.dictionary.dto.ObjectStructure;
-import org.kuali.student.core.dictionary.service.DictionaryService;
+import org.kuali.student.core.dictionary.old.dto.ObjectStructure;
+import org.kuali.student.core.dictionary.service.old.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.entity.Amount;
 import org.kuali.student.core.entity.TimeAmount;

@@ -15,7 +15,7 @@ import java.util.TreeSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.dictionary.poc.MetadataServiceImpl;
+import org.kuali.student.core.assembly.dictionary.MetadataServiceImpl;
 import org.kuali.student.core.dto.TimeAmountInfo;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
