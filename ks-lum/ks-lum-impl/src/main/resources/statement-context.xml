@@ -37,7 +37,21 @@
 		</property>
 	</bean-->
 
+    <!-- Natural Language Translation Contexts -->
+    
     <bean id="cluSetContext" class="org.kuali.student.lum.statement.config.context.lu.CluSetContextImpl">
+        <property name="luService" ref="luServiceImpl" />
+    </bean>
+    <bean id="gradeContext" class="org.kuali.student.lum.statement.config.context.lu.GradeContextImpl">
+        <property name="luService" ref="luServiceImpl" />
+    </bean>
+    <bean id="gpaContext" class="org.kuali.student.lum.statement.config.context.lu.GPAContextImpl">
+        <property name="luService" ref="luServiceImpl" />
+    </bean>
+    <bean id="instructorPermissionContext" class="org.kuali.student.lum.statement.config.context.lu.PersonContextImpl">
+        <property name="luService" ref="luServiceImpl" />
+    </bean>
+    <bean id="orgPermissionContext" class="org.kuali.student.lum.statement.config.context.lu.OrganizationContextImpl">
         <property name="luService" ref="luServiceImpl" />
     </bean>
 
@@ -75,18 +89,15 @@
 	                    <ref local="cluSetContext"/>
                     </list>
                 </entry>
-                <entry key="kuali.reqCompType.grdCondCourseList">
+                <entry key="kuali.reqCompType.course.courseset.credits.completed.max">
                     <list>
-	                    <bean class="org.kuali.student.lum.statement.config.context.lu.GradeConditionCourseListContextImpl">
-					        <property name="luService" ref="luServiceImpl" />
-	                    </bean>
+	                    <ref local="cluSetContext"/>
                     </list>
-                </entry>
-                <entry key="kuali.reqCompType.gradecheck">
+                </entry>                
+                <entry key="kuali.reqCompType.course.courseset.gpa.min">
                     <list>
-	                    <bean class="org.kuali.student.lum.statement.config.context.lu.GPAContextImpl">
-					        <property name="luService" ref="luServiceImpl" />
-	                    </bean>
+                        <ref local="cluSetContext"/>
+                        <ref local="gpaContext"/>
                     </list>
                 </entry>
                 <entry key="kuali.reqCompType.courseList.coreq.all">
@@ -98,7 +109,29 @@
                     <list>
 	                    <ref local="cluSetContext"/>
                     </list>
+                </entry>              
+                <entry key="kuali.reqCompType.course.courseset.grade.min">
+                    <list>
+                        <ref local="cluSetContext"/>
+                        <ref local="gradeContext"/>
+                    </list>
+                </entry>       
+                <entry key="kuali.reqCompType.course.courseset.grade.max">
+                    <list>
+                        <ref local="cluSetContext"/>
+                        <ref local="gradeContext"/>
+                    </list>
+                </entry>  
+                <entry key="kuali.reqCompType.course.permission.org.required">
+                    <ref local="orgPermissionContext"/>
+                </entry>  
+                <entry key="kuali.reqCompType.course.permission.instructor.required">
+                    <ref local="instructorPermissionContext"/>
                 </entry>
+                <entry key="kuali.reqCompType.course.test.score.min">
+	                <ref local="cluSetContext"/>
+                </entry>              
+
                 <!-- Program Contexts -->
                 <entry key="kuali.reqCompType.programList.enroll.oneof">
                     <list>
@@ -109,7 +142,7 @@
                     <list>
 	                    <ref local="cluSetContext"/>
                     </list>
-                </entry>
+                </entry> 
 
                 <!-- New Program Contexts-->
                 <entry key="kuali.reqCompType.program.programset.completed.nof">

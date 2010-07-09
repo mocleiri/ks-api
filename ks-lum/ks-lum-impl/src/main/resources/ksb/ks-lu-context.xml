@@ -27,9 +27,11 @@
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
   <!-- This context requires that a spring Transaction Manager named 'transactionManager'
-    be defined -->
+    be defined
+-->
 
   <import resource="classpath:statement-context.xml" />
+  <import resource="classpath:program-context.xml" />
 
   <bean id="propertyPlaceholder"
     class="org.kuali.rice.student.core.config.spring.RiceConfigPropertyPlaceholderConfigurer" />
@@ -49,7 +51,7 @@
     </property>
   </bean>
 
-  <bean id="serviceValidator" class="org.kuali.student.common.validator.Validator">
+  <bean id="serviceValidator" class="org.kuali.student.common.validator.old.Validator">
     <property name="messageService" ref="ks.messageServiceMock" />
   </bean>
 
@@ -114,7 +116,7 @@
   </bean>
 
   <bean id="lumDictionary"
-    class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceSpringImpl">
+    class="org.kuali.student.core.dictionary.service.impl.old.DictionaryServiceSpringImpl">
     <constructor-arg index="0"
       value="${ks.lum.dictionary.serviceContextLocations}" />
   </bean>
@@ -288,6 +290,7 @@
         <ref bean="luClient" />
         <ref bean="lrcClient" />
         <ref bean="orgClient" />
+        <ref bean="enumServiceClient" />
       </list>
     </property>
   </bean>
@@ -357,9 +360,18 @@
       value="{http://student.kuali.org/wsdl/organization}OrganizationService" />
   </bean>
 
+  <bean id="enumServiceClient"
+    class="org.kuali.rice.student.ksb.messaging.KSBClientProxyFactoryBean">
+    <property name="serviceEndpointInterface"
+      value="org.kuali.student.core.enumerationmanagement.service.EnumerationManagementService" />
+    <property name="serviceQName"
+      value="{http://student.kuali.org/wsdl/enumerationmanagement}EnumerationManagementService" />
+  </bean>
+
   <!-- Document Relation Mock Service Config -->
   <!--Note: When this service is defined, move this declaration into core
-    context. -->
+    context.
+-->
 
   <bean id="documentRelationServiceImpl"
     class="org.kuali.student.lum.mock.service.impl.DocumentRelationServiceImpl">
@@ -377,6 +389,133 @@
         <property name="serviceNameSpaceURI"
           value="http://student.kuali.org/wsdl/documentRelation" />
         <property name="busSecurity" value="false"></property>
+      </bean>
+    </property>
+  </bean>
+
+  <!-- CourseService config -->
+  <bean id="courseServiceImpl"
+    class="org.kuali.student.lum.course.service.impl.CourseServiceImpl">
+    <property name="luService" ref="luClient" />
+    <property name="courseAssembler" ref="courseAssembler" />
+    <property name="courseServiceMethodInvoker" ref="courseServiceMethodInvoker" />
+    <property name="dictionaryServiceDelegate" ref="dictionaryService" />
+    <property name="validator" ref="pocServiceValidator" />
+  </bean>
+
+  <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+    <property name="serviceDefinition">
+      <bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition">
+        <property name="jaxWsService" value="true" />
+        <property name="service" ref="courseServiceImpl" />
+        <property name="serviceInterface"
+          value="org.kuali.student.lum.course.service.CourseService" />
+        <property name="localServiceName" value="CourseService" />
+        <property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/course" />
+        <property name="busSecurity" value="${ks.lum.bus.security}" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="atpClient"
+    class="org.kuali.rice.student.ksb.messaging.KSBClientProxyFactoryBean">
+    <property name="serviceEndpointInterface"
+      value="org.kuali.student.core.atp.service.AtpService" />
+    <property name="serviceQName"
+      value="{http://student.kuali.org/wsdl/atp}AtpService" />
+  </bean>
+
+  <bean id="statementServiceClient"
+    class="org.kuali.rice.student.ksb.messaging.KSBClientProxyFactoryBean">
+    <property name="serviceEndpointInterface"
+      value="org.kuali.student.core.statement.service.StatementService" />
+    <property name="serviceQName"
+      value="{http://student.kuali.org/wsdl/statement}StatementService" />
+  </bean>
+
+  <bean id="courseServiceMethodInvoker"
+    class="org.kuali.student.lum.course.service.impl.CourseServiceMethodInvoker">
+    <property name="luService" ref="luClient" />
+  </bean>
+
+  <bean id="courseAssembler"
+    class="org.kuali.student.lum.course.service.assembler.CourseAssembler">
+    <property name="formatAssembler" ref="formatAssembler" />
+    <property name="courseJointAssembler" ref="courseJointAssembler" />
+    <property name="luService" ref="luClient" />
+  </bean>
+
+  <bean id="formatAssembler"
+    class="org.kuali.student.lum.course.service.assembler.FormatAssembler">
+    <property name="activityAssembler" ref="activityAssembler" />
+    <property name="luService" ref="luClient" />
+  </bean>
+
+  <bean id="activityAssembler"
+    class="org.kuali.student.lum.course.service.assembler.ActivityAssembler">
+    <property name="luService" ref="luClient" />
+  </bean>
+
+  <bean id="courseJointAssembler"
+    class="org.kuali.student.lum.course.service.assembler.CourseJointAssembler">
+    <property name="luService" ref="luClient" />
+  </bean>
+
+  <bean id="dictionaryService"
+    class="org.kuali.student.core.dictionary.service.impl.DictionaryServiceImpl">
+    <constructor-arg index="0"
+      value="classpath:ks-courseInfo-dictionary-context.xml" />
+  </bean>
+
+  <bean id="pocServiceValidator" class="org.kuali.student.common.validator.Validator">
+    <!--<property name="messageService" ref="ks.messageServiceMock"/> -->
+    <property name="searchDispatcher" ref="lumSearchDispatcher" />
+  </bean>
+
+
+  <!-- Program Service Config -->
+
+  <bean id="programSearchManager"
+    class="org.kuali.student.core.search.service.impl.SearchManagerImpl">
+    <constructor-arg index="0"
+      value="classpath:lu-search-config.xml" />
+  </bean>
+
+  <bean id="programRequirementAssembler"
+    class="org.kuali.student.lum.program.service.impl.ProgramRequirementAssembler">
+ </bean>
+ 
+  <bean id="majorDisciplineAssembler"
+    class="org.kuali.student.lum.program.service.assembler.MajorDisciplineAssembler">
+  </bean>
+
+  <bean id="programServiceMethodInvoker"
+    class="org.kuali.student.lum.program.service.impl.ProgramServiceMethodInvoker">
+    <property name="luService" ref="luClient" />
+  </bean>
+  
+  <bean id="programServiceImpl"
+    class="org.kuali.student.lum.program.service.impl.ProgramServiceImpl">
+    <property name="luService" ref="luClient" />
+    <property name="programRequirementAssembler" ref="programRequirementAssembler" />
+    <property name="majorDisciplineAssembler" ref="majorDisciplineAssembler" />    
+    <property name="searchManager" ref="programSearchManager" />
+    <property name="dictionaryService" ref="dictionaryService" />
+    <property name="validator" ref="pocServiceValidator" />
+    <property name="programServiceMethodInvoker" ref="programServiceMethodInvoker" />
+  </bean>
+
+  <bean class="org.kuali.rice.ksb.messaging.KSBExporter">
+    <property name="serviceDefinition">
+      <bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition">
+        <property name="jaxWsService" value="true" />
+        <property name="service" ref="programServiceImpl" />
+        <property name="serviceInterface"
+          value="org.kuali.student.lum.program.service.ProgramService" />
+        <property name="localServiceName" value="ProgramService" />
+        <property name="serviceNameSpaceURI"
+          value="http://student.kuali.org/wsdl/program" />
+        <property name="busSecurity" value="${ks.lum.bus.security}" />
       </bean>
     </property>
   </bean>
@@ -404,7 +543,8 @@
   </bean>
 
   <!-- Exception mapping. This is needed because many operations are proxied
-    and do not throw exceptions until a later time -->
+    and do not throw exceptions until a later time
+-->
   <bean id="mapExceptionAdvisor" class="org.kuali.student.common.util.ExceptionMappingAdvice">
     <property name="defaultException"
       value="org.kuali.student.core.exceptions.OperationFailedException" />

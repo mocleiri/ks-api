@@ -26,9 +26,9 @@
 	<bean id="lookup" abstract="true"
 		class="org.kuali.student.core.assembly.data.LookupMetadata" />
 	<bean id="dataObjectStructure" abstract="true"
-		class="org.kuali.student.core.assembly.dictionary.DataObjectStructure" />
+		class="org.kuali.student.core.assembly.dictionary.old.DataObjectStructure" />
 	<bean id="dataFieldDescriptor" abstract="true"
-		class="org.kuali.student.core.assembly.dictionary.DataFieldDescriptor">
+		class="org.kuali.student.core.assembly.dictionary.old.DataFieldDescriptor">
 		<property name="writeAccess" value="ALWAYS" />
 		<property name="canUnmask" value="false" />
 		<property name="canEdit" value="true" />
@@ -6267,7 +6267,7 @@
 							<property name="desc" value="State" />
 							<property name="writeAccess" value="NEVER" />
 							<property name="defaultValueString"
-								value="clu.state NOT IN ('activated')" />
+								value="clu.state NOT IN ('activated', 'retired')" />
 							<property name="caseSensitive" value="true" />
 						</bean>
 					</list>
@@ -6363,7 +6363,7 @@
 								<property name="writeAccess"
 									value="NEVER" />
 								<property name="defaultValueString"
-									value="clu.state NOT IN ('activated')" />
+									value="clu.state NOT IN ('activated', 'retired')" />
 								<property name="caseSensitive"
 									value="true" />
 							</bean>
