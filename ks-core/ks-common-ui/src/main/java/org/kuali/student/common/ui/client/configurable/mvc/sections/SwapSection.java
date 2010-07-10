@@ -38,8 +38,8 @@ public class SwapSection extends BaseSection implements HasSectionDeletion{
 	}
 	
 	public SwapSection(KSSelectItemWidgetAbstract selectableWidget, ConfirmationDialog dialog){
+        this.dialog = dialog;
 		this.init(selectableWidget);
-		this.dialog = dialog;
 	}
 	
 	private void init(KSSelectItemWidgetAbstract selectableWidget){
@@ -54,7 +54,8 @@ public class SwapSection extends BaseSection implements HasSectionDeletion{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handleUserSelection();	
+				handleUserSelection();
+				dialog.hide();
 			}
 		});
 		

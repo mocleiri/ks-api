@@ -2,7 +2,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 	<import resource="classpath:ks-base-dictionary-context.xml" />
-
 	<!-- CluInfo-->
 	<bean id="org.kuali.student.lum.lu.dto.CluInfo-parent" abstract="true"
 		parent="ObjectStructureDefinition">
@@ -47,7 +46,7 @@
 	<bean id="org.kuali.student.lum.lu.dto.CluInfo" parent="org.kuali.student.lum.lu.dto.CluInfo-parent" />
 
 	<bean id="cluInfo.academicSubjectOrgs-parent" abstract="true"
-		parent="baseRepeatingComplex">
+		parent="baseOptionalRepeatingComplex">
 		<property name="name" value="academicSubjectOrgs" />
 		<property name="dataObjectStructure"
 			ref="org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo" />
@@ -85,9 +84,13 @@
 	</bean>
 	<bean id="cluInfo.alternateIdentifiers" parent="cluInfo.alternateIdentifiers-parent" />
 
+	<!--This is an example of adding special constraints in addition to base constraint baseRequiredRepeatingString -->
 	<bean id="cluInfo.campusLocations-parent" abstract="true"
-		parent="baseRepeatingString">
+		parent="baseRequiredRepeatingString">
 		<property name="name" value="campusLocations" />
+		<property name="minLength" value="1" />
+		<property name="maxLength" value="60" />
+		<property name="lookupDefinition" ref="constraint.lookup.campusLocations"></property>
 	</bean>
 	<bean id="cluInfo.campusLocations" parent="cluInfo.campusLocations-parent" />
 
@@ -115,7 +118,7 @@
 	</bean>
 	<bean id="cluInfo.descr" parent="cluInfo.descr-parent" />
 
-	<bean id="cluInfo.effectiveDate-parent" abstract="true" parent="baseSingleDate">
+	<bean id="cluInfo.effectiveDate-parent" abstract="true" parent="baseEffectiveDate">
 		<property name="name" value="effectiveDate" />
 	</bean>
 	<bean id="cluInfo.effectiveDate" parent="cluInfo.effectiveDate-parent" />
@@ -126,12 +129,12 @@
 	<bean id="cluInfo.enrollable" parent="cluInfo.enrollable-parent" />
 
 	<bean id="cluInfo.expectedFirstAtp-parent" abstract="true"
-		parent="baseSingleString">
+		parent="baseATPType">
 		<property name="name" value="expectedFirstAtp" />
 	</bean>
 	<bean id="cluInfo.expectedFirstAtp" parent="cluInfo.expectedFirstAtp-parent" />
 
-	<bean id="cluInfo.expirationDate-parent" abstract="true" parent="baseSingleDate">
+	<bean id="cluInfo.expirationDate-parent" abstract="true" parent="baseExpirationDate">
 		<property name="name" value="expirationDate" />
 	</bean>
 	<bean id="cluInfo.expirationDate" parent="cluInfo.expirationDate-parent" />
@@ -154,8 +157,39 @@
 	</bean>
 	<bean id="cluInfo.hazardousForDisabledStudents" parent="cluInfo.hazardousForDisabledStudents-parent" />
 
-	<bean id="cluInfo.id-parent" abstract="true" parent="baseSingleString">
+	<!--  Example of a case when constraint application -->
+	<bean id="cluInfo.id-parent" abstract="true" parent="baseId">		
+		<property name="caseConstraint">
+			<bean parent="caseConstraint">
+				<property name="operator" value="EQUALS"/>
+				<property name="fieldPath" value="state"/>
+				<property name="caseSensitive" value="false"/>
+				<property name="whenConstraint">
+					<list>
+						<bean parent="whenConstraint">
+							<property name="values">
+								<list>
+									<value>ACTIVE</value>
+									<value>RETIRED</value>
+								</list>
+							</property>
+							<property name="constraint">
+								<bean parent="baseCluIdRequired"/>
+							</property>
+						</bean>
+						<bean parent="whenConstraint">
+							<property name="value" value="DRAFT"/>
+							<property name="constraint">
+								<bean parent="baseCluIdOptional"/>
+							</property>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
 		<property name="name" value="id" />
+		<property name="minOccurs" value="0" />
+		<property name="maxOccurs" value="1" />
 	</bean>
 	<bean id="cluInfo.id" parent="cluInfo.id-parent" />
 
@@ -528,8 +562,10 @@
 	<bean id="cluIdentifierInfo.code" parent="cluIdentifierInfo.code-parent" />
 
 	<bean id="cluIdentifierInfo.division-parent" abstract="true"
-		parent="baseSingleString">
+		parent="baseCode">
 		<property name="name" value="division" />
+		<property name="minOccurs" value="1"/>
+		<property name="maxOccurs" value="1"/>
 	</bean>
 	<bean id="cluIdentifierInfo.division" parent="cluIdentifierInfo.division-parent" />
 
@@ -547,12 +583,19 @@
 	<bean id="cluIdentifierInfo.longName-parent" abstract="true"
 		parent="baseSingleString">
 		<property name="name" value="longName" />
+		<property name="validChars" ref="lineText"/>
+		<property name="minLength" value="1" />
+		<property name="maxLength" value="255" />
+		<property name="minOccurs" value="0"/>
+		<property name="maxOccurs" value="1"/>
 	</bean>
 	<bean id="cluIdentifierInfo.longName" parent="cluIdentifierInfo.longName-parent" />
 
 	<bean id="cluIdentifierInfo.orgId-parent" abstract="true"
 		parent="baseSingleString">
 		<property name="name" value="orgId" />
+		<property name="maxOccurs" value="1"/>
+		<property name="minOccurs" value="1"/>
 	</bean>
 	<bean id="cluIdentifierInfo.orgId" parent="cluIdentifierInfo.orgId-parent" />
 
@@ -569,8 +612,11 @@
 	<bean id="cluIdentifierInfo.state" parent="cluIdentifierInfo.state-parent" />
 
 	<bean id="cluIdentifierInfo.suffixCode-parent" abstract="true"
-		parent="baseSingleString">
+		parent="baseCode">
 		<property name="name" value="suffixCode" />
+		<property name="validChars" ref="numberic"/>
+		<property name="minLength" value="3"/>
+		<property name="maxLength" value="3"/>
 	</bean>
 	<bean id="cluIdentifierInfo.suffixCode" parent="cluIdentifierInfo.suffixCode-parent" />
 
@@ -581,8 +627,11 @@
 	<bean id="cluIdentifierInfo.type" parent="cluIdentifierInfo.type-parent" />
 
 	<bean id="cluIdentifierInfo.variation-parent" abstract="true"
-		parent="baseSingleString">
+		parent="baseCode">
 		<property name="name" value="variation" />
+		<property name="validChars" ref="upperAlpha"/>
+		<property name="minLength" value="1" />
+		<property name="maxLength" value="1" />
 	</bean>
 	<bean id="cluIdentifierInfo.variation" parent="cluIdentifierInfo.variation-parent" />
 

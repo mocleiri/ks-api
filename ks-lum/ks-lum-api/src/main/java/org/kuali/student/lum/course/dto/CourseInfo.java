@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.kuali.student.core.dto.AmountInfo;
 import org.kuali.student.core.dto.HasAttributes;
 import org.kuali.student.core.dto.HasTypeState;
 import org.kuali.student.core.dto.Idable;
@@ -35,7 +36,6 @@ import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.dto.TimeAmountInfo;
 import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
-import org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo;
 import org.kuali.student.lum.lu.dto.CluFeeInfo;
 import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 
@@ -66,7 +66,7 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     private String transcriptTitle;
 
     @XmlElement
-    private RichTextInfo description;
+    private RichTextInfo descr;
 
     @XmlElement
     private List<FormatInfo> formats;
@@ -75,13 +75,7 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     private List<String> termsOffered;
 
     @XmlElement
-    private String firstExpectedOffering;
-
-    @XmlElement
     private TimeAmountInfo duration;
-
-    @XmlElement
-    private List<String> offeredAtpTypes;
 
     @XmlElement
     private List<CourseJointInfo> joints;
@@ -99,20 +93,44 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     private List<String> campusLocations;
 
     @XmlElement
+    private AmountInfo outOfClassHours;
+
+    @XmlElement
+    private List<String> gradingOptions;
+
+    @XmlElement
+    private List<String> creditOptions;
+    
+    @XmlElement
     private String department;
 
     @XmlElement
-    private List<AcademicSubjectOrgInfo> academicSubjectOrgs;
+    private List<String> academicSubjectOrgs;
 
     @XmlElement
     private CluInstructorInfo primaryInstructor;
 
+    @XmlElement
+    private List<CluInstructorInfo> instructors;
+    
     @XmlElement
     private CluFeeInfo feeInfo;
 
     @XmlElement
     private List<LoDisplayInfo> courseSpecificLOs;
 
+    @XmlElement
+    private boolean isSpecialTopicsCourse;
+
+    @XmlElement
+    private boolean isPilotCourse;
+    
+    @XmlElement
+    private String startTerm;
+
+    @XmlElement
+    private String endTerm;
+    
     @XmlElement
     private Date effectiveDate;
 
@@ -182,12 +200,12 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     /**
      * Narrative description of the Course.
      */
-    public RichTextInfo getDescription() {
-        return description;
+    public RichTextInfo getDescr() {
+        return descr;
     }
 
-    public void setDescription(RichTextInfo description) {
-        this.description = description;
+    public void setDescr(RichTextInfo descr) {
+        this.descr = descr;
     }
 
     /**
@@ -219,17 +237,6 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     }
 
     /**
-     * The expected first academic time period that this course would be effective.
-     */
-    public String getFirstExpectedOffering() {
-        return firstExpectedOffering;
-    }
-
-    public void setFirstExpectedOffering(String firstExpectedOffering) {
-        this.firstExpectedOffering = firstExpectedOffering;
-    }
-
-    /**
      * The standard duration of the Course.
      */
     public TimeAmountInfo getDuration() {
@@ -238,20 +245,6 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
 
     public void setDuration(TimeAmountInfo duration) {
         this.duration = duration;
-    }
-
-    /**
-     * The academic time period types in which this Course is typically offered. Standard usage would equate to terms. It can define a timeframe that a course with of a certain stdDuration would fall in.
-     */
-    public List<String> getOfferedAtpTypes() {
-        if (offeredAtpTypes == null) {
-            offeredAtpTypes = new ArrayList<String>(0);
-        }
-        return offeredAtpTypes;
-    }
-
-    public void setOfferedAtpTypes(List<String> offeredAtpTypes) {
-        this.offeredAtpTypes = offeredAtpTypes;
     }
 
     /**
@@ -319,6 +312,42 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
 
     public void setCampusLocations(List<String> campusLocations) {
         this.campusLocations = campusLocations;
+    }        
+    
+    public AmountInfo getOutOfClassHours() {
+        return outOfClassHours;
+    }
+
+    public void setOutOfClassHours(AmountInfo outOfClassHours) {
+        this.outOfClassHours = outOfClassHours;
+    }
+
+    /**
+     * @return the gradingOptions
+     */
+    public List<String> getGradingOptions() {
+        return gradingOptions;
+    }
+
+    /**
+     * @param gradingOptions the gradingOptions to set
+     */
+    public void setGradingOptions(List<String> gradingOptions) {
+        this.gradingOptions = gradingOptions;
+    }
+
+    /**
+     * @return the creditOptions
+     */
+    public List<String> getCreditOptions() {
+        return creditOptions;
+    }
+
+    /**
+     * @param creditOptions the creditOptions to set
+     */
+    public void setCreditOptions(List<String> creditOptions) {
+        this.creditOptions = creditOptions;
     }
 
     /**
@@ -335,14 +364,14 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     /**
      * The organizations that represents the Subject area of the course.
      */
-    public List<AcademicSubjectOrgInfo> getAcademicSubjectOrgs() {
+    public List<String> getAcademicSubjectOrgs() {
         if (academicSubjectOrgs == null) {
-            academicSubjectOrgs = new ArrayList<AcademicSubjectOrgInfo>(0);
+            academicSubjectOrgs = new ArrayList<String>(0);
         }
         return academicSubjectOrgs;
     }
 
-    public void setAcademicSubjectOrgs(List<AcademicSubjectOrgInfo> academicSubjectOrgs) {
+    public void setAcademicSubjectOrgs(List<String> academicSubjectOrgs) {
         this.academicSubjectOrgs = academicSubjectOrgs;
     }
 
@@ -355,6 +384,14 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
 
     public void setPrimaryInstructor(CluInstructorInfo primaryInstructor) {
         this.primaryInstructor = primaryInstructor;
+    }
+    
+    public List<CluInstructorInfo> getInstructors() {
+        return instructors;
+    }
+
+    public void setInstructors(List<CluInstructorInfo> instructors) {
+        this.instructors = instructors;
     }
 
     /**
@@ -381,10 +418,39 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
     public void setCourseSpecificLOs(List<LoDisplayInfo> courseSpecificLOs) {
         this.courseSpecificLOs = courseSpecificLOs;
     }
+    
+    public boolean isSpecialTopicsCourse() {
+        return isSpecialTopicsCourse;
+    }
 
-    /**
-     * Date and time the Course became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
-     */
+    public void setSpecialTopicsCourse(boolean isSpecialTopicsCourse) {
+        this.isSpecialTopicsCourse = isSpecialTopicsCourse;
+    }
+        
+    public boolean isPilotCourse() {
+        return isPilotCourse;
+    }
+
+    public void setPilotCourse(boolean isPilotCourse) {
+        this.isPilotCourse = isPilotCourse;
+    }
+
+    public String getStartTerm() {
+        return startTerm;
+    }
+
+    public void setStartTerm(String startTerm) {
+        this.startTerm = startTerm;
+    }
+
+    public String getEndTerm() {
+        return endTerm;
+    }
+
+    public void setEndTerm(String endTerm) {
+        this.endTerm = endTerm;
+    }
+
     public Date getEffectiveDate() {
         return effectiveDate;
     }
@@ -393,9 +459,6 @@ public class CourseInfo implements Serializable, Idable, HasTypeState, HasAttrib
         this.effectiveDate = effectiveDate;
     }
 
-    /**
-     * Date and time that this Course expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
-     */
     public Date getExpirationDate() {
         return expirationDate;
     }

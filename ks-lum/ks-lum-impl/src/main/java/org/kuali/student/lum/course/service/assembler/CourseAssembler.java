@@ -23,6 +23,9 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.kuali.student.common.util.UUIDHelper;
+import org.kuali.student.core.assembly.BOAssembler;
+import org.kuali.student.core.assembly.BaseDTOAssemblyNode;
+import org.kuali.student.core.assembly.BaseDTOAssemblyNode.NodeOperation;
 import org.kuali.student.core.assembly.data.AssemblyException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
@@ -31,7 +34,7 @@ import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.course.dto.CourseJointInfo;
 import org.kuali.student.lum.course.dto.FormatInfo;
-import org.kuali.student.lum.course.service.assembler.BaseDTOAssemblyNode.NodeOperation;
+import org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
 import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
@@ -61,13 +64,23 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				: new CourseInfo();
 
 		// Copy all the data from the clu to the course
-		course.setAcademicSubjectOrgs(clu.getAcademicSubjectOrgs());
+		
+		List<String> academicSubjectOrgs = new ArrayList<String>();
+		for(AcademicSubjectOrgInfo orgInfo:clu.getAcademicSubjectOrgs()){
+			academicSubjectOrgs.add(orgInfo.getOrgId());
+		}
+		course.setAcademicSubjectOrgs(academicSubjectOrgs);
+		
 		course.setAttributes(clu.getAttributes());
 		course.setCampusLocations(clu.getCampusLocations());
 		course.setCode(clu.getOfficialIdentifier().getCode());
 		course.setCourseNumberSuffix(clu.getOfficialIdentifier()
 				.getSuffixCode());
-
+		course.setOutOfClassHours(clu.getIntensity());
+		course.setInstructors(clu.getInstructors());
+		course.setStartTerm(clu.getExpectedFirstAtp());
+		course.setEndTerm(clu.getLastAtp());
+		
 		// TODO: LO
 		// course.setCourseSpecificLOs();
 
@@ -77,7 +90,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		// course.setCrossListings();
 
 		course.setDepartment(clu.getPrimaryAdminOrg().getOrgId());
-		course.setDescription(clu.getDescr());
+		course.setDescr(clu.getDescr());
 		course.setDuration(clu.getStdDuration());
 		course.setEffectiveDate(clu.getEffectiveDate());
 		course.setExpirationDate(clu.getExpirationDate());
@@ -87,12 +100,12 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
 		course.setId(clu.getId());
 		course.setType(clu.getType());
-		course.setFirstExpectedOffering(clu.getExpectedFirstAtp());
-		course.setOfferedAtpTypes(clu.getOfferedAtpTypes());
+		course.setTermsOffered(clu.getOfferedAtpTypes());
 		course.setPrimaryInstructor(clu.getPrimaryInstructor());
 		course.setState(clu.getState());
 		course.setSubjectArea(clu.getOfficialIdentifier().getDivision());
 		course.setTranscriptTitle(clu.getOfficialIdentifier().getShortName());
+		course.setMetaInfo(clu.getMetaInfo());
 
 		// Don't make any changes to nested datastructures if this is
 		if (!shallowBuild) {
@@ -101,6 +114,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				// course
 				List<CluCluRelationInfo> cluClus = luService
 						.getCluCluRelationsByClu(clu.getId());
+				
 				for (CluCluRelationInfo cluRel : cluClus) {
 					if (cluRel.getType().equals(
 							CourseAssemblerConstants.JOINT_RELATION_TYPE)) {
@@ -120,6 +134,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				List<CluInfo> formats = luService.getRelatedClusByCluId(course
 						.getId(),
 						CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE);
+				
 				for (CluInfo format : formats) {
 					FormatInfo formatInfo = formatAssembler.assemble(format,
 							null, false);
@@ -154,7 +169,12 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		BaseDTOAssemblyNode<CourseInfo, CluInfo> result = new BaseDTOAssemblyNode<CourseInfo, CluInfo>(
 				this);
 
-		CluInfo clu = new CluInfo();
+		CluInfo clu;
+		try {
+			clu = (NodeOperation.UPDATE == operation) ? luService.getClu(course.getId()) : new CluInfo();
+        } catch (Exception e) {
+			throw new AssemblyException("Error getting existing learning unit during course update", e);
+        } 
 
 		// Create the id if it's not there already(important for creating
 		// relations)
@@ -171,26 +191,41 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		identifier.setCode(course.getCode());
 		identifier.setSuffixCode(course.getCourseNumberSuffix());
 		identifier.setLongName(course.getCourseTitle());
-
+		
 		identifier.setDivision(course.getSubjectArea());
 		identifier.setShortName(course.getTranscriptTitle());
 		clu.setOfficialIdentifier(identifier);
 
-		AdminOrgInfo orgInfo = new AdminOrgInfo();
+		AdminOrgInfo orgInfo = (null != clu.getPrimaryAdminOrg()) ? clu.getPrimaryAdminOrg() : new AdminOrgInfo();
 		orgInfo.setOrgId(course.getDepartment());
 		clu.setPrimaryAdminOrg(orgInfo);
 
-		clu.setAcademicSubjectOrgs(course.getAcademicSubjectOrgs());
+		List<AcademicSubjectOrgInfo> subjectOrgs = new ArrayList<AcademicSubjectOrgInfo>();
+		for (String orgId : course.getAcademicSubjectOrgs()) {
+			AcademicSubjectOrgInfo info = new AcademicSubjectOrgInfo();
+			info.setOrgId(orgId);
+			subjectOrgs.add(info);
+		}
+		clu.setAcademicSubjectOrgs(subjectOrgs);
+
+		
 		clu.setAttributes(course.getAttributes());
 		clu.setCampusLocations(course.getCampusLocations());
-		clu.setDescr(course.getDescription());
+		clu.setDescr(course.getDescr());
 		clu.setStdDuration(course.getDuration());
 		clu.setEffectiveDate(course.getEffectiveDate());
 		clu.setExpirationDate(course.getExpirationDate());
 
-		clu.setExpectedFirstAtp(course.getFirstExpectedOffering());
-		clu.setOfferedAtpTypes(course.getOfferedAtpTypes());
+		clu.setOfferedAtpTypes(course.getTermsOffered());
 		clu.setPrimaryInstructor(course.getPrimaryInstructor());
+		
+		clu.setIntensity(course.getOutOfClassHours());
+		clu.setInstructors(course.getInstructors());
+		
+		clu.setExpectedFirstAtp(course.getStartTerm());
+		clu.setLastAtp(course.getEndTerm());
+		
+		clu.setMetaInfo(course.getMetaInfo());
 
 		// Add the Clu to the result
 		result.setNodeData(clu);
@@ -198,9 +233,16 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		result.setBusinessDTORef(course);
 
 		// Use the Format assembler to disassemble the formats and relations
-		List<BaseDTOAssemblyNode<?, ?>> formatResults = disassembleFormats(clu
-				.getId(), course, operation);
-		result.getChildNodes().addAll(formatResults);
+		List<BaseDTOAssemblyNode<?, ?>> formatResults;
+        try {
+            formatResults = disassembleFormats(clu
+            		.getId(), course, operation);
+            result.getChildNodes().addAll(formatResults);
+            
+        } catch (DoesNotExistException e) {
+        } catch (Exception e) {
+            throw new AssemblyException("Error while disassembling format", e);
+        }
 
 		// Use the CourseJoint assembler to disassemble the CourseJoints and
 		// relations
@@ -215,7 +257,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 	// disassembleActivities code... maybe can be made generic
 	private List<BaseDTOAssemblyNode<?, ?>> disassembleFormats(String nodeId,
 			CourseInfo course, NodeOperation operation)
-			throws AssemblyException {
+			throws AssemblyException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
 
 		List<BaseDTOAssemblyNode<?, ?>> results = new ArrayList<BaseDTOAssemblyNode<?, ?>>();
 
@@ -227,6 +269,9 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 			try {
 				List<CluCluRelationInfo> formatRelationships = luService
 						.getCluCluRelationsByClu(course.getId());
+				
+				//formatRelationships = (null == formatRelationships) ? new ArrayList<CluCluRelationInfo>() : formatRelationships;
+				
 				for (CluCluRelationInfo formatRelation : formatRelationships) {
 					if (CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE
 							.equals(formatRelation.getType())) {
@@ -247,8 +292,34 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		// Loop through all the formats in this course
 		for (FormatInfo format : course.getFormats()) {
 
-			// If this is a course create then all formats will be created
-			if (NodeOperation.UPDATE.equals(operation)
+		    //  If this is a course create/new format update then all formats will be created
+		    if (NodeOperation.CREATE == operation
+		            || (NodeOperation.UPDATE == operation && !currentformatIds.containsKey(format.getId()) )) {
+                // the format does not exist, so create
+                // Assemble and add the format
+                BaseDTOAssemblyNode<FormatInfo, CluInfo> formatNode = formatAssembler
+                        .disassemble(format, NodeOperation.CREATE);
+                results.add(formatNode);
+
+                // Create the relationship and add it as well
+                CluCluRelationInfo relation = new CluCluRelationInfo();
+                relation.setCluId(nodeId);
+                relation.setRelatedCluId(formatNode.getNodeData().getId());// this
+                // should
+                // already
+                // be set even if
+                // it's a create
+                relation
+                        .setType(CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE);
+                relation.setState(course.getState());
+
+                BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo> relationNode = new BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo>(
+                        null);
+                relationNode.setNodeData(relation);
+                relationNode.setOperation(NodeOperation.CREATE);
+
+                results.add(relationNode);
+            } else if (NodeOperation.UPDATE == operation
 					&& currentformatIds.containsKey(format.getId())) {
 				// If the course already has this format, then just update the
 				// format
@@ -259,57 +330,46 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				// remove this entry from the map so we can tell what needs to
 				// be deleted at the end
 				currentformatIds.remove(format.getId());
-			} else if (!NodeOperation.DELETE.equals(operation)) {
-				// the format does not exist, so create
-				// Assemble and add the format
-				BaseDTOAssemblyNode<FormatInfo, CluInfo> formatNode = formatAssembler
-						.disassemble(format, NodeOperation.CREATE);
-				results.add(formatNode);
+			} else if (NodeOperation.DELETE == operation
+                    && currentformatIds.containsKey(format.getId()))  {
+			    // Delete the Format and its relation
+	            CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
+	            relationToDelete.setId( currentformatIds.get(format.getId()) );
+	            BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo>(
+	                    null);
+	            relationToDeleteNode.setNodeData(relationToDelete);
+	            relationToDeleteNode.setOperation(NodeOperation.DELETE);
+	            results.add(relationToDeleteNode);
+			
+                BaseDTOAssemblyNode<FormatInfo, CluInfo> formatNode = formatAssembler
+                .disassemble(format, NodeOperation.DELETE);
+                results.add(formatNode);	            	            
 
-				// Create the relationship and add it as well
-				CluCluRelationInfo relation = new CluCluRelationInfo();
-				relation.setCluId(nodeId);
-				relation.setRelatedCluId(formatNode.getNodeData().getId());// this
-				// should
-				// already
-				// be set even if
-				// it's a create
-				relation
-						.setType(CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE);
-				relation.setState(course.getState());
-
-				BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo> relationNode = new BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo>(
-						null);
-				relationNode.setNodeData(relation);
-				relationNode.setOperation(NodeOperation.CREATE);
-
-				results.add(relationNode);
-			}
-
-			// Now any leftover format ids are no longer needed, so delete
-			// formats and relations
-			for (Entry<String, String> entry : currentformatIds.entrySet()) {
-				// Create a new relation with the id of the relation we want to
-				// delete
-				CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
-				relationToDelete.setId(entry.getValue());
-				BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo>(
-						null);
-				relationToDeleteNode.setNodeData(relationToDelete);
-				relationToDeleteNode.setOperation(NodeOperation.DELETE);
-				results.add(relationToDeleteNode);
-
-				// Create a new Clu Info with the id of the clu we want to
-				// delete
-				CluInfo formatToDelete = new CluInfo();
-				formatToDelete.setId(entry.getKey());
-				BaseDTOAssemblyNode<FormatInfo, CluInfo> formatToDeleteNode = new BaseDTOAssemblyNode<FormatInfo, CluInfo>(
-						formatAssembler);
-				formatToDeleteNode.setNodeData(formatToDelete);
-				formatToDeleteNode.setOperation(NodeOperation.DELETE);
-				results.add(formatToDeleteNode);
-			}
+                // remove this entry from the map so we can tell what needs to
+                // be deleted at the end
+                currentformatIds.remove(format.getId());
+			}			    
 		}
+		
+        // Now any leftover format ids are no longer needed, so delete
+        // formats and relations. These formats have to be assembled first before they can be marked for deletion
+        for (Entry<String, String> entry : currentformatIds.entrySet()) {
+            // Create a new relation with the id of the relation we want to
+            // delete
+            CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
+            relationToDelete.setId( entry.getValue() );
+            BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<CourseInfo, CluCluRelationInfo>(
+                    null);
+            relationToDeleteNode.setNodeData(relationToDelete);
+            relationToDeleteNode.setOperation(NodeOperation.DELETE);
+            results.add(relationToDeleteNode);
+            
+            CluInfo formatCluToDelete = luService.getClu(entry.getKey());
+            FormatInfo formatToDelete = formatAssembler.assemble(formatCluToDelete, null, false);
+            BaseDTOAssemblyNode<FormatInfo, CluInfo> formatNode = formatAssembler
+            .disassemble(formatToDelete, NodeOperation.DELETE);
+            results.add(formatNode);                                            
+        }
 
 		return results;
 	}
@@ -363,22 +423,22 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				jointNode.getNodeData().setCluId(nodeId);
 				results.add(jointNode);
 			}
-
-			// Now any leftover joint ids are no longer needed, so delete
-			// joint relations
-			for (Entry<String, String> entry : currentJointIds.entrySet()) {
-				// Create a new relation with the id of the relation we want to
-				// delete
-				CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
-				relationToDelete.setId(entry.getValue());
-				BaseDTOAssemblyNode<CourseJointInfo, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<CourseJointInfo, CluCluRelationInfo>(
-						courseJointAssembler);
-				relationToDeleteNode.setNodeData(relationToDelete);
-				relationToDeleteNode.setOperation(NodeOperation.DELETE);
-				results.add(relationToDeleteNode);
-			}
 		}
 
+        // Now any leftover joint ids are no longer needed, so delete
+        // joint relations
+        for (Entry<String, String> entry : currentJointIds.entrySet()) {
+            // Create a new relation with the id of the relation we want to
+            // delete
+            CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
+            relationToDelete.setId(entry.getValue());
+            BaseDTOAssemblyNode<CourseJointInfo, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<CourseJointInfo, CluCluRelationInfo>(
+                    courseJointAssembler);
+            relationToDeleteNode.setNodeData(relationToDelete);
+            relationToDeleteNode.setOperation(NodeOperation.DELETE);
+            results.add(relationToDeleteNode);
+        }
+		
 		return results;
 	}
 
