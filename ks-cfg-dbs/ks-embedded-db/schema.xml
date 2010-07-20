@@ -5130,9 +5130,6 @@
         <foreign-key foreignTable="KSST_REQ_COM_FIELD_TYPE" name="FK63DCE85E76C3C296">
             <reference foreign="ID" local="REQ_COMP_FIELD_TYPE_ID"/>
         </foreign-key>
-        <foreign-key foreignTable="KSST_REQ_COM_TYPE" name="FK63DCE85ECF3E3955">
-            <reference foreign="TYPE_KEY" local="REQ_COMP_TYPE_ID"/>
-        </foreign-key>
     </table>
     <table name="KSST_RC_JN_RC_FIELD">
         <column name="REQ_COM_ID" required="true" size="255" type="VARCHAR"/>
@@ -5353,6 +5350,7 @@
             <reference foreign="TYPE_KEY" local="REQ_COM_TYPE_ID"/>
         </foreign-key>
         <unique name="SYS_C0040319">
+            <unique-column name="STMT_TYPE_ID"/>
             <unique-column name="REQ_COM_TYPE_ID"/>
         </unique>
     </table>

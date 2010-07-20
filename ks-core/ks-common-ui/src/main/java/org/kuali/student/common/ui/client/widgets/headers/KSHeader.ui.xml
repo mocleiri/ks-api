@@ -5,7 +5,6 @@
 	<ui:style>
 .leftRightContainer{
   width:100%;
- 
 }
 .leftPart{
    width:50%;
@@ -47,7 +46,7 @@
    padding: 2px;
 }
 
-.hiPanel{
+.hiLabel{
    float:right;
    padding: 2px;
 }
@@ -61,34 +60,29 @@
    height:2px;
    
 }
-.applicationTitle {
-	font-weight: bold;
-	font-size: 20px;
-}
 	</ui:style>
 	<g:HTMLPanel >
 
+
 <div class='{style.leftRightContainer}'>
-    <g:Label ui:field='applicationTitleLabel' styleName='{style.applicationTitle}'>KRU</g:Label>
     <div>
-        <g:FlowPanel ui:field="leftPartPanel" styleName='{style.leftPart}'>
-          <g:Label styleName='{style.title}'></g:Label>
+        <g:FlowPanel styleName='{style.leftPart}'>
+          <g:Label styleName='{style.title}'>adsf</g:Label>
         </g:FlowPanel>
         <div class='{style.rightPart}'>
-           <g:Label styleName='{style.searchButton}'></g:Label><!-- place holder -->
-           <g:Label styleName='{style.searchControl}'></g:Label><!-- place holder -->
+           <g:Label styleName='{style.searchButton}'></g:Label><!-- place holder -->>
+           <g:Label styleName='{style.searchControl}'></g:Label><!-- place holder -->>
            <g:Label ui:field="searchLabel" styleName='{style.course}'></g:Label>
            
            <div class='{style.clearBothDiv}'></div>
            
-           <g:FlowPanel ui:field="logoutPanel" styleName='{style.logoutButton}'></g:FlowPanel>
+           <div class='{style.logoutButton}'>logout</div>
            <div class='{style.separator}'>|</div>
-           <g:FlowPanel ui:field="userNamePanel" styleName='{style.userName}'></g:FlowPanel>
-           <g:FlowPanel ui:field="hiPanel" styleName='{style.hiPanel}'></g:FlowPanel>
+           <g:Label ui:field="userNameLabel" styleName='{style.userName}'>userName</g:Label>
+           <g:Label ui:field="hiLabel" styleName='{style.hiLabel}'>Hi,</g:Label>
         </div>
     </div>
     <div class="{style.bottomLine}"></div>
-    <!-- Your Breadcrum here, Brian,-->
 </div>		
 	</g:HTMLPanel>
 </ui:UiBinder> 
