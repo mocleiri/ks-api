@@ -201,6 +201,11 @@ UULkfsbopfqvWlcW1ofwlkXUUn]]></license>
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.kuali.maven.impex</groupId>
+          <artifactId>maven-impex-plugin</artifactId>
+          <version>1.0.1-SNAPSHOT</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
             <source>${compileSource}</source>
@@ -296,6 +301,7 @@ UULkfsbopfqvWlcW1ofwlkXUUn]]></license>
       <plugin>
         <groupId>com.atlassian.maven.plugins</groupId>
         <artifactId>maven-clover2-plugin</artifactId>
+        <version>3.0.2</version>
         <configuration>
           <license><![CDATA[rQQrPasjfItwAkMJKkmNMCxgroOBLImTnqHdkoJrjKCIWJb
 mj2Krd<9J9nD6sR<IqbMLA7P2L01abPDWMorvjKhHqZHUh0
