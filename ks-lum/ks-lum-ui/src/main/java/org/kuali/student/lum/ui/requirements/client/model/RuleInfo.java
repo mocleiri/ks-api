@@ -1,17 +1,18 @@
-/*
- * Copyright 2009 The Kuali Foundation Licensed under the
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
  * obtain a copy of the License at
- * 
+ *
  * http://www.osedu.org/licenses/ECL-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.lum.ui.requirements.client.model;
 
 import java.io.Serializable;
@@ -19,17 +20,18 @@ import java.util.List;
 
 import org.kuali.student.common.ui.client.widgets.table.Node;
 import org.kuali.student.core.dto.Idable;
-import org.kuali.student.brms.statement.dto.StatementInfo;
-import org.kuali.student.brms.statement.dto.StatementOperatorTypeKey;
+import org.kuali.student.core.statement.dto.StatementInfo;
+import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 
 public class RuleInfo implements Idable, Serializable {
 
 	private static final long serialVersionUID = 1L;
-    private String id = new String("0");
+    private String id = "0";
     private String cluId;
     private StatementVO statementVO;       //top-level statement (tree ROOT)
     private String rationale;
-    private String naturalLanguage;
+    private String naturalLanguageForRuleEdit;
+    private String naturalLanguageForRuleView;    
     private String expression; // current state of rule expression
     private String previewedExpression; // the state of the expression when it was previewed
     private EditHistory editHistory;
@@ -72,13 +74,19 @@ public class RuleInfo implements Idable, Serializable {
     }
     public void setRationale(String rationale) {
         this.rationale = rationale;
+    }   
+    public String getNaturalLanguageForRuleEdit() {
+        return naturalLanguageForRuleEdit;
     }
-    public String getNaturalLanguage() {
-        return naturalLanguage;
+    public void setNaturalLanguageForRuleEdit(String naturalLanguageForRuleEdit) {
+        this.naturalLanguageForRuleEdit = naturalLanguageForRuleEdit;
     }
-    public void setNaturalLanguage(String naturalLanguage) {
-        this.naturalLanguage = naturalLanguage;
-    }    
+    public String getNaturalLanguageForRuleView() {
+        return naturalLanguageForRuleView;
+    }
+    public void setNaturalLanguageForRuleView(String naturalLanguageForRuleView) {
+        this.naturalLanguageForRuleView = naturalLanguageForRuleView;
+    }
     public StatementVO getStatementVO() {
         return statementVO;
     }    
@@ -299,7 +307,7 @@ public class RuleInfo implements Idable, Serializable {
                     parentStatementVO.getStatementVOCount() == 0) {
                 degroupAble = degroupAble && true;
             } else {
-                degroupAble = degroupAble && false;
+                degroupAble = false;
             }
         }
         return degroupAble;

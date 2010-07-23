@@ -1,3 +1,18 @@
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
+
 package org.kuali.student.common.ui.client.mvc;
 
 import java.util.Iterator;
@@ -25,44 +40,54 @@ public class DataModelDefinition implements ModelDefinition {
 	
 	@Override
 	public void ensurePath(Data root, QueryPath path, boolean includeLeafNode) {
-		_ensurePath(root, metadata, path.iterator(), includeLeafNode);
+		try {
+			_ensurePath(root, metadata, path.iterator(), includeLeafNode);
+		} catch (RuntimeException e){
+			throw new RuntimeException("Invalid property path: " + path.toString(), e);
+		}
 	}
 	
 	private void _ensurePath(Data data, Metadata meta, Iterator<Data.Key> itr, boolean includeLeafNode) {
 		Data.Key key = itr.next();
 
-		Metadata currentMeta = meta.getProperties().get(key.toString());
-		if (currentMeta == null) {
-			currentMeta = meta.getProperties().get(QueryPath.getWildCard());
-		}
-		if (currentMeta == null) {
-			throw new RuntimeException("Invalid property path element: " + key.toString());
-		}
-		
-		if (itr.hasNext()) {
-			// not at leaf node yet
-			if (!data.containsKey(key)) {
-				// branch doesn't exist yet
-				Data.DataType type = currentMeta.getDataType(); 
-				if (type != DataType.DATA && type != DataType.LIST) {
-					throw new RuntimeException("Non-leaf nodes cannot be a simple type: " + key.toString() + " " + (type == null ? "null" : type.toString()));
-				} else {
-					Data.Value value = currentMeta.getDefaultValue();
-					if (value == null) {
-						value = new Data.DataValue(new Data());
-					}
-					data.set(key, value);
-				}
-			
+		if (key.toString().startsWith("_run")){
+			if (!data.containsKey(key)){
+				data.set(key,new Data.DataValue(new Data()));
 			}
-			//commented out: this is a workaround for some reason runtime metadata was disappearing from time to time???
-			//if(!(key.toString().equals("_runtimeData"))){
-			_ensurePath((Data) data.get(key), currentMeta, itr, includeLeafNode);
-			//}
 		} else {
-			// we're at the leaf node
-			if (includeLeafNode) {
-				data.set(key, currentMeta.getDefaultValue());
+			Metadata currentMeta = meta.getProperties().get(key.toString());
+			if (currentMeta == null) {
+				currentMeta = meta.getProperties().get(QueryPath.getWildCard());
+			}
+			if (currentMeta == null) {
+				throw new RuntimeException("Invalid property path element: " + key.toString());
+			}
+			
+			if (itr.hasNext()) {
+				// not at leaf node yet
+				if (!data.containsKey(key)) {
+					// branch doesn't exist yet
+					Data.DataType type = currentMeta.getDataType(); 
+					if (type != DataType.DATA && type != DataType.LIST) {
+						throw new RuntimeException("Non-leaf nodes cannot be a simple type: " + key.toString() + " " + (type == null ? "null" : type.toString()));
+					} else {
+						Data.Value value = currentMeta.getDefaultValue();
+						if (value == null) {
+							value = new Data.DataValue(new Data());
+						}
+						data.set(key, value);
+					}
+				
+				}
+				//commented out: this is a workaround for some reason runtime metadata was disappearing from time to time???
+				//if(!(key.toString().equals("_runtimeData"))){
+				_ensurePath((Data) data.get(key), currentMeta, itr, includeLeafNode);
+				//}
+			} else {
+				// we're at the leaf node
+				if (includeLeafNode) {
+					data.set(key, currentMeta.getDefaultValue());
+				}
 			}
 		}
 

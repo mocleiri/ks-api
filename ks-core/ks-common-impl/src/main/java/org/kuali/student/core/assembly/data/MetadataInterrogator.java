@@ -1,24 +1,24 @@
-/*
- * Copyright 2009 The Kuali Foundation
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- * Licensed under the Educational Community License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may	obtain a copy of the License at
+ * http://www.osedu.org/licenses/ECL-2.0
  *
- * 	http://www.osedu.org/licenses/ECL-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 package org.kuali.student.core.assembly.data;
 
 import java.util.Date;
 import java.util.List;
 
-import org.kuali.student.common.validator.DateParser;
+import org.kuali.student.common.validator.old.DateParser;
 
 /**
  * 
@@ -193,29 +193,44 @@ public class MetadataInterrogator {
 			return false;
 		}
 		Integer smallestMaxOccurs = getSmallestMaxOccurs(meta);
-		// not specified so unbounded
-		if (smallestMaxOccurs == null) {
-			return true;
-		}
-		if (smallestMaxOccurs > 1) {
+		if (hasRepeatingConstraint(meta) ||
+				(smallestMaxOccurs != null && smallestMaxOccurs > 1)) {
 			return true;
 		}
 		return false;
 	}
+	
+	private static boolean hasRepeatingConstraint(Metadata meta) {
+		boolean isRepeating = false;
+
+		for (ConstraintMetadata cons : meta.getConstraints()) {
+			if ("repeating".equals(cons.getId())){
+				isRepeating = true;
+			}
+		}
+		return isRepeating;
+	}
 
 	/**
-	 * checks if this field is a repeating field
+	 * Returns the smallest max occurs
 	 * 
-	 * @return true if the smallest maxOccurs is > 1
+	 * @return 
+	 * 
+	 * Returns the smallest of all maxOccurs, if maxOccurs defined in constraints. 
+	 * Returns -1, indicating unbounded repeating field, if repeating constraint defined & maxOccurs not defined. 
+	 * Returns null, indicating that this is a non-repeating field.
 	 */
 	public static Integer getSmallestMaxOccurs(Metadata meta) {
 		if (meta == null) {
 			return null;
 		}
 		Integer smallestMaxOccurs = null;
-		// TODO: worry aboutg special validators
-		// TODO: worry about how this applies to non-strings?
+		boolean isRepeating = false;
+
 		for (ConstraintMetadata cons : meta.getConstraints()) {
+			if ("repeating".equals(cons.getId())){
+				isRepeating = true;
+			}
 			if (cons.getMaxOccurs() != null) {
 				if (smallestMaxOccurs == null) {
 					smallestMaxOccurs = cons.getMaxOccurs();
@@ -224,6 +239,11 @@ public class MetadataInterrogator {
 				}
 			}
 		}
+		
+		if (isRepeating && smallestMaxOccurs == null){
+			smallestMaxOccurs = -1;
+		}
+		
 		return smallestMaxOccurs;
 	}
 
@@ -356,7 +376,7 @@ public class MetadataInterrogator {
 		return result;
 	}
 
-	public static Date getLargestMinValueDate(Metadata meta, DateParser parser) {
+	public static Date getLargestMinValueDate(Metadata meta, DateParser parser, Object dataValue) {
 		if (meta == null) {
 			return null;
 		}
@@ -369,10 +389,15 @@ public class MetadataInterrogator {
 				}
 			}
 		}
+		if (dataValue != null && dataValue instanceof Date){
+			if (result == null || (((Date)dataValue).getTime() > result.getTime())){
+				result = (Date)dataValue;
+			}
+		}
 		return result;
 	}
 
-	public static Date getSmallestMaxValueDate(Metadata meta, DateParser parser) {
+	public static Date getSmallestMaxValueDate(Metadata meta, DateParser parser, Object dataValue) {
 		if (meta == null) {
 			return null;
 		}
@@ -383,6 +408,11 @@ public class MetadataInterrogator {
 				if (result == null || max.getTime() < result.getTime()) {
 					result = max;
 				}
+			}
+		}
+		if (dataValue != null && dataValue instanceof Date){
+			if (result==null || (((Date)dataValue).getTime() < result.getTime())){
+				result = (Date)dataValue;
 			}
 		}
 		return result;

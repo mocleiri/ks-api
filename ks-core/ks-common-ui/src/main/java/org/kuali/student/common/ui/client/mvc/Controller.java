@@ -1,17 +1,18 @@
-/*
- * Copyright 2009 The Kuali Foundation Licensed under the
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
  * obtain a copy of the License at
- * 
+ *
  * http://www.osedu.org/licenses/ECL-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.common.ui.client.mvc;
 
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import org.kuali.student.common.ui.client.mvc.history.HistoryToken;
 import org.kuali.student.common.ui.client.mvc.history.NavigationEvent;
 import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 import org.kuali.student.common.ui.client.security.RequiresAuthorization;
-import org.kuali.student.common.ui.client.service.AuthorizationRpcService.PermissionType;
+import org.kuali.student.core.rice.authorization.PermissionType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
@@ -66,6 +67,17 @@ public abstract class Controller extends Composite implements HistorySupport{
     }
     
     /**
+     * Simple Version of showView, no callback
+     * @param <V>
+     * 			view enum type
+     * @param viewType
+     * 			enum value representing the view to show
+     */
+    public <V extends Enum<?>> void showView(final V viewType){
+    	this.showView(viewType, NO_OP_CALLBACK);
+    }
+    
+    /**
      * Directs the controller to display the specified view. The parameter must be an enum value, based on an enum defined in
      * the controller implementation. For example, a "Search" controller might have an enumeration of: <code>
      *  public enum SearchViews {
@@ -90,40 +102,52 @@ public abstract class Controller extends Composite implements HistorySupport{
         	onReadyCallback.exec(false);
             throw new ControllerException("View not registered: " + viewType.toString());
         }
+        
+        beforeViewChange(new Callback<Boolean>(){
 
-        boolean requiresAuthz = (view instanceof RequiresAuthorization) && ((RequiresAuthorization)view).isAuthorizationRequired(); 
-
-        if (requiresAuthz){
-        	ViewContext tempContext = view.getController().getViewContext();
-        	if (view instanceof DelegatingViewComposite) {
-        		tempContext = ((DelegatingViewComposite)view).getChildController().getViewContext();
-        	}
-        	PermissionType permType = (tempContext != null) ? tempContext.getPermissionType() : null;
-        	if (permType != null) {
-        		GWT.log("Checking permission type '" + permType.toString() + "' for view '" + view.toString() + "'", null);
-            	//A callback is required if async rpc call is required for authz check
-	        	((RequiresAuthorization)view).checkAuthorization(permType, new AuthorizationCallback(){
-					public void isAuthorized() {
-						showView(view, viewType, onReadyCallback);
-					}
-
-					public void isNotAuthorized(String msg) {
-						Window.alert(msg);
-						onReadyCallback.exec(false);					
-					}        		
-	        	});
-        	}
-        	else {
-        		GWT.log("Cannot find PermissionType for view '" + view.toString() + "' which requires authorization", null);
-            	showView(view, viewType, onReadyCallback);
-        	}
-        } else {
-    		GWT.log("Not Requiring Auth.", null);
-        	showView(view, viewType, onReadyCallback);
-        }
+			@Override
+			public void exec(Boolean result) {
+				if(result){
+					 boolean requiresAuthz = (view instanceof RequiresAuthorization) && ((RequiresAuthorization)view).isAuthorizationRequired(); 
+						
+				        if (requiresAuthz){
+				        	ViewContext tempContext = view.getController().getViewContext();
+				        	if (view instanceof DelegatingViewComposite) {
+				        		tempContext = ((DelegatingViewComposite)view).getChildController().getViewContext();
+				        	}
+				        	PermissionType permType = (tempContext != null) ? tempContext.getPermissionType() : null;
+				        	if (permType != null) {
+				        		GWT.log("Checking permission type '" + permType.getPermissionTemplateName() + "' for view '" + view.toString() + "'", null);
+				            	//A callback is required if async rpc call is required for authz check
+					        	((RequiresAuthorization)view).checkAuthorization(permType, new AuthorizationCallback(){
+									public void isAuthorized() {
+										showView(view, viewType, onReadyCallback);
+									}
+				
+									public void isNotAuthorized(String msg) {
+										Window.alert(msg);
+										onReadyCallback.exec(false);					
+									}        		
+					        	});
+				        	}
+				        	else {
+				        		GWT.log("Cannot find PermissionType for view '" + view.toString() + "' which requires authorization", null);
+				            	showView(view, viewType, onReadyCallback);
+				        	}
+				        } else {
+				    		GWT.log("Not Requiring Auth.", null);
+				        	showView(view, viewType, onReadyCallback);
+				        }
+				}
+				else{
+					onReadyCallback.exec(false);
+				}
+				
+			}
+		});
     }
     
-    protected <V extends Enum<?>> void showView(final View view, final V viewType, final Callback<Boolean> onReadyCallback){
+    private <V extends Enum<?>> void showView(final View view, final V viewType, final Callback<Boolean> onReadyCallback){
         if ((currentView == null) || currentView.beforeHide()) {
 			view.beforeShow(new Callback<Boolean>() {
 				@Override
@@ -329,6 +353,16 @@ public abstract class Controller extends Composite implements HistorySupport{
      * @return
      */
     protected abstract <V extends Enum<?>> View getView(V viewType);
+    
+    /**
+     * If a controller which extends this class must perform some action or check before a view
+     * is changed, then override this method.  Do not call super() in the override, as it will
+     * allow the view to continue to change.
+     * @param okToChangeCallback
+     */
+    public void beforeViewChange(Callback<Boolean> okToChangeCallback){
+    	okToChangeCallback.exec(true);
+    }
 
     /**
      * Shows the default view. Must be implemented by subclass, in order to define the default view.

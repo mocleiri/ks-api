@@ -1,17 +1,18 @@
-/*
- * Copyright 2009 The Kuali Foundation Licensed under the
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
  * obtain a copy of the License at
- * 
+ *
  * http://www.osedu.org/licenses/ECL-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.common.ui.client.widgets.menus;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import com.google.gwt.event.shared.GwtEvent.Type;
  */
 public class KSMenuItemData {
 	private String label;
+	private String styleName;
 	private ClickHandler clickHandler;
 	private List<KSMenuItemData> subItems = new ArrayList<KSMenuItemData>();
 	private KSMenuItemData parent = null;
@@ -141,6 +143,15 @@ public class KSMenuItemData {
         }
     }
     
+    public void setSelected(boolean selected, boolean fireClick) {
+        this.selected = selected;
+        if(selected == true){
+        	MenuSelectEvent e = new MenuSelectEvent();
+        	e.setFireClickEvent(fireClick);
+            manager.fireEvent(e);
+        }
+    }
+    
     public void unhandledSetSelected(boolean selected){
         this.selected = selected;
     }
@@ -159,5 +170,12 @@ public class KSMenuItemData {
         return manager.addHandler(type, meh);
     }
     
+    public void addSpecialStyle(String style){
+    	styleName = style;
+    }
+    
+    public String getSpecialStyle(){
+    	return styleName;
+    }
     
 }

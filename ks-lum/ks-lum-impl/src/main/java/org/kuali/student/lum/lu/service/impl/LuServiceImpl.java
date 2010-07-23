@@ -1,17 +1,18 @@
-/*
- * Copyright 2009 The Kuali Foundation Licensed under the
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
  * obtain a copy of the License at
- * 
+ *
  * http://www.osedu.org/licenses/ECL-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an "AS IS"
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 package org.kuali.student.lum.lu.service.impl;
 
 import java.util.ArrayList;
@@ -26,9 +27,9 @@ import java.util.Map.Entry;
 import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.common.validator.Validator;
-import org.kuali.student.core.dictionary.dto.ObjectStructure;
-import org.kuali.student.core.dictionary.service.DictionaryService;
+import org.kuali.student.common.validator.old.Validator;
+import org.kuali.student.core.dictionary.old.dto.ObjectStructure;
+import org.kuali.student.core.dictionary.service.old.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.entity.Amount;
 import org.kuali.student.core.entity.TimeAmount;
@@ -46,16 +47,17 @@ import org.kuali.student.core.exceptions.VersionMismatchException;
 import org.kuali.student.core.search.dto.SearchCriteriaTypeInfo;
 import org.kuali.student.core.search.dto.SearchRequest;
 import org.kuali.student.core.search.dto.SearchResult;
+import org.kuali.student.core.search.dto.SearchResultCell;
+import org.kuali.student.core.search.dto.SearchResultRow;
 import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
-import org.kuali.student.core.search.service.impl.SearchManager;
+import org.kuali.student.core.search.service.SearchManager;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.lu.dao.LuDao;
 import org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo;
 import org.kuali.student.lum.lu.dto.AccreditationInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
-import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 import org.kuali.student.lum.lu.dto.CluLoRelationInfo;
@@ -64,6 +66,7 @@ import org.kuali.student.lum.lu.dto.CluPublicationInfo;
 import org.kuali.student.lum.lu.dto.CluResultInfo;
 import org.kuali.student.lum.lu.dto.CluResultTypeInfo;
 import org.kuali.student.lum.lu.dto.CluSetInfo;
+import org.kuali.student.lum.lu.dto.CluSetTreeViewInfo;
 import org.kuali.student.lum.lu.dto.CluSetTypeInfo;
 import org.kuali.student.lum.lu.dto.DeliveryMethodTypeInfo;
 import org.kuali.student.lum.lu.dto.InstructionalFormatTypeInfo;
@@ -74,6 +77,7 @@ import org.kuali.student.lum.lu.dto.LuPublicationTypeInfo;
 import org.kuali.student.lum.lu.dto.LuTypeInfo;
 import org.kuali.student.lum.lu.dto.LuiInfo;
 import org.kuali.student.lum.lu.dto.LuiLuiRelationInfo;
+import org.kuali.student.lum.lu.dto.MembershipQueryInfo;
 import org.kuali.student.lum.lu.dto.ResultOptionInfo;
 import org.kuali.student.lum.lu.dto.ResultUsageTypeInfo;
 import org.kuali.student.lum.lu.entity.Clu;
@@ -114,6 +118,7 @@ import org.kuali.student.lum.lu.entity.Lui;
 import org.kuali.student.lum.lu.entity.LuiAttribute;
 import org.kuali.student.lum.lu.entity.LuiLuiRelation;
 import org.kuali.student.lum.lu.entity.LuiLuiRelationAttribute;
+import org.kuali.student.lum.lu.entity.MembershipQuery;
 import org.kuali.student.lum.lu.entity.ResultOption;
 import org.kuali.student.lum.lu.entity.ResultUsageType;
 import org.kuali.student.lum.lu.service.LuService;
@@ -130,7 +135,7 @@ public class LuServiceImpl implements LuService {
 	private SearchManager searchManager;
 	private DictionaryService dictionaryServiceDelegate;
 	private Validator validator;
-	
+
 	public void setSearchManager(SearchManager searchManager) {
 		this.searchManager = searchManager;
 	}
@@ -143,7 +148,7 @@ public class LuServiceImpl implements LuService {
 	public DictionaryService getDictionaryServiceDelegate() {
 		return dictionaryServiceDelegate;
 	}
-	
+
 	public Validator getValidator() {
 		return validator;
 	}
@@ -277,8 +282,7 @@ public class LuServiceImpl implements LuService {
 	public List<String> getLuPublicationTypesForLuType(String luTypeKey)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("getLuPublicationTypesForLuType");
 	}
 
 	@Override
@@ -532,8 +536,7 @@ public class LuServiceImpl implements LuService {
 	public List<CluPublicationInfo> getCluPublicationsByCluId(String cluId)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -541,16 +544,14 @@ public class LuServiceImpl implements LuService {
 			String luPublicationTypeKey) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
 	public CluPublicationInfo getCluPublication(String cluPublicationId)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	// **** Results
@@ -633,8 +634,7 @@ public class LuServiceImpl implements LuService {
 	public List<String> getResourceRequirementsForCluId(String cluId)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	// *** Sets
@@ -646,7 +646,75 @@ public class LuServiceImpl implements LuService {
 			PermissionDeniedException {
 		checkForMissingParameter(cluSetId, "cluSetId");
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
-		return LuServiceAssembler.toCluSetInfo(cluSet);
+		CluSetInfo cluSetInfo = LuServiceAssembler.toCluSetInfo(cluSet);
+		setMembershipQuerySearchResult(cluSetInfo);
+		return cluSetInfo;
+	}
+
+	@Override
+	public CluSetTreeViewInfo getCluSetTreeView(String cluSetId)
+			throws DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException {
+
+		checkForMissingParameter(cluSetId, "cluSetId");
+		CluSetInfo cluSet = getCluSetInfo(cluSetId);
+		if (cluSet == null) {
+			return null;
+		}
+
+		CluSetTreeViewInfo cluSetTreeView = new CluSetTreeViewInfo();
+		getCluSetTreeViewHelper(cluSet, cluSetTreeView);
+		return cluSetTreeView;
+	}
+
+	/**
+	 * Go through the list of CluSets and retrieve all the information regarding child
+	 * Clu Sets and associated Clus
+	 *
+	 * @param cluSetInfo
+	 * @param cluSetTreeViewInfo
+	 * @throws DoesNotExistException
+	 * @throws InvalidParameterException
+	 * @throws MissingParameterException
+	 * @throws OperationFailedException
+	 * @throws PermissionDeniedException
+	 */
+	private void getCluSetTreeViewHelper(CluSetInfo cluSetInfo,
+			CluSetTreeViewInfo cluSetTreeViewInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		cluSetTreeViewInfo.setName(cluSetInfo.getName());
+		cluSetTreeViewInfo.setDescr(cluSetInfo.getDescr());
+		cluSetTreeViewInfo.setEffectiveDate(cluSetInfo.getEffectiveDate());
+		cluSetTreeViewInfo.setExpirationDate(cluSetInfo.getExpirationDate());
+		cluSetTreeViewInfo.setAdminOrg(cluSetInfo.getAdminOrg());
+		cluSetTreeViewInfo.setIsReusable(cluSetInfo.getIsReusable());
+		cluSetTreeViewInfo.setIsReferenceable(cluSetInfo.getIsReferenceable());
+		cluSetTreeViewInfo.setMetaInfo(cluSetInfo.getMetaInfo());
+		cluSetTreeViewInfo.setAttributes(cluSetInfo.getAttributes());
+		cluSetTreeViewInfo.setType(cluSetInfo.getType());
+		cluSetTreeViewInfo.setState(cluSetInfo.getState());
+		cluSetTreeViewInfo.setId(cluSetInfo.getId());
+
+		if (!cluSetInfo.getCluSetIds().isEmpty()) {
+			for (String cluSetId : cluSetInfo.getCluSetIds()) {
+				CluSetInfo subCluSet = getCluSetInfo(cluSetId);
+				List<CluSetTreeViewInfo> cluSets =
+                    cluSetTreeViewInfo.getCluSets() == null ?
+                            new ArrayList<CluSetTreeViewInfo>(0) : cluSetTreeViewInfo.getCluSets();
+
+                CluSetTreeViewInfo subCluSetTreeViewInfo = new CluSetTreeViewInfo();
+                getCluSetTreeViewHelper(subCluSet, subCluSetTreeViewInfo);
+                cluSets.add(subCluSetTreeViewInfo);
+
+                cluSetTreeViewInfo.setCluSets(cluSets);
+			}
+		} else {
+			List<CluInfo> clus = new ArrayList<CluInfo>(cluSetInfo.getCluIds().size());
+			for (String cluId : cluSetInfo.getCluIds()) {
+				clus.add(getClu(cluId));
+			}
+			cluSetTreeViewInfo.setClus(clus);
+		}
 	}
 
 	@Override
@@ -672,6 +740,14 @@ public class LuServiceImpl implements LuService {
 			ids.add(cluSet2.getId());
 		}
 		return ids;
+	}
+
+	@Override
+	public Boolean isCluSetDynamic(String cluSetId)
+			throws DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException {
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -772,8 +848,7 @@ public class LuServiceImpl implements LuService {
 	public List<LuiInfo> getLuisInAtpByCluId(String cluId, String atpKey)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -887,7 +962,7 @@ public class LuServiceImpl implements LuService {
 			OperationFailedException {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluInfo, "cluInfo");
-		
+
 		return validator.validateTypeStateObject(cluInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluInfo"));
 	}
 
@@ -905,50 +980,21 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		Clu clu = new Clu();
 
 		LuType luType = luDao.fetch(LuType.class, luTypeKey);
 		clu.setLuType(luType);
 
 		if (cluInfo.getOfficialIdentifier() != null) {
-			CluIdentifier officialIdentifier = new CluIdentifier();
-			BeanUtils.copyProperties(cluInfo.getOfficialIdentifier(),
-					officialIdentifier, new String[] { "code" });
-
-			// FIXME: This will be in orchestration somewhere but
-			// for now put it here
-			officialIdentifier
-					.setCode(new StringBuilder().append(
-							cluInfo.getOfficialIdentifier().getDivision())
-							.append(
-									cluInfo.getOfficialIdentifier()
-											.getSuffixCode()).toString());
-
-			clu.setOfficialIdentifier(officialIdentifier);
+			clu.setOfficialIdentifier(LuServiceAssembler.createOfficialIdentifier(cluInfo));
 		}
-
-		if (clu.getAlternateIdentifiers() == null) {
-			clu.setAlternateIdentifiers(new ArrayList<CluIdentifier>());
-		}
-		List<CluIdentifier> alternateIdentifiers = clu
-				.getAlternateIdentifiers();
-
-		for (CluIdentifierInfo cluIdInfo : cluInfo.getAlternateIdentifiers()) {
-			CluIdentifier identifier = new CluIdentifier();
-			BeanUtils.copyProperties(cluIdInfo, identifier,
-					new String[] { "code" });
-
-			// FIXME: This will be in orchestration somewhere but
-			// for now put it here
-			identifier.setCode(new StringBuilder().append(
-					cluIdInfo.getDivision()).append(cluIdInfo.getSuffixCode())
-					.toString());
-			alternateIdentifiers.add(identifier);
-		}
-
+		clu.setAlternateIdentifiers(LuServiceAssembler.createAlternateIdentifiers(cluInfo));
 		if (cluInfo.getDescr() != null) {
-			clu.setDescr(LuServiceAssembler.toRichText(LuRichText.class, cluInfo.getDescr()));
+		    LuRichText descr = LuServiceAssembler.toRichText(LuRichText.class, cluInfo.getDescr());
+		    if (descr.getPlain() != null || descr.getFormatted() != null) {
+		        clu.setDescr(descr);
+		    }
 		}
 
 		if (cluInfo.getPrimaryAdminOrg() != null) {
@@ -963,7 +1009,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getAlternateAdminOrgs() == null) {
-			clu.setAlternateAdminOrgs(new ArrayList<CluAdminOrg>());
+			clu.setAlternateAdminOrgs(new ArrayList<CluAdminOrg>(0));
 		}
 		List<CluAdminOrg> alternateOrgs = clu.getAlternateAdminOrgs();
 		for (AdminOrgInfo orgInfo : cluInfo.getAlternateAdminOrgs()) {
@@ -988,7 +1034,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getInstructors() == null) {
-			clu.setInstructors(new ArrayList<CluInstructor>());
+			clu.setInstructors(new ArrayList<CluInstructor>(0));
 		}
 		List<CluInstructor> instructors = clu.getInstructors();
 		for (CluInstructorInfo instructorInfo : cluInfo.getInstructors()) {
@@ -1007,7 +1053,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getLuCodes() == null) {
-			clu.setLuCodes(new ArrayList<LuCode>());
+			clu.setLuCodes(new ArrayList<LuCode>(0));
 		}
 		List<LuCode> luCodes = clu.getLuCodes();
 		for (LuCodeInfo luCodeInfo : cluInfo.getLuCodes()) {
@@ -1023,7 +1069,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getOfferedAtpTypes() == null) {
-			clu.setOfferedAtpTypes(new ArrayList<CluAtpTypeKey>());
+			clu.setOfferedAtpTypes(new ArrayList<CluAtpTypeKey>(0));
 		}
 		List<CluAtpTypeKey> offeredAtpTypes = clu.getOfferedAtpTypes();
 		for (String atpTypeKey : cluInfo.getOfferedAtpTypes()) {
@@ -1065,10 +1111,12 @@ public class LuServiceImpl implements LuService {
 		}
 		List<CluAcademicSubjectOrg> subjectOrgs = clu.getAcademicSubjectOrgs();
 		for (AcademicSubjectOrgInfo org : cluInfo.getAcademicSubjectOrgs()) {
-			CluAcademicSubjectOrg subjOrg = new CluAcademicSubjectOrg();
-			subjOrg.setOrgId(org.getOrgId());
-			subjOrg.setClu(clu);
-			subjectOrgs.add(subjOrg);
+            if (org.getOrgId() != null && !org.getOrgId().isEmpty()) {
+                CluAcademicSubjectOrg subjOrg = new CluAcademicSubjectOrg();
+                subjOrg.setOrgId(org.getOrgId());
+                subjOrg.setClu(clu);
+                subjectOrgs.add(subjOrg);
+            }
 		}
 
 		if (cluInfo.getIntensity() != null) {
@@ -1077,7 +1125,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getCampusLocations() == null) {
-			clu.setCampusLocations(new ArrayList<CluCampusLocation>());
+			clu.setCampusLocations(new ArrayList<CluCampusLocation>(0));
 		}
 		List<CluCampusLocation> locations = clu.getCampusLocations();
 		for (String locationName : cluInfo.getCampusLocations()) {
@@ -1088,7 +1136,7 @@ public class LuServiceImpl implements LuService {
 		}
 
 		if (clu.getAccreditations() == null) {
-			clu.setAccreditations(new ArrayList<CluAccreditation>());
+			clu.setAccreditations(new ArrayList<CluAccreditation>(0));
 		}
 		List<CluAccreditation> accreditations = clu.getAccreditations();
 		for (AccreditationInfo accreditationInfo : cluInfo.getAccreditations()) {
@@ -1130,7 +1178,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		Clu clu = luDao.fetch(Clu.class, cluId);
 
 		if (!String.valueOf(clu.getVersionInd()).equals(
@@ -1143,21 +1191,7 @@ public class LuServiceImpl implements LuService {
 		clu.setLuType(luType);
 
 		if (cluInfo.getOfficialIdentifier() != null) {
-			if (clu.getOfficialIdentifier() == null) {
-				clu.setOfficialIdentifier(new CluIdentifier());
-			}
-			BeanUtils.copyProperties(cluInfo.getOfficialIdentifier(), clu
-					.getOfficialIdentifier(), new String[] { "id", "code" });
-
-			// FIXME: This will be in orchestration somewhere but
-			// for now put it here
-			clu.getOfficialIdentifier().setCode(
-					new StringBuilder().append(
-							cluInfo.getOfficialIdentifier().getDivision())
-							.append(
-									cluInfo.getOfficialIdentifier()
-											.getSuffixCode()).toString());
-
+		    LuServiceAssembler.updateOfficialIdentifier(clu, cluInfo);
 		} else if (clu.getOfficialIdentifier() != null) {
 			luDao.delete(clu.getOfficialIdentifier());
 		}
@@ -1166,36 +1200,13 @@ public class LuServiceImpl implements LuService {
 		// Get a map of Id->object of all the currently persisted objects in the
 		// list
 		Map<String, CluIdentifier> oldAltIdMap = new HashMap<String, CluIdentifier>();
-		for (CluIdentifier altIdentifier : clu.getAlternateIdentifiers()) {
-			oldAltIdMap.put(altIdentifier.getId(), altIdentifier);
-		}
-		clu.getAlternateIdentifiers().clear();
-
-		// Loop through the new list, if the item exists already update and
-		// remove from the list
-		// otherwise create a new entry
-		for (CluIdentifierInfo cluIdInfo : cluInfo.getAlternateIdentifiers()) {
-			CluIdentifier identifier = oldAltIdMap.remove(cluIdInfo.getId());
-			if (identifier == null) {
-				identifier = new CluIdentifier();
-			}
-			// Do Copy
-			BeanUtils.copyProperties(cluIdInfo, identifier,
-					new String[] { "code" });
-			// FIXME: This will be in orchestration somewhere but
-			// for now put it here
-			identifier.setCode(new StringBuilder().append(
-					cluIdInfo.getDivision()).append(cluIdInfo.getSuffixCode())
-					.toString());
-			clu.getAlternateIdentifiers().add(identifier);
-		}
-
+		LuServiceAssembler.updateAlternateIdentifier(oldAltIdMap, clu, cluInfo);
 		// Now delete anything left over
 		for (Entry<String, CluIdentifier> entry : oldAltIdMap.entrySet()) {
 			luDao.delete(entry.getValue());
 		}
 
-		if (cluInfo.getDescr() != null) {
+		if (cluInfo.getDescr() != null && (cluInfo.getDescr().getPlain() != null || cluInfo.getDescr().getFormatted() != null)) {
 			if (clu.getDescr() == null) {
 				clu.setDescr(new LuRichText());
 			}
@@ -1358,9 +1369,9 @@ public class LuServiceImpl implements LuService {
 					.toAffiliatedOrgs(true, clu.getAccounting().getAffiliatedOrgs(),
 							cluInfo.getAccountingInfo().getAffiliatedOrgs(),
 							luDao));
-			
+
 		} else if (clu.getAccounting() != null) {
-			luDao.delete(clu.getAccounting());
+			clu.setAccounting(null);
 		}
 
 		clu.setAttributes(LuServiceAssembler.toGenericAttributes(
@@ -1566,7 +1577,6 @@ public class LuServiceImpl implements LuService {
 			String validationType, CluCluRelationInfo cluCluRelationInfo)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException {
-		// TODO Auto-generated method stub
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluCluRelationInfo, "cluCluRelationInfo");
 
@@ -1596,8 +1606,8 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
-		
+
+
 		Clu clu = luDao.fetch(Clu.class, cluId);
 		Clu relatedClu = luDao.fetch(Clu.class, relatedCluId);
 
@@ -1692,7 +1702,7 @@ public class LuServiceImpl implements LuService {
 
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluPublicationInfo, "cluPublicationInfo");
-		
+
 		return validator.validateTypeStateObject(cluPublicationInfo, getObjectStructure("cluPlublicationInfo"));
 	}
 
@@ -1713,8 +1723,7 @@ public class LuServiceImpl implements LuService {
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException,
 			VersionMismatchException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -1722,8 +1731,7 @@ public class LuServiceImpl implements LuService {
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, DependentObjectsExistException,
 			OperationFailedException, PermissionDeniedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -1734,18 +1742,18 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluResultInfo, "cluResultInfo");
 
-		return validator.validateTypeStateObject(cluResultInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluResultInfo"));		
+		return validator.validateTypeStateObject(cluResultInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluResultInfo"));
 	}
 
 	@Override
-	public CluResultInfo createCluResult(String cluId, String cluResultType,
+	public CluResultInfo createCluResult(String cluId, String cluResultTypeKey,
 			CluResultInfo cluResultInfo) throws AlreadyExistsException,
 			DataValidationErrorException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException, DoesNotExistException {
 
 		checkForMissingParameter(cluId, "cluId");
-		checkForMissingParameter(cluResultType, "cluResultType");
+		checkForMissingParameter(cluResultTypeKey, "cluResultTypeKey");
 		checkForMissingParameter(cluResultInfo, "cluResultInfo");
 
 		// Validate CluResult
@@ -1753,16 +1761,21 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
+		cluResultInfo.setType(cluResultTypeKey);
+		cluResultInfo.setCluId(cluId);
+
 		List<ResultOption> resOptList = new ArrayList<ResultOption>();
 		for (ResultOptionInfo resOptInfo : cluResultInfo.getResultOptions()) {
 			ResultOption resOpt = new ResultOption();
 			BeanUtils.copyProperties(resOptInfo, resOpt, new String[] { "id",
 					"metaInfo", "resultUsageType", "desc" });
 
-			ResultUsageType resUsageType = luDao.fetch(ResultUsageType.class,
-					resOptInfo.getResultUsageTypeKey());
-			resOpt.setResultUsageType(resUsageType);
+			if(resOptInfo.getResultUsageTypeKey() != null) {
+				ResultUsageType resUsageType = luDao.fetch(ResultUsageType.class,
+						resOptInfo.getResultUsageTypeKey());
+				resOpt.setResultUsageType(resUsageType);
+			}
 			resOpt.setDesc(LuServiceAssembler.toRichText(LuRichText.class, resOptInfo.getDesc()));
 			luDao.create(resOpt);
 			resOptList.add(resOpt);
@@ -1775,6 +1788,12 @@ public class LuServiceImpl implements LuService {
 		cluResult.setDesc(LuServiceAssembler
 				.toRichText(LuRichText.class, cluResultInfo.getDesc()));
 		cluResult.setResultOptions(resOptList);
+
+		Clu clu = luDao.fetch(Clu.class, cluId);
+		cluResult.setClu(clu);
+
+		CluResultType type = luDao.fetch(CluResultType.class, cluResultTypeKey);
+		cluResult.setCluResultType(type);
 
 		luDao.create(cluResult);
 
@@ -1796,7 +1815,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		CluResult result = luDao.fetch(CluResult.class, cluResultId);
 		if (!String.valueOf(result.getVersionInd()).equals(
 				cluResultInfo.getMetaInfo().getVersionInd())) {
@@ -1818,15 +1837,23 @@ public class LuServiceImpl implements LuService {
 		for (ResultOptionInfo resOptInfo : cluResultInfo.getResultOptions()) {
 			ResultOption opt = oldResultOptionMap.remove(resOptInfo.getId());
 			if (opt == null) {
+				// New result option
 				opt = new ResultOption();
+				// Copy properties
+				BeanUtils.copyProperties(resOptInfo, opt, new String[] {
+						"resultUsageType", "desc" });
+			} else {
+				// Get existing result option
+				opt = luDao.fetch(ResultOption.class, resOptInfo.getId());
+				// Copy properties
+				BeanUtils.copyProperties(resOptInfo, opt, new String[] {
+						"id", "resultUsageType", "desc" });
 			}
-			// Do Copy
-			BeanUtils.copyProperties(resOptInfo, opt, new String[] {
-					"resultUsageType", "desc" });
-
-			ResultUsageType resUsageType = luDao.fetch(ResultUsageType.class,
-					resOptInfo.getResultUsageTypeKey());
-			opt.setResultUsageType(resUsageType);
+			if(resOptInfo.getResultUsageTypeKey() != null && !resOptInfo.getResultUsageTypeKey().isEmpty()) {
+				ResultUsageType resUsageType = luDao.fetch(ResultUsageType.class,
+						resOptInfo.getResultUsageTypeKey());
+				opt.setResultUsageType(resUsageType);
+			}
 			opt.setDesc(LuServiceAssembler.toRichText(LuRichText.class, resOptInfo.getDesc()));
 			result.getResultOptions().add(opt);
 		}
@@ -1840,6 +1867,8 @@ public class LuServiceImpl implements LuService {
 				"desc", "resultOptions" });
 
 		result.setDesc(LuServiceAssembler.toRichText(LuRichText.class, cluResultInfo.getDesc()));
+		CluResultType type = luDao.fetch(CluResultType.class, cluResultInfo.getType());
+		result.setCluResultType(type);
 
 		CluResult updated = luDao.update(result);
 
@@ -1870,8 +1899,8 @@ public class LuServiceImpl implements LuService {
 
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluLoRelationInfo, "cluLoRelationInfo");
-		
-		return validator.validateTypeStateObject(cluLoRelationInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluLoRelationInfo"));	
+
+		return validator.validateTypeStateObject(cluLoRelationInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluLoRelationInfo"));
 	}
 
 	@Override
@@ -1890,7 +1919,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		Clu clu = luDao.fetch(Clu.class, cluId);
 		if (clu == null) {
 			throw new DoesNotExistException("Clu does not exist for id: "
@@ -1989,8 +2018,7 @@ public class LuServiceImpl implements LuService {
 			String cluId) throws AlreadyExistsException, DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException {
-		// TODO Auto-generated method stub
-		return null;
+	      throw new UnsupportedOperationException("Method not yet implemented!");
 	}
 
 	@Override
@@ -2014,47 +2042,94 @@ public class LuServiceImpl implements LuService {
 	}
 
 	@Override
-	public CluSetInfo createCluSet(String cluSetName, CluSetInfo cluSetInfo)
+	public CluSetInfo createCluSet(String cluSetType, CluSetInfo cluSetInfo)
 			throws AlreadyExistsException, DataValidationErrorException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException, PermissionDeniedException,
-			DoesNotExistException {
+			UnsupportedActionException {
 
-		checkForMissingParameter(cluSetName, "cluSetName");
+		checkForMissingParameter(cluSetType, "cluSetType");
 		checkForMissingParameter(cluSetInfo, "cluSetInfo");
 
+		cluSetInfo.setType(cluSetType);
+
+		validateCluSet(cluSetInfo);
+
 		// Validate CluSet
-		List<ValidationResultInfo> val = validateCluSet("SYSTEM", cluSetInfo);
+		List<ValidationResultInfo> val;
+		try {
+			val = validateCluSet("SYSTEM", cluSetInfo);
+		} catch (DoesNotExistException e) {
+			throw new DataValidationErrorException("Validation error! " + e.getMessage());
+		}
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
 
-		// if(cluSetInfo.getCluCriteria()!=null){
-		// throw new
-		// InvalidParameterException("Enumerated CluSets can not contain Criteria");
-		// }
+		List<String> cluIdList = getMembershipQuerySearchResult(cluSetInfo.getMembershipQuery());
 
-		CluSet cluSet = new CluSet();
-		BeanUtils.copyProperties(cluSetInfo, cluSet, new String[] { "id",
-				"descr", "name", "attributes", "metaInfo", "membershipQuery" });
-		cluSet.setAttributes(LuServiceAssembler.toGenericAttributes(
-				CluSetAttribute.class, cluSetInfo.getAttributes(), cluSet,
-				luDao));
-		cluSet.setName(cluSetName);
-		cluSet.setDescr(LuServiceAssembler.toRichText(LuRichText.class, cluSetInfo.getDescr()));
-
-		// TODO: set membership query information based on how the queryparamvalue is to be persisted
-		
-		for (String cluId : cluSetInfo.getCluIds()) {
-			cluSet.getClus().add(luDao.fetch(Clu.class, cluId));
+		CluSet cluSet = null;
+		try {
+			cluSet = LuServiceAssembler.toCluSetEntity(cluSetInfo, this.luDao);
+		} catch (DoesNotExistException e) {
+			throw new DataValidationErrorException("Creating CluSet entity failed. Clu or CluSet does not exist: " + e.getMessage());
 		}
-		for (String cluSetId : cluSetInfo.getCluSetIds()) {
-			cluSet.getCluSets().add(luDao.fetch(CluSet.class, cluSetId));
-		}
-		cluSet.setCriteriaSet(false);
-		luDao.create(cluSet);
 
-		return LuServiceAssembler.toCluSetInfo(cluSet);
+		cluSet = luDao.create(cluSet);
+
+		CluSetInfo newCluSetInfo = LuServiceAssembler.toCluSetInfo(cluSet);
+
+		if(cluIdList != null) {
+			newCluSetInfo.getCluIds().addAll(cluIdList);
+		}
+
+		return newCluSetInfo;
+	}
+
+	private void setMembershipQuerySearchResult(CluSetInfo cluSetInfo) throws MissingParameterException {
+		if(cluSetInfo.getMembershipQuery() == null) {
+			return;
+		}
+		List<String> cluIds = getMembershipQuerySearchResult(cluSetInfo.getMembershipQuery());
+		cluSetInfo.getCluIds().addAll(cluIds);
+	}
+
+	private List<String> getMembershipQuerySearchResult(MembershipQueryInfo query) throws MissingParameterException {
+		if(query == null) {
+			return null;
+		}
+		SearchRequest sr = new SearchRequest();
+		sr.setSearchKey(query.getSearchTypeKey());
+		sr.setParams(query.getQueryParamValueList());
+
+		SearchResult result = search(sr);
+
+		List<String> cluIds = new ArrayList<String>();
+		List<SearchResultRow> rows = result.getRows();
+		for(SearchResultRow row : rows) {
+			List<SearchResultCell> cells = row.getCells();
+			for(SearchResultCell cell : cells) {
+				if(cell.getKey().equals("lu.resultColumn.cluId")) {
+					cluIds.add(cell.getValue());
+				}
+			}
+		}
+		return cluIds;
+	}
+
+	private void validateCluSet(CluSetInfo cluSetInfo) throws UnsupportedActionException {
+		MembershipQueryInfo mqInfo = cluSetInfo.getMembershipQuery();
+
+		if (cluSetInfo.getType() == null) {
+			throw new UnsupportedActionException("CluSet type cannot be null. CluSet id="+cluSetInfo.getId());
+		}
+		else if(mqInfo != null && mqInfo.getSearchTypeKey() != null && !mqInfo.getSearchTypeKey().isEmpty() &&
+				(cluSetInfo.getCluIds().size() > 0 || cluSetInfo.getCluSetIds().size() > 0)) {
+			throw new UnsupportedActionException("Dynamic CluSet cannot contain Clus and/or CluSets. CluSet id="+cluSetInfo.getId());
+		}
+		else if (cluSetInfo.getCluIds().size() > 0 && cluSetInfo.getCluSetIds().size() > 0) {
+			throw new UnsupportedActionException("CluSet cannot contain both Clus and CluSets. CluSet id="+cluSetInfo.getId());
+		}
 	}
 
 	@Override
@@ -2064,6 +2139,7 @@ public class LuServiceImpl implements LuService {
 			OperationFailedException, PermissionDeniedException,
 			VersionMismatchException, CircularRelationshipException,
 			UnsupportedActionException {
+
 		// Check Missing params
 		checkForMissingParameter(cluSetId, "cluSetId");
 		checkForMissingParameter(cluSetInfo, "cluSetInfo");
@@ -2073,67 +2149,89 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
+		cluSetInfo.setId(cluSetId);
+
+		validateCluSet(cluSetInfo);
+
+		List<String> cluIdList = getMembershipQuerySearchResult(cluSetInfo.getMembershipQuery());
+
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
+
+		if (!cluSetInfo.getType().equals(cluSet.getType())) {
+			throw new UnsupportedActionException("CluSet type is set at creation time and cannot be updated. CluSet id="+cluSetId);
+		}
 
 		if (!String.valueOf(cluSet.getVersionInd()).equals(
 				cluSetInfo.getMetaInfo().getVersionInd())) {
 			throw new VersionMismatchException(
-					"CluSet to be updated is not the current version");
+					"CluSet (id=" + cluSetId +
+					") to be updated is not the current version " +
+					"(version=" + cluSetInfo.getMetaInfo().getVersionInd() +
+					"), current version="+cluSet.getVersionInd());
 		}
 
-		if (cluSet.isCriteriaSet()) {
-			if (cluSetInfo.getCluIds().size() > 0
-					|| cluSetInfo.getCluSetIds().size() > 0) {
-				throw new UnsupportedActionException(
-						"Criteria CluSets can not contain Clus or CluSets");
-			}
-			// TODO update criteria here
-		}
-
-		if (!cluSet.isCriteriaSet()) {
-			// if(cluSetInfo.getCluCriteria()!=null){
-			// throw new
-			// UnsupportedActionException("Enumerated CluSets can not contain Criteria");
-			// }
-
-			// update the cluIds
+		// update the cluIds
+		cluSet.setClus(null);
+		if(!cluSetInfo.getCluIds().isEmpty()) {
 			Set<String> newCluIds = new HashSet<String>(cluSetInfo.getCluIds());
 			for (Iterator<Clu> i = cluSet.getClus().iterator(); i.hasNext();) {
 				if (!newCluIds.remove(i.next().getId())) {
 					i.remove();
 				}
 			}
-			for (String newCluId : newCluIds) {
-				this.addCluToCluSet(newCluId, cluSet.getId());
-			}
+			List<Clu> cluList = luDao.getClusByIdList(new ArrayList<String>(newCluIds));
+			cluSet.setClus(cluList);
+		}
 
-			// update the cluSetIds
-			Set<String> newCluSetIds = new HashSet<String>(cluSetInfo
-					.getCluSetIds());
-			for (Iterator<CluSet> i = cluSet.getCluSets().iterator(); i
-					.hasNext();) {
+        // clean up existing wrappers if any
+        if (cluSetInfo.getId() != null) {
+            CluSetInfo originalCluSet = getCluSetInfo(cluSetInfo.getId());
+            List<CluSetInfo> origSubCSs = null;
+            List<String> origSubCSIds = originalCluSet.getCluSetIds();
+            if (origSubCSIds != null && !origSubCSIds.isEmpty()) {
+                origSubCSs = getCluSetInfoByIdList(origSubCSIds);
+            }
+            if (origSubCSs != null) {
+                for (CluSetInfo origSubCS : origSubCSs) {
+                    if (!origSubCS.getIsReusable()) {
+                        deleteCluSet(origSubCS.getId());
+                    }
+                }
+            }
+        }
+
+		// update the cluSetIds
+		cluSet.setCluSets(null);
+		if(!cluSetInfo.getCluSetIds().isEmpty()) {
+			Set<String> newCluSetIds = new HashSet<String>(cluSetInfo.getCluSetIds());
+			for (Iterator<CluSet> i = cluSet.getCluSets().iterator(); i.hasNext();) {
 				if (!newCluSetIds.remove(i.next().getId())) {
 					i.remove();
 				}
 			}
-			for (String newCluSetId : newCluSetIds) {
-				this.addCluSetToCluSet(cluSet.getId(), newCluSetId);
-			}
+			List<CluSet> cluSetList = luDao.getCluSetInfoByIdList(new ArrayList<String>(newCluSetIds));
+			cluSet.setCluSets(cluSetList);
 		}
 
-		// TODO: set membership query information based on how the queryparamvalue is to be persisted
-		
 		BeanUtils.copyProperties(cluSetInfo, cluSet, new String[] { "descr",
-				"attributes", "metaInfo" });
+				"attributes", "metaInfo", "membershipQuery" });
 		cluSet.setAttributes(LuServiceAssembler.toGenericAttributes(
-				CluSetAttribute.class, cluSetInfo.getAttributes(), cluSet,
-				luDao));
+				CluSetAttribute.class, cluSetInfo.getAttributes(), cluSet, luDao));
 		cluSet.setDescr(LuServiceAssembler.toRichText(LuRichText.class, cluSetInfo.getDescr()));
+
+		MembershipQuery mq = LuServiceAssembler.toMembershipQueryEntity(cluSetInfo.getMembershipQuery());
+		cluSet.setMembershipQuery(mq);
 
 		CluSet updated = luDao.update(cluSet);
 
-		return LuServiceAssembler.toCluSetInfo(updated);
+		CluSetInfo updatedCluSetInfo = LuServiceAssembler.toCluSetInfo(updated);
+
+		if(cluIdList != null) {
+			updatedCluSetInfo.getCluIds().addAll(cluIdList);
+		}
+
+		return updatedCluSetInfo;
 	}
 
 	@Override
@@ -2163,10 +2261,7 @@ public class LuServiceImpl implements LuService {
 
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
 
-		if (cluSet.isCriteriaSet()) {
-			throw new UnsupportedActionException(
-					"Can not add a CluSet to a dynamic CluSet");
-		}
+		checkCluSetAlreadyAdded(cluSet, addedCluSetId);
 
 		CluSet addedCluSet = luDao.fetch(CluSet.class, addedCluSetId);
 
@@ -2193,11 +2288,6 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(removedCluSetId, "removedCluSetId");
 
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
-
-		if (cluSet.isCriteriaSet()) {
-			throw new UnsupportedActionException(
-					"Cannot remove a CluSet from a Dynamic CluSet");
-		}
 
 		for (Iterator<CluSet> i = cluSet.getCluSets().iterator(); i.hasNext();) {
 			CluSet childCluSet = i.next();
@@ -2230,21 +2320,9 @@ public class LuServiceImpl implements LuService {
 
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
 
-		if (cluSet.isCriteriaSet()) {
-			throw new UnsupportedActionException(
-					"Cannot add a Clu to a Dynamic CluSet");
-		}
-
 		Clu clu = luDao.fetch(Clu.class, cluId);
 
-		for (Clu childClu : cluSet.getClus()) {
-			if (childClu.getId().equals(cluId)) {
-				StatusInfo statusInfo = new StatusInfo();
-				statusInfo.setSuccess(false);
-				statusInfo.setMessage("CluSet already contains Clu:" + cluId);
-				return statusInfo;
-			}
-		}
+		checkCluAlreadyAdded(cluSet, cluId);
 
 		cluSet.getClus().add(clu);
 
@@ -2266,11 +2344,6 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(cluSetId, "cluSetId");
 
 		CluSet cluSet = luDao.fetch(CluSet.class, cluSetId);
-
-		if (cluSet.isCriteriaSet()) {
-			throw new UnsupportedActionException(
-					"Cannot remove a Clu from a Dynamic CluSet");
-		}
 
 		for (Iterator<Clu> i = cluSet.getClus().iterator(); i.hasNext();) {
 			Clu clu = i.next();
@@ -2317,7 +2390,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		Lui lui = new Lui();
 		luiInfo.setCluId(cluId);
 		luiInfo.setAtpId(atpKey);
@@ -2347,7 +2420,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		Lui lui = luDao.fetch(Lui.class, luiId);
 
 		if (!String.valueOf(lui.getVersionInd()).equals(
@@ -2431,7 +2504,7 @@ public class LuServiceImpl implements LuService {
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		if (luiId.equals(relatedLuiId)) {
 			throw new CircularRelationshipException(
 					"Can not relate a Lui to itself");
@@ -2471,13 +2544,13 @@ public class LuServiceImpl implements LuService {
 
 		checkForMissingParameter(luiLuiRelationId, "luiLuiRelationId");
 		checkForMissingParameter(luiLuiRelationInfo, "luiLuiRelationInfo");
-		
+
 		// Validate LuiLuiRelation
 		List<ValidationResultInfo> val = validateLuiLuiRelation("SYSTEM", luiLuiRelationInfo);
 		if(null != val && val.size() > 0) {
 			throw new DataValidationErrorException("Validation error!");
 		}
-		
+
 		LuiLuiRelation luiLuiRelation = luDao.fetch(LuiLuiRelation.class,
 				luiLuiRelationId);
 
@@ -2599,14 +2672,39 @@ public class LuServiceImpl implements LuService {
 		return searchManager.getSearchTypesByResult(searchResultTypeKey);
 	}
 
-	private void checkCluSetCircularReference(CluSet addedCluSet,
-			String cluSetId) throws CircularRelationshipException {
-		for (CluSet childSet : addedCluSet.getCluSets()) {
-			if (childSet.getId().equals(cluSetId)) {
-				throw new CircularRelationshipException(
-						"Set already contains this Set");
+	private void checkCluAlreadyAdded(CluSet cluSet, String cluId)
+			throws OperationFailedException {
+		for (Clu childClu : cluSet.getClus()) {
+			if (childClu.getId().equals(cluId)) {
+				throw new OperationFailedException("CluSet already contains Clu (id='" + cluId + "')");
 			}
-			checkCluSetCircularReference(childSet, cluSetId);
+		}
+	}
+
+	private void checkCluSetAlreadyAdded(CluSet cluSet, String cluSetIdToAdd)
+			throws OperationFailedException {
+		for (CluSet childCluSet : cluSet.getCluSets()) {
+			if (childCluSet.getId().equals(cluSetIdToAdd)) {
+				throw new OperationFailedException("CluSet (id=" + cluSet.getId() +
+						") already contains CluSet (id='" + cluSetIdToAdd + "')");
+			}
+		}
+	}
+
+	private void checkCluSetCircularReference(CluSet addedCluSet, String hostCluSetId)
+			throws CircularRelationshipException {
+		if (addedCluSet.getId().equals(hostCluSetId)) {
+			throw new CircularRelationshipException(
+					"Cannot add a CluSet (id=" + hostCluSetId + ") to ifself");
+		}
+		for (CluSet childSet : addedCluSet.getCluSets()) {
+			if (childSet.getId().equals(hostCluSetId)) {
+				throw new CircularRelationshipException(
+						"CluSet (id=" + hostCluSetId +
+						") already contains this CluSet (id=" +
+						childSet.getId() + ")");
+			}
+			checkCluSetCircularReference(childSet, hostCluSetId);
 		}
 	}
 
@@ -2623,15 +2721,6 @@ public class LuServiceImpl implements LuService {
 		}
 	}
 
-	private Validator createValidator() {
-		// Validator validator = new Validator();
-		// validator.setDateParser(new ServerDateParser());
-		// // validator.addMessages(null); //TODO this needs to be loaded
-		// somehow
-		// return validator;
-		return null;
-	}
-
 	@Override
 	public ObjectStructure getObjectStructure(String objectTypeKey) {
 		return dictionaryServiceDelegate.getObjectStructure(objectTypeKey);
@@ -2640,20 +2729,6 @@ public class LuServiceImpl implements LuService {
 	@Override
 	public List<String> getObjectTypes() {
 		return dictionaryServiceDelegate.getObjectTypes();
-	}
-
-	@Override
-	public boolean validateObject(String objectTypeKey, String stateKey,
-			String info) {
-		return dictionaryServiceDelegate.validateObject(objectTypeKey,
-				stateKey, info);
-	}
-
-	@Override
-	public boolean validateStructureData(String objectTypeKey, String stateKey,
-			String info) {
-		return dictionaryServiceDelegate.validateStructureData(objectTypeKey,
-				stateKey, info);
 	}
 
 	public LuDao getLuDao() {
@@ -2672,7 +2747,7 @@ public class LuServiceImpl implements LuService {
 
 	/**
 	 * Check for missing parameter and throw localized exception if missing
-	 * 
+	 *
 	 * @param param
 	 * @param parameter
 	 *            name
@@ -2697,5 +2772,53 @@ public class LuServiceImpl implements LuService {
 			throw new MissingParameterException(paramName
 					+ " can not be an empty list");
 		}
+	}
+
+	@Override
+	public StatusInfo addCluSetsToCluSet(String cluSetId, List<String> cluSetIdList)
+		throws CircularRelationshipException,
+			DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException, UnsupportedActionException {
+
+		checkForMissingParameter(cluSetId, "cluSetId");
+		checkForMissingParameter(cluSetIdList, "cluSetIdList");
+
+		// Check that CluSet exists
+		luDao.fetch(CluSet.class, cluSetId);
+
+		for(String cluSetIdToAdd : cluSetIdList) {
+			StatusInfo status = addCluSetToCluSet(cluSetId, cluSetIdToAdd);
+			if (!status.getSuccess()) {
+				return status;
+			}
+		}
+
+		StatusInfo statusInfo = new StatusInfo();
+		statusInfo.setSuccess(true);
+
+		return statusInfo;
+	}
+
+	@Override
+	public StatusInfo addClusToCluSet(List<String> cluIdList, String cluSetId)
+		throws DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException, UnsupportedActionException {
+
+		checkForMissingParameter(cluIdList, "cluIdList");
+		checkForMissingParameter(cluSetId, "cluSetId");
+
+		for(String cluId : cluIdList) {
+			StatusInfo status = addCluToCluSet(cluId, cluSetId);
+			if (!status.getSuccess()) {
+				return status;
+			}
+		}
+
+		StatusInfo statusInfo = new StatusInfo();
+		statusInfo.setSuccess(true);
+
+		return statusInfo;
 	}
 }

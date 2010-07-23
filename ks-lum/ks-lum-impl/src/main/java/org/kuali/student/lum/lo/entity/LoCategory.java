@@ -1,17 +1,16 @@
-/*
- * Copyright 2009 The Kuali Foundation
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- * Licensed under the Educational Community License, Version 1.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * http://www.osedu.org/licenses/ECL-2.0
  *
- * http://www.opensource.org/licenses/ecl1.php
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
 
 package org.kuali.student.lum.lo.entity;
@@ -25,7 +24,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -65,9 +63,6 @@ public class LoCategory extends MetaEntity implements AttributeOwner<LoCategoryA
 	@Column(name="STATE")
 	private String state;
 	
-	@ManyToMany(mappedBy="categories")
-	private List<Lo> los;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "EFF_DT")
 	private Date effectiveDate;
@@ -142,17 +137,6 @@ public class LoCategory extends MetaEntity implements AttributeOwner<LoCategoryA
 
 	public String getState() {
 		return state;
-	}
-
-	public void setLos(List<Lo> los) {
-		this.los = los;
-	}
-
-	public List<Lo> getLos() {
-		if (null == los) {
-			los = new ArrayList<Lo>(0);
-		}
-		return los;
 	}
 
 	public Date getEffectiveDate() {

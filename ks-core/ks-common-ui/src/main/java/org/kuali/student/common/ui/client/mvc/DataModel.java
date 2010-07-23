@@ -1,10 +1,18 @@
-/*
- * Copyright 2010 The Kuali Foundation Licensed under the Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.osedu.org/licenses/ECL-2.0 Unless required by applicable law or agreed to in writing, software distributed
- * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing permissions and limitations under the License.
+/**
+ * Copyright 2010 The Kuali Foundation Licensed under the
+ * Educational Community License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.osedu.org/licenses/ECL-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS"
+ * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
  */
+
 /**
  * 
  */
@@ -19,7 +27,7 @@ import java.util.Set;
 import org.kuali.student.common.ui.client.mvc.ModelChangeEvent.Action;
 import org.kuali.student.common.ui.client.validator.ClientDateParser;
 import org.kuali.student.common.ui.client.validator.DataModelValidator;
-import org.kuali.student.common.validator.DateParser;
+import org.kuali.student.common.validator.old.DateParser;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.assembly.data.ModelDefinition;
@@ -32,7 +40,7 @@ import org.kuali.student.core.assembly.data.Data.Value;
 import org.kuali.student.core.assembly.data.HasChangeCallbacks.ChangeCallback;
 import org.kuali.student.core.assembly.data.HasChangeCallbacks.ChangeCallbackRegistration;
 import org.kuali.student.core.assembly.data.HasChangeCallbacks.ChangeType;
-import org.kuali.student.core.validation.dto.ValidationResultContainer;
+import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
@@ -64,7 +72,6 @@ public class DataModel implements Model {
     // do nothing
     }
 
-    @SuppressWarnings("deprecation")
     public DataModel(final ModelDefinition definition, final Data root) {
         this.definition = definition;
         this.root = root;
@@ -174,9 +181,13 @@ public class DataModel implements Model {
 
     public void set(final QueryPath path, final Value value) {
         definition.ensurePath(root, path, value instanceof DataValue);
-        final QueryPath q = path.subPath(0, path.size() - 1);
-        final Data d = root.query(q);
-        d.set(path.get(path.size() - 1), value);
+        if (path.size() > 1){
+        	final QueryPath q = path.subPath(0, path.size() - 1);
+        	final Data d = root.query(q);
+            d.set(path.get(path.size() - 1), value);
+        } else {
+        	root.set(path.get(0), value);
+        }
     }
 
     public DataType getType(final QueryPath path) {
@@ -226,8 +237,8 @@ public class DataModel implements Model {
         this.definition = definition;
     }
 
-    public void validate(final Callback<List<ValidationResultContainer>> callback) {
-        List<ValidationResultContainer> result = validator.validate(this);
+    public void validate(final Callback<List<ValidationResultInfo>> callback) {
+        List<ValidationResultInfo> result = validator.validate(this);
         callback.exec(result);
     }
 }
