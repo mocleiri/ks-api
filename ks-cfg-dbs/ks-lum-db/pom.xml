@@ -5,9 +5,9 @@
     <artifactId>ks-dbs</artifactId>
     <version>1.1.0-poc-M7-SNAPSHOT</version>
   </parent>
-  <artifactId>ks-embedded-db</artifactId>
-  <name>KS Embedded DB</name>
-  <description>Kuali Student Embedded Database</description>
+  <artifactId>ks-lum-db</artifactId>
+  <name>KS LUM DB</name>
+  <description>Kuali Student Learning Unit Management Database</description>
   <build>
     <resources>
       <resource>
