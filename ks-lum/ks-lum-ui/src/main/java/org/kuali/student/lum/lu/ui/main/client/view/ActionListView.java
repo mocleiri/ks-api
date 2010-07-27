@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.main.client.widgets;
+package org.kuali.student.lum.lu.ui.main.client.view;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,10 +26,9 @@ import org.kuali.student.common.ui.client.service.ServerPropertiesRpcServiceAsyn
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Frame;
 
-public class ActionList extends Composite {
+public class ActionListView extends ViewComposite {
     private static final String ACTION_LIST_URL	= "ks.rice.actionList.serviceAddress";
 	
     private ServerPropertiesRpcServiceAsync serverPropertiesRpcService = GWT.create(ServerPropertiesRpcService.class);
@@ -39,7 +38,8 @@ public class ActionList extends Composite {
 	
 	private String actionListUrl = null;
 	
-	public ActionList() {
+	public ActionListView(Controller controller, String name, Enum<?> viewType) {
+		super(controller, name, viewType);
 		actionList.addStyleName("KS-Action-List");
 		initWidget(actionList);
 	}

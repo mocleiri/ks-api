@@ -13,9 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.mvc.history;
+package org.kuali.student.lum.lu.ui.home.client.view;
 
-public interface HistorySupport {
-    public void collectHistory(HistoryStackFrame frame);
-    public void onHistoryEvent(HistoryStackFrame frame);
+import org.kuali.student.common.ui.client.mvc.Controller;
+import org.kuali.student.common.ui.client.mvc.ViewComposite;
+
+import com.google.gwt.user.client.ui.Label;
+
+public class DefaultPanel extends ViewComposite{
+	public enum Views{LUM}
+    public DefaultPanel(Controller controller) {
+        super(controller, "LUM", Views.LUM);
+        this.initWidget(new Label("Place Directions for menu/introduction here...."));
+    }
+
 }

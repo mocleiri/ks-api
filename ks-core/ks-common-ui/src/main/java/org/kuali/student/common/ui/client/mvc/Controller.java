@@ -19,11 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.student.common.ui.client.application.ViewContext;
-import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
-import org.kuali.student.common.ui.client.mvc.breadcrumb.BreadcrumbSupport;
 import org.kuali.student.common.ui.client.mvc.events.ViewChangeEvent;
-import org.kuali.student.common.ui.client.mvc.history.HistoryManager;
+import org.kuali.student.common.ui.client.mvc.history.HistoryStackFrame;
 import org.kuali.student.common.ui.client.mvc.history.HistorySupport;
+import org.kuali.student.common.ui.client.mvc.history.HistoryToken;
 import org.kuali.student.common.ui.client.mvc.history.NavigationEvent;
 import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 import org.kuali.student.common.ui.client.security.RequiresAuthorization;
@@ -45,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Kuali Student Team
  */
-public abstract class Controller extends Composite implements HistorySupport, BreadcrumbSupport{
+public abstract class Controller extends Composite implements HistorySupport{
 	public static final Callback<Boolean> NO_OP_CALLBACK = new Callback<Boolean>() {
 		@Override
 		public void exec(Boolean result) {
@@ -112,18 +111,10 @@ public abstract class Controller extends Composite implements HistorySupport, Br
 					 boolean requiresAuthz = (view instanceof RequiresAuthorization) && ((RequiresAuthorization)view).isAuthorizationRequired(); 
 						
 				        if (requiresAuthz){
-				        	ViewContext tempContext = new ViewContext();
-				        	if(view instanceof LayoutController){
-				        		tempContext = ((LayoutController) view).getViewContext();
-				        	}
-				        	else{
-				        		tempContext = view.getController().getViewContext();
-				        	}
-				        	
+				        	ViewContext tempContext = view.getController().getViewContext();
 				        	if (view instanceof DelegatingViewComposite) {
 				        		tempContext = ((DelegatingViewComposite)view).getChildController().getViewContext();
 				        	}
-				        	
 				        	PermissionType permType = (tempContext != null) ? tempContext.getPermissionType() : null;
 				        	if (permType != null) {
 				        		GWT.log("Checking permission type '" + permType.getPermissionTemplateName() + "' for view '" + view.toString() + "'", null);
@@ -383,101 +374,49 @@ public abstract class Controller extends Composite implements HistorySupport, Br
     public abstract Enum<?> getViewEnumValue(String enumValue);
     
     @Override
-    public String collectHistory(String historyStack) {
-    	String token = getHistoryToken();
-    	historyStack = historyStack + "/" + token;
-    	
-    	if(currentView != null){
-    		String tempHistoryStack = historyStack;
-    		historyStack = currentView.collectHistory(historyStack);
-    		
-    		//Sanity check, if collectHistory returns null or empty string, restore
-    		if(historyStack == null){
-    			historyStack = tempHistoryStack;
-    		}
-    		else if(historyStack != null && historyStack.isEmpty()){
-    			historyStack = tempHistoryStack;
-    		}
-    	}
-    	return historyStack;
+    public void collectHistory(HistoryStackFrame frame) {
+        HistoryToken token = getHistoryToken();
+        frame.getTokens().put(token.getKey(), token);
+        if (currentView != null) {
+            currentView.collectHistory(frame);
+        }
     }
     
-    protected String getHistoryToken() {
-    	String historyToken = "";
+    protected HistoryToken getHistoryToken() {
+        HistoryToken token = new HistoryToken(controllerId);
         if (currentViewEnum != null) {
-            historyToken = currentViewEnum.toString();
-            if(currentView != null && currentView instanceof Controller 
-            		&& ((Controller)currentView).getViewContext() != null){
-            	ViewContext context = ((Controller) currentView).getViewContext();
-            	historyToken = HistoryManager.appendContext(historyToken, context);
-            }
-             
+            token.getParameters().put("view", currentViewEnum.toString());
         }
-        return historyToken;
+        return token;
     }
 
     @Override
-    public void onHistoryEvent(String historyStack) {
-    	final String nextHistoryStack = HistoryManager.nextHistoryStack(historyStack);
-        String[] tokens = HistoryManager.splitHistoryStack(nextHistoryStack);
-        if (tokens.length >= 1 && tokens[0] != null && !tokens[0].isEmpty()) {
-            Map<String, String> tokenMap = HistoryManager.getTokenMap(tokens[0]);
-            //TODO add some automatic view context setting here, get and set
-            String viewEnumString = tokenMap.get("view");
-            if (viewEnumString != null) {
-                Enum<?> viewEnum = getViewEnumValue(viewEnumString);
-                
+    public void onHistoryEvent(final HistoryStackFrame frame) {
+        HistoryToken token = frame.getTokens().get(controllerId);
+        if (token != null) {
+            String s = token.getParameters().get("view");
+            if (s != null) {
+                Enum<?> viewEnum = getViewEnumValue(s);
                 if (viewEnum != null) {
-                	View theView = getView(viewEnum);
-                	boolean sameContext = true;
-                	if(theView instanceof Controller){
-                		
-                		ViewContext newContext = new ViewContext();
-                		if(tokenMap.get(ViewContext.ID_ATR) != null){
-                			newContext.setId(tokenMap.get(ViewContext.ID_ATR));
-                		}
-                		if(tokenMap.get(ViewContext.ID_TYPE_ATR) != null){
-                			newContext.setIdType(tokenMap.get(ViewContext.ID_TYPE_ATR));
-                		}
-                		
-                		ViewContext viewContext = ((Controller) theView).getViewContext();
-                		if(viewContext.compareTo(newContext) != 0){
-                			((Controller) theView).setViewContext(newContext);
-                			sameContext = false;
-                		}
-                	}
-                    if (currentViewEnum == null || !viewEnum.equals(currentViewEnum) 
-                    		|| !sameContext) {
+                    if (currentViewEnum == null || !viewEnum.equals(currentViewEnum)) {
                         showView(viewEnum, new Callback<Boolean>() {
                             @Override
                             public void exec(Boolean result) {
                                 if (result) {
-                                    currentView.onHistoryEvent(nextHistoryStack);
+                                    currentView.onHistoryEvent(frame);
                                 }
                             }
                         });
                     } else if (currentView != null) {
-                    	currentView.onHistoryEvent(nextHistoryStack);
+                        currentView.onHistoryEvent(frame);
                     }
                 }
             }
         }
-        else{
-    		this.showDefaultView(new Callback<Boolean>(){
-
-				@Override
-				public void exec(Boolean result) {
-					if(result){
-						currentView.onHistoryEvent(nextHistoryStack);
-					}
-					
-				}
-			});
-    	}
-        
     }
 
     public void setViewContext(ViewContext viewContext){
+    	clear();
     	this.context = viewContext;
     }
 
@@ -485,7 +424,7 @@ public abstract class Controller extends Composite implements HistorySupport, Br
     	return this.context;
     }
 
-    public void clearViewContext(){
+    public void clear(){
         this.context = new ViewContext();
     }
 
@@ -493,9 +432,7 @@ public abstract class Controller extends Composite implements HistorySupport, Br
         return this.controllerId;
     }
     
-    public void resetCurrentView(){
+    public void reset(){
     	currentView = null;
-    }
-    
-
+    }        
 }
