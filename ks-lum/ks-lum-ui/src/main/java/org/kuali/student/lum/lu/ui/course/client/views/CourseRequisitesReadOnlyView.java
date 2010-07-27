@@ -27,55 +27,55 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CourseRequisitesReadOnlyView extends Composite {
-	DataModel dataModel=null;
-	
+    DataModel dataModel=null;
+
     Controller myController;
     private VerticalPanel rootPanel = new VerticalPanel();
-    
-    public CourseRequisitesReadOnlyView(){
-    	super();
-    	super.initWidget(rootPanel);
-    }
-	/* (non-Javadoc)
-	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
-	 */
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		myController = Controller.findController(this);
-		
-		if(null==dataModel){
-			//Get the Model from the controller and register a model change handler when the workflow model is updated
-			myController.requestModel(LuData.class, new ModelRequestCallback<DataModel>(){
-			
-				@Override
-				public void onRequestFail(Throwable cause) {
-					Window.alert("Model Request Failed. "+cause.getMessage());
-				}
 
-				@Override
-				public void onModelReady(DataModel model) {
-					//After we get the model update immediately
-					dataModel = model;
-					updateWorkflow(dataModel);
-				 
-				}
-			});
-		}else{
-			
-			//If the model has been set don't waste time finding it again and don't register 
-			//another change listener, just update
-			updateWorkflow(dataModel);
-		}
-	}
-	private void updateWorkflow(DataModel dataModel) {
-		LuData data = (LuData)dataModel.getRoot();
-		rootPanel.clear();
-		if(data.getRuleInfos()!=null){
-			for(RuleInfo ruleInfo:data.getRuleInfos()){
-				KSLabel label = new KSLabel(ruleInfo.getNaturalLanguage());
-				rootPanel.add(label);
-			}
-		}
-	}
+    public CourseRequisitesReadOnlyView(){
+        super();
+        super.initWidget(rootPanel);
+    }
+    /* (non-Javadoc)
+     * @see com.google.gwt.user.client.ui.Widget#onLoad()
+     */
+    @Override
+    protected void onLoad() {
+        super.onLoad();
+        myController = Controller.findController(this);
+
+        if(null==dataModel){
+            //Get the Model from the controller and register a model change handler when the workflow model is updated
+            myController.requestModel(LuData.class, new ModelRequestCallback<DataModel>(){
+
+                @Override
+                public void onRequestFail(Throwable cause) {
+                    Window.alert("Model Request Failed. "+cause.getMessage());
+                }
+
+                @Override
+                public void onModelReady(DataModel model) {
+                    //After we get the model update immediately
+                    dataModel = model;
+                    updateWorkflow(dataModel);
+
+                }
+            });
+        }else{
+
+            //If the model has been set don't waste time finding it again and don't register
+            //another change listener, just update
+            updateWorkflow(dataModel);
+        }
+    }
+    private void updateWorkflow(DataModel dataModel) {
+        LuData data = (LuData)dataModel.getRoot();
+        rootPanel.clear();
+        if(data.getRuleInfos()!=null){
+            for(RuleInfo ruleInfo:data.getRuleInfos()){
+                KSLabel label = new KSLabel(ruleInfo.getNaturalLanguageForRuleEdit());
+                rootPanel.add(label);
+            }
+        }
+    }
 }
