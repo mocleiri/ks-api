@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.views;
+package org.kuali.student.lum.lu.ui.course.client.configuration;
 
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.DataModel;
@@ -73,7 +73,7 @@ public class CourseRequisitesReadOnlyView extends Composite {
 		rootPanel.clear();
 		if(data.getRuleInfos()!=null){
 			for(RuleInfo ruleInfo:data.getRuleInfos()){
-				KSLabel label = new KSLabel(ruleInfo.getNaturalLanguage());
+				KSLabel label = new KSLabel(ruleInfo.getNaturalLanguageForRuleEdit());
 				rootPanel.add(label);
 			}
 		}
