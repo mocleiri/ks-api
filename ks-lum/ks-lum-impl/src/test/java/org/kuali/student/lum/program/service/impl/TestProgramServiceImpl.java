@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Ignore;
@@ -19,12 +20,11 @@ import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.exceptions.PermissionDeniedException;
-import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.program.dto.LoDisplayInfo;
 import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
 import org.kuali.student.lum.program.dto.ProgramRequirementInfo;
 import org.kuali.student.lum.program.dto.ProgramVariationInfo;
 import org.kuali.student.lum.program.service.ProgramService;
+import org.kuali.student.lum.program.service.assembler.MajorDisciplineDataGenerator;
 import org.kuali.student.lum.program.service.assembler.ProgramAssemblerConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -88,13 +88,39 @@ public class TestProgramServiceImpl {
 		assertNotNull(progReqInfo);
 	}
 
+	@Test(expected = MissingParameterException.class)
+	public void testGetProgramRequirement_nullId() throws Exception {
+		programService.getProgramRequirement(null);
+	}
+
+	@Test(expected = DoesNotExistException.class)
+	public void testGetProgramRequirement_badId() throws Exception {
+		programService.getProgramRequirement("CLU-XXX ");
+	}
+
     @Test
-    @Ignore public void testGetMajorDiscipline() {
+    public void testGetMajorDiscipline() {
+        MajorDisciplineInfo majorDisciplineInfo = null;
         try {
         	MajorDisciplineDataGenerator generator = new MajorDisciplineDataGenerator();
-        	MajorDisciplineInfo majorDisciplineInfo = generator.getMajorDisciplineInfoTestData();
+            // MajorDisciplineInfo majorDisciplineInfo = generator.getMajorDisciplineInfoTestData();
+            try {
+                majorDisciplineInfo = programService.getMajorDiscipline("0d8c42bc-77ba-450e-ae0e-eecd76fae779");
+                fail("Should have received DoesNotExistException");
+            } catch (DoesNotExistException dnee) {
+                String expectedExceptionMessage = "Specified CLU is not a Major Discipline";
+                assertEquals("Expected DoesNotExistException has incorrect message:", expectedExceptionMessage, dnee.getMessage());
+            }
+            majorDisciplineInfo = programService.getMajorDiscipline("D4EA77DD-B492-4554-B104-863E42C5F8B7");
             assertNotNull(majorDisciplineInfo);
 
+            assertNotNull(majorDisciplineInfo.getOrgCoreProgram());
+            assertNotNull(majorDisciplineInfo.getStartTerm());
+            assertEquals("kuali.atp.SU2009-2010S1", majorDisciplineInfo.getStartTerm());
+            assertNotNull(majorDisciplineInfo.getCredentialProgramId());
+            assertEquals("D02DBBD3-20E2-410D-AB52-1BD6D362748B", majorDisciplineInfo.getCredentialProgramId());
+            assertEquals("ANTH", majorDisciplineInfo.getCode());
+            /*
             MajorDisciplineInfo createdMD = programService.createMajorDiscipline(majorDisciplineInfo);
             assertNotNull(createdMD);
 
@@ -137,8 +163,43 @@ public class TestProgramServiceImpl {
                 assertNotNull(value);
                 assertEquals(key, value);
             }
+            */
 
           } catch (Exception e) {
+        	e.printStackTrace();
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    @Ignore
+    public void testGetVariationsByMajorDisciplineId(){
+    	MajorDisciplineInfo majorDisciplineInfo = null;
+        try {
+			MajorDisciplineDataGenerator generator = new MajorDisciplineDataGenerator();
+//			majorDisciplineInfo = generator.getMajorDisciplineInfoTestData();
+
+			majorDisciplineInfo = programService.getMajorDiscipline("D4EA77DD-B492-4554-B104-863E42C5F8B7");
+			assertNotNull(majorDisciplineInfo);
+
+			List<ProgramVariationInfo> pvInfos = programService.getVariationsByMajorDisciplineId("D4EA77DD-B492-4554-B104-863E42C5F8B7");
+			assertNotNull(pvInfos);
+			assertEquals(pvInfos.size(), majorDisciplineInfo.getVariations().size());
+
+			/*MajorDisciplineInfo createdMD = programService.createMajorDiscipline(majorDisciplineInfo);
+			assertNotNull(createdMD);
+
+			// get it fresh from database
+			MajorDisciplineInfo retrievedMD = programService.getMajorDiscipline(createdMD.getId());
+			assertNotNull(retrievedMD);
+
+			// get program variations
+			List<ProgramVariationInfo> pvInfos = programService.getVariationsByMajorDisciplineId(retrievedMD.getId());
+			assertNotNull(pvInfos);
+			assertEquals(pvInfos.size(), retrievedMD.getVariations().size());
+			assertEquals(pvInfos, retrievedMD.getVariations());*/
+
+        } catch (Exception e) {
         	e.printStackTrace();
             fail(e.getMessage());
         }
@@ -180,7 +241,6 @@ public class TestProgramServiceImpl {
             // minimal sanity check
             assertEquals("longTitle-test", createdMD.getLongTitle());
             assertEquals("shortTitle-test", createdMD.getShortTitle());
-            assertEquals("programLevel-test", createdMD.getProgramLevel());
             assertEquals("credentialProgramId-test", createdMD.getCredentialProgramId());
             assertEquals(ProgramAssemblerConstants.MAJOR_DISCIPLINE, createdMD.getType());
             assertEquals(ProgramAssemblerConstants.DRAFT, createdMD.getState());

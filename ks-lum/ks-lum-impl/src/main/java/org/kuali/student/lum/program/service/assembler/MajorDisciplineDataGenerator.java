@@ -15,7 +15,6 @@ import java.util.Random;
 
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
 import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
-import org.kuali.student.lum.program.service.assembler.ProgramAssemblerConstants;
 
 public class MajorDisciplineDataGenerator {
 	private static final String[] campusLocations = {CourseAssemblerConstants.COURSE_CAMPUS_LOCATION_CD_NORTH,CourseAssemblerConstants.COURSE_CAMPUS_LOCATION_CD_SOUTH};
@@ -90,7 +89,9 @@ public class MajorDisciplineDataGenerator {
 			}else if(String.class.equals(pt)){
 				value = getStringValue(pd.getName(),parentPropertyName, propertyIndex, false);
 			}else{
-				value = generateTestData(pt,propertyIndex,sameClassNestLevel,pd.getName(), false);
+                System.out.println("Property:" + pd.getDisplayName() + " :" + clazz.getName());
+			    value = generateTestData(pt,propertyIndex,sameClassNestLevel,pd.getName(), false);
+
 			}
 			pd.getWriteMethod().invoke(instance, value);
 		}
@@ -139,7 +140,13 @@ public class MajorDisciplineDataGenerator {
 				return ProgramAssemblerConstants.PROGRAM_VARIATION;
 			}
 			
-			throw new RuntimeException("Code what to do with this type");
+			//Temporary change added because of addition of type field to AdminOrgInfo.
+			// Please add the type values for MajorDisciplineInfo admin orgs
+			else{
+				return "default.temp.type";
+			}
+			
+//			throw new RuntimeException("Code what to do with this type");
 		}
 
 		if("state".equals(name)){

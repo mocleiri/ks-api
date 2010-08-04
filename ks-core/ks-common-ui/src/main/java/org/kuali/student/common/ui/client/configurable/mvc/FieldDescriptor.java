@@ -20,6 +20,7 @@ import org.kuali.student.common.ui.client.configurable.mvc.binding.MultiplicityC
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityComposite;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.HasDataValue;
+import org.kuali.student.common.ui.client.widgets.KSCheckBox;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.RichTextEditor;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.FieldElement;
@@ -48,6 +49,7 @@ public class FieldDescriptor {
     private boolean hasHadFocus = false;
     private FieldElement fieldElement;
     private String modelId;
+    private boolean showLabelInfo = false;
 
     public FieldDescriptor(String fieldKey, MessageKeyInfo messageKey, Metadata metadata) {
     	this.fieldKey = fieldKey;
@@ -82,6 +84,10 @@ public class FieldDescriptor {
 	    	fieldElement.setRequired(MetadataInterrogator.isRequired(metadata));
 	    	//TODO setup the constraint text here
     	}
+    }
+    
+    public void showLabel(boolean show){
+    	fieldElement.showLabel(show);
     }
 
     public FieldElement getFieldElement(){
@@ -128,9 +134,11 @@ public class FieldDescriptor {
         if(modelWidgetBinding == null){
             if(fieldElement.getFieldWidget() instanceof RichTextEditor){
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.RichTextBinding.INSTANCE;
-            }else if(fieldElement.getFieldWidget() instanceof MultiplicityComposite){
+            } else if (fieldElement.getFieldWidget() instanceof KSCheckBox){
+            	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasValueBinding.INSTANCE;
+            } else if(fieldElement.getFieldWidget() instanceof MultiplicityComposite){
         		modelWidgetBinding = MultiplicityCompositeBinding.INSTANCE;
-        	}else if (fieldElement.getFieldWidget()instanceof HasText) {
+        	} else if (fieldElement.getFieldWidget()instanceof HasText) {
         	    modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasTextBinding.INSTANCE;
             } else if (fieldElement.getFieldWidget() instanceof KSSelectItemWidgetAbstract){
                 modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.SelectItemWidgetBinding.INSTANCE;
@@ -138,7 +146,7 @@ public class FieldDescriptor {
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasDataValueBinding.INSTANCE;
             } else if (fieldElement.getFieldWidget() instanceof HasValue){
             	modelWidgetBinding = org.kuali.student.common.ui.client.configurable.mvc.binding.HasValueBinding.INSTANCE;
-            }
+            } 
         }
         return modelWidgetBinding;
     }

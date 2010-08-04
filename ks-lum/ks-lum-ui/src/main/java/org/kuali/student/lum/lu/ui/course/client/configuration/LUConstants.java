@@ -126,6 +126,11 @@ public class LUConstants {
     public static final String ADMIN_ORG_LABEL_KEY = "cluAdminOrg";
     public static final String ALT_ADMIN_ORG_LABEL_KEY = "cluAltAdminOrg";
 
+    // Active Dates Labels
+    public static final String START_TERM_LABEL_KEY = "cluStartTerm";
+    public static final String END_TERM_LABEL_KEY = "cluEndTerm";
+    public static final String PILOT_COURSE_LABEL_KEY = "cluPilotCourse";
+    
     //Logistics labels
     public static final String LOGISTICS_LABEL_KEY = "cluLogistics";
     public static final String INSTRUCTORS_LABEL_KEY = "cluInstructors";
@@ -185,6 +190,7 @@ public class LUConstants {
     public static final String CL_V_J_LABEL_KEY = "cluCrossListedVersionJoin";
     public static final String JOINT_OFFER_ITEM_LABEL_KEY = "cluJointOfferItem";
     public static final String JOINT_OFFERINGS_LABEL_KEY = "cluJointOfferings";
+    public static final String JOINT_OFFERINGS_SECTION_TITLE_LABEL_KEY = "cluJointOfferingsSectionTitle";
     public static final String JOINT_OFFERINGS_ALT_LABEL_KEY = "cluJointOfferingsAlt";
     public static final String EVALUATION_TYPE_LABEL_KEY = "cluEvaluationType";
     public static final String TERM_LITERAL_LABEL_KEY = "cluTermLiteral";
