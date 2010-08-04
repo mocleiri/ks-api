@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.server.gwt.old;
+package org.kuali.student.core.workflow.ui.server.gwt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,50 +26,54 @@ import org.kuali.rice.kew.dto.ActionRequestDTO;
 import org.kuali.rice.kew.dto.DocumentDetailDTO;
 import org.kuali.rice.kew.dto.DocumentTypeDTO;
 import org.kuali.rice.kew.exception.WorkflowException;
+import org.kuali.rice.kew.service.WorkflowUtility;
 import org.kuali.rice.kew.util.KEWConstants;
+import org.kuali.rice.kew.webservice.SimpleDocumentActionsWebService;
 import org.kuali.rice.kew.webservice.StandardResponse;
 import org.kuali.rice.kim.bo.entity.dto.KimEntityDefaultInfo;
 import org.kuali.rice.kim.bo.impl.KimAttributes;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityService;
+import org.kuali.rice.kim.service.PermissionService;
 import org.kuali.rice.kim.service.RoleUpdateService;
-import org.kuali.rice.student.StudentWorkflowConstants;
-import org.kuali.rice.student.bo.KualiStudentKimAttributes;
 import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
-import org.kuali.student.common.ui.server.gwt.old.AbstractBaseDataOrchestrationRpcGwtServlet;
-import org.kuali.student.core.assembly.data.Data;
+import org.kuali.student.common.util.security.SecurityUtils;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.assembly.dictionary.old.MetadataServiceImpl;
 import org.kuali.student.core.rice.authorization.PermissionType;
-import org.kuali.student.lum.lu.dto.workflow.WorkflowPersonInfo;
-import org.kuali.student.lum.lu.ui.course.client.service.WorkflowToolRpcService;
+import org.kuali.student.core.workflow.dto.WorkflowPersonInfo;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowToolRpcService;
 
-//FIXME this servlet should take not extend AbstractBaseDataOrchestrationRpcGwtServlet, does not use metadata and not processed through workflow
-public class WorkflowToolRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet implements WorkflowToolRpcService{
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+public class WorkflowToolRpcGwtServlet extends RemoteServiceServlet implements WorkflowToolRpcService{
+
+	//FIXME: These constants inner classes are in here temporarily due to dependency issues, will be removed once ks-lum-rice module moved to core
+	public class StudentWorkflowConstants {
+		public static final String DEFAULT_WORKFLOW_DOCUMENT_START_NODE_NAME = "PreRoute";
+		public static final String ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAMESPACE = "KS-SYS";
+		public static final String ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAME = "Adhoc Permissions: Edit Document";
+		public static final String ROLE_NAME_ADHOC_ADD_COMMENT_PERMISSIONS_ROLE_NAMESPACE = "KS-SYS";
+		public static final String ROLE_NAME_ADHOC_ADD_COMMENT_PERMISSIONS_ROLE_NAME = "Adhoc Permissions: Comment on Document";
+
+	}
 	
+	public class KualiStudentKimAttributes {
+		public static final String DOCUMENT_TYPE_NAME                   = KimAttributes.DOCUMENT_TYPE_NAME;		
+		public static final String QUALIFICATION_DATA_ID                = "dataId";
+	}
+	
+
 	private static final long serialVersionUID = 1L;
 	final static Logger LOG = Logger.getLogger(WorkflowToolRpcGwtServlet.class);
 
 	protected MetadataServiceImpl metadataService;
 	protected IdentityService identityService;
 	protected RoleUpdateService roleUpdateService;
+	private SimpleDocumentActionsWebService simpleDocService;
+    private WorkflowUtility workflowUtilityService;
+	private PermissionService permissionService;    
 	
-	public IdentityService getIdentityService() {
-		return identityService;
-	}
-
-	public void setIdentityService(IdentityService identityService) {
-		this.identityService = identityService;
-	}
-	
-	public RoleUpdateService getRoleUpdateService() {
-    	return roleUpdateService;
-    }
-
-	public void setRoleUpdateService(RoleUpdateService roleUpdateService) {
-    	this.roleUpdateService = roleUpdateService;
-    }
-
 	@Override
 	public Metadata getMetadata(String idType, String id) {
 		return metadataService.getMetadata(idType, null, null);
@@ -90,7 +94,7 @@ public class WorkflowToolRpcGwtServlet extends AbstractBaseDataOrchestrationRpcG
         }
 
 		//get a user name
-        String currentUserPrincipalId = getCurrentUser();
+        String currentUserPrincipalId = SecurityUtils.getCurrentUserId();
 
         ActionRequestType actionRequestType = ActionRequestType.getByCode(actionRequestTypeCode);
         if (actionRequestType == null) {
@@ -128,7 +132,8 @@ public class WorkflowToolRpcGwtServlet extends AbstractBaseDataOrchestrationRpcG
 //	        List<String> roleIds = getPermissionService().getRoleIdsForPermissions(permissions);
 //	        RoleService roleService;
 //	        List<KimRoleInfo> roles = roleService.getRoles(roleIds);
-        	addRoleMember(StudentWorkflowConstants.ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAMESPACE, StudentWorkflowConstants.ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAME, docId, dataId, recipientPrincipalId);
+ 
+        	addRoleMember(StudentWorkflowConstants.ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAMESPACE, StudentWorkflowConstants.ROLE_NAME_ADHOC_EDIT_PERMISSIONS_ROLE_NAME, docId, dataId, recipientPrincipalId);       	
         }
         else if (PermissionType.ADD_COMMENT.equals(selectedPermType)) {
         	addRoleMember(StudentWorkflowConstants.ROLE_NAME_ADHOC_ADD_COMMENT_PERMISSIONS_ROLE_NAMESPACE, StudentWorkflowConstants.ROLE_NAME_ADHOC_ADD_COMMENT_PERMISSIONS_ROLE_NAME, docId, dataId, recipientPrincipalId);
@@ -229,41 +234,11 @@ public class WorkflowToolRpcGwtServlet extends AbstractBaseDataOrchestrationRpcG
 			AttributeSet permissionDetails = new AttributeSet();
 			AttributeSet roleQuals = new AttributeSet();
 			roleQuals.put(KimAttributes.DOCUMENT_NUMBER,docId);
-			return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(getCurrentUser(), PermissionType.ADD_ADHOC_REVIEWER.getPermissionNamespace(), 
+			return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(SecurityUtils.getCurrentUserId(), PermissionType.ADD_ADHOC_REVIEWER.getPermissionNamespace(), 
 					PermissionType.ADD_ADHOC_REVIEWER.getPermissionTemplateName(), permissionDetails, roleQuals));
 		}
 		return Boolean.FALSE;
     }
-
-	@Override
-	protected String deriveAppIdFromData(Data data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String deriveDocContentFromData(Data data) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String getDefaultMetaDataState() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String getDefaultMetaDataType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String getDefaultWorkflowDocumentType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
     private String getActionRequestStatusLabel(String key) {
         Map<String,String> newArStatusLabels = new HashMap<String,String>();
@@ -273,4 +248,43 @@ public class WorkflowToolRpcGwtServlet extends AbstractBaseDataOrchestrationRpcG
         return newArStatusLabels.get(key);
     }
 
+	public IdentityService getIdentityService() {
+		return identityService;
+	}
+
+	public void setIdentityService(IdentityService identityService) {
+		this.identityService = identityService;
+	}
+	
+	public RoleUpdateService getRoleUpdateService() {
+    	return roleUpdateService;
+    }
+
+	public void setRoleUpdateService(RoleUpdateService roleUpdateService) {
+    	this.roleUpdateService = roleUpdateService;
+    }
+
+	public SimpleDocumentActionsWebService getSimpleDocService() {
+		return simpleDocService;
+	}
+
+	public void setSimpleDocService(SimpleDocumentActionsWebService simpleDocService) {
+		this.simpleDocService = simpleDocService;
+	}
+
+	public WorkflowUtility getWorkflowUtilityService() {
+		return workflowUtilityService;
+	}
+
+	public void setWorkflowUtilityService(WorkflowUtility workflowUtilityService) {
+		this.workflowUtilityService = workflowUtilityService;
+	}
+
+	public PermissionService getPermissionService() {
+		return permissionService;
+	}
+
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 }

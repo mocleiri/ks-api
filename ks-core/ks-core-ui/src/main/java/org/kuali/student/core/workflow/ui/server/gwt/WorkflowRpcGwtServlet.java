@@ -1,4 +1,4 @@
-package org.kuali.student.common.ui.server.gwt;
+package org.kuali.student.core.workflow.ui.server.gwt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +20,11 @@ import org.kuali.rice.kim.bo.impl.KimAttributes;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityService;
 import org.kuali.rice.kim.service.PermissionService;
-import org.kuali.student.common.ui.client.service.WorkflowRpcService;
 import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
 import org.kuali.student.common.util.security.SecurityUtils;
 import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

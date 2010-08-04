@@ -290,7 +290,7 @@
     </bean>
 
     <bean id="WorkflowToolRpcGwtServlet"
-          class="org.kuali.student.lum.lu.ui.course.server.gwt.old.WorkflowToolRpcGwtServlet">
+          class="org.kuali.student.core.workflow.ui.server.gwt.WorkflowToolRpcGwtServlet">
         <property name="metadataService" ref="metadataServiceImpl"/>
         <property name="simpleDocService" ref="simpleDocActionsClient"/>
         <property name="permissionService" ref="permissionServiceClient"/>
@@ -300,7 +300,7 @@
     </bean>
 
     <bean id="WorkflowRpcGwtServlet"
-          class="org.kuali.student.common.ui.server.gwt.WorkflowRpcGwtServlet">
+          class="org.kuali.student.core.workflow.ui.server.gwt.WorkflowRpcGwtServlet">
         <property name="simpleDocService" ref="simpleDocActionsClient"/>
         <property name="permissionService" ref="permissionServiceClient"/>
         <property name="identityService" ref="identityServiceClient"/>

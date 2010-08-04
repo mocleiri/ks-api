@@ -45,8 +45,6 @@ import org.kuali.student.common.ui.client.event.SubmitProposalEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
-import org.kuali.student.common.ui.client.service.WorkflowRpcService;
-import org.kuali.student.common.ui.client.service.WorkflowRpcServiceAsync;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.StylishDropDown;
@@ -59,6 +57,8 @@ import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.core.assembly.data.Data.DataValue;
 import org.kuali.student.core.assembly.data.Data.Value;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcService;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

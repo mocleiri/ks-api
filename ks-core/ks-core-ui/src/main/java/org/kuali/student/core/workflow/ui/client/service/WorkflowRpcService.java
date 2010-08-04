@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.service;
+package org.kuali.student.core.workflow.ui.client.service;
 
 import java.util.List;
 

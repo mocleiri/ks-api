@@ -13,11 +13,11 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.service;
+package org.kuali.student.core.workflow.ui.client.service;
 
 import java.util.List;
 
-import org.kuali.student.common.ui.client.service.WorkflowRpcService.RequestType;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcService.RequestType;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

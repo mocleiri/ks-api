@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.dto.workflow;
+package org.kuali.student.core.workflow.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

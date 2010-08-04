@@ -13,19 +13,19 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.ui.course.client.service;
+package org.kuali.student.core.workflow.ui.client.service;
 
 import java.util.List;
 
-import org.kuali.student.common.ui.client.service.BaseDataOrchestrationRpcService;
 import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
 import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.lum.lu.dto.workflow.WorkflowPersonInfo;
+import org.kuali.student.core.workflow.dto.WorkflowPersonInfo;
 
+import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("rpcservices/WorkflowToolRpcService")
-public interface WorkflowToolRpcService extends BaseDataOrchestrationRpcService{
+public interface WorkflowToolRpcService extends RemoteService{
 	
 	public enum ActionRequestType {
 		COMPLETE("C", "Complete"), 

@@ -26,12 +26,15 @@ import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBi
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
-import org.kuali.student.common.ui.client.service.WorkflowRpcService;
-import org.kuali.student.common.ui.client.service.WorkflowRpcServiceAsync;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.assembly.data.MetadataInterrogator;
 import org.kuali.student.core.assembly.data.QueryPath;
+import org.kuali.student.core.workflow.dto.WorkflowPersonInfo;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcService;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcServiceAsync;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowToolRpcService;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowToolRpcServiceAsync;
 import org.kuali.student.core.workflow.ui.client.widgets.WorkflowUtilities;
 import org.kuali.student.lum.lu.assembly.data.client.LuData;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.base.AcademicSubjectOrgInfoConstants;
@@ -53,10 +56,7 @@ import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.FeeInfoCons
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.LearningObjectiveConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.SingleUseLoChildSingleUseLosConstants;
 import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.SingleUseLoConstants;
-import org.kuali.student.lum.lu.dto.workflow.WorkflowPersonInfo;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseConfigurer.CourseSections;
-import org.kuali.student.lum.lu.ui.course.client.service.WorkflowToolRpcService;
-import org.kuali.student.lum.lu.ui.course.client.service.WorkflowToolRpcServiceAsync;
 import org.kuali.student.lum.ui.requirements.client.model.RuleInfo;
 import org.kuali.student.lum.ui.requirements.client.view.RuleConstants;
 
