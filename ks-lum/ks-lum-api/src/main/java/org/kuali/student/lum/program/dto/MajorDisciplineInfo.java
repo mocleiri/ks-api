@@ -55,9 +55,6 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
     private static final long serialVersionUID = 1L;
 
     @XmlElement
-    private String programLevel;
-
-    @XmlElement
     private String intensity;
 
     @XmlElement
@@ -76,7 +73,10 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
     private String code;
 
     @XmlElement
-    private String cipCode;
+    private String cip2000Code;
+
+    @XmlElement
+    private String cip2010Code;
 
     @XmlElement
     private String hegisCode;
@@ -127,16 +127,19 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
     private RichTextInfo catalogDescr;
 
     @XmlElement
+    private List<String> catalogPublicationTargets;
+    
+    @XmlElement
     private List<LoDisplayInfo> learningObjectives;
 
     @XmlElement
     private List<String> campusLocations;
 
     @XmlElement
-    private List<String> programRequirements;
+    private CoreProgramInfo orgCoreProgram;
 
     @XmlElement
-    private AdminOrgInfo institution;
+    private List<String> programRequirements;
 
     @XmlElement
     private List<AccreditationInfo> accreditingAgencies;    
@@ -186,17 +189,6 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
 
     @XmlAttribute
     private String id;
-
-    /**
-     * A code that indicates whether this is Graduate, Undergraduage etc level major
-     */
-    public String getProgramLevel() {
-        return programLevel;
-    }
-
-    public void setProgramLevel(String programLevel) {
-        this.programLevel = programLevel;
-    }
 
     /**
      * Indicates if the program is full time, part time, both etc
@@ -271,14 +263,25 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
     }
 
     /**
-     * CIP Code for the Program
+     * CIP 2000 Code for the Program
      */
-    public String getCipCode() {
-        return cipCode;
+    public String getCip2000Code() {
+        return cip2000Code;
     }
 
-    public void setCipCode(String cipCode) {
-        this.cipCode = cipCode;
+    public void setCip2000Code(String cip2000Code) {
+        this.cip2000Code = cip2000Code;
+    }
+
+    /**
+     * CIP 2010 Code for the Program
+     */
+    public String getCip2010Code() {
+        return cip2010Code;
+    }
+
+    public void setCip2010Code(String cip2010Code) {
+        this.cip2010Code = cip2010Code;
     }
 
     /**
@@ -419,6 +422,17 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
     }
 
     /**
+     * List of catalog targets where major information will be published.   
+     */
+    public List<String> getCatalogPublicationTargets() {
+        return catalogPublicationTargets;
+    }
+
+    public void setCatalogPublicationTargets(List<String> catalogPublicationTargets) {
+        this.catalogPublicationTargets = catalogPublicationTargets;
+    }
+
+    /**
      * Learning Objectives associated with this Major.
      */
     public List<LoDisplayInfo> getLearningObjectives() {
@@ -444,6 +458,14 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
 
     public void setCampusLocations(List<String> campusLocations) {
         this.campusLocations = campusLocations;
+    }
+
+    public CoreProgramInfo getOrgCoreProgram() {
+        return orgCoreProgram;
+    }
+
+    public void setOrgCoreProgram(CoreProgramInfo orgCoreProgram) {
+        this.orgCoreProgram = orgCoreProgram;
     }
 
     /**
@@ -478,14 +500,6 @@ public class MajorDisciplineInfo implements Serializable, Idable, HasTypeState, 
 
     public void setEndProgramEntryTerm(String endProgramEntryTerm) {
         this.endProgramEntryTerm = endProgramEntryTerm;
-    }
-
-    public AdminOrgInfo getInstitution() {
-        return institution;
-    }
-
-    public void setInstitution(AdminOrgInfo institution) {
-        this.institution = institution;
     }
 
     public List<AccreditationInfo> getAccreditingAgencies() {

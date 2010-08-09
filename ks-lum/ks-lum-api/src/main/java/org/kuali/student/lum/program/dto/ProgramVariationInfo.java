@@ -61,8 +61,11 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     private String code;
 
     @XmlElement
-    private String cipCode;
+    private String cip2000Code;
 
+    @XmlElement
+    private String cip2010Code;
+        
     @XmlElement
     private String hegisCode;
 
@@ -82,7 +85,7 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     private String endTerm;
 
     @XmlElement
-    private String lastAdmitTerm;
+    private String endProgramEntryTerm;
 
     @XmlElement
     private Date effectiveDate;
@@ -105,6 +108,9 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     @XmlElement
     private RichTextInfo catalogDescr;
 
+    @XmlElement
+    private List<String> catalogPublicationTargets;
+    
     @XmlElement
     private List<LoDisplayInfo> learningObjectives;
 
@@ -194,14 +200,25 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     }
 
     /**
-     * CIP Code for the Program
+     * CIP 2000 Code for the Program
      */
-    public String getCipCode() {
-        return cipCode;
+    public String getCip2000Code() {
+        return cip2000Code;
     }
 
-    public void setCipCode(String cipCode) {
-        this.cipCode = cipCode;
+    public void setCip2000Code(String cip2000Code) {
+        this.cip2000Code = cip2000Code;
+    }
+
+    /**
+     * CIP 2010 Code for the Program
+     */
+    public String getCip2010Code() {
+        return cip2010Code;
+    }
+
+    public void setCip2010Code(String cip2010Code) {
+        this.cip2010Code = cip2010Code;
     }
 
     /**
@@ -269,14 +286,14 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     }
 
     /**
-     * The last academic time period that this Variation would be available for enrollment. This may not reflect the last "real" academic time period for this Variation.
+     * The last academic time period that this Variation would be available for enrollment. This may not reflect the last "real" academic time period for this Variation.   
      */
-    public String getLastAdmitTerm() {
-        return lastAdmitTerm;
+    public String getEndProgramEntryTerm() {
+        return endProgramEntryTerm;
     }
 
-    public void setLastAdmitTerm(String lastAdmitTerm) {
-        this.lastAdmitTerm = lastAdmitTerm;
+    public void setEndProgramEntryTerm(String endProgramEntryTerm) {
+        this.endProgramEntryTerm = endProgramEntryTerm;
     }
 
     /**
@@ -355,7 +372,18 @@ public class ProgramVariationInfo implements Serializable, Idable, HasTypeState,
     public void setCatalogDescr(RichTextInfo catalogDescr) {
         this.catalogDescr = catalogDescr;
     }
+    
+    /**
+     * List of catalog targets where program variation information will be published.   
+     */
+    public List<String> getCatalogPublicationTargets() {
+        return catalogPublicationTargets;
+    }
 
+    public void setCatalogPublicationTargets(List<String> catalogPublicationTargets) {
+        this.catalogPublicationTargets = catalogPublicationTargets;
+    }
+    
     /**
      * Learning Objectives associated with this Variation.
      */

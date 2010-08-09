@@ -1,36 +1,26 @@
 package org.kuali.student.lum.program.client.configuration;
 
-import com.google.gwt.user.client.ui.HTML;
+import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.HorizontalSection;
+import org.kuali.student.common.ui.client.configurable.mvc.sections.TableSection;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.common.ui.client.mvc.View;
-import org.kuali.student.common.ui.client.widgets.KSLabel;
-import org.kuali.student.common.ui.client.widgets.field.layout.element.MessageKeyInfo;
 import org.kuali.student.lum.program.client.ProgramConfigurer;
 import org.kuali.student.lum.program.client.ProgramConstants;
 import org.kuali.student.lum.program.client.ProgramSections;
 import org.kuali.student.lum.program.client.configuration.base.AbstractConfiguration;
-import org.kuali.student.lum.program.client.configuration.base.EditableConfiguration;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 
 /**
  * @author Igor
  */
-public class ProgramInformationConfiguration extends AbstractConfiguration<ProgramConfigurer> implements EditableConfiguration<ProgramConfigurer> {
+public class ProgramInformationConfiguration extends AbstractConfiguration<ProgramConfigurer> {
 
     private VerticalSectionView showView;
 
     private VerticalSectionView editView;
 
     public ProgramInformationConfiguration() {
-    }
-
-    @Override
-    public View getEditView() {
-        if (editView == null) {
-            createEditView();
-        }
-        return editView;
     }
 
     @Override
@@ -42,7 +32,7 @@ public class ProgramInformationConfiguration extends AbstractConfiguration<Progr
     }
 
     private void createEditView() {
-        editView = new VerticalSectionView(ProgramSections.PROGRAM_DETAILS_EDIT, ProgramProperties.get().program_menu_sections_programDetails(), ProgramConstants.PROGRAM_MODEL_ID);
+        /*  editView = new VerticalSectionView(ProgramSections.PROGRAM_DETAILS_EDIT, ProgramProperties.get().program_menu_sections_programDetails(), ProgramConstants.PROGRAM_MODEL_ID);
         HorizontalSection section = new HorizontalSection();
         configurer.addField(section, ProgramConstants.CODE, new MessageKeyInfo(ProgramProperties.get().programInformation_programCode()));
         configurer.addField(section, ProgramConstants.SHORT_TITLE, new MessageKeyInfo(ProgramProperties.get().programInformation_shortTitle()));
@@ -63,13 +53,15 @@ public class ProgramInformationConfiguration extends AbstractConfiguration<Progr
         configurer.addField(section, ProgramConstants.INSTITUTION, new MessageKeyInfo(ProgramProperties.get().programInformation_institution()));
         configurer.addField(section, ProgramConstants.DESCRIPTION, new MessageKeyInfo(ProgramProperties.get().programInformation_programDescription()));
         configurer.addField(section, ProgramConstants.MORE_INFORMATION, new MessageKeyInfo(ProgramProperties.get().programInformation_moreInformation()));
-        editView.addSection(section);
+        editView.addSection(section);*/
     }
 
     private void createShowView() {
-        showView = new VerticalSectionView(ProgramSections.PROGRAM_DETAILS_VIEW, ProgramProperties.get().program_menu_sections_programDetails(), ProgramConstants.PROGRAM_MODEL_ID);
+        showView = new VerticalSectionView(ProgramSections.PROGRAM_DETAILS_VIEW, ProgramProperties.get().program_menu_sections_programInformation(), ProgramConstants.PROGRAM_MODEL_ID);
         HorizontalSection section = new HorizontalSection();
-        configurer.addField(section, ProgramConstants.CODE, new MessageKeyInfo(ProgramProperties.get().programInformation_programCode()), new KSLabel());
+        TableSection leftSection = new TableSection(SectionTitle.generateH4Title(ProgramProperties.get().programInformation_identifyingDetails()));
+        TableSection rightSection = new TableSection(SectionTitle.generateH4Title(ProgramProperties.get().programInformation_programTitle()));
+       /* configurer.addField(section, ProgramConstants.CODE, new MessageKeyInfo(ProgramProperties.get().programInformation_programCode()), new KSLabel());
         configurer.addField(section, ProgramConstants.SHORT_TITLE, new MessageKeyInfo(ProgramProperties.get().programInformation_shortTitle()), new KSLabel());
         configurer.addField(section, ProgramConstants.LONG_TITLE, new MessageKeyInfo(ProgramProperties.get().programInformation_longTitle()), new KSLabel());
         configurer.addField(section, ProgramConstants.PROGRAM_LEVEL, new MessageKeyInfo(ProgramProperties.get().programInformation_programLevel()), new KSLabel());
@@ -87,7 +79,9 @@ public class ProgramInformationConfiguration extends AbstractConfiguration<Progr
         configurer.addField(section, ProgramConstants.ACCREDITING_AGENCY, new MessageKeyInfo(ProgramProperties.get().programInformation_accreditingAgency()), new KSLabel());
         configurer.addField(section, ProgramConstants.INSTITUTION, new MessageKeyInfo(ProgramProperties.get().programInformation_institution()), new KSLabel());
         configurer.addField(section, ProgramConstants.DESCRIPTION_FORMATTED, new MessageKeyInfo(ProgramProperties.get().programInformation_programDescription()), new HTML());
-        configurer.addField(section, ProgramConstants.MORE_INFORMATION, new MessageKeyInfo(ProgramProperties.get().programInformation_moreInformation()), new KSLabel());
+        configurer.addField(section, ProgramConstants.MORE_INFORMATION, new MessageKeyInfo(ProgramProperties.get().programInformation_moreInformation()), new KSLabel());*/
+        section.addSection(leftSection);
+        section.addSection(rightSection);
         showView.addSection(section);
     }
 }

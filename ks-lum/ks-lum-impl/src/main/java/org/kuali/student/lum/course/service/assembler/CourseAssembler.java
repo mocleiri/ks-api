@@ -35,8 +35,11 @@ import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.lum.course.dto.CourseCrossListingInfo;
+import org.kuali.student.lum.course.dto.CourseExpenditureInfo;
+import org.kuali.student.lum.course.dto.CourseFeeInfo;
 import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.course.dto.CourseJointInfo;
+import org.kuali.student.lum.course.dto.CourseRevenueInfo;
 import org.kuali.student.lum.course.dto.CourseVariationInfo;
 import org.kuali.student.lum.course.dto.FormatInfo;
 import org.kuali.student.lum.course.dto.LoDisplayInfo;
@@ -44,7 +47,10 @@ import org.kuali.student.lum.lo.dto.LoInfo;
 import org.kuali.student.lum.lo.service.LearningObjectiveService;
 import org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
+import org.kuali.student.lum.lu.dto.CluAccountingInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
+import org.kuali.student.lum.lu.dto.CluFeeInfo;
+import org.kuali.student.lum.lu.dto.CluFeeRecordInfo;
 import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.dto.CluLoRelationInfo;
@@ -52,6 +58,7 @@ import org.kuali.student.lum.lu.dto.CluResultInfo;
 import org.kuali.student.lum.lu.dto.LuCodeInfo;
 import org.kuali.student.lum.lu.dto.ResultOptionInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.service.assembler.CluAssemblerUtils;
 /**
  * Assembler for CourseInfo. Provides assemble and disassemble operation on
  * CourseInfo from/to CluInfo and other base DTOs
@@ -62,12 +69,12 @@ import org.kuali.student.lum.lu.service.LuService;
 public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
     final static Logger LOG = Logger.getLogger(CourseAssembler.class);
-    
 	private LuService luService;
 	private FormatAssembler formatAssembler;
 	private CourseJointAssembler courseJointAssembler;
 	private LoAssembler loAssembler;
 	private LearningObjectiveService loService;
+    private CluAssemblerUtils cluAssemblerUtils;
 	
 	@Override
 	public CourseInfo assemble(CluInfo clu, CourseInfo courseInfo,
@@ -78,12 +85,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
 		// Copy all the data from the clu to the course
 		
-		List<String> academicSubjectOrgs = new ArrayList<String>();
-		for(AcademicSubjectOrgInfo orgInfo:clu.getAcademicSubjectOrgs()){
-			academicSubjectOrgs.add(orgInfo.getOrgId());
-		}
-		course.setAcademicSubjectOrgs(academicSubjectOrgs);
-		
+
 		course.setAttributes(clu.getAttributes());
 		course.setCampusLocations(clu.getCampusLocations());
 		course.setCode(clu.getOfficialIdentifier().getCode());
@@ -93,26 +95,73 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		course.setInstructors(clu.getInstructors());
 		course.setStartTerm(clu.getExpectedFirstAtp());
 		course.setEndTerm(clu.getLastAtp());
-		
-		// TODO: LO
-		// course.setCourseSpecificLOs();
-
 		course.setCourseTitle(clu.getOfficialIdentifier().getLongName());
 
 		// CrossListings
-		// course.setCrossListings();
 		List<CourseCrossListingInfo> crossListings = assembleCrossListings(clu.getAlternateIdentifiers()); 
 		course.setCrossListings(crossListings);
 
-		course.setDepartment(clu.getPrimaryAdminOrg().getOrgId());
+//		course.setDepartment(clu.getPrimaryAdminOrg().getOrgId());
+		if(course.getAdministeringOrgs()==null){
+			course.setAdministeringOrgs(new ArrayList<String>());
+		}
+		if(course.getCurriculumOversightOrgs()==null){
+			course.setCurriculumOversightOrgs(new ArrayList<String>());
+		}
+		List<String> courseAdminOrgs = new ArrayList<String>();
+		List<String> courseSubjectOrgs = new ArrayList<String>();
+		for(AdminOrgInfo adminOrg: clu.getAdminOrgs()){
+			if(adminOrg.getType().equals(CourseAssemblerConstants.ADMIN_ORG)){
+				courseAdminOrgs.add(adminOrg.getOrgId());
+			}
+			if(adminOrg.getType().equals(CourseAssemblerConstants.SUBJECT_ORG)){
+				courseSubjectOrgs.add(adminOrg.getOrgId());
+			}
+		}
+		course.setAdministeringOrgs(courseAdminOrgs);
+		course.setCurriculumOversightOrgs(courseSubjectOrgs);
 		course.setDescr(clu.getDescr());
 		course.setDuration(clu.getStdDuration());
 		course.setEffectiveDate(clu.getEffectiveDate());
 		course.setExpirationDate(clu.getExpirationDate());
 
-		// TODO: Fee
-		// course.setFeeInfo(feeInfo)
+		//Fees
+		//Fee justification
+		if(clu.getFeeInfo() != null){
+			course.setFeeJustification(clu.getFeeInfo().getDescr());
 
+			//Fees and revenues come from the same place but revenues have a special feeType
+			for(CluFeeRecordInfo cluFeeRecord: clu.getFeeInfo().getCluFeeRecords()){
+				String feeType = cluFeeRecord.getFeeType();
+				if(CourseAssemblerConstants.COURSE_FINANCIALS_REVENUE_TYPE.equals(feeType)){
+					CourseRevenueInfo courseRevenue = new CourseRevenueInfo();
+					courseRevenue.setFeeType(feeType);
+					courseRevenue.setAffiliatedOrgs(cluFeeRecord.getAffiliatedOrgs());
+					courseRevenue.setAttributes(cluFeeRecord.getAttributes());
+					courseRevenue.setId(cluFeeRecord.getId());
+					courseRevenue.setMetaInfo(cluFeeRecord.getMetaInfo());
+					course.getRevenues().add(courseRevenue);
+				}else{
+					CourseFeeInfo courseFee = new CourseFeeInfo();
+					courseFee.setFeeType(feeType);
+					courseFee.setRateType(cluFeeRecord.getRateType());
+					courseFee.setDescr(cluFeeRecord.getDescr());
+					courseFee.setMetaInfo(cluFeeRecord.getMetaInfo());
+					courseFee.setId(cluFeeRecord.getId());
+					courseFee.setFeeAmounts(cluFeeRecord.getFeeAmounts());
+					courseFee.setAttributes(cluFeeRecord.getAttributes());
+					course.getFees().add(courseFee);
+				}
+			}
+		}
+		//Expenditures are mapped from accounting info
+		if(course.getExpenditure() == null || clu.getAccountingInfo() == null){
+			course.setExpenditure(new CourseExpenditureInfo());
+		}
+		if(clu.getAccountingInfo() != null){
+			course.getExpenditure().setAffiliatedOrgs(clu.getAccountingInfo().getAffiliatedOrgs());
+		}
+		
 		course.setId(clu.getId());
 		course.setType(clu.getType());
 		course.setTermsOffered(clu.getOfferedAtpTypes());
@@ -123,6 +172,24 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		course.setTranscriptTitle(clu.getOfficialIdentifier().getShortName());
 		course.setMetaInfo(clu.getMetaInfo());
 
+		
+		//Special topics code
+		course.setSpecialTopicsCourse(false);
+		for(LuCodeInfo luCode : clu.getLuCodes()){
+			if(CourseAssemblerConstants.COURSE_CODE_SPECIAL_TOPICS.equals(luCode.getValue())){
+				course.setSpecialTopicsCourse(true);
+				break;
+			}
+		}
+		//Pilot Course code
+		course.setPilotCourse(false);
+		for(LuCodeInfo luCode : clu.getLuCodes()){
+			if(CourseAssemblerConstants.COURSE_CODE_PILOT_COURSE.equals(luCode.getValue())){
+				course.setPilotCourse(true);
+				break;
+			}
+		}
+		
 		// Don't make any changes to nested datastructures if this is
 		if (!shallowBuild) {
 			try {
@@ -170,49 +237,25 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 				course.setCreditOptions(creditOptions);
 				
 				List<String> gradingOptions = assembleCluResults(CourseAssemblerConstants.COURSE_RESULT_TYPE_GRADE, cluResults);
+				
+				//Remove special case for grading options
+				gradingOptions.remove("kuali.resultComponent.grade.passFail");
+				gradingOptions.remove("kuali.resultComponent.grade.audit");
+				
 				course.setGradingOptions(gradingOptions);
 			} catch (DoesNotExistException e){
 			} catch (Exception e) {
 				throw new AssemblyException("Error getting course results", e);
 			}
+			
+			//Learning Objectives
+            course.getCourseSpecificLOs().addAll(cluAssemblerUtils.assembleLearningObjectives(course.getId(), shallowBuild));
+			
+			//Variation
+			List<CourseVariationInfo> variations = assembleVariations(clu.getAlternateIdentifiers()); 
+			course.setVariations(variations);
 		}
 
-		//Special topics code
-		course.setSpecialTopicsCourse(false);
-		for(LuCodeInfo luCode : clu.getLuCodes()){
-			if(CourseAssemblerConstants.COURSE_CODE_SPECIAL_TOPICS.equals(luCode.getValue())){
-				course.setSpecialTopicsCourse(true);
-				break;
-			}
-		}
-		//Pilot Course code
-		course.setPilotCourse(false);
-		for(LuCodeInfo luCode : clu.getLuCodes()){
-			if(CourseAssemblerConstants.COURSE_CODE_PILOT_COURSE.equals(luCode.getValue())){
-				course.setPilotCourse(true);
-				break;
-			}
-		}
-		
-		//Variation
-		List<CourseVariationInfo> variations = assembleVariations(clu.getAlternateIdentifiers()); 
-		course.setVariations(variations);
-
-		//Learning Objectives
-		try {
-			List<CluLoRelationInfo> cluLoRelations = luService.getCluLoRelationsByClu(clu.getId());
-			for(CluLoRelationInfo cluLoRelation:cluLoRelations){
-				String loId = cluLoRelation.getLoId();
-				LoInfo lo = loService.getLo(loId);
-				LoDisplayInfo loDisplay = loAssembler.assemble(lo, null, shallowBuild);
-				course.getCourseSpecificLOs().add(loDisplay);
-			}
-		} catch (DoesNotExistException e) {
-		} catch (Exception e) {
-			throw new AssemblyException("Error getting learning objectives", e);
-		}
-		
-		
 		return course;
 	}
 
@@ -258,6 +301,9 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		identifier.setShortName(course.getTranscriptTitle());
 		clu.setOfficialIdentifier(identifier);
 
+
+		clu.setAdminOrgs(new ArrayList<AdminOrgInfo>());
+
 		// Use the Course Variation assembler to disassemble the variations
 		List<BaseDTOAssemblyNode<?, ?>> variationResults;
         try {
@@ -282,17 +328,32 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
             throw new AssemblyException("Error while disassembling CrossListings", e);
         }
 		
-		AdminOrgInfo orgInfo = (null != clu.getPrimaryAdminOrg()) ? clu.getPrimaryAdminOrg() : new AdminOrgInfo();
-		orgInfo.setOrgId(course.getDepartment());
-		clu.setPrimaryAdminOrg(orgInfo);
 
-		List<AcademicSubjectOrgInfo> subjectOrgs = new ArrayList<AcademicSubjectOrgInfo>();
-		for (String orgId : course.getAcademicSubjectOrgs()) {
-			AcademicSubjectOrgInfo info = new AcademicSubjectOrgInfo();
-			info.setOrgId(orgId);
-			subjectOrgs.add(info);
+
+		List<AdminOrgInfo> adminOrgInfos = new ArrayList<AdminOrgInfo>();
+		for(String org:course.getAdministeringOrgs()){
+//			if(org.getType().equals(CourseAssemblerConstants.ADMIN_ORG)){
+//				adminOrgInfos.add(org);
+//			}
+			//This is a temporary fix because list type in CourseInfo is changed from AdminOrgInfo to String
+			AdminOrgInfo adminOrg = new AdminOrgInfo();
+			adminOrg.setType(CourseAssemblerConstants.ADMIN_ORG);
+			adminOrg.setOrgId(org);
+			adminOrgInfos.add(adminOrg);
 		}
-		clu.setAcademicSubjectOrgs(subjectOrgs);
+		clu.getAdminOrgs().addAll(adminOrgInfos);
+		
+		List<AdminOrgInfo> subjectOrgs = new ArrayList<AdminOrgInfo>();
+		for (String subOrg : course.getCurriculumOversightOrgs()) {
+//			if(subOrg.getType().equals(CourseAssemblerConstants.SUBJECT_ORG)){
+//				subjectOrgs.add(subOrg);
+//			}
+			AdminOrgInfo subjectOrg = new AdminOrgInfo();
+			subjectOrg.setType(CourseAssemblerConstants.SUBJECT_ORG);
+			subjectOrg.setOrgId(subOrg);
+			subjectOrgs.add(subjectOrg);
+		}
+		clu.getAdminOrgs().addAll(subjectOrgs);
 
 		
 		clu.setAttributes(course.getAttributes());
@@ -337,6 +398,18 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		result.getChildNodes().addAll(courseJointResults);
 
 		//Disassemble the CluResults (grading and credit options)
+		//Special code to take audit/passfail from attributes and put into options
+		if(course.getAttributes().containsKey("passFail")&&"true".equals(course.getAttributes().get("passFail"))){
+			if(!course.getGradingOptions().contains("kuali.resultComponent.grade.passFail")){
+				course.getGradingOptions().add("kuali.resultComponent.grade.passFail");
+			}
+		}
+		if(course.getAttributes().containsKey("audit")&&"true".equals(course.getAttributes().get("audit"))){
+			if(!course.getGradingOptions().contains("kuali.resultComponent.grade.audit")){
+				course.getGradingOptions().add("kuali.resultComponent.grade.audit");
+			}
+		}
+		
 		BaseDTOAssemblyNode<?, ?> creditOptions = disassembleCluResults(
 				clu.getId(), course.getState(), course.getCreditOptions(), operation, CourseAssemblerConstants.COURSE_RESULT_TYPE_CREDITS, "Credit outcome options", "Credit outcome option");
 		result.getChildNodes().add(creditOptions);
@@ -389,6 +462,40 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 			LuCodeInfo luCode = new LuCodeInfo();
 			luCode.setValue(CourseAssemblerConstants.COURSE_CODE_PILOT_COURSE);
 			clu.getLuCodes().add(luCode);
+		}
+		
+		//FEES
+		if(clu.getFeeInfo() == null){
+			clu.setFeeInfo(new CluFeeInfo());
+		}
+		clu.getFeeInfo().setDescr(course.getFeeJustification());
+		clu.getFeeInfo().getCluFeeRecords().clear();
+		for(CourseRevenueInfo courseRevenue:course.getRevenues()){
+			CluFeeRecordInfo cluFeeRecord  = new CluFeeRecordInfo();
+			cluFeeRecord.setFeeType(CourseAssemblerConstants.COURSE_FINANCIALS_REVENUE_TYPE);
+			cluFeeRecord.setAttributes(courseRevenue.getAttributes());
+			cluFeeRecord.setAffiliatedOrgs(courseRevenue.getAffiliatedOrgs());
+			cluFeeRecord.setId(courseRevenue.getId());
+			cluFeeRecord.setMetaInfo(courseRevenue.getMetaInfo());
+			clu.getFeeInfo().getCluFeeRecords().add(cluFeeRecord);
+		}
+		for(CourseFeeInfo courseFee : course.getFees()){
+			CluFeeRecordInfo cluFeeRecord  = new CluFeeRecordInfo();
+			cluFeeRecord.setFeeType(courseFee.getFeeType());
+			cluFeeRecord.setRateType(courseFee.getRateType());
+			cluFeeRecord.setDescr(courseFee.getDescr());
+			cluFeeRecord.setMetaInfo(courseFee.getMetaInfo());
+			cluFeeRecord.setId(courseFee.getId());
+			cluFeeRecord.setFeeAmounts(courseFee.getFeeAmounts());
+			cluFeeRecord.setAttributes(courseFee.getAttributes());
+			clu.getFeeInfo().getCluFeeRecords().add(cluFeeRecord);
+		}
+		if(clu.getAccountingInfo() == null || course.getExpenditure()== null){
+			clu.setAccountingInfo( new CluAccountingInfo());
+		}
+		if(course.getExpenditure() != null){
+			clu.getAccountingInfo().setAffiliatedOrgs(course.getExpenditure().getAffiliatedOrgs());
+			clu.getAccountingInfo().setAttributes(course.getExpenditure().getAttributes());
 		}
 		
 		return result;
@@ -995,4 +1102,8 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 	public void setLoService(LearningObjectiveService loService) {
 		this.loService = loService;
 	}
+
+    public void setCluAssemblerUtils(CluAssemblerUtils cluAssemblerUtils) {
+        this.cluAssemblerUtils = cluAssemblerUtils;
+    }
 }
