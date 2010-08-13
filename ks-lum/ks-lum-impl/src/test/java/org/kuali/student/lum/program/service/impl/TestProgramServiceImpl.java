@@ -94,7 +94,7 @@ public class TestProgramServiceImpl {
 	@Test
 	@Ignore
 	public void testGetProgramRequirement() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-		ProgramRequirementInfo progReqInfo = programService.getProgramRequirement("CLU-2");
+		ProgramRequirementInfo progReqInfo = programService.getProgramRequirement("PROGREQ-1");
 		assertNotNull(progReqInfo);
 	}
 
@@ -344,7 +344,7 @@ public class TestProgramServiceImpl {
     @Test
     public void testGetVariationsByMajorDisciplineId(){
     	MajorDisciplineInfo majorDisciplineInfo = null;
-    	
+
         try {
 			majorDisciplineInfo = programService.getMajorDiscipline("D4EA77DD-B492-4554-B104-863E42C5F8B7");
 			assertNotNull(majorDisciplineInfo);
@@ -352,7 +352,7 @@ public class TestProgramServiceImpl {
 			List<ProgramVariationInfo> pvInfos = programService.getVariationsByMajorDisciplineId("D4EA77DD-B492-4554-B104-863E42C5F8B7");
 			assertNotNull(pvInfos);
 			assertEquals(pvInfos.size(), majorDisciplineInfo.getVariations().size());
-						
+
         } catch (Exception e) {
         	e.printStackTrace();
             fail(e.getMessage());
@@ -440,7 +440,7 @@ public class TestProgramServiceImpl {
 
         assertEquals("longTitle-toolong", updatedMD.getLongTitle());
     }
-    
+
     @Test
     @Ignore
     public void testCreateBaccCredentialProgram() {
@@ -456,7 +456,7 @@ public class TestProgramServiceImpl {
             fail(e.getMessage());
         }
 	}
-    
+
     @Test
     public void testGetBaccCredentialProgram(){
     	String credentialProgramId = "D02DBBD3-20E2-410D-AB52-1BD6D362748B";
@@ -478,7 +478,7 @@ public class TestProgramServiceImpl {
 	        fail(e.getMessage());
 	    }
     }
-    
+
     @Test
     @Ignore public void testDeleteBaccCredentialProgram() {
         try {
@@ -502,7 +502,7 @@ public class TestProgramServiceImpl {
             fail(e.getMessage());
         }
     }
-    
+
     @Test
     @Ignore public void testUpdateBaccCredentialProgram() {
         try {
@@ -543,7 +543,7 @@ public class TestProgramServiceImpl {
             fail(e.getMessage());
         }
     }
-    
+
     private void verifyUpdate(CredentialProgramInfo updatedCP) {
     	assertNotNull(updatedCP);
 
@@ -555,7 +555,7 @@ public class TestProgramServiceImpl {
 
         assertEquals("longTitle-toolong", updatedCP.getLongTitle());
     }
-    
+
     @Test
     @Ignore
     public void testCreateCoreProgram() {
