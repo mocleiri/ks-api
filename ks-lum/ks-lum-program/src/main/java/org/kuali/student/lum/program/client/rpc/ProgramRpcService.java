@@ -8,4 +8,5 @@ import org.kuali.student.common.ui.client.service.BaseDataOrchestrationRpcServic
  */
 @RemoteServiceRelativePath("rpcservices/programRpcService")
 public interface ProgramRpcService extends BaseDataOrchestrationRpcService {
+ //  public ProgramRequirementInfo getProgramRequirement(String programRequirementId);
 }

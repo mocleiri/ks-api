@@ -131,6 +131,9 @@ public interface KSClientBundle extends ClientBundleWithLookup{
 	@Source("org/kuali/student/common/ui/theme/standard/public/css/MenuLayout.css")
 	@CssResource.NotStrict
 	public CssResource menuLayoutCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RuleTable.css")
+    @CssResource.NotStrict
+    public CssResource ruleTableCss();
 
 	//Reset Css
 	@Source("org/kuali/student/common/ui/theme/standard/public/css/Reset.css")
