@@ -118,7 +118,8 @@ public class RequirementsViewController extends BasicLayout {
         //no name for the view so that breadcrumbs do not extra link
         ProgramRequirementsSummaryView view = new ProgramRequirementsSummaryView(this, ProgramRequirementsViews.VIEW, "", PROGRAM_RULES_MODEL_ID, stmtTreeInfo);              
         super.addView(view);
-        ProgramRequirementsManageView viewRequirementsManage = new ProgramRequirementsManageView(this, ProgramRequirementsViews.MANAGE, "Add and Combine Rules", PROGRAM_RULES_MODEL_ID, stmtTreeInfo);
+        ProgramRequirementsManageView viewRequirementsManage = new ProgramRequirementsManageView(this, ProgramRequirementsViews.MANAGE,
+                                                                    "", PROGRAM_RULES_MODEL_ID, stmtTreeInfo, "Fundamental Studies"); //breadcrumb: "Add and Combine Rules"
         super.addView(viewRequirementsManage);
              
     }

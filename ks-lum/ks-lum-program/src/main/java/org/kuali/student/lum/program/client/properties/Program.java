@@ -527,4 +527,40 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Title Transcript")
   @Key("programInformation.titleTranscript")
   String programInformation_titleTranscript();
+
+  /**
+   * Translated "Add a <*> Rule".
+   *
+   * @return translated "Add a <*> Rule"
+   */
+  @DefaultMessage("Add a <*> Rule")
+  @Key("programRequirements.manageViewPageTitle")  
+  String programRequirements_manageViewPageTitle();
+
+  /**
+   * Translated "Step 1: Build and Add Rules".
+   *
+   * @return translated "Step 1: Build and Add Rules"
+   */
+  @DefaultMessage("Step 1: Build and Add Rules")
+  @Key("programRequirements.manageViewPageStep1Title")
+  String programRequirements_manageViewPageStep1Title();
+
+  /**
+   * Translated "Step 2: Combine Rules with Logic".
+   *
+   * @return translated "Step 2: Combine Rules with Logic"
+   */
+  @DefaultMessage("Step 2: Combine Rules with Logic")
+  @Key("programRequirements.manageViewPageStep2Title")
+  String programRequirements_manageViewPageStep2Title();
+
+  /**
+   * Translated "Add a <*> Rule".
+   *
+   * @return translated "Add a <*> Rule"
+   */
+  @DefaultMessage("Program Requirements")
+  @Key("programRequirements.summaryViewPageTitle")
+  String programRequirements_summaryViewPageTitle();
 }

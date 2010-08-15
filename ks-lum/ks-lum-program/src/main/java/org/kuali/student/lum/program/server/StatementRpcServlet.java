@@ -15,26 +15,20 @@
 
 package org.kuali.student.lum.program.server;
 
-import org.apache.log4j.Logger;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
-import org.kuali.student.core.exceptions.*;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
-import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
+import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.core.statement.service.StatementService;
-import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.program.client.requirements.StatementVO;
 import org.kuali.student.lum.program.client.rpc.StatementRpcService;
-import org.kuali.student.lum.statement.typekey.ReqComponentFieldTypeKeys;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * @author Zdenek Zraly
@@ -48,23 +42,16 @@ public class StatementRpcServlet extends BaseRpcGwtServletAbstract<LuService> im
     private static final long serialVersionUID = 822326113643828855L;
 
     @Override
-    public String translateStatementTreeViewToNL(StatementTreeViewInfo statementTreeViewInfo, String nlUsageTypeKey, String language) throws Exception {
-        return statementService.translateStatementTreeViewToNL(statementTreeViewInfo, nlUsageTypeKey, language);
-    }    
-
-    @Override
-    public String translateReqComponentToNL(ReqComponentInfo reqComponentInfo, String nlUsageTypeKey, String language) throws Exception {
-        return statementService.translateReqComponentToNL(reqComponentInfo, nlUsageTypeKey, language);
+    public List<StatementTypeInfo> getStatementTypesForStatementType(String statementTypeKey) throws Exception {
+        List<String> statementTypeNames = statementService.getStatementTypesForStatementType(statementTypeKey);
+        List<StatementTypeInfo> statementTypes = new ArrayList<StatementTypeInfo>();
+        for (String statementTypeName : statementTypeNames) {
+            statementTypes.add(statementService.getStatementType(statementTypeName));
+        }
+        return statementTypes;
     }
 
-    public String getNaturalLanguageForReqComponentInfo(ReqComponentInfo compInfo, String nlUsageTypeKey, String language) throws Exception {
-        
-        String naturalLanguage = "";   
-        naturalLanguage = statementService.translateReqComponentToNL(compInfo, nlUsageTypeKey, language);
-
-        return naturalLanguage;
-    }   
-        
+    //TODO do we need this?
     public String getNaturalLanguageForStatementVO(String cluId, StatementVO statementVO, String nlUsageTypeKey, String language) throws Exception {
         StatementTreeViewInfo statementTreeViewInfo = new StatementTreeViewInfo();
         
@@ -91,7 +78,7 @@ public class StatementRpcServlet extends BaseRpcGwtServletAbstract<LuService> im
         return nlStatement;
     }
     
-    public List<ReqComponentTypeInfo> getReqComponentTypesForLuStatementType(String luStatementTypeKey) throws Exception {
+    public List<ReqComponentTypeInfo> getReqComponentTypesForStatementType(String luStatementTypeKey) throws Exception {
                 
         List<ReqComponentTypeInfo> reqComponentTypeInfoList = null;
         try { 
@@ -103,79 +90,16 @@ public class StatementRpcServlet extends BaseRpcGwtServletAbstract<LuService> im
         
         return reqComponentTypeInfoList;
     }
-    
-    /**
-     * @throws Exception 
-     */
-    public List<ReqCompFieldInfo> verifyFieldsAndSetIds(List<ReqCompFieldInfo> editedFields) throws Exception {
 
-    	//check each type of field values and find related ids
-    	for (ReqCompFieldInfo comp : editedFields) {
-    		
-    		//find clu ids based on clu code
-    		if (comp.getId().equals(ReqComponentFieldTypeKeys.CLU_KEY.getKey())) {
-    			String[] codes = comp.getValue().split(", ");
-    			StringBuffer ids = new StringBuffer();
-    			
-    	        try {
-    	        	for (String id : codes) {    
-    	        		id = id.trim();
-    	           		List<SearchParam> cluParam = new ArrayList<SearchParam>();
-    	           		SearchParam orgOptionalTypeParam = new SearchParam();
-    	        		orgOptionalTypeParam.setKey("lu.criteria.code");
-    	        		orgOptionalTypeParam.setValue(id);   
-    	        		cluParam.add(orgOptionalTypeParam);         		
-    	        		SearchRequest searchRequest = new SearchRequest();
-    	        		searchRequest.setSearchKey("lu.search.cluByCode");
-    	        		searchRequest.setParams(cluParam);
-    	        		SearchResult resultId = service.search(searchRequest);
-    	        		if ((resultId == null) || (resultId.getRows().size() < 1)) {
-    	        			throw new Exception("Invalid code: '" + id + "'");
-    	        		}
-    	        		List<SearchResultCell> cells = resultId.getRows().get(0).getCells();        		        		
-        				ids.append(ids.length() > 0 ? ", " : "");
-        				ids.append(cells.get(0).getValue());        				
-    	        	}
-    	        } catch (DoesNotExistException e) {
-    	        	LOG.error(e);
-    	        } catch (InvalidParameterException e) {
-    	        	LOG.error(e);
-    	        } catch (MissingParameterException e) {
-    	        	LOG.error(e);
-    	        } catch (OperationFailedException e) {
-    	        	LOG.error(e);
-    	        } catch (PermissionDeniedException e) {
-    				LOG.error(e);
-    			}    
-    	        
-    			comp.setValue(ids.toString());    	        
-			}  // if()
-    	}  // for()  
- 
-        return editedFields;
-    } 
-    
-    public String retrieveCluCode(String cluId) {
+    @Override
+    public String translateStatementTreeViewToNL(StatementTreeViewInfo statementTreeViewInfo, String nlUsageTypeKey, String language) throws Exception {
+        return statementService.translateStatementTreeViewToNL(statementTreeViewInfo, nlUsageTypeKey, language);
+    }
 
-        String cluCode = null;       
-        
-        try {   		        		
-    		CluInfo clu = service.getClu(cluId);
-    		if ((clu != null)) {
-    			return clu.getOfficialIdentifier().getCode();
-    		}                             
-        } catch (DoesNotExistException e) {
-        	LOG.error(e);
-        } catch (InvalidParameterException e) {
-        	LOG.error(e);
-        } catch (MissingParameterException e) {
-        	LOG.error(e);
-        } catch (OperationFailedException e) {
-        	LOG.error(e);
-        }
- 
-        return cluCode;
-    }     
+    @Override
+    public String translateReqComponentToNL(ReqComponentInfo reqComponentInfo, String nlUsageTypeKey, String language) throws Exception {
+        return statementService.translateReqComponentToNL(reqComponentInfo, nlUsageTypeKey, language);
+    }    
           
     public void setStatementService(StatementService statementService) {
         this.statementService = statementService;
