@@ -1,19 +1,27 @@
 package org.kuali.student.lum.course.service.impl;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.kuali.student.common.validator.DefaultValidatorImpl;
 import org.kuali.student.common.validator.SampCustomValidator;
 import org.kuali.student.common.validator.ServerDateParser;
 import org.kuali.student.common.validator.ValidatorFactory;
 import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
+import org.kuali.student.core.dto.RichTextInfo;
+import org.kuali.student.core.exceptions.OperationFailedException;
+import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 import org.kuali.student.lum.course.dto.CourseInfo;
+import org.kuali.student.lum.course.dto.LoDisplayInfo;
+import org.kuali.student.lum.lo.dto.LoCategoryInfo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import static org.junit.Assert.*;
 
 public class TestCourseInfoDictionary
 {
@@ -21,84 +29,39 @@ public class TestCourseInfoDictionary
  @Test
  public void testLoadCourseInfoDictionary ()
  {
-  ApplicationContext ac = new ClassPathXmlApplicationContext (
-    "classpath:ks-courseInfo-dictionary-context.xml");
-//  for (String beanName: ac.getBeanDefinitionNames ())
-//  {
-//   System.out.println ("beanName=" + beanName);
-//  }
-  List<String> discrepancies = new ArrayList ();
-  for (Class<?> clazz : getComplexStructures (CourseInfo.class))
-  {
-   discrepancies.addAll (compare (clazz, ac));
-  }
-  if (discrepancies.size () > 0)
-  {
-   System.out.println (formatAsString (discrepancies));
-//   fail (formatAsString (discrepancies));
-   return;
-  }
-
- }
-
- private Set<Class<?>> getComplexStructures (Class<?> clazz)
- {
-  return new ComplexSubstructuresHelper ().getComplexStructures (clazz);
- }
-
- private List<String> compare (Class<?> clazz, ApplicationContext ac)
- {
-  ObjectStructureDefinition os = (ObjectStructureDefinition) ac.getBean (
-    clazz.getName ());
-  os.getAttributes ();
-  System.out.println (new DictionaryFormatter (os, "|").format ());
-  return compare (clazz, os);
- }
-
- private List<String> compare (Class<?> clazz, ObjectStructureDefinition os)
- {
-  Dictionary2BeanComparer comparer = new Dictionary2BeanComparer (clazz, os);
-  List<String> discrepancies = comparer.compare ();
-  if (discrepancies.size () > 0)
-  {
-   discrepancies.add (0, discrepancies.size () + " discrepancies in "
-                         + clazz.getSimpleName ());
-  }
-  return discrepancies;
- }
-
- private String formatAsString (List<String> discrepancies)
- {
-  int i = 0;
-  StringBuilder builder = new StringBuilder ();
-  for (String discrep : discrepancies)
-  {
-   i ++;
-   builder.append (i + ". " + discrep + "\n");
-  }
-  return builder.toString ();
+  Set<Class<?>> startingClasses = new LinkedHashSet ();
+  startingClasses.add (CourseInfo.class);
+  startingClasses.add (StatementTreeViewInfo.class);
+  String contextFile = "ks-courseInfo-dictionary-context";
+  String outFile = "target/" + contextFile + ".txt";
+  DictionaryTesterHelper helper = new DictionaryTesterHelper (outFile,
+                                                              startingClasses,
+                                                              contextFile
+                                                              + ".xml",
+                                                              true);
+  helper.doTest ();
  }
 
  @Test
- public void testCourseInfoValidation ()
+ public void testCourseInfoValidation () throws OperationFailedException
  {
   ApplicationContext ac = new ClassPathXmlApplicationContext (
     "classpath:ks-courseInfo-dictionary-context.xml");
+  System.out.println ("h1. Test Validation");
   DefaultValidatorImpl val = new DefaultValidatorImpl ();
   val.setValidatorFactory (new ValidatorFactory (new SampCustomValidator ()));
   val.setDateParser (new ServerDateParser ());
+  val.setSearchDispatcher (new MockSearchDispatcher ());
   CourseInfo info = new CourseInfo ();
   ObjectStructureDefinition os = (ObjectStructureDefinition) ac.getBean (
     info.getClass ().getName ());
   List<ValidationResultInfo> validationResults = val.validateObject (info, os);
-  System.out.println ("validation results with just a blank Course");
+  System.out.println ("h3. With just a blank Course");
   for (ValidationResultInfo vr : validationResults)
   {
    System.out.println (vr.getElement () + " " + vr.getMessage ());
   }
-  //TODO: change this back to 4 once we fix make the effective date required again
   assertEquals (4, validationResults.size ());
-
 
   try
   {
@@ -110,11 +73,54 @@ public class TestCourseInfoDictionary
    throw new RuntimeException (ex);
   }
   validationResults = val.validateObject (info, os);
-  System.out.println ("validation results with generated data");
+  System.out.println ("h3. With generated data");
   for (ValidationResultInfo vr : validationResults)
   {
    System.out.println (vr.getElement () + " " + vr.getMessage ());
   }
   assertEquals (0, validationResults.size ());
+
+  System.out.println ("testCourseDescrRequiredBasedOnState");
+  info.setState ("DRAFT");
+  info.setDescr (null);
+  validationResults = val.validateObject (info, os);
+  assertEquals (0, validationResults.size ());
+
+  info.setState ("ACTIVE");
+  info.setDescr (null);
+  validationResults = val.validateObject (info, os);
+  for (ValidationResultInfo vr : validationResults)
+  {
+   System.out.println (vr.getElement () + " " + vr.getMessage ());
+  }
+  assertEquals (1, validationResults.size ());
+
+  System.out.println ("test validation on dynamic attributes");
+  info.getAttributes ().put ("finalExamStatus", "123");
+  validationResults = val.validateObject (info, os);
+  for (ValidationResultInfo vr : validationResults)
+  {
+   System.out.println (vr.getElement () + " " + vr.getMessage ());
+  }
+  assertEquals (2, validationResults.size ());
+
+  LoDisplayInfo loInfo = new LoDisplayInfo ();
+  LoCategoryInfo loCatInfo = new LoCategoryInfo ();
+  loInfo.setLoCategoryInfoList (Arrays.asList (loCatInfo));
+  RichTextInfo rtInfo = new RichTextInfo ();
+  rtInfo.setPlain (
+    "The ability to use sensory cues to guide motor activity.  This ranges from sensory stimulation, through cue selection, to translation.");
+  rtInfo.setFormatted (rtInfo.getPlain ());
+  loCatInfo.setDesc (rtInfo);
+  info.setCourseSpecificLOs (Arrays.asList (loInfo));
+  validationResults = val.validateObject (info, os);
+  for (ValidationResultInfo vr : validationResults)
+  {
+   System.out.println (vr.getElement () + " " + vr.getMessage ());
+  }
+  assertTrue (rtInfo.getPlain ().matches (
+    "[A-Za-z0-9.\\\\\\-;:&#34;,'&amp;%$#@!\t\n\r ]*"));
+  assertEquals (2, validationResults.size ());
+
  }
 }

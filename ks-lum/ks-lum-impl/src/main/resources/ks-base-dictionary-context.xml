@@ -3,14 +3,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
  <import resource="classpath:common-lookup-context.xml"/>
- <bean id="constraint.lookup.campusLocations"
-       class="org.kuali.student.core.dictionary.dto.LookupConstraint"
-       parent="kuali.common.lookup.campusLocations"/>
  <bean id="objectStructureDefinition"
        class="org.kuali.student.core.dictionary.dto.ObjectStructureDefinition"
-       abstract="true" />
- <bean id="FieldDefinition"
-       class="org.kuali.student.core.dictionary.dto.FieldDefinition"
        abstract="true" />
  <bean id="constraint" abstract="true"
        class="org.kuali.student.core.dictionary.dto.Constraint" />
@@ -18,6 +12,9 @@
        class="org.kuali.student.core.dictionary.dto.CaseConstraint" />
  <bean id="whenConstraint" abstract="true"
        class="org.kuali.student.core.dictionary.dto.WhenConstraint" />
+ <!--TODO: rename the java dto to be requiresConstraint-->
+ <bean id="requiresConstraint" abstract="true"
+       class="org.kuali.student.core.dictionary.dto.RequiredConstraint" />
 
 
  <bean id="ValidCharDefinition" abstract="true"
@@ -25,13 +22,16 @@
 
  <bean id="alphanumericHyphenPeriod" parent="ValidCharDefinition">
   <property name="value" value="regex:[A-Za-z0-9.\-]*" />
+  <property name="labelKey" value="validation.validChars.alphanumericHyphenPeriod"/>
  </bean>
  <bean id="digits" parent="ValidCharDefinition">
   <property name="value" value="regex:[0-9]*"/>
+  <property name="labelKey" value="validation.validChars.digits"/>
  </bean>
  <bean id="numeric" parent="ValidCharDefinition">
   <!--TODO: make this so it allows in only values that can be converted to a number-->
   <property name="value" value="regex:[0-9]*"/>
+  <property name="labelKey" value="validation.validChars.numeric"/>
  </bean>
  <bean id="alpha" parent="ValidCharDefinition">
   <property name="value" value="regex:[A-Za-z]*"/>
@@ -43,10 +43,10 @@
   <property name="value" value="regex:[A-Z]*"/>
  </bean>
  <bean id="lineText" parent="ValidCharDefinition">
-  <property name="value" value="regex:[A-Za-z0-9.\-;:&#34;'&amp;%$#@!\t ]*"/>
+  <property name="value" value="regex:[A-Za-z0-9.,&gt;&lt;/\-;:&#34;'&amp;%$#@!\t ]*"/>
  </bean>
  <bean id="multiLineText" parent="ValidCharDefinition">
-  <property name="value" value="regex:[A-Za-z0-9.\-;:&#34;'&amp;%$#@!\t\n\r ]*"/>
+  <property name="value" value="regex:[A-Za-z0-9.,&gt;&lt;/\-;:&#34;'&amp;%$#@!\t\n\r ]*"/>
  </bean>
 
  <bean id="customEditorConfigurer"
@@ -82,7 +82,6 @@
        class="org.kuali.student.core.dictionary.dto.FieldDefinition"
        abstract="true">
   <property name="minOccurs" value="1" />
-
  </bean>
 
  <bean id="baseIntegerRepeating" parent="baseFieldDefinitionRepeating"
@@ -177,11 +176,37 @@
  <bean id="baseKualiIdRequired" parent="baseKualiId" abstract="true">
   <property name="minOccurs" value="1" />
  </bean>
-
+ <bean id="baseKualiOrgId" parent="baseKualiId" abstract="true">
+  <!--TODO: Add a lookup to make sure the Org Id is a valid org -->
+ </bean>
+ <bean id="baseKualiCluId" parent="baseKualiId" abstract="true">
+  <!--TODO: Add a lookup to make sure the Org Id is a valid clu -->
+ </bean>
+ <bean id="baseKualiPersonId" parent="baseKualiId" abstract="true">
+  <!--TODO: Add a lookup to make sure the Org Id is a valid person -->
+ </bean>
+ <bean id="baseKualiOrgIdRequired" parent="baseKualiOrgId" abstract="true">
+  <property name="minOccurs" value="1" />
+ </bean>
+ <bean id="baseKualiCluIdRequired" parent="baseKualiCluId" abstract="true">
+  <property name="minOccurs" value="1" />
+ </bean>
+ <bean id="baseKualiPersonIdRequired" parent="baseKualiPersonId" abstract="true">
+  <property name="minOccurs" value="1" /> 
+ </bean>
+ <bean id="baseKualiOrgIdRepeating" parent="baseKualiOrgId" abstract="true">
+  <property name="maxOccurs" value="unbounded" /> 
+ </bean>
+ <bean id="baseKualiCluIdRepeating" parent="baseKualiCluId" abstract="true">
+  <property name="maxOccurs" value="unbounded" />
+ </bean>
+ <bean id="baseKualiPersonIdRepeating" parent="baseKualiPersonId" abstract="true">
+  <property name="maxOccurs" value="unbounded" /> 
+ </bean> 
  <bean id="baseDateRequired" parent="baseDate">
   <property name="minOccurs" value="1" />
  </bean>
- <bean id="baseKualiEffectiveDate" parent="baseDateRequired">
+ <bean id="baseKualiEffectiveDate" parent="baseDate">
  </bean>
  <!--Need to add	cross field field validation with effective date-->
  <bean id="baseKualiExpirationDate" parent="baseDate">
@@ -222,6 +247,9 @@
  </bean>
  <bean id="baseKualiTypeRequired" parent="baseKualiType" abstract="true">
   <property name="minOccurs" value="1" />
+ </bean>
+ <bean id="baseKualiTypeRepeating" parent="baseKualiType" abstract="true">
+  <property name="maxOccurs" value="unbounded" />
  </bean>
  <bean id="baseKualiType" parent="baseKualiCode" abstract="true">
  </bean>

@@ -18,7 +18,7 @@
   </parent>
   <groupId>org.kuali.student</groupId>
   <artifactId>student</artifactId>
-  <version>1.1.0-poc-M7-SNAPSHOT</version>
+  <version>1.1.0-M8-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Kuali Student</name>
   <organization>
@@ -56,9 +56,9 @@
     <module>ks-web</module>
   </modules>
   <scm>
-    <connection>scm:svn:https://test.kuali.org/svn/student/branches/ks-poc-1.1.x-br</connection>
-    <developerConnection>scm:svn:https://test.kuali.org/svn/student/branches/ks-poc-1.1.x-br</developerConnection>
-    <url>https://test.kuali.org/svn/student/branches/ks-poc-1.1.x-br</url>
+    <connection>scm:svn:https://test.kuali.org/svn/student/trunk</connection>
+    <developerConnection>scm:svn:https://test.kuali.org/svn/student/trunk</developerConnection>
+    <url>https://test.kuali.org/svn/student/trunk</url>
   </scm>
   <properties>
     <!-- Shared between compiler, pmd, and javadoc plugins -->
@@ -72,12 +72,12 @@
     <cxf.version>2.2</cxf.version>
     <derby.version>10.4.2.0</derby.version>
     <eclipselink.version>1.0</eclipselink.version>
-    <gwtVersion>2.0.3</gwtVersion>
+    <gwtVersion>2.0.4</gwtVersion>
     <jaxws-api.version>2.1</jaxws-api.version>
     <jaxws.version>2.1.5</jaxws.version>
     <jetty.version>6.1.6</jetty.version>
     <junit.version>4.4</junit.version>
-    <kuali.rice.version>1.0.2.1-SNAPSHOT</kuali.rice.version>
+    <kuali.rice.version>1.0.2.1</kuali.rice.version>
     <log4j.version>1.2.14</log4j.version>
     <log4j.javadoc.version>1.2</log4j.javadoc.version>
     <metro.version>1.4</metro.version>

@@ -1,6 +1,6 @@
 package org.kuali.student.lum.program.service.impl;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -9,11 +9,12 @@ import org.kuali.student.common.validator.SampCustomValidator;
 import org.kuali.student.common.validator.ServerDateParser;
 import org.kuali.student.common.validator.ValidatorFactory;
 import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
+import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
-import org.kuali.student.lum.course.service.impl.ComplexSubstructuresHelper;
-import org.kuali.student.lum.course.service.impl.Dictionary2BeanComparer;
-import org.kuali.student.lum.course.service.impl.DictionaryFormatter;
+import org.kuali.student.lum.course.service.impl.DictionaryTesterHelper;
+import org.kuali.student.lum.course.service.impl.MockSearchDispatcher;
 import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
+import org.kuali.student.lum.program.dto.MinorDisciplineInfo;
 import org.kuali.student.lum.program.service.assembler.MajorDisciplineDataGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,83 +26,40 @@ public class TestProgramInfoDictionary
  @Test
  public void testLoadProgramInfoDictionary ()
  {
-  ApplicationContext ac = new ClassPathXmlApplicationContext (
-    "classpath:ks-programInfo-dictionary-context.xml");
-//  for (String beanName: ac.getBeanDefinitionNames ())
-//  {
-//   System.out.println ("beanName=" + beanName);
-//  }
-  List<String> discrepancies = new ArrayList ();
-  for (Class<?> clazz : getComplexStructures (MajorDisciplineInfo.class))
-  {
-   discrepancies.addAll (compare (clazz, ac));
-  }
-  if (discrepancies.size () > 0)
-  {
-   System.out.println (formatAsString (discrepancies));
-//   fail (formatAsString (discrepancies));
-   return;
-  }
-
- }
-
- private Set<Class<?>> getComplexStructures (Class<?> clazz)
- {
-  return new ComplexSubstructuresHelper ().getComplexStructures (clazz);
- }
-
- private List<String> compare (Class<?> clazz, ApplicationContext ac)
- {
-  ObjectStructureDefinition os = (ObjectStructureDefinition) ac.getBean (
-    clazz.getName ());
-  os.getAttributes ();
-  System.out.println (new DictionaryFormatter (os, "|").format ());
-  return compare (clazz, os);
- }
-
- private List<String> compare (Class<?> clazz, ObjectStructureDefinition os)
- {
-  Dictionary2BeanComparer comparer = new Dictionary2BeanComparer (clazz, os);
-  List<String> discrepancies = comparer.compare ();
-  if (discrepancies.size () > 0)
-  {
-   discrepancies.add (0, discrepancies.size () + " discrepancies in "
-                         + clazz.getSimpleName ());
-  }
-  return discrepancies;
- }
-
- private String formatAsString (List<String> discrepancies)
- {
-  int i = 0;
-  StringBuilder builder = new StringBuilder ();
-  for (String discrep : discrepancies)
-  {
-   i ++;
-   builder.append (i + ". " + discrep + "\n");
-  }
-  return builder.toString ();
+  Set<Class<?>> startingClasses = new LinkedHashSet ();
+  startingClasses.add (MajorDisciplineInfo.class);
+  startingClasses.add (MinorDisciplineInfo.class);
+  String contextFile = "ks-programInfo-dictionary-context";
+  String outFile = "target/" + contextFile + ".txt";
+  DictionaryTesterHelper helper = new DictionaryTesterHelper (outFile,
+                                                              startingClasses,
+                                                              contextFile
+                                                              + ".xml",
+                                                              true);
+  helper.doTest ();
  }
 
  @Test
- public void testMajorDisciplineInfoValidation ()
+ public void testMajorDisciplineInfoValidation () throws
+   OperationFailedException
  {
+  System.out.println ("h1. Validation results");
   ApplicationContext ac = new ClassPathXmlApplicationContext (
     "classpath:ks-programInfo-dictionary-context.xml");
   DefaultValidatorImpl val = new DefaultValidatorImpl ();
   val.setValidatorFactory (new ValidatorFactory (new SampCustomValidator ()));
   val.setDateParser (new ServerDateParser ());
+  val.setSearchDispatcher (new MockSearchDispatcher ());
   MajorDisciplineInfo info = new MajorDisciplineInfo ();
   ObjectStructureDefinition os = (ObjectStructureDefinition) ac.getBean (
     info.getClass ().getName ());
   List<ValidationResultInfo> validationResults = val.validateObject (info, os);
-  System.out.println ("validation results with just a blank");
+  System.out.println ("h2. with just a blank record");
   for (ValidationResultInfo vr : validationResults)
   {
    System.out.println (vr.getElement () + " " + vr.getMessage ());
   }
-  assertEquals (1, validationResults.size ());
-
+  assertEquals (2, validationResults.size ());
 
   try
   {
@@ -113,11 +71,17 @@ public class TestProgramInfoDictionary
    throw new RuntimeException (ex);
   }
   validationResults = val.validateObject (info, os);
-  System.out.println ("validation results with generated data");
+  System.out.println ("h2. with generated data");
   for (ValidationResultInfo vr : validationResults)
   {
    System.out.println (vr.getElement () + " " + vr.getMessage ());
   }
-  assertEquals (0, validationResults.size ());
+///[id='null']/code[value='code-test']/ validation.lengthOutOfRange
+///[id='null']/code[value='code-test']/ validation.validCharsFailed
+///[id='null']/cip2000Code[value='cip2000Code-test']/ validation.lengthOutOfRange
+///[id='null']/cip2000Code[value='cip2000Code-test']/ validation.validCharsFailed
+///[id='null']/cip2010Code[value='cip2010Code-test']/ validation.lengthOutOfRange
+///[id='null']/cip2010Code[value='cip2010Code-test']/ validation.validCharsFailed
+  assertEquals (6, validationResults.size ());
  }
 }

@@ -1,8 +1,10 @@
 package org.kuali.student.lum.program.server;
 
 import org.kuali.student.common.ui.server.gwt.AbstractBaseDataOrchestrationRpcGwtServlet;
+import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.lum.program.client.rpc.ProgramRpcService;
 import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
+import org.kuali.student.lum.program.dto.ProgramRequirementInfo;
 import org.kuali.student.lum.program.service.ProgramService;
 
 /**
@@ -26,13 +28,31 @@ public class ProgramRpcServlet extends AbstractBaseDataOrchestrationRpcGwtServle
 
     @Override
     protected Object get(String id) throws Exception {
+    	//TODO Just Major Discipline for now - need to check for other types later
         return programService.getMajorDiscipline(id);
     }
 
     @Override
     protected Object save(Object dto) throws Exception {
-        return null;
+    	//TODO Just Major Discipline for now - need to check for other types later
+        if (dto instanceof MajorDisciplineInfo) {
+            MajorDisciplineInfo mdInfo = (MajorDisciplineInfo) dto;
+            if (mdInfo.getId() == null) {
+                mdInfo = programService.createMajorDiscipline(mdInfo);
+            } else {
+                mdInfo = programService.updateMajorDiscipline(mdInfo);
+            }
+            return mdInfo;
+        } else {
+            throw new InvalidParameterException("Only persistence of MajorDiscipline is currently implemented");
+        }
+
     }
+
+    @Override
+    public ProgramRequirementInfo getProgramRequirement(String programRequirementId) throws Exception {
+        return programService.getProgramRequirement(programRequirementId);
+    }    
 
     @Override
     protected Class<?> getDtoClass() {

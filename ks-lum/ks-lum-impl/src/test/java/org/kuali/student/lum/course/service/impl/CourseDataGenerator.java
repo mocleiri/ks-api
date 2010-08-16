@@ -16,6 +16,7 @@ import java.util.Random;
 import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
 
+
 /**
  * Use this class to generate test data for a course
  * (it may need improvements for creating real relationships for more complex data elements)
@@ -33,6 +34,7 @@ public class CourseDataGenerator {
 	public CourseInfo getCourseTestData() throws IntrospectionException, InstantiationException, IllegalAccessException, IllegalArgumentException, SecurityException, InvocationTargetException, NoSuchFieldException{
 		CourseInfo testData = generateTestData(CourseInfo.class, 0, 0,null);
 		testData.getAttributes().put("proposalTitle", "proposalTitle-1");
+		testData.getAttributes().put("proposalRationale", "proposalRationale");
 		return testData;
 	}
 
@@ -159,6 +161,12 @@ public class CourseDataGenerator {
 			}
 			if("variations".equals(parentPropertyName)){
 				return "kuali.lu.type.CreditCourse.identifier.variation";
+			}
+			if("administeringOrgs".equals(parentPropertyName)){
+				return "kuali.adminOrg.type.Administration";
+			}
+			if("curriculumOversightOrgs".equals(parentPropertyName)){
+				return "kuali.adminOrg.type.CurriculumOversight";
 			}
 			
 			throw new RuntimeException("Code what to do with this type");

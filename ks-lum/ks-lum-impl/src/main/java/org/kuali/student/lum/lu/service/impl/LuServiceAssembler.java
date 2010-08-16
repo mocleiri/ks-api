@@ -34,7 +34,6 @@ import org.kuali.student.core.search.dto.SearchParam;
 import org.kuali.student.core.service.impl.BaseAssembler;
 import org.kuali.student.lum.lrc.dto.ResultComponentTypeInfo;
 import org.kuali.student.lum.lu.dao.LuDao;
-import org.kuali.student.lum.lu.dto.AcademicSubjectOrgInfo;
 import org.kuali.student.lum.lu.dto.AccreditationInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
 import org.kuali.student.lum.lu.dto.AffiliatedOrgInfo;
@@ -68,7 +67,6 @@ import org.kuali.student.lum.lu.dto.ResultOptionInfo;
 import org.kuali.student.lum.lu.dto.ResultUsageTypeInfo;
 import org.kuali.student.lum.lu.entity.AffiliatedOrg;
 import org.kuali.student.lum.lu.entity.Clu;
-import org.kuali.student.lum.lu.entity.CluAcademicSubjectOrg;
 import org.kuali.student.lum.lu.entity.CluAccounting;
 import org.kuali.student.lum.lu.entity.CluAccreditation;
 import org.kuali.student.lum.lu.entity.CluAdminOrg;
@@ -209,9 +207,9 @@ public class LuServiceAssembler extends BaseAssembler {
 				"officialIdentifier", "alternateIdentifiers", "descr",
 				"participatingOrgs", "primaryInstructor", "instructors",
 				"stdDuration", "luCodes", "credit", "offeredAtpTypes", "fee",
-				"accounting", "intensity", "academicSubjectOrgs",
-				"campusLocationList", "accreditationList", "primaryAdminOrg",
-				"alternateAdminOrgs", "attributes", "metaInfo" });
+				"accounting", "intensity",
+				"campusLocationList", "accreditationList",
+				"adminOrgs", "attributes", "metaInfo" });
 		dto.setOfficialIdentifier(toCluIdentifierInfo(entity
 				.getOfficialIdentifier()));
 		dto.setAlternateIdentifiers(toCluIdentifierInfos(entity
@@ -222,9 +220,8 @@ public class LuServiceAssembler extends BaseAssembler {
 		// Alternate admin orgs
 		dto.setAccreditations(toAccreditationInfos(entity.getAccreditations()));
 
-		dto.setPrimaryAdminOrg(toAdminOrgInfo(entity.getPrimaryAdminOrg()));
-		dto.setAlternateAdminOrgs(toCluAdminOrgInfos(entity
-				.getAlternateAdminOrgs()));
+		dto.setAdminOrgs(toCluAdminOrgInfos(entity
+				.getAdminOrgs()));
 
 		dto.setPrimaryInstructor(toCluInstructorInfo(entity
 				.getPrimaryInstructor()));
@@ -248,17 +245,6 @@ public class LuServiceAssembler extends BaseAssembler {
 		dto.setMetaInfo(toMetaInfo(entity.getMeta(), entity.getVersionInd()));
 
 		dto.setType(entity.getLuType().getId());
-
-		if (entity.getAcademicSubjectOrgs() != null) {
-			List<AcademicSubjectOrgInfo> academicSubjectOrgs = new ArrayList<AcademicSubjectOrgInfo>(
-					entity.getAcademicSubjectOrgs().size());
-			for (CluAcademicSubjectOrg cluOrg : entity.getAcademicSubjectOrgs()) {
-				AcademicSubjectOrgInfo sOrg = new AcademicSubjectOrgInfo();
-				sOrg.setOrgId(cluOrg.getOrgId());
-				academicSubjectOrgs.add(sOrg);
-			}
-			dto.setAcademicSubjectOrgs(academicSubjectOrgs);
-		}
 
 		if (entity.getCampusLocations() != null) {
 			List<String> campusLocations = new ArrayList<String>(entity
@@ -484,7 +470,9 @@ public class LuServiceAssembler extends BaseAssembler {
 		dto.setDesc(toRichTextInfo(entity.getDesc()));
 		dto.setCluId(entity.getClu().getId());
 		CluResultTypeInfo type = toCluResultTypeInfo(entity.getCluResultType());
-		dto.setType(type.getId());
+		if(type!=null){
+			dto.setType(type.getId());
+		}
 		dto.setMetaInfo(toMetaInfo(entity.getMeta(), entity.getVersionInd()));
 
 		return dto;

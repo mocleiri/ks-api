@@ -71,6 +71,7 @@ public class Metadata implements Serializable {
         }
     }
     private String name;
+    private String labelKey;
     private WriteAccess writeAccess;
     
     private boolean canUnmask = false;
@@ -102,6 +103,8 @@ public class Metadata implements Serializable {
     
     @XmlElement(name="constraint")
     @XmlElementWrapper
+    //TODO: When all dictionaries have been updated, this needs to be changed to a single value object.
+    //No need for it to be a list with new dictionary structure. 
     private List<ConstraintMetadata> constraints;
     
     @XmlElement(name="lookupMetadata")
@@ -211,7 +214,7 @@ public class Metadata implements Serializable {
     		for (ConstraintMetadata constraint:constraints){
     			if (!"single".equals(constraint.getId()) && 
     				!"optional".equals(constraint.getId()) &&
-    				!constraint.getServerSide()){
+    				!constraint.isServerSide()){
     				metadataConstraints.add(constraint);
     			}
     		}
@@ -344,5 +347,13 @@ public class Metadata implements Serializable {
 
 	public void setDynamic(boolean dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	public String getLabelKey() {
+		return labelKey;
+	}
+
+	public void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
 	}
 }
