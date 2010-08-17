@@ -120,7 +120,7 @@ public abstract class Controller extends Composite implements HistorySupport, Br
 				        	ViewContext tempContext = new ViewContext();
 				        	if(view instanceof LayoutController){
 				        		tempContext = ((LayoutController) view).getViewContext();
-				        	}
+				        	}                 
 				        	else{
 				        		tempContext = view.getController().getViewContext();
 				        	}
@@ -192,12 +192,12 @@ public abstract class Controller extends Composite implements HistorySupport, Br
     }
 
     protected void fireNavigationEvent() {
-        DeferredCommand.addCommand(new Command() {
-            @Override
-            public void execute() {
+        //DeferredCommand.addCommand(new Command() {
+           // @Override
+            //public void execute() {
                 fireApplicationEvent(new NavigationEvent(Controller.this));
-            }
-        });
+            //}
+        //});
     }
     
     /**
