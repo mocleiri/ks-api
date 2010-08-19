@@ -1,4 +1,4 @@
-package org.kuali.student.lum.program.client.configuration;
+package org.kuali.student.lum.program.client.view;
 
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.common.ui.client.mvc.View;
@@ -12,7 +12,7 @@ import org.kuali.student.lum.program.client.properties.ProgramProperties;
 /**
  * @author Igor
  */
-public class SpecializationsConfiguration extends AbstractConfiguration<ProgramViewConfigurer> implements Configuration<ProgramViewConfigurer> {
+public class SpecializationsViewConfiguration extends AbstractConfiguration<ProgramViewConfigurer> {
 
     @Override
     public View getView() {
