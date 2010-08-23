@@ -21,6 +21,7 @@ import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.exceptions.PermissionDeniedException;
+import org.kuali.student.core.exceptions.UnsupportedActionException;
 import org.kuali.student.core.exceptions.VersionMismatchException;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
@@ -32,6 +33,7 @@ import org.kuali.student.lum.course.service.CourseService;
 import org.kuali.student.lum.course.service.assembler.CourseAssembler;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * CourseServiceImpl implements CourseService Interface by mapping DTOs in CourseInfo to underlying entity DTOs like CluInfo
@@ -39,6 +41,7 @@ import org.kuali.student.lum.lu.service.LuService;
  * 
  * @author Kuali Student Team
  */
+@Transactional(noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
 public class CourseServiceImpl implements CourseService {
     final static Logger LOG = Logger.getLogger(CourseServiceImpl.class);
 
@@ -50,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
     private ValidatorFactory validatorFactory;
 
     @Override
-    public CourseInfo createCourse(CourseInfo courseInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DoesNotExistException, CircularRelationshipException, DependentObjectsExistException {
+    public CourseInfo createCourse(CourseInfo courseInfo) throws AlreadyExistsException, DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DoesNotExistException, CircularRelationshipException, DependentObjectsExistException, UnsupportedActionException {
 
         if (courseInfo == null) {
             throw new MissingParameterException("CourseInfo can not be null");
@@ -67,11 +70,14 @@ public class CourseServiceImpl implements CourseService {
         } catch (AssemblyException e) {
             LOG.error("Error disassembling course", e);
             throw new OperationFailedException("Error disassembling course");
+        } catch (Exception e){
+        	LOG.error("Error disassembling course", e);
+        	throw new OperationFailedException("Error disassembling course");
         }
     }
 
     @Override
-    public CourseInfo updateCourse(CourseInfo courseInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException, PermissionDeniedException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException {
+    public CourseInfo updateCourse(CourseInfo courseInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException, PermissionDeniedException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException, UnsupportedActionException {
 
         if (courseInfo == null) {
             throw new MissingParameterException("CourseInfo can not be null");
@@ -94,7 +100,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public StatusInfo deleteCourse(String courseId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException {
+    public StatusInfo deleteCourse(String courseId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException, UnsupportedActionException {
 
         try {
             CourseInfo course = getCourse(courseId);
@@ -144,7 +150,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<StatementTreeViewInfo> getCourseStatements(String courseId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+    public List<StatementTreeViewInfo> getCourseStatements(String courseId, String nlUsageTypeKey, String language) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         throw new UnsupportedOperationException("GetCourseStatements");
     }
 
@@ -212,7 +218,7 @@ public class CourseServiceImpl implements CourseService {
         this.dictionaryServiceDelegate = dictionaryServiceDelegate;
     }
 
-    private CourseInfo processCourseInfo(CourseInfo courseInfo, NodeOperation operation) throws AssemblyException, OperationFailedException, VersionMismatchException, PermissionDeniedException, MissingParameterException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException {
+    private CourseInfo processCourseInfo(CourseInfo courseInfo, NodeOperation operation) throws AssemblyException, OperationFailedException, VersionMismatchException, PermissionDeniedException, MissingParameterException, InvalidParameterException, DoesNotExistException, DataValidationErrorException, AlreadyExistsException, CircularRelationshipException, DependentObjectsExistException, UnsupportedActionException {
 
         BaseDTOAssemblyNode<CourseInfo, CluInfo> results = courseAssembler.disassemble(courseInfo, operation);
 

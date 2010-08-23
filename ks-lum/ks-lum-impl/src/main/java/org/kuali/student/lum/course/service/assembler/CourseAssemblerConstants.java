@@ -49,15 +49,47 @@ public class CourseAssemblerConstants {
 	public static final String COURSE_CAMPUS_LOCATION_CD_NORTH = "NORTH";
 	public static final String COURSE_CAMPUS_LOCATION_CD_SOUTH = "SOUTH";
 	
+	// Course Variation Identifier
+	public static final String COURSE_VARIATION_IDENT_TYPE  = "kuali.lu.type.CreditCourse.identifier.variation";
+
+	// Course CrossListing Identifier
+	public static final String COURSE_CROSSLISTING_IDENT_TYPE = "kuali.lu.type.CreditCourse.identifier.crosslisting";
+	
 	//Learning result Constants
 	//FIXME follow Norm's Type Keys (this requires impex changes)
 //	public final static String COURSE_RESULT_TYPE_GRADE   = "kuali.resultType.grades";
 //	public final static String COURSE_RESULT_TYPE_CREDITS = "kuali.resultType.credits";
 	public final static String COURSE_RESULT_TYPE_GRADE   = "kuali.resultType.gradeCourseResult";
 	public final static String COURSE_RESULT_TYPE_CREDITS = "kuali.resultType.creditCourseResult";
-
+	public final static String COURSE_RESULT_COMP_TYPE_CREDIT_FIXED = "kuali.resultComponentType.credit.degree.fixed";
+	public final static String COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE = "kuali.resultComponentType.credit.degree.range";
+	public final static String COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE = "kuali.resultComponentType.credit.degree.multiple";
+	public static final String COURSE_RESULT_COMP_GRADE_PASSFAIL = "kuali.resultComponent.grade.passFail";
+	public static final String COURSE_RESULT_COMP_GRADE_AUDIT = "kuali.resultComponent.grade.audit";
+	public static final String COURSE_RESULT_COMP_ATTR_PASSFAIL = "passFail";
+	public static final String COURSE_RESULT_COMP_ATTR_AUDIT = "audit";
+	public static final String COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE = "fixedCreditValue";
+	public static final String COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE = "minCreditValue";
+	public static final String COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE = "maxCreditValue";
+	public static final String COURSE_RESULT_COMP_CREDIT_PREFIX = "kuali.creditType.credit.degree.";
+	
+	
 	//FIXME ask norm for these values
 	public static final String COURSE_CODE_SPECIAL_TOPICS = "kuali.lu.code.specialTopics";
 	public static final String COURSE_CODE_PILOT_COURSE = "kuali.lu.code.pilotCourse";
+
+
+	//Constants for AdminOrg types in Course
+    public static final String ADMIN_ORG = "kuali.adminOrg.type.Administration";
+    public static final String SUBJECT_ORG = "kuali.adminOrg.type.CurriculumOversight";
+
+	public static final String COURSE_LO_RELATION_INCLUDES = "kuali.lo.relation.type.includes";
+	public static final String COURSE_LO_SEQUENCE = "sequence";
+	public static final String COURSE_LO_COURSE_SPECIFIC_RELATION = "cluLuType.default";
+	public static final String COURSE_LO_TYPE = "kuali.lo.type.singleUse";
+	public static final String COURSE_LO_REPOSITORY_KEY = "kuali.loRepository.key.singleUse";
+	public static final String COURSE_FINANCIALS_REVENUE_TYPE = "REVENUE";
+
+	
 
 }
