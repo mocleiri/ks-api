@@ -21,15 +21,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.jws.WebService;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.common.validator.old.Validator;
-import org.kuali.student.core.dictionary.old.dto.ObjectStructure;
-import org.kuali.student.core.dictionary.service.old.DictionaryService;
+import org.kuali.student.common.validator.Validator;
+import org.kuali.student.common.validator.ValidatorFactory;
+import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
+import org.kuali.student.core.dictionary.service.DictionaryService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.entity.Amount;
 import org.kuali.student.core.entity.TimeAmount;
@@ -80,7 +81,6 @@ import org.kuali.student.lum.lu.dto.MembershipQueryInfo;
 import org.kuali.student.lum.lu.dto.ResultOptionInfo;
 import org.kuali.student.lum.lu.dto.ResultUsageTypeInfo;
 import org.kuali.student.lum.lu.entity.Clu;
-import org.kuali.student.lum.lu.entity.CluAcademicSubjectOrg;
 import org.kuali.student.lum.lu.entity.CluAccounting;
 import org.kuali.student.lum.lu.entity.CluAccountingAttribute;
 import org.kuali.student.lum.lu.entity.CluAccreditation;
@@ -125,7 +125,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 @WebService(endpointInterface = "org.kuali.student.lum.lu.service.LuService", serviceName = "LuService", portName = "LuService", targetNamespace = "http://student.kuali.org/wsdl/lu")
-@Transactional(rollbackFor = { Throwable.class })
+@Transactional(noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
 public class LuServiceImpl implements LuService {
 
 	final Logger logger = Logger.getLogger(LuServiceImpl.class);
@@ -134,6 +134,7 @@ public class LuServiceImpl implements LuService {
 	private SearchManager searchManager;
 	private DictionaryService dictionaryServiceDelegate;
 	private Validator validator;
+	private ValidatorFactory validatorFactory;
 
 	public void setSearchManager(SearchManager searchManager) {
 		this.searchManager = searchManager;
@@ -957,7 +958,12 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluInfo, "cluInfo");
 
-		return validator.validateTypeStateObject(cluInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluInfo, objStructure);
+        
+        return validationResults;
 	}
 
 	@Override
@@ -1002,6 +1008,7 @@ public class LuServiceImpl implements LuService {
 			instructor.setAttributes(LuServiceAssembler.toGenericAttributes(
 					CluAdminOrgAttribute.class, orgInfo.getAttributes(),
 					instructor, luDao));
+			instructor.setClu(clu);
 			adminOrgs.add(instructor);
 		}
 
@@ -1450,6 +1457,7 @@ public class LuServiceImpl implements LuService {
 			cluOrg.setAttributes(LuServiceAssembler.toGenericAttributes(
 					CluAdminOrgAttribute.class, orgInfo.getAttributes(),
 					cluOrg, luDao));
+			cluOrg.setClu(clu);
 			clu.getAdminOrgs().add(cluOrg);
 		}
 
@@ -1512,7 +1520,12 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluCluRelationInfo, "cluCluRelationInfo");
 
-		return validator.validateTypeStateObject(cluCluRelationInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluCluRelationInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluCluRelationInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluCluRelationInfo, objStructure);
+        
+        return validationResults;
 	}
 
 	@Override
@@ -1634,8 +1647,12 @@ public class LuServiceImpl implements LuService {
 
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluPublicationInfo, "cluPublicationInfo");
-
-        return validator.validateTypeStateObject(cluPublicationInfo, getObjectStructure("cluPublicationInfo"));
+		
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluPublicationInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluPublicationInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -1674,7 +1691,11 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluResultInfo, "cluResultInfo");
 
-		return validator.validateTypeStateObject(cluResultInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluResultInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluResultInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluResultInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -1832,7 +1853,11 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluLoRelationInfo, "cluLoRelationInfo");
 
-		return validator.validateTypeStateObject(cluLoRelationInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluLoRelationInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluLoRelation.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluLoRelationInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -1970,7 +1995,11 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(cluSetInfo, "cluSetInfo");
 
-		return validator.validateTypeStateObject(cluSetInfo, getObjectStructure("org.kuali.student.lum.lu.dto.CluSetInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(CluSetInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(cluSetInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -2304,7 +2333,11 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(luiInfo, "luiInfo");
 
-		return validator.validateTypeStateObject(luiInfo, getObjectStructure("luiInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(LuiInfo.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(luiInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -2415,7 +2448,11 @@ public class LuServiceImpl implements LuService {
 		checkForMissingParameter(validationType, "validationType");
 		checkForMissingParameter(luiLuiRelationInfo, "luiLuiRelationInfo");
 
-		return validator.validateTypeStateObject(luiLuiRelationInfo, getObjectStructure("luiLuiRelationInfo"));
+        ObjectStructureDefinition objStructure = this.getObjectStructure(LuiLuiRelation.class.getName());
+        validatorFactory.setObjectStructureDefinition(objStructure);
+        Validator defaultValidator = validatorFactory.getValidator();
+        List<ValidationResultInfo> validationResults = defaultValidator.validateObject(luiLuiRelationInfo, objStructure);
+        return validationResults;
 	}
 
 	@Override
@@ -2654,7 +2691,7 @@ public class LuServiceImpl implements LuService {
 	}
 
 	@Override
-	public ObjectStructure getObjectStructure(String objectTypeKey) {
+	public ObjectStructureDefinition getObjectStructure(String objectTypeKey) {
 		return dictionaryServiceDelegate.getObjectStructure(objectTypeKey);
 	}
 
@@ -2753,4 +2790,12 @@ public class LuServiceImpl implements LuService {
 
 		return statusInfo;
 	}
+
+	public ValidatorFactory getValidatorFactory() {
+		return validatorFactory;
+	}
+
+	public void setValidatorFactory(ValidatorFactory validatorFactory) {
+		this.validatorFactory = validatorFactory;
+	}	
 }

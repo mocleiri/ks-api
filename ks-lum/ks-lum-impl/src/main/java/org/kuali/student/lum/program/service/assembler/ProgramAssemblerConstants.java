@@ -15,6 +15,10 @@
  */
 package org.kuali.student.lum.program.service.assembler;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * These are the constants that are used in the programs.
  * 
@@ -37,6 +41,12 @@ public class ProgramAssemblerConstants {
 								MASTERS_PROGRAM, PROFESSIONAL_PROGRAM, DOCTORAL_PROGRAM,
 								UNDERGRADUATE_CERTIFICATE, GRADUATE_CERTIFICATE };
 
+	// used for testing credentialProgramType
+    public static final Set<String> CREDENTIAL_PROGRAM_TYPES = new TreeSet<String>(Arrays.asList(CREDENTIAL_PROGRAM));
+
+	public static final String UNDERGRAD_PROGRAM_LEVEL = "kuali.lu.program.level.UnderGraduate";
+	public static final String GRADUATE_PROGRAM_LEVEL = "kuali.lu.program.level.Graduate";
+	
 	public static final String MAJOR_DISCIPLINE = "kuali.lu.type.MajorDiscipline";
 	public static final String PROGRAM_VARIATION = "kuali.lu.type.Variation";
 	public static final String MINOR_DISCIPLINE = "kuali.lu.type.MinorDiscipline";
@@ -96,4 +106,7 @@ public class ProgramAssemblerConstants {
     public static final String CERTIFICATE_RESULTS = "kuali.resultType.certificate";
     public static final String ANNOTATION_RESULTS = "kuali.resultType.annotation";
     public static final String COMPLETION_RESULTS = "kuali.resultType.completion";
+
+    // dynamic attributes the UI needs to retrieve
+    public static final String PROGRAM_LEVEL = "programLevel";
 }
