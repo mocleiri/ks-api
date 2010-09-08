@@ -1008,6 +1008,7 @@ public class LuServiceImpl implements LuService {
 			instructor.setAttributes(LuServiceAssembler.toGenericAttributes(
 					CluAdminOrgAttribute.class, orgInfo.getAttributes(),
 					instructor, luDao));
+			instructor.setClu(clu);
 			adminOrgs.add(instructor);
 		}
 
@@ -1190,6 +1191,7 @@ public class LuServiceImpl implements LuService {
 			BeanUtils.copyProperties(cluInfo.getDescr(), clu.getDescr());
 		} else if (clu.getDescr() != null) {
 			luDao.delete(clu.getDescr());
+			clu.setDescr(null);//TODO is the is the best method of doing this? what if the user passes in a new made up id, does that mean we have orphaned richtexts?
 		}
 
 		if (cluInfo.getPrimaryInstructor() != null) {
@@ -1456,6 +1458,7 @@ public class LuServiceImpl implements LuService {
 			cluOrg.setAttributes(LuServiceAssembler.toGenericAttributes(
 					CluAdminOrgAttribute.class, orgInfo.getAttributes(),
 					cluOrg, luDao));
+			cluOrg.setClu(clu);
 			clu.getAdminOrgs().add(cluOrg);
 		}
 

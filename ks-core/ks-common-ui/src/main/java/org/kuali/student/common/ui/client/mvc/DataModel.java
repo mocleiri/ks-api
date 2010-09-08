@@ -93,6 +93,23 @@ public class DataModel implements Model {
     public Data getRoot() {
         return root;
     }
+    
+    public void remove(final QueryPath path) {
+        QueryPath parent = null;
+        QueryPath leavePath = null;
+        if (path != null && path.size() >= 2) {
+            parent = path.subPath(0, path.size() - 1);
+            leavePath = path.subPath(path.size() - 1, path.size());
+            Object parentData = this.get(parent);
+            if (parentData != null && parentData instanceof Data) {
+                ((Data) parentData).remove(
+                        new Data.StringKey(leavePath.toString()));
+            }
+            
+        } else if (path != null){
+            root.remove(new Data.StringKey(path.toString()));
+        }
+    }
 
     public Map<QueryPath, Object> query(final QueryPath path) {
         Map<QueryPath, Object> result = new HashMap<QueryPath, Object>();
@@ -124,11 +141,14 @@ public class DataModel implements Model {
 	                }
                 } else {
                 	//The wildcard is last element in path, so add all sub-elements to result
+                	//The wildcard will not match a _runtimeData path
                 	Set<Key> keys = d.keySet();
                 	for (Key wildcardKey:keys){
-                		QueryPath wildcardPath = path.subPath(0, path.size()-1);
-                		wildcardPath.add(wildcardKey);
-                		result.put(wildcardPath, d.get(wildcardKey));
+                		if (!("_runtimeData".equals(wildcardKey.get()))){
+	                		QueryPath wildcardPath = path.subPath(0, path.size()-1);
+	                		wildcardPath.add(wildcardKey);
+	                		result.put(wildcardPath, d.get(wildcardKey));
+                		}
                 	}
                 }
             } else if (i < path.size() - 1) {
@@ -243,9 +263,35 @@ public class DataModel implements Model {
         callback.exec(result);
     }
     
+    public void validateNextState(final Callback<List<ValidationResultInfo>> callback){
+    	List<ValidationResultInfo> result = validator.validateNextState(this);
+        callback.exec(result);
+    }
+    
     public void validateField(FieldDescriptor fd, final Callback<List<ValidationResultInfo>> callback) {
     	List<ValidationResultInfo> result = validator.validate(fd, this);
     	callback.exec(result);
 }
+    
+	public boolean isValidPath(String sPath) {
+		QueryPath path = QueryPath.parse(sPath);
+		boolean result = false;
+		Data root = this.getRoot();
+		for(int i = 0; i < path.size(); i++) {
+			Data.Key key = path.get(i);
+			if (!root.containsKey(key)) {
+				result = false;
+				break;
+			}
+			else if(i < path.size() - 1){
+				root = (Data) root.get(key);
+			}
+			else{
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
 
 }
