@@ -48,15 +48,16 @@ h1.ks-layout-header{
 h2.ks-layout-header{
 	font-size: 2em;
 	color: #940b07;
-	margin-bottom: 0.75em;
+	padding-bottom: 2px;
+    margin-bottom: 2px;
 }
 
 h3.ks-layout-header{
 	font-size: 1.5em;
     color: #000;
     font-weight: normal;
-    padding-bottom: 4px;
-    margin-bottom: 0em;
+    padding-bottom: 2px;
+    margin-bottom: 2px;
 }
 
 h4.ks-layout-header{
@@ -685,6 +686,9 @@ legend.invalid{color: red;}
 	line-height: 1.3em;
 }
 
+a:focus{
+	text-decoration: underline;
+}
 /* Buttons -------------------------------------------------------------- */
 
 /* ---- Primary ------------------------- */
@@ -701,6 +705,14 @@ a.ks-button-primary {
 	color: #2C61E6;
 	font-size: 1.167em;
 	font-weight: bold;
+}
+
+a.ks-button-primary:focus{
+	color: #2C61E6;
+	border: 1px solid #2C61E6;
+	background-color: #FFFFFF;
+	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#BFD1FF));
+	background-image: \-moz-linear-gradient(-90deg,#FFFFFF,#BFD1FF);
 }
 
 a.ks-button-primary:hover {
@@ -739,6 +751,13 @@ a.ks-button-secondary {
 	padding: 7px 10px 5px 10px;
 	color: #2C61E6;
 	font-size: 1.167em;
+}
+
+a.ks-button-secondary:focus {
+	background-color: #FFFFFF;
+	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#D8D8D8));
+	background-image: \-moz-linear-gradient(-90deg,#FFFFFF,#D8D8D8);
+	border: 1px solid #2C61E6;
 }
 
 a.ks-button-secondary:hover {
@@ -780,6 +799,13 @@ a.ks-button-primary-small {
 	font-weight: bold;
 }
 
+a.ks-button-primary-small:focus {
+	background-color: #FFFFFF;
+	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#BFD1FF));
+	background-image: \-moz-linear-gradient(-90deg,#FFFFFF,#BFD1FF);
+	border: 1px solid #2C61E6;
+}
+
 a.ks-button-primary-small:hover {
 	background-color: #FFFFFF;
 	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#BFD1FF));
@@ -819,6 +845,13 @@ a.ks-button-secondary-small {
 	font-size: 1em;
 }
 
+a.ks-button-secondary-small:focus {
+	background-color: #FFFFFF;
+	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#D8D8D8));
+	background-image: \-moz-linear-gradient(-90deg,#FFFFFF,#D8D8D8);
+	border: 1px solid #2C61E6;
+}
+
 a.ks-button-secondary-small:hover {
 	background-color: #FFFFFF;
 	background-image: \-webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#D8D8D8));
@@ -856,11 +889,9 @@ a.ks-button-secondary-small:hover {
 }
 
 .ks-table-title-column-width{
-	width: 15%;
 }
 
 .ks-table-field-column-width{
-	width: 35%;
 }
 
 .top-padding{
@@ -878,4 +909,13 @@ a.ks-button-secondary-small:hover {
 .horizontal-component{
 	width: 50%;
 	float: left;
+}
+
+.accessibility-hidden{
+	position:absolute;
+	left:-10000px;
+	top:auto;
+	width:1px;
+	height:1px;
+	overflow:hidden;
 }

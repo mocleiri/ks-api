@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.core.exceptions.DoesNotExistException;
+import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.statement.entity.ReqComponent;
 import org.kuali.student.core.statement.entity.ReqComponentField;
 
@@ -32,16 +34,14 @@ public abstract class AbstractContext<T> implements Context<T> {
 	/**
 	 * <p>These common shared tokens are needed since velocity doesn't 
 	 * allow periods in tokens.</p>
-	 * <p>E.g. reqCompFieldType.totalCredits must either be convert to 
+	 * <p>E.g. kuali.reqComponent.field.type.totalCredits must either be convert to 
 	 * totalCredits or reqCompFieldType_totalCredits so a template would look 
 	 * like:</p>
 	 * <p>'Student must take $totalCredits of MATH 100'</p>
 	 * or
 	 * <p>'Student must take $reqCompFieldType_totalCredits of MATH 100'</p>
 	 */
-	protected final static String EXPECTED_VALUE_TOKEN = "expectedValue";
 	protected final static String FIELDS_TOKEN = "fields";
-	protected final static String OPERATOR_TOKEN = "relationalOperator";
 
     /**
      * Gets requirement component fields as a map.
@@ -49,14 +49,13 @@ public abstract class AbstractContext<T> implements Context<T> {
      * @param reqComponent Requirement component
      * @return Map of requirement component fields
      */
-    public Map<String, String> getReqComponentFieldMap(ReqComponent reqComponent) {
+	protected Map<String, String> getReqComponentFieldMap(ReqComponent reqComponent) {
         List<ReqComponentField> fields = reqComponent.getReqComponentFields();
         Map<String, String> map = new HashMap<String, String>();
         for (ReqComponentField field : fields) {
-            String key = field.getKey();
-            //String key = field.getId();
+            String type = field.getType();
             String value = field.getValue();
-            map.put(key, value);
+            map.put(type, value);
         }
         return map;
     }
@@ -69,7 +68,20 @@ public abstract class AbstractContext<T> implements Context<T> {
      * @param key <code>ReqCompFieldInfo</code> key
      * @return Value of <code>ReqCompFieldInfo</code>
      */
-    public String getReqComponentFieldValue(ReqComponent reqComponent, String key) {
+	protected String getReqComponentFieldValue(ReqComponent reqComponent, String key) {
         return getReqComponentFieldMap(reqComponent).get(key);
+    }
+
+    /**
+     * Creates the context map (template data) for the requirement component.
+     * Also, adds the field token map to the context map.
+     *
+     * @param reqComponent Requirement component
+     * @throws DoesNotExistException If CLU, CluSet or relation does not exist
+     */
+    public Map<String, Object> createContextMap(ReqComponent reqComponent) throws OperationFailedException {
+        Map<String, Object> contextMap = new HashMap<String, Object>();
+        contextMap.put(FIELDS_TOKEN, getReqComponentFieldMap(reqComponent));
+        return contextMap;
     }
 }

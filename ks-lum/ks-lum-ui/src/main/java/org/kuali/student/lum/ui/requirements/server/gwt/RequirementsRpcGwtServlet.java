@@ -23,7 +23,6 @@ import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
-import org.kuali.student.core.statement.naturallanguage.util.ReqComponentFieldTypes;
 import org.kuali.student.core.statement.service.StatementService;
 import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
 import org.kuali.student.core.exceptions.DoesNotExistException;
@@ -37,6 +36,7 @@ import org.kuali.student.core.search.dto.SearchResult;
 import org.kuali.student.core.search.dto.SearchResultCell;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.statement.typekey.ReqComponentFieldTypes;
 import org.kuali.student.lum.ui.requirements.client.model.StatementVO;
 import org.kuali.student.lum.ui.requirements.client.service.RequirementsRpcService;
 
@@ -99,8 +99,7 @@ public class RequirementsRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServi
     }
     
     /**
-     * @throws Exception 
-     * @see org.kuali.student.lum.lu.ui.course.client.service.LuRemoteService#updateClu(java.lang.String, org.kuali.student.lum.lu.dto.CluInfo)
+     * @throws Exception
      */
     public List<ReqCompFieldInfo> verifyFieldsAndSetIds(List<ReqCompFieldInfo> editedFields) throws Exception {
 
@@ -108,7 +107,7 @@ public class RequirementsRpcGwtServlet extends BaseRpcGwtServletAbstract<LuServi
     	for (ReqCompFieldInfo comp : editedFields) {
     		
     		//find clu ids based on clu code
-    		if (comp.getId().equals(ReqComponentFieldTypes.CLU_KEY.getKey())) {
+    		if (comp.getId().equals(ReqComponentFieldTypes.CLU_KEY.getId())) {
     			String[] codes = comp.getValue().split(", ");
     			StringBuffer ids = new StringBuffer();
     			

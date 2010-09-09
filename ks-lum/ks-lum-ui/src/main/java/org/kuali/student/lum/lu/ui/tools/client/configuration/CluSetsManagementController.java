@@ -18,14 +18,11 @@ package org.kuali.student.lum.lu.ui.tools.client.configuration;
 import java.util.List;
 
 import org.kuali.student.common.ui.client.application.Application;
-import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
+import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.TabbedSectionLayout;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.SaveActionHandler;
-import org.kuali.student.common.ui.client.event.ValidateRequestEvent;
-import org.kuali.student.common.ui.client.event.ValidateRequestHandler;
-import org.kuali.student.common.ui.client.event.ValidateResultEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.DataModel;
@@ -55,7 +52,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class CluSetsManagementController extends TabbedSectionLayout {  
 
@@ -165,9 +161,9 @@ public class CluSetsManagementController extends TabbedSectionLayout {
                     @Override
                     public void exec(final Callback<Boolean> workCompleteCallback) {
                         if (cfg.getEditSearchCluSetId() != null) {
-                            cluSetManagementRpcServiceAsync.getData(cfg.getEditSearchCluSetId(), new AsyncCallback<Data>() {
+                            cluSetManagementRpcServiceAsync.getData(cfg.getEditSearchCluSetId(), new KSAsyncCallback<Data>() {
                                 @Override
-                                public void onFailure(Throwable caught) {
+                                public void handleFailure(Throwable caught) {
                                     Window.alert("Failed to retrieve cluset with id" + cfg.getEditSearchCluSetId());
                                     workCompleteCallback.exec(false);
                                 }
@@ -196,9 +192,9 @@ public class CluSetsManagementController extends TabbedSectionLayout {
                     @Override
                     public void exec(final Callback<Boolean> workCompleteCallback) {
                         if (cfg.getViewSearchCluSetId() != null) {
-                            cluSetManagementRpcServiceAsync.getData(cfg.getViewSearchCluSetId(), new AsyncCallback<Data>() {
+                            cluSetManagementRpcServiceAsync.getData(cfg.getViewSearchCluSetId(), new KSAsyncCallback<Data>() {
                                 @Override
-                                public void onFailure(Throwable caught) {
+                                public void handleFailure(Throwable caught) {
                                     Window.alert("Failed to retrieve cluset with id" + cfg.getViewSearchCluSetId());
                                     workCompleteCallback.exec(false);
                                 }
@@ -215,58 +211,9 @@ public class CluSetsManagementController extends TabbedSectionLayout {
                 viewSearchCluSetModelRequestQueue.submit(workItem);                
             }
         });
-
-        super.addApplicationEventHandler(ValidateRequestEvent.TYPE, new ValidateRequestHandler() {
-
-            @Override
-            public void onValidateRequest(ValidateRequestEvent event) {
-            	FieldDescriptor originatingField = event.getFieldDescriptor();
-            	String modelId = null;
-            	if (originatingField != null) {
-            		modelId = originatingField.getModelId();
-            	}
-            	if (modelId == null) {
-            		requestModel(new ModelRequestCallback<DataModel>() {
-            			@Override
-            			public void onModelReady(DataModel model) {
-            				validateModel(model);
-            			}
-
-            			@Override
-            			public void onRequestFail(Throwable cause) {
-            				GWT.log("Unable to retrieve model for validation", cause);
-            			}
-
-            		});
-            	} else {
-            		requestModel(modelId, new ModelRequestCallback<DataModel>() {
-            			@Override
-            			public void onModelReady(DataModel model) {
-            				validateModel(model);
-            			}
-
-            			@Override
-            			public void onRequestFail(Throwable cause) {
-            				GWT.log("Unable to retrieve model for validation", cause);
-            			}
-
-            		});
-            	}
-            }
-
-        });
     }
     
-    private void validateModel(DataModel model) {
-		model.validate(new Callback<List<ValidationResultInfo>>() {
-			@Override
-			public void exec(List<ValidationResultInfo> result) {
-				ValidateResultEvent e = new ValidateResultEvent();
-				e.setValidationResult(result);
-				fireApplicationEvent(e);
-			}
-		});
-    }
+
 
     private KSButton getQuitButton(){
         return new KSButton("Quit", new ClickHandler(){
@@ -295,10 +242,10 @@ public class CluSetsManagementController extends TabbedSectionLayout {
         } else {
             progressWindow.show();
 
-            cluSetManagementRpcServiceAsync.getMetadata("", "", new AsyncCallback<Metadata>(){
+            cluSetManagementRpcServiceAsync.getMetadata("", "", new KSAsyncCallback<Metadata>(){
 
                 @Override
-                public void onFailure(Throwable caught) {
+                public void handleFailure(Throwable caught) {
                     onReadyCallback.exec(false);
                     progressWindow.hide();
                     throw new RuntimeException("Failed to get model definition.", caught);                        
@@ -450,9 +397,9 @@ public class CluSetsManagementController extends TabbedSectionLayout {
 
         };
         try {
-            cluSetManagementRpcServiceAsync.saveData(dataModel.getRoot(), new AsyncCallback<DataSaveResult>() {
+            cluSetManagementRpcServiceAsync.saveData(dataModel.getRoot(), new KSAsyncCallback<DataSaveResult>() {
                 @Override
-                public void onFailure(Throwable caught) {
+                public void handleFailure(Throwable caught) {
                     saveFailedCallback.exec(caught); 
                 }
 

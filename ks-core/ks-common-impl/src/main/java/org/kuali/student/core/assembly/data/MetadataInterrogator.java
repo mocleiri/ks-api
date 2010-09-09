@@ -18,7 +18,7 @@ package org.kuali.student.core.assembly.data;
 import java.util.Date;
 import java.util.List;
 
-import org.kuali.student.common.validator.DateParser;
+import org.kuali.student.common.validator.old.DateParser;
 
 /**
  * 
@@ -160,6 +160,25 @@ public class MetadataInterrogator {
 	}
 
 	/**
+	 * Use to determine if the field is required for the next state.
+	 * 
+	 * @param meta
+	 * @return
+	 */
+	public static boolean isRequiredForNextState(Metadata meta){
+		boolean required = false;
+		
+		//This flag is only set when using the new dictionary, in which case there should
+		//never be more than one constraint.
+		if (meta.getConstraints() != null && meta.getConstraints().size() == 1){
+			ConstraintMetadata constraint =  meta.getConstraints().get(0);
+			required = constraint.isRequiredForNextState();
+		}
+		
+		return required;
+	}
+	
+	/**
 	 * get the largest min occurs value
 	 * 
 	 * @return null if none specified
@@ -193,10 +212,22 @@ public class MetadataInterrogator {
 			return false;
 		}
 		Integer smallestMaxOccurs = getSmallestMaxOccurs(meta);
-		if (smallestMaxOccurs != null) {
+		if (hasRepeatingConstraint(meta) ||
+				(smallestMaxOccurs != null && smallestMaxOccurs > 1)) {
 			return true;
 		}
 		return false;
+	}
+	
+	private static boolean hasRepeatingConstraint(Metadata meta) {
+		boolean isRepeating = false;
+
+		for (ConstraintMetadata cons : meta.getConstraints()) {
+			if ("repeating".equals(cons.getId())){
+				isRepeating = true;
+			}
+		}
+		return isRepeating;
 	}
 
 	/**

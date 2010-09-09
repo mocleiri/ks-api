@@ -14,39 +14,17 @@
  */
 package org.kuali.student.core.workflow.ui.client.widgets;
 
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_APPROVED_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_APPROVED_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_CANCEL_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_CANCEL_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_DISAPPROVED_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_DISAPPROVED_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_DISAPPROVE_CANCEL_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_DISAPPROVE_CANCEL_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_ENROUTE_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_ENROUTE_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_EXCEPTION_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_EXCEPTION_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_FINAL_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_FINAL_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_INITIATED_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_INITIATED_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_PROCESSED_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_PROCESSED_LABEL_KEY;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_SAVED_CD;
-import static org.kuali.student.core.workflow.ui.client.WorkflowConstants.ROUTE_HEADER_SAVED_LABEL_KEY;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.student.common.ui.client.application.Application;
+import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
 import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.SubmitProposalEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
-import org.kuali.student.common.ui.client.service.DataSaveResult;
-import org.kuali.student.common.ui.client.service.WorkflowRpcServiceAsync;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.StylishDropDown;
@@ -56,6 +34,9 @@ import org.kuali.student.common.ui.client.widgets.dialog.ConfirmationDialog;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
 import org.kuali.student.core.assembly.data.QueryPath;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.workflow.ui.client.WorkflowConstants;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcService;
+import org.kuali.student.core.workflow.ui.client.service.WorkflowRpcServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -83,35 +64,31 @@ public class WorkflowUtilities{
     SaveActionEvent approveSaveActionEvent;
     SaveActionEvent startWorkflowSaveActionEvent;
     
-    WorkflowRpcServiceAsync workflowRpcServiceAsync;
+    WorkflowRpcServiceAsync workflowRpcServiceAsync = GWT.create(WorkflowRpcService.class);
     
     private String modelName;
-    private String idPath;
+    private String proposalPath;
+    private String proposalId = "";
     private String workflowId;
-    
-    private String[] requiredFieldPaths;
-    
+        
 	private List<StylishDropDown> workflowWidgets = new ArrayList<StylishDropDown>();
     private CloseHandler<KSLightBox> onSubmitSuccessHandler;
 	private ConfirmationDialog dialog = new ConfirmationDialog("Submit Proposal", "Are you sure you want to submit the proposal to workflow?", "Submit");
     
     private KSLabel workflowStatusLabel = new KSLabel("");
-    private String workflowStatus;
     
     private LayoutController parentController;
     
-	public WorkflowUtilities(WorkflowRpcServiceAsync service, LayoutController parentController, String idPath, CloseHandler<KSLightBox> onSubmitSuccessHandler) {
+	public WorkflowUtilities(LayoutController parentController, String proposalPath, CloseHandler<KSLightBox> onSubmitSuccessHandler) {
 		
 		this.parentController = parentController;
 		this.onSubmitSuccessHandler = onSubmitSuccessHandler;
-		this.idPath = idPath;
-		this.workflowRpcServiceAsync = service;
+		this.proposalPath = proposalPath;
 		setupWFButtons();
-		init();
 		setupDialog();
 	}
 	
-	protected void init() {
+	public void requestAndSetupModel() {
 		
 		if(null==dataModel){
 			//Get the Model from the controller and register a model change handler when the workflow model is updated
@@ -153,21 +130,21 @@ public class WorkflowUtilities{
 			public void onClick(ClickEvent event) {
 				dialog.getConfirmButton().setEnabled(false);
 				parentController.fireApplicationEvent(new SubmitProposalEvent());
-				workflowRpcServiceAsync.submitDocumentWithData(dataModel.getRoot(), new AsyncCallback<DataSaveResult>(){
-					public void onFailure(
-							Throwable caught) {
+				workflowRpcServiceAsync.submitDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						Window.alert("Error starting Proposal workflow");
 						dialog.getConfirmButton().setEnabled(true);
 					}
-					public void onSuccess(
-							DataSaveResult result) {
-						//Update the model with the saved data
-						dataModel.setRoot(result.getValue());
-						updateWorkflow(dataModel);						
-						dialog.hide();
-						dialog.getConfirmButton().setEnabled(true);
-						//Notify the user that the document was submitted
-						showSuccessDialog("Proposal has been routed to workflow");
+					public void onSuccess(Boolean result) {
+						if (result){
+							updateWorkflow(dataModel);						
+							dialog.hide();
+							dialog.getConfirmButton().setEnabled(true);
+							//Notify the user that the document was submitted
+							showSuccessDialog("Proposal has been routed to workflow");
+						} else {
+							Window.alert("Error starting Proposal workflow");
+						}
 					}
 				});
 				
@@ -187,26 +164,27 @@ public class WorkflowUtilities{
 		return workflowStatusLabel;
 	}
 	
-	private String getProposalIdFromModel(DataModel model){
-		String proposalId = "";
+	private void updateWorkflowIdFromModel(final DataModel model){
 		if(model!=null){
-			proposalId = model.get(QueryPath.parse(idPath));
+			String modelProposalId = model.get(QueryPath.parse(proposalPath + "/id"));
+			
+			//If proposalId in model has been set or changed, get new workflowId and update workfow widget
+			if (modelProposalId != null && !modelProposalId.isEmpty() && !modelProposalId.equals(proposalId)){
+				proposalId = modelProposalId;
+				workflowId = model.get(QueryPath.parse(proposalPath + "/workflowId"));
+				updateWorkflow(model);
+			}
 		}
-		return proposalId;
 	}
 
-
 	private void updateWorkflow(DataModel model){
-		String proposalId = getProposalIdFromModel(model);
+		updateWorkflowIdFromModel(model);
 		
-		//Determine which workflow actions are displayed in the drop down
-		workflowRpcServiceAsync.getActionsRequested(proposalId, new AsyncCallback<String>(){
-
-			public void onFailure(Throwable caught) {
-				// TODO
-			}
-
-			public void onSuccess(String result) {
+		if (workflowId != null && !workflowId.isEmpty()){
+			//Determine which workflow actions are displayed in the drop down
+			workflowRpcServiceAsync.getActionsRequested(workflowId, new KSAsyncCallback<String>(){
+		
+				public void onSuccess(String result) {
 					items.clear();
 					if(result.contains("S")){
 						items.add(wfStartWorkflowItem);
@@ -227,57 +205,34 @@ public class WorkflowUtilities{
 					if(result.contains("F")){
 						items.add(wfFYIWorkflowItem);
 					}
-				for(StylishDropDown widget: workflowWidgets){	
-					widget.setItems(items);
+					for(StylishDropDown widget: workflowWidgets){	
+						widget.setItems(items);
+					}
 				}
-			}
-		});
+			});
 		
-		//Get and display workflow status and workflow nodes
-		if (proposalId != null){
-			workflowRpcServiceAsync.getWorkflowIdFromDataId(proposalId, new AsyncCallback<String>(){
-	
+			workflowRpcServiceAsync.getDocumentStatus(workflowId, new KSAsyncCallback<String>(){
 				@Override
-				public void onFailure(Throwable caught) {
-					workflowId = null;
-					workflowStatus = "Status: Unknown";
+				public void handleFailure(Throwable caught) {
+					workflowStatusLabel.setText("Status: Unknown");
 				}
-	
+
 				@Override
 				public void onSuccess(String result) {
-					workflowId = result;
-					if (workflowId != null && !workflowId.isEmpty()){			
-						workflowRpcServiceAsync.getDocumentStatus(workflowId, new AsyncCallback<String>(){
-							@Override
-							public void onFailure(Throwable caught) {
-								workflowStatus = "Status: Unknown";
-							}
-		
-							@Override
-							public void onSuccess(String result) {
-								getWorkflowStatus(result);
-							}						
-						});
-					}				
-				}			
+					setWorkflowStatus(result);
+				}						
 			});
 		} else {
-			workflowStatus = "Status: Draft";
-		}
-		
-		workflowStatusLabel.setText(workflowStatus);
-		
+			workflowStatusLabel.setText("Status: Draft");
+		}			
 	}
 	
 	private KSMenuItemData getFYIWorkflowItem() {
 		KSMenuItemData wfFYIWorkflowItem;
 		wfFYIWorkflowItem = new KSMenuItemData("FYI Proposal", new ClickHandler(){
-	        public void onClick(ClickEvent event) {
-	        	String proposalId = getProposalIdFromModel(dataModel);
-	        	
-				workflowRpcServiceAsync.fyiDocumentWithId(proposalId, new AsyncCallback<Boolean>(){
-					public void onFailure(
-							Throwable caught) {
+	        public void onClick(ClickEvent event) {	        	
+				workflowRpcServiceAsync.fyiDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						Window.alert("Error FYIing Proposal");
 					}
 					public void onSuccess(
@@ -301,11 +256,8 @@ public class WorkflowUtilities{
 		KSMenuItemData wfAcknowledgeItem;
 		wfAcknowledgeItem = new KSMenuItemData("Acknowledge Proposal", new ClickHandler(){
 	        public void onClick(ClickEvent event) {
-	        	String proposalId = getProposalIdFromModel(dataModel);
-	        	
-				workflowRpcServiceAsync.acknowledgeDocumentWithId(proposalId, new AsyncCallback<Boolean>(){
-					public void onFailure(
-							Throwable caught) {
+				workflowRpcServiceAsync.acknowledgeDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						Window.alert("Error acknowledging Proposal");
 					}
 					public void onSuccess(
@@ -328,12 +280,9 @@ public class WorkflowUtilities{
 	private KSMenuItemData getDisApproveItem() {
 		KSMenuItemData wfDisApproveItem;
 		wfDisApproveItem = new KSMenuItemData("Disapprove Proposal", new ClickHandler(){
-	        public void onClick(ClickEvent event) {
-	        	String proposalId = getProposalIdFromModel(dataModel);
-	        	
-				workflowRpcServiceAsync.disapproveDocumentWithId(proposalId, new AsyncCallback<Boolean>(){
-					public void onFailure(
-							Throwable caught) {
+	        public void onClick(ClickEvent event) {        	
+				workflowRpcServiceAsync.disapproveDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						Window.alert("Error disapproving Proposal");
 					}
 					public void onSuccess(
@@ -356,18 +305,18 @@ public class WorkflowUtilities{
 		KSMenuItemData wfApproveItem;
 		wfApproveItem= new KSMenuItemData("Approve Proposal", new ClickHandler(){
 			public void onClick(ClickEvent event) {
-				workflowRpcServiceAsync.approveDocumentWithData(dataModel.getRoot(), new AsyncCallback<DataSaveResult>(){
-					public void onFailure(
-							Throwable caught) {
+				workflowRpcServiceAsync.approveDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						Window.alert("Error approving Proposal");
 					}
-					public void onSuccess(
-							DataSaveResult result) {
-						//Update the model with the saved data
-						dataModel.setRoot(result.getValue());
-						updateWorkflow(dataModel);
-						//Notify the user that the document was approved
-						showSuccessDialog("Proposal was approved");
+					public void onSuccess(Boolean result) {
+						if (result){
+							updateWorkflow(dataModel);
+							//Notify the user that the document was approved
+							showSuccessDialog("Proposal was approved");
+						} else {
+							Window.alert("Error approving Proposal");
+						}
 					}
 				});
 			}        
@@ -379,10 +328,9 @@ public class WorkflowUtilities{
 		KSMenuItemData wfWithdrawItem;
     	wfWithdrawItem = new KSMenuItemData("Withdraw Proposal", new ClickHandler(){
 	        public void onClick(ClickEvent event) {
-	        	String proposalId = getProposalIdFromModel(dataModel);
 	        	
-				workflowRpcServiceAsync.withdrawDocumentWithId(proposalId, new AsyncCallback<Boolean>(){
-					public void onFailure(Throwable caught) {
+				workflowRpcServiceAsync.withdrawDocumentWithId(workflowId, new KSAsyncCallback<Boolean>(){
+					public void handleFailure(Throwable caught) {
 						GWT.log("Error Withdrawing Proposal", caught);
 						Window.alert("Error Withdrawing Proposal");
 					}
@@ -409,57 +357,53 @@ public class WorkflowUtilities{
 		KSMenuItemData wfStartWorkflowItem;
     	wfStartWorkflowItem = new KSMenuItemData("Submit Proposal", new ClickHandler(){
     		public void onClick(ClickEvent event) {
-    			if(dataModel==null || (requiredFieldPaths != null && dataModel.get(QueryPath.parse(requiredFieldPaths[0])) == null)){
-    				Window.alert("Administering Organization must be entered and saved before workflow can be started.");
-    			}else{
-                    //Make sure the entire data model is valid before submit
-    				dataModel.validate(new Callback<List<ValidationResultInfo>>() {
-                        @Override
-                        public void exec(List<ValidationResultInfo> result) {
-                        	
-                        	boolean isValid = ((LayoutController)parentController).isValid(result, false);
-                        	if(isValid){
-                				dialog.show();
-                        	}
-                        	else{
-                        		Window.alert("Unable to submit to workflow.  Please check sections for errors.");
-                        	}                            
-                        }
-                    });
-    			}
+                //Make sure the entire data model is valid before submit
+				dataModel.validateNextState(new Callback<List<ValidationResultInfo>>() {
+                    @Override
+                    public void exec(List<ValidationResultInfo> result) {
+                    	
+                    	boolean isValid = ((LayoutController)parentController).isValid(result, false);
+                    	if(isValid){
+            				dialog.show();
+                    	}
+                    	else{
+                    		Window.alert("Unable to submit to workflow.  Please check sections for missing fields.");
+                    	}                            
+                    }
+                });
     		}
+
     	});
 		return wfStartWorkflowItem;
 	}
-	
-
-	private String getWorkflowStatus(String statusCd){
+		
+	private void setWorkflowStatus(String statusCd){
 		String statusTranslation = "";
-		if (ROUTE_HEADER_SAVED_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_SAVED_LABEL_KEY);
-		} else  if (ROUTE_HEADER_INITIATED_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_INITIATED_LABEL_KEY);
-		} else if (ROUTE_HEADER_ENROUTE_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_ENROUTE_LABEL_KEY);
-		} else if (ROUTE_HEADER_APPROVED_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_APPROVED_LABEL_KEY);
-		} else if (ROUTE_HEADER_CANCEL_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_CANCEL_LABEL_KEY);
-		} else if (ROUTE_HEADER_EXCEPTION_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_EXCEPTION_LABEL_KEY);
-		} else if (ROUTE_HEADER_DISAPPROVED_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_DISAPPROVED_LABEL_KEY);
-		} else if (ROUTE_HEADER_FINAL_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_FINAL_LABEL_KEY);
-		} else if (ROUTE_HEADER_DISAPPROVE_CANCEL_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_DISAPPROVE_CANCEL_LABEL_KEY);
-		} else if (ROUTE_HEADER_PROCESSED_CD.equals(statusCd)){
-			statusTranslation = getLabel(ROUTE_HEADER_PROCESSED_LABEL_KEY);
+		if (WorkflowConstants.ROUTE_HEADER_SAVED_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_SAVED_LABEL_KEY);
+		} else  if (WorkflowConstants.ROUTE_HEADER_INITIATED_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_INITIATED_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_ENROUTE_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_ENROUTE_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_APPROVED_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_APPROVED_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_CANCEL_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_CANCEL_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_EXCEPTION_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_EXCEPTION_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_DISAPPROVED_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_DISAPPROVED_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_FINAL_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_FINAL_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_DISAPPROVE_CANCEL_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_DISAPPROVE_CANCEL_LABEL_KEY);
+		} else if (WorkflowConstants.ROUTE_HEADER_PROCESSED_CD.equals(statusCd)){
+			statusTranslation = getLabel(WorkflowConstants.ROUTE_HEADER_PROCESSED_LABEL_KEY);
 		} else {
 			statusTranslation = statusCd;
 		}
 		
-		return "Status: " + statusTranslation;		
+		workflowStatusLabel.setText("Status: " + statusTranslation);	
 	}
 	
 	private void showSuccessDialog(String successMessage) {
@@ -495,24 +439,13 @@ public class WorkflowUtilities{
 	}
 	
 	/**
-	 * Use to set the data model path to retrieve the id to use for this workflow. 
+	 * Use to set the data model path to retrieve the propsal data to use for this workflow. 
 	 * @param idPath
 	 */
-	public void setIdPath(String idPath) {
-		this.idPath = idPath;
+	public void setProposalPath(String proposalPath) {
+		this.proposalPath = proposalPath;
 	}
-	
-	/**
-	 * Use to indicate which fields are required for workflow before workflow actions are allowed.
-	 * 
-	 * NOTE: We want this to be configurable via metadata rather than hardcoding a call to this in configurers or controllers.
-	 * 
-	 * @param requiredFieldPaths An array of paths to fields to check in the data model
-	 */
-	public void setRequiredFieldPaths(String[] requiredFieldPaths){
-		this.requiredFieldPaths = requiredFieldPaths;
-	}
-	
+		
 	public void setWorkflowRpcService(WorkflowRpcServiceAsync workflowRpcServiceAsync){
 		this.workflowRpcServiceAsync = workflowRpcServiceAsync;
 	}
@@ -523,5 +456,9 @@ public class WorkflowUtilities{
 	
     private String getLabel(String labelKey) {
         return Application.getApplicationContext().getUILabel("common", null, null, labelKey);
+    }
+    
+    public void getDataIdFromWorkflowId(String workflowId, AsyncCallback<String> callback){
+    	workflowRpcServiceAsync.getDataIdFromWorkflowId(workflowId, callback);
     }
 }

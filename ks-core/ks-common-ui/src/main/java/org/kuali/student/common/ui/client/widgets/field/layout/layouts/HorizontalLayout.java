@@ -8,6 +8,7 @@ import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 public class HorizontalLayout extends FieldLayout{
@@ -46,6 +47,9 @@ public class HorizontalLayout extends FieldLayout{
 	}
 	
 	private void init(){
+		instructions.setVisible(false);
+		this.add(instructions);
+		this.add(message);
 		if(hasValidation){
 			this.add(validationPanel);
 		}
@@ -64,6 +68,8 @@ public class HorizontalLayout extends FieldLayout{
 	@Override
 	public void addFieldToLayout(FieldElement field) {
 		horizontalArea.setWidget(currentRow, currentColumn, field);
+		horizontalArea.getFlexCellFormatter().setVerticalAlignment(currentRow, currentColumn, HasVerticalAlignment.ALIGN_TOP);
+
 		if(hasValidation){
 			field.setValidationPanel(validationPanel);
 		}
@@ -73,12 +79,14 @@ public class HorizontalLayout extends FieldLayout{
 	@Override
 	public void addLayoutToLayout(FieldLayout layout) {
 		horizontalArea.setWidget(currentRow, currentColumn, layout);
+		horizontalArea.getFlexCellFormatter().setVerticalAlignment(currentRow, currentColumn, HasVerticalAlignment.ALIGN_TOP);
 		currentColumn++;
 	}
 
 	@Override
 	public void addWidgetToLayout(Widget widget) {
 		horizontalArea.setWidget(currentRow, currentColumn, widget);
+		horizontalArea.getFlexCellFormatter().setVerticalAlignment(currentRow, currentColumn, HasVerticalAlignment.ALIGN_TOP);
 		currentColumn++;
 	}
 	

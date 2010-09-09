@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class translates requirement components into a specific 
+ * This class translates requirement components into a specific
  * natural language. This class is not thread safe.
  */
 public class ReqComponentTranslator {
@@ -43,7 +43,7 @@ public class ReqComponentTranslator {
     private TemplateTranslator templateTranslator = new TemplateTranslator();
 
     /**
-	 * Constructs a new natural language translator in the 
+	 * Constructs a new natural language translator in the
 	 * default language locale.
      */
     public ReqComponentTranslator() {
@@ -52,7 +52,7 @@ public class ReqComponentTranslator {
 
 	/**
 	 * Sets requirement component translation language.
-	 * 
+	 *
 	 * @param language Language translation
 	 */
     public void setLanguage(final String language) {
@@ -61,7 +61,7 @@ public class ReqComponentTranslator {
 
     /**
      * Sets the template context registry.
-     * 
+     *
      * @param contextRegistry Template context registry
      */
     public void setContextRegistry(final ContextRegistry<Context<ReqComponent>> contextRegistry) {
@@ -69,9 +69,10 @@ public class ReqComponentTranslator {
     }
 
     /**
-     * Translates an <code>reqComponent</code> for a specific <code>nlUsageTypeKey</code> into natural language.
+     * Translates an <code>reqComponent</code> for a specific
+     * <code>nlUsageTypeKey</code> into natural language.
      * This method is not thread safe.
-     *  
+     *
      * @param reqComponent
      *            Requirement component to translate
      * @param nlUsageTypeKey
@@ -83,13 +84,34 @@ public class ReqComponentTranslator {
      *             Translation failed
      */
     public String translate(final ReqComponent reqComponent, final String nlUsageTypeKey) throws DoesNotExistException, OperationFailedException {
+    	return translate(reqComponent, nlUsageTypeKey, this.language);
+    }
+
+    /**
+     * Translates an <code>reqComponent</code> for a specific
+     * <code>nlUsageTypeKey</code> into natural language.
+     * This method is not thread safe.
+     *
+     * @param reqComponent
+     *            Requirement component to translate
+     * @param nlUsageTypeKey
+     *            Natural language usuage type key (context)
+     * @param language
+     *            Translation language
+     * @return
+     * @throws DoesNotExistException
+     *             Natural language usuage type key does not exist
+     * @throws OperationFailedException
+     *             Translation failed
+     */
+    public String translate(final ReqComponent reqComponent, final String nlUsageTypeKey, final String language) throws DoesNotExistException, OperationFailedException {
     	if(reqComponent == null) {
     		throw new DoesNotExistException("ReqComponent cannot be null");
     	}
-    	
+
     	ReqComponentType reqComponentType = reqComponent.getRequiredComponentType();
         Map<String, Object> contextMap = buildContextMap(reqComponent);
-        ReqComponentTypeNLTemplate template = getTemplate(reqComponentType, nlUsageTypeKey);
+        ReqComponentTypeNLTemplate template = getTemplate(reqComponentType, nlUsageTypeKey, language);
 
         try {
 			return this.templateTranslator.translate(contextMap, template.getTemplate());
@@ -102,7 +124,7 @@ public class ReqComponentTranslator {
 
     /**
      * Builds a requirement component type context map.
-     * 
+     *
      * @param reqComponent Requirement component
      * @throws DoesNotExistException Requirement component context not found in registry
      * @throws OperationFailedException Creating context map failed
@@ -124,7 +146,7 @@ public class ReqComponentTranslator {
 
     /**
      * Gets the requirement component type template for the <code>nlUsageTypeKey</code>.
-     * 
+     *
      * @param reqComponentType
      *            Requirement component type
      * @param nlUsageTypeKey
@@ -132,14 +154,14 @@ public class ReqComponentTranslator {
      * @return Requirement component type template
      * @throws DoesNotExistException Template does not exist
      */
-    private ReqComponentTypeNLTemplate getTemplate(ReqComponentType reqComponentType, String nlUsageTypeKey) throws DoesNotExistException {
-        List<ReqComponentTypeNLTemplate> templateList = reqComponentType.getNlUsageTemplates();
+    private ReqComponentTypeNLTemplate getTemplate(ReqComponentType reqComponentType, String nlUsageTypeKey, String language) throws DoesNotExistException {
+    	List<ReqComponentTypeNLTemplate> templateList = reqComponentType.getNlUsageTemplates();
         for (ReqComponentTypeNLTemplate template : templateList) {
-            if (nlUsageTypeKey.equals(template.getNlUsageTypeKey()) && this.language.equals(template.getLanguage())) {
+            if (nlUsageTypeKey.equals(template.getNlUsageTypeKey()) && language.equals(template.getLanguage())) {
                 return template;
             }
         }
         throw new DoesNotExistException("Natural language usage type key '" + nlUsageTypeKey + "'" +
-        		" and language code '" + this.language + "' for requirement component type template not found");
+        		" and language code '" + language + "' for requirement component type " + reqComponentType.getId() + " template not found");
     }
 }

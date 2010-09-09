@@ -20,6 +20,7 @@ import static org.kuali.student.core.organization.ui.client.mvc.view.CommonConfi
 
 import java.util.List;
 
+import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.TabbedSectionLayout;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.BaseSection;
@@ -30,9 +31,6 @@ import org.kuali.student.common.ui.client.event.ModifyActionEvent;
 import org.kuali.student.common.ui.client.event.ModifyActionHandler;
 import org.kuali.student.common.ui.client.event.SaveActionEvent;
 import org.kuali.student.common.ui.client.event.SaveActionHandler;
-import org.kuali.student.common.ui.client.event.ValidateRequestEvent;
-import org.kuali.student.common.ui.client.event.ValidateRequestHandler;
-import org.kuali.student.common.ui.client.event.ValidateResultEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
@@ -67,7 +65,6 @@ import org.kuali.student.core.validation.dto.ValidationResultInfo.ErrorLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -122,33 +119,6 @@ public class OrgProposalController extends TabbedSectionLayout{
   	            };
   	            modelRequestQueue.submit(workItem);
             }
-
-        });
-        super.addApplicationEventHandler(ValidateRequestEvent.TYPE, new ValidateRequestHandler() {
-
-            @Override
-            public void onValidateRequest(ValidateRequestEvent event) {
-                requestModel(new ModelRequestCallback<DataModel>() {
-                    @Override
-                    public void onModelReady(DataModel model) {
-                        model.validate(new Callback<List<ValidationResultInfo>>() {
-                            @Override
-                            public void exec(List<ValidationResultInfo> result) {
-                                ValidateResultEvent e = new ValidateResultEvent();
-                                e.setValidationResult(result);
-                                fireApplicationEvent(e);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onRequestFail(Throwable cause) {
-                        GWT.log("Unable to retrieve model for validation", cause);
-                    }
-
-                });
-            }
-
         });
     }
 
@@ -213,10 +183,10 @@ public class OrgProposalController extends TabbedSectionLayout{
             }
 
             orgProposalRpcServiceAsync.getMetadata( QUALIFICATION_ORG_ID, viewContextId,
-                    new AsyncCallback<Metadata>(){
+                    new KSAsyncCallback<Metadata>(){
 
                         @Override
-                        public void onFailure(Throwable caught) {
+                        public void handleFailure(Throwable caught) {
                             GWT.log("Failure",null);
                             KSBlockingProgressIndicator.removeTask(initializingTask);
                             throw new RuntimeException("Failed to get model definition.", caught);
@@ -240,10 +210,10 @@ public class OrgProposalController extends TabbedSectionLayout{
 
     private void setSectionConfig(final Callback<Boolean> onReadyCallback){
         orgProposalRpcServiceAsync.getSectionConfig(
-                new AsyncCallback<SectionConfigInfo>(){
+                new KSAsyncCallback<SectionConfigInfo>(){
 
                     @Override
-                    public void onFailure(Throwable caught) {
+                    public void handleFailure(Throwable caught) {
                         GWT.log("Failure", null);
                         throw new RuntimeException("Failed to get section config.", caught);
                     }
@@ -380,10 +350,10 @@ public class OrgProposalController extends TabbedSectionLayout{
         GWT.log("Reached modify action", null);
 
         orgProposalRpcServiceAsync.getMetadata( QUALIFICATION_ORG_ID, modifyActionEvent.getId(),
-                new AsyncCallback<Metadata>(){
+                new KSAsyncCallback<Metadata>(){
 
                     @Override
-                    public void onFailure(Throwable caught) {
+                    public void handleFailure(Throwable caught) {
                         GWT.log("Failure",null);
                         throw new RuntimeException("Failed to get model definition.", caught);
                     }
@@ -409,8 +379,8 @@ public class OrgProposalController extends TabbedSectionLayout{
 
    public void fetchProposalOrg(final ModifyActionEvent modifyActionEvent) {
 
-       orgProposalRpcServiceAsync.fetchOrg(modifyActionEvent.getId(), new AsyncCallback<Data>() {
-           public void onFailure(Throwable caught) {
+       orgProposalRpcServiceAsync.fetchOrg(modifyActionEvent.getId(), new KSAsyncCallback<Data>() {
+           public void handleFailure(Throwable caught) {
                GWT.log("Fetch Failed.", caught);
            }
 
@@ -463,8 +433,8 @@ public class OrgProposalController extends TabbedSectionLayout{
         }
         saveWindow.show();
 
-        orgProposalRpcServiceAsync.saveOrgProposal(orgProposalModel.getRoot(),  new AsyncCallback<DataSaveResult>(){
-            public void onFailure(Throwable caught) {
+        orgProposalRpcServiceAsync.saveOrgProposal(orgProposalModel.getRoot(),  new KSAsyncCallback<DataSaveResult>(){
+            public void handleFailure(Throwable caught) {
                 GWT.log("Save Failed.", caught);
                 saveWindow.setWidget(buttonGroup);
                 saveMessage.setText(getLabel("orgSaveFailed"));

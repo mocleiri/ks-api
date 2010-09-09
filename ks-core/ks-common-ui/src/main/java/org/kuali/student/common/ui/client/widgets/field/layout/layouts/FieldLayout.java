@@ -24,8 +24,10 @@ import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.InfoMessage;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ButtonLayout;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.AbbrButton;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.FieldElement;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.AbbrButton.AbbrButtonType;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,7 +37,7 @@ public abstract class FieldLayout extends FlowPanel implements FieldLayoutCompon
 	protected Map<String, FieldElement> fieldMap = new HashMap<String, FieldElement>();
 	protected Map<String, FieldLayout> layoutMap = new HashMap<String, FieldLayout>();
 	protected LinkedHashMap<String, Widget> drawOrder = new LinkedHashMap<String, Widget>();
-	protected KSLabel instructions = new KSLabel();
+	protected SpanPanel instructions = new SpanPanel();
 	protected InfoMessage message = new InfoMessage();
 	protected FieldLayout parentLayout;
 	protected boolean hasValidation = false;
@@ -43,6 +45,7 @@ public abstract class FieldLayout extends FlowPanel implements FieldLayoutCompon
 	private String key;
 	private ButtonLayout buttonLayout;
 	protected SectionTitle layoutTitle = null;
+	private AbbrButton help = null;
 
 
 	private static String getNextId() {
@@ -171,7 +174,7 @@ public abstract class FieldLayout extends FlowPanel implements FieldLayoutCompon
 	public void setInstructions(String instructions) {
 		if(instructions != null && !instructions.equals("")){
 			this.instructions.addStyleName("ks-section-instuctions");
-			this.instructions.setText(instructions);
+			this.instructions.setHTML(instructions);
 			this.instructions.setVisible(true);
 		}
 		else{
@@ -256,5 +259,24 @@ public abstract class FieldLayout extends FlowPanel implements FieldLayoutCompon
 	}
 
 	public abstract void addButtonLayoutToLayout(ButtonLayout buttonLayout);
+	
+	public void setHelp(String html){
+		if(layoutTitle != null){
+			if(help == null){
+				help = new AbbrButton(AbbrButtonType.HELP);
+				layoutTitle.add(help);
+			}
+			
+	    	if(html != null && !html.trim().equals("")){
+	    		help.setVisible(true);
+	    		help.setHoverHTML(html);
+	    	}
+	    	else{
+	    		help.setVisible(false);
+	    	}
+	    	
+	    	
+		}
+	}
 
 }
