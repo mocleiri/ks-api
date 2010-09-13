@@ -16,6 +16,7 @@
 package org.kuali.student.lum.lu.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,20 +26,25 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.jws.WebService;
+import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
 import org.kuali.student.common.validator.Validator;
 import org.kuali.student.common.validator.ValidatorFactory;
 import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;
 import org.kuali.student.core.dictionary.service.DictionaryService;
+import org.kuali.student.core.dto.CurrencyAmountInfo;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.entity.Amount;
 import org.kuali.student.core.entity.TimeAmount;
+import org.kuali.student.core.entity.Version;
+import org.kuali.student.core.entity.VersionEntity;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.CircularRelationshipException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.DependentObjectsExistException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
+import org.kuali.student.core.exceptions.IllegalVersionSequencingException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
@@ -54,10 +60,14 @@ import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
 import org.kuali.student.core.search.service.SearchManager;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.lum.lu.dao.LuDao;
 import org.kuali.student.lum.lu.dto.AccreditationInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
+import org.kuali.student.lum.lu.dto.AffiliatedOrgInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
+import org.kuali.student.lum.lu.dto.CluFeeRecordInfo;
+import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.dto.CluInstructorInfo;
 import org.kuali.student.lum.lu.dto.CluLoRelationInfo;
@@ -121,8 +131,12 @@ import org.kuali.student.lum.lu.entity.MembershipQuery;
 import org.kuali.student.lum.lu.entity.ResultOption;
 import org.kuali.student.lum.lu.entity.ResultUsageType;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.lu.service.LuServiceConstants;
 import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
+
+import edu.emory.mathcs.backport.java.util.Collections;
+
 
 @WebService(endpointInterface = "org.kuali.student.lum.lu.service.LuService", serviceName = "LuService", portName = "LuService", targetNamespace = "http://student.kuali.org/wsdl/lu")
 @Transactional(noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
@@ -972,6 +986,16 @@ public class LuServiceImpl implements LuService {
 			DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
+		Clu clu = toCluForCreate(luTypeKey,cluInfo);
+		luDao.create(clu);
+		return LuServiceAssembler.toCluInfo(clu);
+	}
+	
+	public Clu toCluForCreate(String luTypeKey, CluInfo cluInfo)
+			throws AlreadyExistsException, DataValidationErrorException,
+			DoesNotExistException, InvalidParameterException,
+			MissingParameterException, OperationFailedException,
+			PermissionDeniedException {
 		checkForMissingParameter(luTypeKey, "luTypeKey");
 		checkForMissingParameter(cluInfo, "cluInfo");
 
@@ -1126,19 +1150,17 @@ public class LuServiceImpl implements LuService {
 							.getAttributes(), accreditation, luDao));
 			accreditations.add(accreditation);
 		}
-
+		
 		// Now copy all not standard properties
 		BeanUtils.copyProperties(cluInfo, clu, new String[] { "luType",
 				"officialIdentifier", "alternateIdentifiers", "descr",
 				"luCodes", "primaryInstructor", "instructors", "stdDuration",
 				"offeredAtpTypes", "feeInfo", "accountingInfo", "attributes",
-				"metaInfo", "intensity",
+				"metaInfo", "versionInfo", "intensity",
 				"campusLocations", "accreditations",
 				"adminOrgs" });
 
-		luDao.create(clu);
-
-		return LuServiceAssembler.toCluInfo(clu);
+		return clu;
 	}
 
 	@Override
@@ -2798,5 +2820,231 @@ public class LuServiceImpl implements LuService {
 
 	public void setValidatorFactory(ValidatorFactory validatorFactory) {
 		this.validatorFactory = validatorFactory;
-	}	
+	}
+
+	/********* Versioning Methods ***************************/
+	
+	@Override
+    public CluInfo createNewCluVersion(String versionIndCluId, String versionComment) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException {	    
+		Clu latestClu;
+		Clu currentClu; 
+		try{
+			latestClu = luDao.getLatestCluVersion(versionIndCluId);
+		}catch(NoResultException e){
+			throw new DoesNotExistException("There are no matching versions of this clu", e);
+		}
+		try{
+			currentClu = luDao.getCurrentCluVersion(versionIndCluId);
+		}catch(NoResultException e){
+			throw new DoesNotExistException("There is no current version of this clu. Only current clus can be versioned. Use setCurrentCluVersion to make a clu current.", e);
+		}
+		
+	    CluInfo cluInfo = LuServiceAssembler.toCluInfo(currentClu);
+	    
+	    // Reset the Clu
+	    clearCluIds(cluInfo);
+	    
+	    // Create the new Clu Version	    
+	    CluInfo newClu = null;
+	    
+        try {
+    		Clu clu = toCluForCreate(cluInfo.getType(), cluInfo);
+    	    //Set the Version data
+    		Version version = new Version();
+    		version.setSequenceNumber(latestClu.getVersion().getSequenceNumber() + 1);
+    		version.setVersionIndId(versionIndCluId);
+    		version.setCurrentVersionStart(null);
+    		version.setCurrentVersionEnd(null);
+    		version.setVersionComment(versionComment);
+    		version.setVersionedFromId(currentClu.getId());
+    		clu.setVersion(version);
+    		luDao.create(clu);
+            newClu = LuServiceAssembler.toCluInfo(clu); 
+        } catch (AlreadyExistsException e) {
+            throw new OperationFailedException("Error creating a new clu version", e);
+        }
+	    
+	    return newClu;
+	}
+
+    private void clearCluIds(CluInfo clu) {
+	    // Clear out all ids so a copy can be made
+    	
+    	clu.setId(null);
+	    	    	    
+	    clu.getAccountingInfo().setId(null);
+	    for(AffiliatedOrgInfo affiliatedOrg:clu.getAccountingInfo().getAffiliatedOrgs()){
+	    	affiliatedOrg.setId(null);
+	    }
+	    for(AccreditationInfo accredation:clu.getAccreditations()){
+	    	accredation.setId(null);
+	    }
+	    for(AdminOrgInfo adminOrg:clu.getAdminOrgs()){
+	    	adminOrg.setId(null);
+	    }
+	    for(CluIdentifierInfo alternateIdentifier:clu.getAlternateIdentifiers()){
+	    	alternateIdentifier.setId(null);
+	    }
+	    clu.getFeeInfo().setId(null);
+	    for(CluFeeRecordInfo cluFeeRecord:clu.getFeeInfo().getCluFeeRecords()){
+	    	cluFeeRecord.setId(null);
+	    	for(AffiliatedOrgInfo affiliatedOrg:cluFeeRecord.getAffiliatedOrgs()){
+	    		affiliatedOrg.setId(null);
+	    	}
+	    	for(CurrencyAmountInfo feeAmount:cluFeeRecord.getFeeAmounts()){
+	    		feeAmount.setId(null);
+	    	}
+	    }
+	    for(LuCodeInfo luCode:clu.getLuCodes()){
+	    	luCode.setId(null);
+	    }
+	    clu.getOfficialIdentifier().setId(null);
+	}
+
+	@Override
+    public StatusInfo setCurrentCluVersion(String cluVersionId, Date currentVersionStart) throws DoesNotExistException, InvalidParameterException, MissingParameterException, IllegalVersionSequencingException, OperationFailedException, PermissionDeniedException {
+        //Check params
+		Date currentDbDate = new Date();//FIXME, this should be DB time
+		if(currentVersionStart!=null&&currentVersionStart.compareTo(currentDbDate)<0){
+			throw new InvalidParameterException("currentVersionStart must be in the future.");
+		}
+		//Default the currentVersionStart to the current date
+		if(currentVersionStart==null){
+			currentVersionStart = currentDbDate;
+		}
+		
+		//get the clu we are setting as current 
+		Clu clu = luDao.fetch(Clu.class, cluVersionId);
+		String versionIndId = clu.getVersion().getVersionIndId();
+
+		Clu oldClu = null;
+		try{
+			oldClu = luDao.getCurrentCluVersion(versionIndId);
+		}catch(NoResultException e){}
+		
+		//Check that the clu you are trying to version has a sequence number greater than the current clu
+		if(oldClu!=null){
+			if(clu.getVersion().getSequenceNumber()<=oldClu.getVersion().getSequenceNumber()){
+				throw new OperationFailedException("Clu to make current must have been versioned from the current Clu");
+			}
+		}else{
+			//Ignore the start date set if this is the first version (it will be set to the current time to avoid weird time problems)
+			currentVersionStart = currentDbDate;
+		}
+		
+		
+		//Get any clus that are set to become current in the future, and clear their current dates
+		List<VersionDisplayInfo> versionsInFuture = luDao.getVersionsInDateRange(versionIndId, null, currentDbDate, null);
+		for(VersionDisplayInfo versionInFuture:versionsInFuture){
+			if(oldClu==null || !versionInFuture.getId().equals(oldClu.getId())){
+				VersionEntity futureClu = luDao.fetch(Clu.class, versionInFuture.getId());
+				futureClu.getVersion().setCurrentVersionStart(null);
+				futureClu.getVersion().setCurrentVersionEnd(null);
+				futureClu = luDao.update(futureClu);
+			}
+		}
+		
+		//If there is a current clu, set its end date to the new clu's start date
+		if(oldClu!=null){
+			oldClu.getVersion().setCurrentVersionEnd(currentVersionStart);
+			oldClu = luDao.update(oldClu);
+		}
+		
+		//Set the startdate of the new current clu
+		clu.getVersion().setCurrentVersionStart(currentVersionStart);
+		clu.getVersion().setCurrentVersionEnd(null);
+		clu = luDao.update(clu);
+		
+		StatusInfo statusInfo = new StatusInfo();
+		statusInfo.setSuccess(true);
+        return statusInfo;
+    }   
+	
+    @Override
+    public VersionDisplayInfo getCurrentVersion(String refObjectTypeURI, String refObjectId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		VersionDisplayInfo versionInfo = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+        	try{
+        		versionInfo = luDao.getCurrentCluVersionInfo(refObjectId, refObjectTypeURI);
+        	}catch(NoResultException e){
+        		throw new DoesNotExistException();
+        	}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfo;
+	}
+
+    @Override
+    public VersionDisplayInfo getCurrentVersionOnDate(String refObjectTypeURI, String refObjectId, Date date) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		VersionDisplayInfo versionInfo = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+        	try{
+        		versionInfo = luDao.getCurrentVersionOnDate(refObjectId, refObjectTypeURI, date);
+        	}catch(NoResultException e){
+        		throw new DoesNotExistException();
+        	}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfo;
+    }
+
+    @Override
+    public VersionDisplayInfo getFirstVersion(String refObjectTypeURI, String refObjectId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		VersionDisplayInfo versionInfo = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+        	try{
+        		versionInfo = luDao.getFirstVersion(refObjectId, refObjectTypeURI);
+        	}catch(NoResultException e){
+        		throw new DoesNotExistException();
+        	}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfo;
+    }
+
+    @Override
+    public VersionDisplayInfo getVersionBySequenceNumber(String refObjectTypeURI, String refObjectId, Long sequence) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+		VersionDisplayInfo versionInfo = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+        	try{
+        		versionInfo = luDao.getVersionBySequenceNumber(refObjectId, refObjectTypeURI, sequence);
+        	}catch(NoResultException e){
+        		throw new DoesNotExistException();
+        	}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfo;
+    }
+
+    @Override
+    public List<VersionDisplayInfo> getVersions(String refObjectTypeURI, String refObjectId) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+    	List<VersionDisplayInfo> versionInfos = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+       		versionInfos = luDao.getVersions(refObjectId, refObjectTypeURI);
+       		if(versionInfos==null){
+       			versionInfos = Collections.emptyList();
+       		}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfos;
+    }
+
+    @Override
+    public List<VersionDisplayInfo> getVersionsInDateRange(String refObjectTypeURI, String refObjectId, Date from, Date to) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+    	List<VersionDisplayInfo> versionInfos = null;
+		if(LuServiceConstants.CLU_NAMESPACE_URI.equals(refObjectTypeURI)){
+    		versionInfos = luDao.getVersionsInDateRange(refObjectId, refObjectTypeURI, from, to);
+       		if(versionInfos==null){
+       			versionInfos = Collections.emptyList();
+       		}
+        }else{
+        	throw new UnsupportedOperationException("This method does not know how to handle object type:"+refObjectTypeURI);
+        }
+		return versionInfos;
+    }
 }

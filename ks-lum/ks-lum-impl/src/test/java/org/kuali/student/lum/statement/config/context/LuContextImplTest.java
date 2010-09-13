@@ -2,6 +2,7 @@ package org.kuali.student.lum.statement.config.context;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.kuali.student.core.exceptions.CircularRelationshipException;
 import org.kuali.student.core.exceptions.DataValidationErrorException;
 import org.kuali.student.core.exceptions.DependentObjectsExistException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
+import org.kuali.student.core.exceptions.IllegalVersionSequencingException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;
 import org.kuali.student.core.exceptions.OperationFailedException;
@@ -30,6 +32,7 @@ import org.kuali.student.core.search.dto.SearchTypeInfo;
 import org.kuali.student.core.statement.entity.ReqComponent;
 import org.kuali.student.core.statement.entity.ReqComponentField;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
+import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
 import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
@@ -1220,6 +1223,83 @@ public class LuContextImplTest {
 		@Override
 		public SearchResult search(SearchRequest searchRequest)
 				throws MissingParameterException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public CluInfo createNewCluVersion(String cluId, String versionComment)
+				throws DataValidationErrorException, DoesNotExistException,
+				InvalidParameterException, MissingParameterException,
+				OperationFailedException, PermissionDeniedException,
+				VersionMismatchException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public StatusInfo setCurrentCluVersion(String cluVersionId,
+				Date currentVersionStart) throws DoesNotExistException,
+				InvalidParameterException, MissingParameterException,
+				IllegalVersionSequencingException, OperationFailedException,
+				PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public VersionDisplayInfo getCurrentVersion(String refObjectTypeURI,
+				String refObjectId) throws DoesNotExistException,
+				InvalidParameterException, MissingParameterException,
+				OperationFailedException, PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public VersionDisplayInfo getCurrentVersionOnDate(
+				String refObjectTypeURI, String refObjectId, Date date)
+				throws DoesNotExistException, InvalidParameterException,
+				MissingParameterException, OperationFailedException,
+				PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public VersionDisplayInfo getFirstVersion(String refObjectTypeURI,
+				String refObjectId) throws DoesNotExistException,
+				InvalidParameterException, MissingParameterException,
+				OperationFailedException, PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public VersionDisplayInfo getVersionBySequenceNumber(
+				String refObjectTypeURI, String refObjectId, Long sequence)
+				throws DoesNotExistException, InvalidParameterException,
+				MissingParameterException, OperationFailedException,
+				PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<VersionDisplayInfo> getVersions(String refObjectTypeURI,
+				String refObjectId) throws DoesNotExistException,
+				InvalidParameterException, MissingParameterException,
+				OperationFailedException, PermissionDeniedException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public List<VersionDisplayInfo> getVersionsInDateRange(
+				String refObjectTypeURI, String refObjectId, Date from, Date to)
+				throws DoesNotExistException, InvalidParameterException,
+				MissingParameterException, OperationFailedException,
+				PermissionDeniedException {
 			// TODO Auto-generated method stub
 			return null;
 		}

@@ -35,6 +35,7 @@ import org.kuali.student.core.dto.Idable;
 import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.dto.TimeAmountInfo;
+import org.kuali.student.core.versionmanagement.dto.VersionInfo;
 import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
 
 /**
@@ -136,6 +137,9 @@ public class CluInfo implements Serializable, Idable, HasTypeState, HasAttribute
     @XmlElement
     private MetaInfo metaInfo;
 
+    @XmlElement
+    private VersionInfo versionInfo; 
+    
     @XmlAttribute
     private String type;
 
@@ -463,6 +467,15 @@ public class CluInfo implements Serializable, Idable, HasTypeState, HasAttribute
 
     public void setMetaInfo(MetaInfo metaInfo) {
         this.metaInfo = metaInfo;
+    }
+
+       
+    public VersionInfo getVersionInfo() {
+        return versionInfo;
+    }
+
+    public void setVersionInfo(VersionInfo versionInfo) {
+        this.versionInfo = versionInfo;
     }
 
     /**
