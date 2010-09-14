@@ -4026,11 +4026,11 @@
         <foreign-key foreignTable="KSLU_LOLO_RELTN_TYPE" name="FK43828D88ED64FBFA">
             <reference foreign="ID" local="LO_LO_RELATION_TYPE_ID"/>
         </foreign-key>
-        <foreign-key foreignTable="KSLU_LO" name="FK43828D88A473D327">
-            <reference foreign="ID" local="RELATED_LO_ID"/>
-        </foreign-key>
         <foreign-key foreignTable="KSLU_LO" name="FK43828D888DD0E03B">
             <reference foreign="ID" local="LO_ID"/>
+        </foreign-key>
+        <foreign-key foreignTable="KSLU_LO" name="FK43828D88A473D327">
+            <reference foreign="ID" local="RELATED_LO_ID"/>
         </foreign-key>
     </table>
     <table name="KSLU_LOLO_RELTN_ATTR">
@@ -5295,17 +5295,17 @@
     <sequence name="KREW_ACTN_LIST_OPTN_S" nextval="1269"/>
     <sequence name="KREW_ACTN_RQST_S" nextval="2369"/>
     <sequence name="KREW_ACTN_TKN_S" nextval="2329"/>
-    <sequence name="KREW_DOC_HDR_S" nextval="3000"/>
+    <sequence name="KREW_DOC_HDR_S" nextval="3005"/>
     <sequence name="KREW_DOC_LNK_S" nextval="2000"/>
     <sequence name="KREW_DOC_NTE_S" nextval="2020"/>
-    <sequence name="KREW_DOC_TYP_ATTR_S" nextval="2009"/>
+    <sequence name="KREW_DOC_TYP_ATTR_S" nextval="2010"/>
     <sequence name="KREW_EDL_FLD_DMP_S" nextval="5000"/>
     <sequence name="KREW_EDL_S" nextval="2020"/>
     <sequence name="KREW_HLP_S" nextval="100"/>
     <sequence name="KREW_OUT_BOX_ITM_S" nextval="10043"/>
     <sequence name="KREW_RSP_S" nextval="2065"/>
-    <sequence name="KREW_RTE_NODE_CFG_PARM_S" nextval="2456"/>
-    <sequence name="KREW_RTE_NODE_S" nextval="2912"/>
+    <sequence name="KREW_RTE_NODE_CFG_PARM_S" nextval="2572"/>
+    <sequence name="KREW_RTE_NODE_S" nextval="2943"/>
     <sequence name="KREW_RTE_TMPL_S" nextval="1645"/>
     <sequence name="KREW_RULE_EXPR_S" nextval="2002"/>
     <sequence name="KREW_RULE_TMPL_OPTN_S" nextval="2020"/>
@@ -5352,6 +5352,6 @@
     <sequence name="KRSB_BAM_PARM_S" nextval="2000"/>
     <sequence name="KRSB_BAM_S" nextval="2000"/>
     <sequence name="KRSB_FLT_SVC_DEF_S" nextval="1000"/>
-    <sequence name="KRSB_MSG_QUE_S" nextval="463"/>
-    <sequence name="KRSB_SVC_DEF_S" nextval="4058"/>
+    <sequence name="KRSB_MSG_QUE_S" nextval="1000"/>
+    <sequence name="KRSB_SVC_DEF_S" nextval="1000"/>
 </database>
