@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.program.client.requirements;
+package org.kuali.student.lum.lu.ui.course.client.requirements;
 
 import java.util.List;
 
@@ -40,18 +40,18 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ProgramRequirementsManageView extends VerticalSectionView {
+public class CourseRequirementsManageView extends VerticalSectionView {
 
     private StatementRpcServiceAsync statementRpcServiceAsync = GWT.create(StatementRpcService.class);
 
-    private ProgramRequirementsViewController parentController;
+    private CourseRequirementsViewController parentController;
 
     //view's widgets
     private VerticalPanel layout = new VerticalPanel();
     private ReqCompEditWidget editReqCompWidget;
     private RuleManageWidget ruleManageWidget;
     private SimplePanel twiddlerPanel = new SimplePanel();
-    private ActionCancelGroup actionCancelButtons = new ActionCancelGroup(ButtonEnumerations.SaveCancelEnum.SAVE, ButtonEnumerations.SaveCancelEnum.CANCEL);    
+    private ActionCancelGroup actionCancelButtons = new ActionCancelGroup(ButtonEnumerations.SaveCancelEnum.SAVE, ButtonEnumerations.SaveCancelEnum.CANCEL);
 
     //view's data
     private StatementTreeViewInfo rule = null;
@@ -59,14 +59,14 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
     private boolean isNewRule = false;
     private ReqComponentInfo editedReqCompInfo = null;
     private static int tempStmtTreeViewInfoID = 9999;
-    private String relatedProgramReqInfoId = null;
+    private String relatedCourseReqInfoId = null;
     private String originalReqCompNL;
     private String originalLogicExpression;
 
     //   private boolean isLocalDirty = false;
     private boolean userClickedSaveButton = false;
 
-    public ProgramRequirementsManageView(ProgramRequirementsViewController parentController, Enum<?> viewEnum, String name, String modelId) {
+    public CourseRequirementsManageView(CourseRequirementsViewController parentController, Enum<?> viewEnum, String name, String modelId) {
         super(viewEnum, name, modelId);
         this.parentController = parentController;
     }
@@ -127,7 +127,7 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
              @Override
             public void exec(ButtonEnumerations.ButtonEnum result) {
                 userClickedSaveButton = (result == ButtonEnumerations.SaveCancelEnum.SAVE);
-                parentController.showView(ProgramRequirementsViewController.ProgramRequirementsViews.PREVIEW);
+                parentController.showView(CourseRequirementsViewController.CourseRequirementsViews.PREVIEW);
             }
         });
         addWidget(actionCancelButtons);
@@ -145,7 +145,7 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
             ruleManageWidget = new RuleManageWidget();            
         }
 
-        this.relatedProgramReqInfoId = relatedProgramReqInfoId;
+        this.relatedCourseReqInfoId = relatedProgramReqInfoId;
         editedReqCompInfo = null;
         userClickedSaveButton = false;        
         rule = ObjectClonerUtil.clone(stmtTreeInfo);
@@ -225,8 +225,8 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
             }
 
             //1. update NL for the req. component
-            statementRpcServiceAsync.translateReqComponentToNL(reqComp, ProgramRequirementsViewController.RULEEDIT_TEMLATE,
-                                                                         ProgramRequirementsViewController.TEMLATE_LANGUAGE, new KSAsyncCallback<String>() {
+            statementRpcServiceAsync.translateReqComponentToNL(reqComp, CourseRequirementsViewController.RULEEDIT_TEMLATE,
+                                                                         CourseRequirementsViewController.TEMLATE_LANGUAGE, new KSAsyncCallback<String>() {
                 public void handleFailure(Throwable caught) {
                     Window.alert(caught.getMessage());
                     GWT.log("translateReqComponentToNL failed", caught);
@@ -256,25 +256,10 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
                     } else {    //update req. component
                         editedReqCompInfo.setNaturalLanguageTranslation(reqComp.getNaturalLanguageTranslation());
                         editedReqCompInfo.setReqCompFields(reqComp.getReqCompFields());
-                        //editedReqCompInfo.setRequiredComponentType(reqComp.getRequiredComponentType());
+                        editedReqCompInfo.setType(reqComp.getType());
                         editedReqCompInfo = null;  //de-reference from existing req. component
                     }
-
-                    //3. update NL for the rule
-                    /* not needed because the service does not care about NL in statement tree view info object
-                    statementRpcServiceAsync.translateStatementTreeViewToNL(rule, ProgramRequirementsViewController.RULEEDIT_TEMLATE,
-                                                                            ProgramRequirementsViewController.TEMLATE_LANGUAGE, new KSAsyncCallback<String>() {
-                        public void handleFailure(Throwable caught) {
-                            Window.alert(caught.getMessage());
-                            GWT.log("translateStatementTreeViewToNL failed", caught);
-                       }
-
-                        public void onSuccess(final String reqCompNL) {
-                            rule.setNaturalLanguageTranslation(reqCompNL);
-                            ruleManageWidget.redraw(rule);
-                        }
-                    }); */
-
+                    
                     ruleManageWidget.redraw(rule);
                 }
             });
@@ -315,8 +300,8 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
             //reqComp.setReqCompFields(new ArrayList<ReqCompFieldInfo>());
             //reqComp.setRequiredComponentType(reqCompTypeInfo);
 
-            statementRpcServiceAsync.translateReqComponentToNL(reqComp, ProgramRequirementsViewController.COMPOSITION_TEMLATE,
-                                                                ProgramRequirementsViewController.TEMLATE_LANGUAGE, new KSAsyncCallback<String>() {
+            statementRpcServiceAsync.translateReqComponentToNL(reqComp, CourseRequirementsViewController.COMPOSITION_TEMLATE,
+                                                                CourseRequirementsViewController.TEMLATE_LANGUAGE, new KSAsyncCallback<String>() {
                 public void handleFailure(Throwable caught) {
                     Window.alert(caught.getMessage());
                     GWT.log("translateReqComponentToNL failed",caught);
@@ -337,7 +322,7 @@ public class ProgramRequirementsManageView extends VerticalSectionView {
         this.userClickedSaveButton = userClickedSaveButton;
     }
 
-    public String getRelatedProgramReqInfoId() {
-        return relatedProgramReqInfoId;
+    public String getRelatedCourseReqInfoId() {
+        return relatedCourseReqInfoId;
     }
 }
