@@ -20,5 +20,6 @@ public class ProgramEditConfigurer extends AbstractProgramConfigurer {
         programSectionConfigManager.registerConfiguration(GWT.<Configuration>create(ProgramRequirementsEditConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<Configuration>create(LearningObjectivesEditConfiguration.class));
         programSectionConfigManager.registerConfiguration(GWT.<Configuration>create(SupportingDocsEditConfiguration.class));
+        programSectionConfigManager.registerConfiguration(GWT.<Configuration>create(ProgramSummaryConfiguration.class));
     }
 }

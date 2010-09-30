@@ -340,6 +340,15 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String program_menu_sections_specializations();
 
   /**
+   * Translated "Program Summary".
+   * 
+   * @return translated "Program Summary"
+   */
+  @DefaultMessage("Program Summary")
+  @Key("program.menu.sections.summary")
+  String program_menu_sections_summary();
+
+  /**
    * Translated "Supporting Documents".
    * 
    * @return translated "Supporting Documents"

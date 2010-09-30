@@ -1,27 +1,23 @@
-package org.kuali.student.lum.program.client.major.view;
+package org.kuali.student.lum.program.client.major.edit;
 
+import com.google.gwt.core.client.GWT;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.lum.common.client.configuration.AbstractControllerConfiguration;
-import org.kuali.student.lum.common.client.configuration.AbstractSectionConfiguration;
 import org.kuali.student.lum.common.client.configuration.Configuration;
 import org.kuali.student.lum.common.client.configuration.ConfigurationManager;
 import org.kuali.student.lum.program.client.ProgramConstants;
-import org.kuali.student.lum.program.client.ProgramController;
 import org.kuali.student.lum.program.client.ProgramSections;
+import org.kuali.student.lum.program.client.major.view.*;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
-
-import com.google.gwt.core.client.GWT;
 
 /**
  * @author Igor
  */
-public class ViewAllSectionConfiguration extends AbstractSectionConfiguration {
+public class ProgramSummaryConfiguration extends AbstractControllerConfiguration {
 
-    private ProgramController viewController;
-
-    public ViewAllSectionConfiguration() {
-        rootSection = new VerticalSectionView(ProgramSections.VIEW_ALL, ProgramProperties.get().program_menu_sections_viewAll(), ProgramConstants.PROGRAM_MODEL_ID, false);
+    public ProgramSummaryConfiguration() {
+        rootSection = new VerticalSectionView(ProgramSections.SUMMARY, ProgramProperties.get().program_menu_sections_summary(), ProgramConstants.PROGRAM_MODEL_ID, false);
     }
 
     @Override
@@ -35,13 +31,9 @@ public class ViewAllSectionConfiguration extends AbstractSectionConfiguration {
         configurationManager.registerConfiguration(GWT.<Configuration>create(LearningObjectivesViewConfiguration.class));
         for (Configuration configuration : configurationManager.getConfigurations()) {
             if (configuration instanceof AbstractControllerConfiguration) {
-            ((AbstractControllerConfiguration) configuration).setController(viewController);
+                ((AbstractControllerConfiguration) configuration).setController(controller);
             }
             rootSection.addSection((Section) configuration.getView());
         }
-    }
-
-    public void setViewController(ProgramController viewController) {
-        this.viewController = viewController;            
     }
 }
