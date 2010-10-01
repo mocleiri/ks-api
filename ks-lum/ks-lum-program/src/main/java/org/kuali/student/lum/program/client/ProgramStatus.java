@@ -22,7 +22,7 @@ public enum ProgramStatus {
 
     public static ProgramStatus of(String value) {
         for (ProgramStatus status : values()) {
-            if (status.getValue().equals(value)) {
+            if (status.getValue().equalsIgnoreCase(value)) {
                 return status;
             }
         }
