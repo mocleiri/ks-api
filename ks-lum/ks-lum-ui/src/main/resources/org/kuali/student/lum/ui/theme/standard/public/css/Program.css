@@ -20,7 +20,14 @@
 
 /* Program Summary View */
 .KS-Program-Requirements-Preview-Rule-Type-First-Header {
-    padding-top: 20px;
+    border-bottom:1px solid #D7D7D7;
+    padding-bottom:8px;
+    padding-top:15px;
+    width:650px;
+}
+
+.KS-Program-Requirements-Preview-Rule-Type-First-Desc {
+    padding-bottom:10px;
 }
 
 .KS-Program-Requirements-Preview-Rule-Type-Header {
@@ -32,7 +39,7 @@
 }
 
 .KS-Program-Requirements-Preview-SaveContinue {
-    padding-top: 40px;    
+    padding-top: 40px;
 }
 
 /* Program Manage View */
@@ -69,4 +76,20 @@
 
 .KS-Program-Rule-ObjectView-RulePanel label {
     display: inline
+}
+
+.programController .programActionPanel {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 240px;
+}
+
+.programController .sideBar {
+    padding-top: 10px;
+    padding-left: 10px;
+    border-spacing: 6px;
+}
+
+.programController .sideBar .history {
+    font-weight: bold;
 }

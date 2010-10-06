@@ -3,8 +3,11 @@
  */
 package org.kuali.student.lum.program.service.impl;
 
-import java.util.List;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.kuali.student.common.util.UUIDHelper;
 import org.kuali.student.core.assembly.BOAssembler;
@@ -13,7 +16,6 @@ import org.kuali.student.core.assembly.BaseDTOAssemblyNode.NodeOperation;
 import org.kuali.student.core.assembly.data.AssemblyException;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.statement.dto.RefStatementRelationInfo;
-import org.kuali.student.core.statement.dto.StatementInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.service.StatementService;
 import org.kuali.student.core.statement.service.assembler.StatementTreeViewAssembler;
@@ -23,6 +25,7 @@ import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.program.dto.ProgramRequirementInfo;
+import org.kuali.student.lum.program.service.assembler.ProgramAssemblerConstants;
 import org.kuali.student.lum.program.service.assembler.ProgramAssemblerUtils;
 import org.kuali.student.lum.service.assembler.CluAssemblerUtils;
 
@@ -62,7 +65,7 @@ public class ProgramRequirementAssembler implements BOAssembler<ProgramRequireme
 
 				StatementTreeViewInfo statementTree = new StatementTreeViewInfo();
 				if (relations != null) {
-					statementTreeViewAssembler.assemble(statementService.getStatement(relations.get(0).getStatementId()), statementTree, shallowBuild);
+					statementTreeViewAssembler.assemble(statementService.getStatementTreeView(relations.get(0).getStatementId()), statementTree, shallowBuild);
 				}
 				progReq.setStatement(statementTree);
 			} catch (AssemblyException e) {
@@ -73,7 +76,7 @@ public class ProgramRequirementAssembler implements BOAssembler<ProgramRequireme
 		}
 
 		if (isEmpty(progReq.getLearningObjectives())) {
-			progReq.setLearningObjectives(cluAssemblerUtils.assembleLearningObjectives(clu.getId(), shallowBuild));
+			progReq.setLearningObjectives(cluAssemblerUtils.assembleLos(clu.getId(), shallowBuild));
 		}
 
 		progReq.setMetaInfo(clu.getMetaInfo());
@@ -101,7 +104,7 @@ public class ProgramRequirementAssembler implements BOAssembler<ProgramRequireme
 		// Create the Statement Tree
         StatementTreeViewInfo statement = progReq.getStatement();
         statement.setId(UUIDHelper.genStringUUID(statement.getId()));
-        BaseDTOAssemblyNode<StatementTreeViewInfo, StatementInfo> statementTree;
+        BaseDTOAssemblyNode<StatementTreeViewInfo, StatementTreeViewInfo> statementTree;
 		try {
 			statementTree = statementTreeViewAssembler.disassemble(statement, operation);
 		} catch (AssemblyException e) {
@@ -127,11 +130,14 @@ public class ProgramRequirementAssembler implements BOAssembler<ProgramRequireme
 
         programAssemblerUtils.disassembleBasics(clu, progReq, operation);
         progReq.setId(clu.getId());
-        if (clu.getOfficialIdentifier() == null) {
-        	clu.setOfficialIdentifier(new CluIdentifierInfo());
-        }
-        clu.getOfficialIdentifier().setLongName(progReq.getLongTitle());
-        clu.getOfficialIdentifier().setShortName(progReq.getShortTitle());
+        CluIdentifierInfo official = null != clu.getOfficialIdentifier() ? clu.getOfficialIdentifier() : new CluIdentifierInfo();
+        official.setLongName(progReq.getLongTitle());
+        official.setShortName(progReq.getShortTitle());
+        official.setState(!isEmpty(clu.getState()) ? clu.getState() : ProgramAssemblerConstants.ACTIVE);
+        // gotta be this type
+        official.setType(ProgramAssemblerConstants.OFFICIAL);
+        clu.setOfficialIdentifier(official);
+
         clu.setDescr(progReq.getDescr());
 
         if (progReq.getLearningObjectives() != null) {

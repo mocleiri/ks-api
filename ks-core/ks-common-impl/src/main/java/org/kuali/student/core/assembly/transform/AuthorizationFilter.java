@@ -13,8 +13,8 @@ import org.kuali.student.common.util.security.SecurityUtils;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.assembly.data.Metadata.Permission;
 import org.kuali.student.core.assembly.util.AssemblerUtils;
+import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;
 
 /**
@@ -31,6 +31,27 @@ public class AuthorizationFilter extends AbstractDataFilter implements MetadataF
     	
 	final Logger LOG = Logger.getLogger(AuthorizationFilter.class);
     
+    public enum Permission {
+        EDIT("edit"), READ_ONLY("readonly"), UNMASK("unmask");
+        final String kimName;
+        private Permission(String kimName) {
+            this.kimName = kimName;
+        }
+        @Override
+        public String toString() {
+            return kimName;
+        }
+        public static Permission kimValueOf(String kimName) {
+            for(Permission p : values()) {
+                if(p.kimName.equals(kimName)) {
+                    return p;
+                }
+            }
+            //fall through
+            throw new IllegalArgumentException("The value " + kimName + " is not enumerated in Permission"); 
+        }
+    }
+	
     @Override
 	public void applyInboundDataFilter(Data data, Metadata metadata, Map<String,Object> filterProperties) throws Exception {       
         if(metadata != null && !metadata.isCanEdit()) {
@@ -106,7 +127,7 @@ public class AuthorizationFilter extends AbstractDataFilter implements MetadataF
 	                    fieldMetadata = fieldMetadata.getProperties().get(fieldPathTokens[i]);
 	                }
 	                if (fieldMetadata != null) {
-	                    Permission perm = Metadata.Permission.kimValueOf(fieldAccessLevel);
+	                    Permission perm = Permission.kimValueOf(fieldAccessLevel);
 	                    if (Permission.EDIT.equals(perm)) {
 	                        setReadOnly(fieldMetadata, false);
 	                        //fieldMetadata.setCanEdit(true);
@@ -163,7 +184,7 @@ public class AuthorizationFilter extends AbstractDataFilter implements MetadataF
 
     protected AttributeSet getQualification(String idType, String id, String docType) {
         AttributeSet qualification = new AttributeSet();
-        qualification.put("documentTypeName", docType);
+        qualification.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, docType);
         qualification.put(idType, id);
         return qualification;
     }

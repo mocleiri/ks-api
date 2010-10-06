@@ -10,8 +10,8 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumeration
 import org.kuali.student.common.ui.client.widgets.dialog.ButtonMessageDialog;
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ButtonGroup;
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ContinueCancelGroup;
+import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
-import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
 import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 
@@ -30,6 +30,7 @@ public class ProgramRequirementsViewController extends BasicLayout {
     public static final String PROGRAM_RULES_MODEL_ID = "programRulesModelId";
     private ProgramRequirementsSummaryView preview;
     private static ProgramRequirementsDataModel dataInstance;
+    private boolean isReadOnly;
 
     public ProgramRequirementsViewController(Controller controller, String name, Enum<?> viewType, boolean isReadOnly) {
 		super(ProgramRequirementsViewController.class.getName());
@@ -38,6 +39,7 @@ public class ProgramRequirementsViewController extends BasicLayout {
 		super.setViewEnum(viewType);
         super.setDefaultModelId(PROGRAM_RULES_MODEL_ID);
         super.setParentController(controller);
+        this.isReadOnly = isReadOnly;
         
 		this.setDefaultView(ProgramRequirementsViews.PREVIEW);
 
@@ -61,6 +63,11 @@ public class ProgramRequirementsViewController extends BasicLayout {
             ProgramRequirementsManageView manageView = new ProgramRequirementsManageView(this, ProgramRequirementsViews.MANAGE, "Add and Combine Rules", PROGRAM_RULES_MODEL_ID);
             super.addView(manageView);
         }
+    }
+
+    @Override
+    public void updateModel() {
+        preview.updateModel();    
     }
 
     @Override
@@ -90,7 +97,7 @@ public class ProgramRequirementsViewController extends BasicLayout {
                 }
 
                 //no dialog if user clicks on the 'Save' button
-                if (((ProgramRequirementsManageView)getCurrentView()).isUserClickedSaveButton()) {                       
+                if (((ProgramRequirementsManageView)getCurrentView()).isUserClickedSaveButton()) {
                     okToChange.exec(true);
                     return;                    
                 }
@@ -117,7 +124,9 @@ public class ProgramRequirementsViewController extends BasicLayout {
     
     @Override
 	public void beforeShow(final Callback<Boolean> onReadyCallback){
-        //TODO
+        dataInstance = new ProgramRequirementsDataModel(this);
+        preview.setRules(dataInstance);
+
 	//	init(new Callback<Boolean>() {
 	//		@Override
 	//		public void exec(Boolean result) {
@@ -129,12 +138,6 @@ public class ProgramRequirementsViewController extends BasicLayout {
 	//		}
 	//	});
 	}
-
-    /*
-    @Override
-    public View getCurrentView() {
-        return this;
-    } */
 
     public ProgramRequirementsSummaryView getProgramRequirementsView() {
         return preview;
@@ -162,21 +165,17 @@ public class ProgramRequirementsViewController extends BasicLayout {
         ReqComponentInfo reqComp1 = new ReqComponentInfo();
         reqComp1.setId("REQCOMP-TV-1");
         reqComp1.setNaturalLanguageTranslation("Must have successfully completed all of (Sociology and CORE Advanced Studies) programs");
-        ReqComponentTypeInfo reqCompType = new ReqComponentTypeInfo();
-        reqCompType.setId("kuali.reqComponent.type.program.programset.completed.all");
-        //reqComp1.setRequiredComponentType(reqCompType);
+        reqComp1.setType("kuali.reqComponent.type.program.programset.completed.all");
         ReqComponentInfo reqComp2 = new ReqComponentInfo();
         reqComp2.setId("REQCOMP-TV-2");
         reqComp2.setNaturalLanguageTranslation("Must have earned a minimum GPA of 2.00 in (MATH111, 140, 220, and STAT100)");
-        ReqComponentTypeInfo reqCompType2 = new ReqComponentTypeInfo();
-        reqCompType2.setId("kuali.reqComponent.type.course.courseset.gpa.min");
-        //reqComp2.setRequiredComponentType(reqCompType2);        
+        reqComp2.setType("kuali.reqComponent.type.course.courseset.gpa.min");
         List<ReqComponentInfo> reqComponents = new ArrayList<ReqComponentInfo>();
         reqComponents.add(reqComp1);
         reqComponents.add(reqComp2);
         subTree1.setReqComponents(reqComponents);
-        subTree1.setNaturalLanguageTranslation("Must have successfully completed all of (Sociology and CORE Advanced Studies) programs " +
-        		"and must have earned a minimum GPA of 2.00 in (MATH111, 140, 220, and STAT100)");
+//        subTree1.setNaturalLanguageTranslation("Must have successfully completed all of (Sociology and CORE Advanced Studies) programs " +
+//        		"or must have earned a minimum GPA of 2.00 in (MATH111, 140, 220, and STAT100)");
         subTree1.setOperator(StatementOperatorTypeKey.OR);
 
         subTree2.setId("STMT-TV-3");
@@ -184,26 +183,30 @@ public class ProgramRequirementsViewController extends BasicLayout {
         ReqComponentInfo reqComp3 = new ReqComponentInfo();
         reqComp3.setId("REQCOMP-TV-3");
         reqComp3.setNaturalLanguageTranslation("Must have successfully completed a minimum of 14 courses from ( Sociology and CORE Advanced Studies) programs");
-        ReqComponentTypeInfo reqCompType3 = new ReqComponentTypeInfo();
-        reqCompType3.setId("kuali.reqComponent.type.program.programset.coursecompleted.nof");
-        //reqComp3.setRequiredComponentType(reqCompType3);
+        reqComp3.setType("kuali.reqComponent.type.program.programset.coursecompleted.nof");
         ReqComponentInfo reqComp4 = new ReqComponentInfo();
         reqComp4.setId("REQCOMP-TV-4");
         reqComp4.setNaturalLanguageTranslation("Must be admitted to program prior to earning 60 credits");
-        ReqComponentTypeInfo reqCompType4 = new ReqComponentTypeInfo();
-        reqCompType4.setId("kuali.reqComponent.type.program.admitted.credits");
-        //reqComp4.setRequiredComponentType(reqCompType4);
+        reqComp4.setType("kuali.reqComponent.type.program.admitted.credits");
+
+        List<ReqCompFieldInfo> reqCompFields = new ArrayList<ReqCompFieldInfo>();
+        ReqCompFieldInfo field = new ReqCompFieldInfo();
+        field.setId("kuali.reqComponent.field.type.value.positive.integer");
+        field.setValue("60");
+        reqCompFields.add(field);
+        reqComp4.setReqCompFields(reqCompFields);
+
         List<ReqComponentInfo> reqComponents2 = new ArrayList<ReqComponentInfo>();
         reqComponents2.add(reqComp3);
         reqComponents2.add(reqComp4);
         subTree2.setReqComponents(reqComponents2);
-        subTree2.setNaturalLanguageTranslation("Must have successfully completed a minimum of 14 courses from ( Sociology and CORE Advanced Studies) programs " +
-                "and must be admitted to program prior to earning 60 credits");
+//        subTree2.setNaturalLanguageTranslation("Must have successfully completed a minimum of 14 courses from ( Sociology and CORE Advanced Studies) programs " +
+//                "and must be admitted to program prior to earning 60 credits");
         subTree2.setOperator(StatementOperatorTypeKey.AND);
 
-       stmtTreeInfo.setNaturalLanguageTranslation(
-               "(Student must have completed all of MATH 152, MATH 180 or Student needs a minimum GPA of 3.5 in MATH 152, MATH 180) " +
-        		"and (Student must have completed 1 of MATH 152, MATH 180 and Student needs a minimum GPA of 4.0 in MATH 152, MATH 180)");
+//       stmtTreeInfo.setNaturalLanguageTranslation(
+//               "(Student must have completed all of MATH 152, MATH 180 or Student needs a minimum GPA of 3.5 in MATH 152, MATH 180) " +
+//        		"and (Student must have completed 1 of MATH 152, MATH 180 and Student needs a minimum GPA of 4.0 in MATH 152, MATH 180)");
        stmtTreeInfo.setOperator(StatementOperatorTypeKey.AND);
 
         return stmtTreeInfo;
