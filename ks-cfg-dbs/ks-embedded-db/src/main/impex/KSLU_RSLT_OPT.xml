@@ -1,13 +1,20 @@
 <?xml version="1.0"?>
 <!DOCTYPE dataset SYSTEM "data.dtd">
 <dataset>
-    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100415100000"
-        ID="99080d6d-59ad-4159-95ee-35b39fb160d4"
-        RES_COMP_ID="kuali.resultComponent.grade.passFail" ST="active" VERSIONIND="0"/>
-    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100415100000"
-        ID="99238bf0-6ea4-4447-95cd-fd2010bd5b0d"
-        RES_COMP_ID="kuali.creditType.credit.degree.10" ST="active" VERSIONIND="0"/>
-    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100415100000"
-        ID="7CB0F936-3EF3-4029-8980-5A628DAEEB61" RT_DESCR_ID="9623c41c-ae72-473a-a1ac-6874c433967d"
-        RES_COMP_ID="kuali.certificateType.degree" ST="active" VERSIONIND="0"/>
+    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100724120530"
+        ID="MAJOR-101" OBJ_ID="4BF9EF45F6364FF088B750A3543B5AFA"
+        RES_COMP_ID="kuali.resultComponent.degree.ba"
+        RT_DESCR_ID="MAJOR-101" ST="active" VER_NBR="0"/>
+    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100724120530"
+        ID="MAJOR-102" OBJ_ID="36E84F8A3A2A4184BBF9781D40A4675C"
+        RES_COMP_ID="kuali.resultComponent.degree.bsc"
+        RT_DESCR_ID="MAJOR-102" ST="active" VER_NBR="0"/>
+    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100724120530"
+        ID="VAR-201" OBJ_ID="D1094B00082A412E8D95DEFA4A69A1E0"
+        RES_COMP_ID="kuali.resultComponent.degree.ba"
+        RT_DESCR_ID="VAR-202" ST="active" VER_NBR="0"/>
+    <KSLU_RSLT_OPT CREATEID="admin" CREATETIME="20100724120530"
+        ID="VAR-301" OBJ_ID="2AF803D1DDE149918852601FEDE95391"
+        RES_COMP_ID="kuali.resultComponent.degree.bsc"
+        RT_DESCR_ID="VAR-302" ST="active" VER_NBR="0"/>
 </dataset>

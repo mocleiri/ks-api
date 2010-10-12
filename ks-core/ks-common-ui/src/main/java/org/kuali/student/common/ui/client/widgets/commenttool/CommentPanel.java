@@ -22,12 +22,12 @@ import java.util.List;
 
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.ApplicationContext;
+import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.DelayedToolView;
 import org.kuali.student.common.ui.client.configurable.mvc.HasReferenceId;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.InfoMessage;
 import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.history.HistoryStackFrame;
 import org.kuali.student.common.ui.client.service.CommentRpcService;
 import org.kuali.student.common.ui.client.service.CommentRpcServiceAsync;
 import org.kuali.student.common.ui.client.theme.Theme;
@@ -53,7 +53,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -122,10 +121,10 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
                 newComment.setType("commentType." + referenceType + "." + referenceState);
 
                 try {
-					commentServiceAsync.addComment(referenceId, referenceTypeKey, newComment, new AsyncCallback<CommentInfo>(){
+					commentServiceAsync.addComment(referenceId, referenceTypeKey, newComment, new KSAsyncCallback<CommentInfo>(){
 
 						@Override
-						public void onFailure(Throwable caught) {
+						public void handleFailure(Throwable caught) {
 							GWT.log("Add Comment Failed", caught);
 						}
 
@@ -313,7 +312,7 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
 
     private void isAuthorizedAddComment() {
         // check permission to see if user can comment
-        commentServiceAsync.isAuthorizedAddComment(referenceId, referenceTypeKey, new AsyncCallback<Boolean>() {
+        commentServiceAsync.isAuthorizedAddComment(referenceId, referenceTypeKey, new KSAsyncCallback<Boolean>() {
 
 			@Override
             public void onFailure(Throwable caught) {
@@ -401,10 +400,10 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
         //rpc call to get all current comments and populate into comment list
     	try {
     		if(commentTypes.getSelectedItem().equals(ALL)){
-				commentServiceAsync.getComments(referenceId, referenceTypeKey, new AsyncCallback<List<CommentInfo>>(){
+				commentServiceAsync.getComments(referenceId, referenceTypeKey, new KSAsyncCallback<List<CommentInfo>>(){
 
 						@Override
-						public void onFailure(Throwable caught) {
+						public void handleFailure(Throwable caught) {
 							GWT.log("getComments failed", caught);
 							commentList.remove(loadingComments);
 						}
@@ -435,10 +434,10 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
 	    		}
     		else{
     			//must be showing specific comment type
-				commentServiceAsync.getCommentsByType(referenceId, referenceTypeKey, commentTypes.getSelectedItem(), new AsyncCallback<List<CommentInfo>>(){
+				commentServiceAsync.getCommentsByType(referenceId, referenceTypeKey, commentTypes.getSelectedItem(), new KSAsyncCallback<List<CommentInfo>>(){
 
 					@Override
-					public void onFailure(Throwable caught) {
+					public void handleFailure(Throwable caught) {
 						GWT.log("getCommentsByType Failed" ,caught);
 						commentList.remove(loadingComments);
 					}
@@ -546,10 +545,10 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
                                     Comment.this.info.getCommentText().setPlain(CommentPanel.this.editor.getText());
 
                                 	try {
-										commentServiceAsync.updateComment(referenceId, referenceTypeKey, Comment.this.info, new AsyncCallback<CommentInfo>(){
+										commentServiceAsync.updateComment(referenceId, referenceTypeKey, Comment.this.info, new KSAsyncCallback<CommentInfo>(){
 
 											@Override
-											public void onFailure(Throwable caught) {
+											public void handleFailure(Throwable caught) {
 												GWT.log("updateComment failed", caught);
 											}
 
@@ -591,10 +590,10 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
                 @Override
                 public void onClick(ClickEvent event) {
                 	try {
-						commentServiceAsync.removeComment(Comment.this.info.getId(), referenceId, referenceTypeKey, new AsyncCallback<StatusInfo>(){
+						commentServiceAsync.removeComment(Comment.this.info.getId(), referenceId, referenceTypeKey, new KSAsyncCallback<StatusInfo>(){
 
 							@Override
-							public void onFailure(Throwable caught) {
+							public void handleFailure(Throwable caught) {
 								GWT.log("remove Comment Failed", caught);
 							}
 
@@ -672,16 +671,6 @@ public class CommentPanel extends DelayedToolView implements HasReferenceId {
         	editActions.setVisible(show);
         }
 
-    }
-
-    @Override
-    public void collectHistory(HistoryStackFrame frame) {
-        // do nothing
-    }
-
-    @Override
-    public void onHistoryEvent(HistoryStackFrame frame) {
-        // do nothing
     }
 
 	@Override

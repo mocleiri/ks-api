@@ -23,25 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.kuali.student.core.assembly.binding.JaxbMetadataPropertyMapAdapter;
-import org.kuali.student.core.assembly.data.masking.Mask;
-
-
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Metadata implements Serializable {
-    // TODO this class, and referenced classes, need to be moved into a GWT
-    // module
 
     private static final long serialVersionUID = 1L;
 
@@ -50,27 +34,8 @@ public class Metadata implements Serializable {
         ALWAYS, NEVER, WHEN_NULL, REQUIRED
     }
 
-    public enum Permission {
-        EDIT("edit"), READ_ONLY("readonly"), UNMASK("unmask");
-        final String kimName;
-        private Permission(String kimName) {
-            this.kimName = kimName;
-        }
-        @Override
-        public String toString() {
-            return kimName;
-        }
-        public static Permission kimValueOf(String kimName) {
-            for(Permission p : values()) {
-                if(p.kimName.equals(kimName)) {
-                    return p;
-                }
-            }
-            //fall through
-            throw new IllegalArgumentException("The value " + kimName + " is not enumerated in Permission"); 
-        }
-    }
     private String name;
+    private String labelKey;
     private WriteAccess writeAccess;
     
     private boolean canUnmask = false;
@@ -78,48 +43,28 @@ public class Metadata implements Serializable {
     private boolean canEdit = true;
     private boolean dynamic = false;
     
-    private boolean onChangeRefreshMetadata;
+	protected String partialMaskFormatter;//Regex replace to do a partial mask  	
+	protected String maskFormatter;//Regex replace to do a mask
+	
+	private boolean onChangeRefreshMetadata;
 
-    private Mask mask;
     private Data.DataType dataType;
     
-    @XmlAnyElement
-    @XmlElementRefs({
-        @XmlElementRef(type=Data.BooleanValue.class),
-        @XmlElementRef(type=Data.StringValue.class),
-        @XmlElementRef(type=Data.IntegerValue.class),
-        @XmlElementRef(type=Data.DoubleValue.class),
-        @XmlElementRef(type=Data.FloatValue.class),
-        @XmlElementRef(type=Data.LongValue.class),
-        @XmlElementRef(type=Data.ShortValue.class),
-        @XmlElementRef(type=Data.DataValue.class),
-        @XmlElementRef(type=Data.TimestampValue.class),
-        @XmlElementRef(type=Data.TimeValue.class)
-    })
     private Data.Value defaultValue;
     
     private String defaultValuePath;
     
-    @XmlElement(name="constraint")
-    @XmlElementWrapper
+    //TODO: When all dictionaries have been updated, this needs to be changed to a single value object.
+    //No need for it to be a list with new dictionary structure. 
     private List<ConstraintMetadata> constraints;
     
-    @XmlElement(name="lookupMetadata")
     private LookupMetadata initialLookup;
 
     private String lookupContextPath;
     
-    @XmlElement(name="lookupMetadata")
-    @XmlElementWrapper(name="additionalLookups")
     private List<LookupMetadata> additionalLookups;
 
-    @XmlElement(name="properties")
-    @XmlJavaTypeAdapter(JaxbMetadataPropertyMapAdapter.class)
     private Map<String, Metadata> childProperties;
-
-    
-    
-    
     
     public Metadata() {
         
@@ -211,7 +156,7 @@ public class Metadata implements Serializable {
     		for (ConstraintMetadata constraint:constraints){
     			if (!"single".equals(constraint.getId()) && 
     				!"optional".equals(constraint.getId()) &&
-    				!constraint.getServerSide()){
+    				!constraint.isServerSide()){
     				metadataConstraints.add(constraint);
     			}
     		}
@@ -298,14 +243,6 @@ public class Metadata implements Serializable {
         this.onChangeRefreshMetadata = onChangeRefereshMetadata;
     }
 
-    public Mask getMask() {
-        return mask;
-    }
-
-    public void setMask(Mask mask) {
-        this.mask = mask;
-    }
-
     public boolean isCanUnmask() {
         return canUnmask;
     }
@@ -344,5 +281,29 @@ public class Metadata implements Serializable {
 
 	public void setDynamic(boolean dynamic) {
 		this.dynamic = dynamic;
+	}
+
+	public String getLabelKey() {
+		return labelKey;
+	}
+
+	public void setLabelKey(String labelKey) {
+		this.labelKey = labelKey;
+	}
+
+    public String getPartialMaskFormatter() {
+		return partialMaskFormatter;
+	}
+
+	public void setPartialMaskFormatter(String partialMaskFormatter) {
+		this.partialMaskFormatter = partialMaskFormatter;
+	}
+
+	public String getMaskFormatter() {
+		return maskFormatter;
+	}
+
+	public void setMaskFormatter(String maskFormatter) {
+		this.maskFormatter = maskFormatter;
 	}
 }

@@ -2,10 +2,118 @@ package org.kuali.student.lum.program.client.properties;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	D:/programming/projects/exadel_projects/berkeley/kuali/poc-branch/ks-lum/ks-lum-program/src/main/java/org/kuali/student/lum/program/client/properties/program.properties'.
+ * 	D:/programming/projects/exadel_projects/berkeley/kuali/trunk/ks-lum/ks-lum-program/src/main/java/org/kuali/student/lum/program/client/properties/program.properties'.
  */
 public interface Program extends com.google.gwt.i18n.client.Messages {
   
+  /**
+   * Translated "Activate".
+   * 
+   * @return translated "Activate"
+   */
+  @DefaultMessage("Activate")
+  @Key("button.activate")
+  String button_activate();
+
+  /**
+   * Translated "Approve".
+   * 
+   * @return translated "Approve"
+   */
+  @DefaultMessage("Approve")
+  @Key("button.approve")
+  String button_approve();
+
+  /**
+   * Translated "Catalog Description".
+   * 
+   * @return translated "Catalog Description"
+   */
+  @DefaultMessage("Catalog Description")
+  @Key("catalogInformation.catalogDescr")
+  String catalogInformation_catalogDescr();
+
+  /**
+   * Translated "Publication Targets".
+   * 
+   * @return translated "Publication Targets"
+   */
+  @DefaultMessage("Publication Targets")
+  @Key("catalogInformation.catalogPublicationTargets")
+  String catalogInformation_catalogPublicationTargets();
+
+  /**
+   * Translated "Program Description".
+   * 
+   * @return translated "Program Description"
+   */
+  @DefaultMessage("Program Description")
+  @Key("catalogInformation.descr")
+  String catalogInformation_descr();
+
+  /**
+   * Translated "Duration Count".
+   * 
+   * @return translated "Duration Count"
+   */
+  @DefaultMessage("Duration Count")
+  @Key("catalogInformation.durationCount")
+  String catalogInformation_durationCount();
+
+  /**
+   * Translated "Duration Notes".
+   * 
+   * @return translated "Duration Notes"
+   */
+  @DefaultMessage("Duration Notes")
+  @Key("catalogInformation.durationNotes")
+  String catalogInformation_durationNotes();
+
+  /**
+   * Translated "Full Time / Part Time".
+   * 
+   * @return translated "Full Time / Part Time"
+   */
+  @DefaultMessage("Full Time / Part Time")
+  @Key("catalogInformation.intensity")
+  String catalogInformation_intensity();
+
+  /**
+   * Translated "Core Faculty Members".
+   * 
+   * @return translated "Core Faculty Members"
+   */
+  @DefaultMessage("Core Faculty Members")
+  @Key("catalogInformation.publishedInstructors")
+  String catalogInformation_publishedInstructors();
+
+  /**
+   * Translated "More Info".
+   * 
+   * @return translated "More Info"
+   */
+  @DefaultMessage("More Info")
+  @Key("catalogInformation.referenceUrl")
+  String catalogInformation_referenceUrl();
+
+  /**
+   * Translated "Duration".
+   * 
+   * @return translated "Duration"
+   */
+  @DefaultMessage("Duration")
+  @Key("catalogInformation.stdDuration")
+  String catalogInformation_stdDuration();
+
+  /**
+   * Translated "Add/View Comments".
+   * 
+   * @return translated "Add/View Comments"
+   */
+  @DefaultMessage("Add/View Comments")
+  @Key("comments.button")
+  String comments_button();
+
   /**
    * Translated "Cancel".
    * 
@@ -14,6 +122,24 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Cancel")
   @Key("common.cancel")
   String common_cancel();
+
+  /**
+   * Translated "Edit".
+   * 
+   * @return translated "Edit"
+   */
+  @DefaultMessage("Edit")
+  @Key("common.edit")
+  String common_edit();
+
+  /**
+   * Translated "Save Failed. There were validation errors: {0}".
+   * 
+   * @return translated "Save Failed. There were validation errors: {0}"
+   */
+  @DefaultMessage("Save Failed. There were validation errors: {0}")
+  @Key("common.failedSave")
+  String common_failedSave(String arg0);
 
   /**
    * Translated "Retrieving Data...".
@@ -32,6 +158,168 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Save")
   @Key("common.save")
   String common_save();
+
+  /**
+   * Translated "Saving Data...".
+   * 
+   * @return translated "Saving Data..."
+   */
+  @DefaultMessage("Saving Data...")
+  @Key("common.savingData")
+  String common_savingData();
+
+  /**
+   * Translated "Status: {0}".
+   * 
+   * @return translated "Status: {0}"
+   */
+  @DefaultMessage("Status: {0}")
+  @Key("common.status")
+  String common_status(String arg0);
+
+  /**
+   * Translated "Save Successful".
+   * 
+   * @return translated "Save Successful"
+   */
+  @DefaultMessage("Save Successful")
+  @Key("common.successfulSave")
+  String common_successfulSave();
+
+  /**
+   * Translated "Do you want to save data?".
+   * 
+   * @return translated "Do you want to save data?"
+   */
+  @DefaultMessage("Do you want to save data?")
+  @Key("confirmDialog.text")
+  String confirmDialog_text();
+
+  /**
+   * Translated "Program Save".
+   * 
+   * @return translated "Program Save"
+   */
+  @DefaultMessage("Program Save")
+  @Key("confirmDialog.title")
+  String confirmDialog_title();
+
+  /**
+   * Translated "Exit".
+   * 
+   * @return translated "Exit"
+   */
+  @DefaultMessage("Exit")
+  @Key("link.exit")
+  String link_exit();
+
+  /**
+   * Translated "Learning Objectives".
+   * 
+   * @return translated "Learning Objectives"
+   */
+  @DefaultMessage("Learning Objectives")
+  @Key("lo.title")
+  String lo_title();
+
+  /**
+   * Translated "Curriculum Oversight Division".
+   * 
+   * @return translated "Curriculum Oversight Division"
+   */
+  @DefaultMessage("Curriculum Oversight Division")
+  @Key("managingBodies.curriculumOversightDivision")
+  String managingBodies_curriculumOversightDivision();
+
+  /**
+   * Translated "Curriculum Oversight Unit".
+   * 
+   * @return translated "Curriculum Oversight Unit"
+   */
+  @DefaultMessage("Curriculum Oversight Unit")
+  @Key("managingBodies.curriculumOversightUnit")
+  String managingBodies_curriculumOversightUnit();
+
+  /**
+   * Translated "Deployment Division".
+   * 
+   * @return translated "Deployment Division"
+   */
+  @DefaultMessage("Deployment Division")
+  @Key("managingBodies.deploymentDivision")
+  String managingBodies_deploymentDivision();
+
+  /**
+   * Translated "Deployment Unit".
+   * 
+   * @return translated "Deployment Unit"
+   */
+  @DefaultMessage("Deployment Unit")
+  @Key("managingBodies.deploymentUnit")
+  String managingBodies_deploymentUnit();
+
+  /**
+   * Translated "Financial Control Division".
+   * 
+   * @return translated "Financial Control Division"
+   */
+  @DefaultMessage("Financial Control Division")
+  @Key("managingBodies.financialControlDivision")
+  String managingBodies_financialControlDivision();
+
+  /**
+   * Translated "Financial Control Unit".
+   * 
+   * @return translated "Financial Control Unit"
+   */
+  @DefaultMessage("Financial Control Unit")
+  @Key("managingBodies.financialControlUnit")
+  String managingBodies_financialControlUnit();
+
+  /**
+   * Translated "Financial Resources Division".
+   * 
+   * @return translated "Financial Resources Division"
+   */
+  @DefaultMessage("Financial Resources Division")
+  @Key("managingBodies.financialResourcesDivision")
+  String managingBodies_financialResourcesDivision();
+
+  /**
+   * Translated "Financial Resources Unit".
+   * 
+   * @return translated "Financial Resources Unit"
+   */
+  @DefaultMessage("Financial Resources Unit")
+  @Key("managingBodies.financialResourcesUnit")
+  String managingBodies_financialResourcesUnit();
+
+  /**
+   * Translated "See All Managing Bodies".
+   * 
+   * @return translated "See All Managing Bodies"
+   */
+  @DefaultMessage("See All Managing Bodies")
+  @Key("managingBodies.seeAll")
+  String managingBodies_seeAll();
+
+  /**
+   * Translated "Student Oversight Division".
+   * 
+   * @return translated "Student Oversight Division"
+   */
+  @DefaultMessage("Student Oversight Division")
+  @Key("managingBodies.studentOversightDivision")
+  String managingBodies_studentOversightDivision();
+
+  /**
+   * Translated "Student Oversight Unit".
+   * 
+   * @return translated "Student Oversight Unit"
+   */
+  @DefaultMessage("Student Oversight Unit")
+  @Key("managingBodies.studentOversightUnit")
+  String managingBodies_studentOversightUnit();
 
   /**
    * Translated "Actions".
@@ -61,11 +349,11 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String program_menu_sections();
 
   /**
-   * Translated "Catalog Information".
+   * Translated "Description and Catalog Information".
    * 
-   * @return translated "Catalog Information"
+   * @return translated "Description and Catalog Information"
    */
-  @DefaultMessage("Catalog Information")
+  @DefaultMessage("Description and Catalog Information")
   @Key("program.menu.sections.catalogInfo")
   String program_menu_sections_catalogInfo();
 
@@ -79,40 +367,22 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String program_menu_sections_learningObjectives();
 
   /**
-   * Translated "Learning Results".
+   * Translated "Program Managing Bodies".
    * 
-   * @return translated "Learning Results"
+   * @return translated "Program Managing Bodies"
    */
-  @DefaultMessage("Learning Results")
-  @Key("program.menu.sections.learningResults")
-  String program_menu_sections_learningResults();
-
-  /**
-   * Translated "Managing Bodies".
-   * 
-   * @return translated "Managing Bodies"
-   */
-  @DefaultMessage("Managing Bodies")
+  @DefaultMessage("Program Managing Bodies")
   @Key("program.menu.sections.managingBodies")
   String program_menu_sections_managingBodies();
 
   /**
-   * Translated "Program Description".
+   * Translated "Key Program Information".
    * 
-   * @return translated "Program Description"
+   * @return translated "Key Program Information"
    */
-  @DefaultMessage("Program Description")
-  @Key("program.menu.sections.programDescription")
-  String program_menu_sections_programDescription();
-
-  /**
-   * Translated "Program Details".
-   * 
-   * @return translated "Program Details"
-   */
-  @DefaultMessage("Program Details")
-  @Key("program.menu.sections.programDetails")
-  String program_menu_sections_programDetails();
+  @DefaultMessage("Key Program Information")
+  @Key("program.menu.sections.programInformation")
+  String program_menu_sections_programInformation();
 
   /**
    * Translated "Program Requirements".
@@ -133,22 +403,130 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String program_menu_sections_specializations();
 
   /**
-   * Translated "Accrediting Agency".
+   * Translated "Program Summary".
    * 
-   * @return translated "Accrediting Agency"
+   * @return translated "Program Summary"
    */
-  @DefaultMessage("Accrediting Agency")
-  @Key("programInformation.accreditingAgency")
-  String programInformation_accreditingAgency();
+  @DefaultMessage("Program Summary")
+  @Key("program.menu.sections.summary")
+  String program_menu_sections_summary();
 
   /**
-   * Translated "CIP Code".
+   * Translated "Supporting Documents".
    * 
-   * @return translated "CIP Code"
+   * @return translated "Supporting Documents"
    */
-  @DefaultMessage("CIP Code")
-  @Key("programInformation.cipCode")
-  String programInformation_cipCode();
+  @DefaultMessage("Supporting Documents")
+  @Key("program.menu.sections.supportingDocuments")
+  String program_menu_sections_supportingDocuments();
+
+  /**
+   * Translated "View All Sections".
+   * 
+   * @return translated "View All Sections"
+   */
+  @DefaultMessage("View All Sections")
+  @Key("program.menu.sections.viewAll")
+  String program_menu_sections_viewAll();
+
+  /**
+   * Translated "Modify".
+   * 
+   * @return translated "Modify"
+   */
+  @DefaultMessage("Modify")
+  @Key("programAction.modify")
+  String programAction_modify();
+
+  /**
+   * Translated "Program Actions: Modify, Retire...".
+   * 
+   * @return translated "Program Actions: Modify, Retire..."
+   */
+  @DefaultMessage("Program Actions: Modify, Retire...")
+  @Key("programAction.title")
+  String programAction_title();
+
+  /**
+   * Translated "Accreditation".
+   * 
+   * @return translated "Accreditation"
+   */
+  @DefaultMessage("Accreditation")
+  @Key("programInformation.accreditation")
+  String programInformation_accreditation();
+
+  /**
+   * Translated "Accreditations".
+   * 
+   * @return translated "Accreditations"
+   */
+  @DefaultMessage("Accreditations")
+  @Key("programInformation.accreditations")
+  String programInformation_accreditations();
+
+  /**
+   * Translated "Add Accreditation".
+   * 
+   * @return translated "Add Accreditation"
+   */
+  @DefaultMessage("Add Accreditation")
+  @Key("programInformation.addAccreditation")
+  String programInformation_addAccreditation();
+
+  /**
+   * Translated "End Inst Admit Term".
+   * 
+   * @return translated "End Inst Admit Term"
+   */
+  @DefaultMessage("End Inst Admit Term")
+  @Key("programInformation.admitTerm")
+  String programInformation_admitTerm();
+
+  /**
+   * Translated "Program Approval Date".
+   * 
+   * @return translated "Program Approval Date"
+   */
+  @DefaultMessage("Program Approval Date")
+  @Key("programInformation.approvalDate")
+  String programInformation_approvalDate();
+
+  /**
+   * Translated "CIP 2000".
+   * 
+   * @return translated "CIP 2000"
+   */
+  @DefaultMessage("CIP 2000")
+  @Key("programInformation.cip2000")
+  String programInformation_cip2000();
+
+  /**
+   * Translated "CIP 2010".
+   * 
+   * @return translated "CIP 2010"
+   */
+  @DefaultMessage("CIP 2010")
+  @Key("programInformation.cip2010")
+  String programInformation_cip2010();
+
+  /**
+   * Translated "Classification".
+   * 
+   * @return translated "Classification"
+   */
+  @DefaultMessage("Classification")
+  @Key("programInformation.classification")
+  String programInformation_classification();
+
+  /**
+   * Translated "Code".
+   * 
+   * @return translated "Code"
+   */
+  @DefaultMessage("Code")
+  @Key("programInformation.code")
+  String programInformation_code();
 
   /**
    * Translated "Credential Program".
@@ -160,6 +538,15 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programInformation_credentialProgram();
 
   /**
+   * Translated "Dates".
+   * 
+   * @return translated "Dates"
+   */
+  @DefaultMessage("Dates")
+  @Key("programInformation.dates")
+  String programInformation_dates();
+
+  /**
    * Translated "Degree Type".
    * 
    * @return translated "Degree Type"
@@ -169,31 +556,40 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programInformation_degreeType();
 
   /**
-   * Translated "Duration".
+   * Translated "End Program Enroll Term".
    * 
-   * @return translated "Duration"
+   * @return translated "End Program Enroll Term"
    */
-  @DefaultMessage("Duration")
-  @Key("programInformation.duration")
-  String programInformation_duration();
+  @DefaultMessage("End Program Enroll Term")
+  @Key("programInformation.enrollTerm")
+  String programInformation_enrollTerm();
 
   /**
-   * Translated "Full Time/Part Time".
+   * Translated "End Program Entry Term".
    * 
-   * @return translated "Full Time/Part Time"
+   * @return translated "End Program Entry Term"
    */
-  @DefaultMessage("Full Time/Part Time")
-  @Key("programInformation.fullPartTime")
-  String programInformation_fullPartTime();
+  @DefaultMessage("End Program Entry Term")
+  @Key("programInformation.entryTerm")
+  String programInformation_entryTerm();
 
   /**
-   * Translated "HEGIS Code".
+   * Translated "HEGIS".
    * 
-   * @return translated "HEGIS Code"
+   * @return translated "HEGIS"
    */
-  @DefaultMessage("HEGIS Code")
-  @Key("programInformation.hegisCode")
-  String programInformation_hegisCode();
+  @DefaultMessage("HEGIS")
+  @Key("programInformation.hegis")
+  String programInformation_hegis();
+
+  /**
+   * Translated "Identifying Details".
+   * 
+   * @return translated "Identifying Details"
+   */
+  @DefaultMessage("Identifying Details")
+  @Key("programInformation.identifyingDetails")
+  String programInformation_identifyingDetails();
 
   /**
    * Translated "Institution".
@@ -205,6 +601,15 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programInformation_institution();
 
   /**
+   * Translated "Level".
+   * 
+   * @return translated "Level"
+   */
+  @DefaultMessage("Level")
+  @Key("programInformation.level")
+  String programInformation_level();
+
+  /**
    * Translated "Location".
    * 
    * @return translated "Location"
@@ -214,92 +619,308 @@ public interface Program extends com.google.gwt.i18n.client.Messages {
   String programInformation_location();
 
   /**
-   * Translated "Program Title (long)".
+   * Translated "Other Information".
    * 
-   * @return translated "Program Title (long)"
+   * @return translated "Other Information"
    */
-  @DefaultMessage("Program Title (long)")
-  @Key("programInformation.longTitle")
-  String programInformation_longTitle();
+  @DefaultMessage("Other Information")
+  @Key("programInformation.otherInformation")
+  String programInformation_otherInformation();
 
   /**
-   * Translated "More Information".
+   * Translated "Program Title".
    * 
-   * @return translated "More Information"
+   * @return translated "Program Title"
    */
-  @DefaultMessage("More Information")
-  @Key("programInformation.moreInformation")
-  String programInformation_moreInformation();
+  @DefaultMessage("Program Title")
+  @Key("programInformation.programTitle")
+  String programInformation_programTitle();
 
   /**
-   * Translated "Program Classification".
+   * Translated "Start Term".
    * 
-   * @return translated "Program Classification"
+   * @return translated "Start Term"
    */
-  @DefaultMessage("Program Classification")
-  @Key("programInformation.programClassification")
-  String programInformation_programClassification();
+  @DefaultMessage("Start Term")
+  @Key("programInformation.startTerm")
+  String programInformation_startTerm();
 
   /**
-   * Translated "Program Code".
+   * Translated "Key Program Information".
    * 
-   * @return translated "Program Code"
+   * @return translated "Key Program Information"
    */
-  @DefaultMessage("Program Code")
-  @Key("programInformation.programCode")
-  String programInformation_programCode();
+  @DefaultMessage("Key Program Information")
+  @Key("programInformation.title")
+  String programInformation_title();
 
   /**
-   * Translated "Program Description".
+   * Translated "Title Diploma".
    * 
-   * @return translated "Program Description"
+   * @return translated "Title Diploma"
    */
-  @DefaultMessage("Program Description")
-  @Key("programInformation.programDescription")
-  String programInformation_programDescription();
+  @DefaultMessage("Title Diploma")
+  @Key("programInformation.titleDiploma")
+  String programInformation_titleDiploma();
 
   /**
-   * Translated "Program Title (diploma)".
+   * Translated "Title Full".
    * 
-   * @return translated "Program Title (diploma)"
+   * @return translated "Title Full"
    */
-  @DefaultMessage("Program Title (diploma)")
-  @Key("programInformation.programDiploma")
-  String programInformation_programDiploma();
+  @DefaultMessage("Title Full")
+  @Key("programInformation.titleFull")
+  String programInformation_titleFull();
 
   /**
-   * Translated "Program Level".
+   * Translated "Title Short".
    * 
-   * @return translated "Program Level"
+   * @return translated "Title Short"
    */
-  @DefaultMessage("Program Level")
-  @Key("programInformation.programLevel")
-  String programInformation_programLevel();
+  @DefaultMessage("Title Short")
+  @Key("programInformation.titleShort")
+  String programInformation_titleShort();
 
   /**
-   * Translated "Program Title (transcript)".
+   * Translated "Title Transcript".
    * 
-   * @return translated "Program Title (transcript)"
+   * @return translated "Title Transcript"
    */
-  @DefaultMessage("Program Title (transcript)")
-  @Key("programInformation.programTranscript")
-  String programInformation_programTranscript();
+  @DefaultMessage("Title Transcript")
+  @Key("programInformation.titleTranscript")
+  String programInformation_titleTranscript();
 
   /**
-   * Translated "Program Title (short)".
+   * Translated "Step 1: Build and Add Rules".
    * 
-   * @return translated "Program Title (short)"
+   * @return translated "Step 1: Build and Add Rules"
    */
-  @DefaultMessage("Program Title (short)")
-  @Key("programInformation.shortTitle")
-  String programInformation_shortTitle();
+  @DefaultMessage("Step 1: Build and Add Rules")
+  @Key("programRequirements.manageViewPageStep1Title")
+  String programRequirements_manageViewPageStep1Title();
 
   /**
-   * Translated "Specialization Required".
+   * Translated "Step 2: Combine Rules with Logic".
    * 
-   * @return translated "Specialization Required"
+   * @return translated "Step 2: Combine Rules with Logic"
    */
-  @DefaultMessage("Specialization Required")
-  @Key("programInformation.specializationRequired")
-  String programInformation_specializationRequired();
+  @DefaultMessage("Step 2: Combine Rules with Logic")
+  @Key("programRequirements.manageViewPageStep2Title")
+  String programRequirements_manageViewPageStep2Title();
+
+  /**
+   * Translated "Add <*> Rule".
+   * 
+   * @return translated "Add <*> Rule"
+   */
+  @DefaultMessage("Add <*> Rule")
+  @Key("programRequirements.manageViewPageTitle")
+  String programRequirements_manageViewPageTitle();
+
+  /**
+   * Translated "Add {0}".
+   * 
+   * @return translated "Add {0}"
+   */
+  @DefaultMessage("Add {0}")
+  @Key("programRequirements.summaryViewPageAddRule")
+  String programRequirements_summaryViewPageAddRule(String arg0);
+
+  /**
+   * Translated "Are you sure you want to delete this rule?".
+   * 
+   * @return translated "Are you sure you want to delete this rule?"
+   */
+  @DefaultMessage("Are you sure you want to delete this rule?")
+  @Key("programRequirements.summaryViewPageDeleteRuleDialogMsg")
+  String programRequirements_summaryViewPageDeleteRuleDialogMsg();
+
+  /**
+   * Translated "Delete Rule".
+   * 
+   * @return translated "Delete Rule"
+   */
+  @DefaultMessage("Delete Rule")
+  @Key("programRequirements.summaryViewPageDeleteRuleDialogTitle")
+  String programRequirements_summaryViewPageDeleteRuleDialogTitle();
+
+  /**
+   * Translated "No {0} currently exist for this program".
+   * 
+   * @return translated "No {0} currently exist for this program"
+   */
+  @DefaultMessage("No {0} currently exist for this program")
+  @Key("programRequirements.summaryViewPageNoRule")
+  String programRequirements_summaryViewPageNoRule(String arg0);
+
+  /**
+   * Translated "Program Requirements".
+   * 
+   * @return translated "Program Requirements"
+   */
+  @DefaultMessage("Program Requirements")
+  @Key("programRequirements.summaryViewPageTitle")
+  String programRequirements_summaryViewPageTitle();
+
+  /**
+   * Translated "Completion of a specialization is required for this program".
+   * 
+   * @return translated "Completion of a specialization is required for this program"
+   */
+  @DefaultMessage("Completion of a specialization is required for this program")
+  @Key("programSpecialization.instructions")
+  String programSpecialization_instructions();
+
+  /**
+   * Translated "Edit Dates".
+   * 
+   * @return translated "Edit Dates"
+   */
+  @DefaultMessage("Edit Dates")
+  @Key("sideBar.dialog.title")
+  String sideBar_dialog_title();
+
+  /**
+   * Translated "Last review date".
+   * 
+   * @return translated "Last review date"
+   */
+  @DefaultMessage("Last review date")
+  @Key("sideBar.form.lastReviewDate")
+  String sideBar_form_lastReviewDate();
+
+  /**
+   * Translated "Scheduled review date".
+   * 
+   * @return translated "Scheduled review date"
+   */
+  @DefaultMessage("Scheduled review date")
+  @Key("sideBar.form.scheduledReviewDate")
+  String sideBar_form_scheduledReviewDate();
+
+  /**
+   * Translated "HISTORY".
+   * 
+   * @return translated "HISTORY"
+   */
+  @DefaultMessage("HISTORY")
+  @Key("sideBar.history")
+  String sideBar_history();
+
+  /**
+   * Translated "Last review date:".
+   * 
+   * @return translated "Last review date:"
+   */
+  @DefaultMessage("Last review date:")
+  @Key("sideBar.lastReviewDate")
+  String sideBar_lastReviewDate();
+
+  /**
+   * Translated "Program last updated:".
+   * 
+   * @return translated "Program last updated:"
+   */
+  @DefaultMessage("Program last updated:")
+  @Key("sideBar.programLastUpdated")
+  String sideBar_programLastUpdated();
+
+  /**
+   * Translated "Scheduled review date:".
+   * 
+   * @return translated "Scheduled review date:"
+   */
+  @DefaultMessage("Scheduled review date:")
+  @Key("sideBar.scheduledReviewDate")
+  String sideBar_scheduledReviewDate();
+
+  /**
+   * Translated "Version: {0}".
+   * 
+   * @return translated "Version: {0}"
+   */
+  @DefaultMessage("Version: {0}")
+  @Key("sideBar.version")
+  String sideBar_version(String arg0);
+
+  /**
+   * Translated "Active".
+   * 
+   * @return translated "Active"
+   */
+  @DefaultMessage("Active")
+  @Key("status.active")
+  String status_active();
+
+  /**
+   * Translated "Approve".
+   * 
+   * @return translated "Approve"
+   */
+  @DefaultMessage("Approve")
+  @Key("status.approve")
+  String status_approve();
+
+  /**
+   * Translated "Draft".
+   * 
+   * @return translated "Draft"
+   */
+  @DefaultMessage("Draft")
+  @Key("status.draft")
+  String status_draft();
+
+  /**
+   * Translated "Variation Sections".
+   * 
+   * @return translated "Variation Sections"
+   */
+  @DefaultMessage("Variation Sections")
+  @Key("variation.menu.sections")
+  String variation_menu_sections();
+
+  /**
+   * Translated "Key Specialization Information".
+   * 
+   * @return translated "Key Specialization Information"
+   */
+  @DefaultMessage("Key Specialization Information")
+  @Key("variation.menu.sections.variationInformation")
+  String variation_menu_sections_variationInformation();
+
+  /**
+   * Translated "Specialization Description".
+   * 
+   * @return translated "Specialization Description"
+   */
+  @DefaultMessage("Specialization Description")
+  @Key("variationCatalogInformation.descr")
+  String variationCatalogInformation_descr();
+
+  /**
+   * Translated "Add Specialization".
+   * 
+   * @return translated "Add Specialization"
+   */
+  @DefaultMessage("Add Specialization")
+  @Key("variationInformation.button.addSpecialization")
+  String variationInformation_button_addSpecialization();
+
+  /**
+   * Translated "Key Specialization Information".
+   * 
+   * @return translated "Key Specialization Information"
+   */
+  @DefaultMessage("Key Specialization Information")
+  @Key("variationInformation.title")
+  String variationInformation_title();
+
+  /**
+   * Translated "Specialization Title".
+   * 
+   * @return translated "Specialization Title"
+   */
+  @DefaultMessage("Specialization Title")
+  @Key("variationInformation.variationTitle")
+  String variationInformation_variationTitle();
 }

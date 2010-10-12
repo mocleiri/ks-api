@@ -1,27 +1,26 @@
 package org.kuali.student.common.ui.client.configurable.mvc.layouts;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
-import org.kuali.student.common.ui.client.mvc.Callback;
-import org.kuali.student.common.ui.client.mvc.View;
-import org.kuali.student.common.ui.client.widgets.KSButton;
-import org.kuali.student.common.ui.client.widgets.headers.KSDocumentHeader;
-import org.kuali.student.common.ui.client.widgets.layout.HorizontalBlockFlowPanel;
-import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
-import org.kuali.student.common.ui.client.widgets.menus.impl.KSBlockMenuImpl;
-import org.kuali.student.common.ui.client.widgets.panels.collapsable.VerticalCollapsableDrawer;
-import org.kuali.student.core.validation.dto.ValidationResultInfo;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
+import org.kuali.student.common.ui.client.mvc.Callback;
+import org.kuali.student.common.ui.client.mvc.View;
+import org.kuali.student.common.ui.client.widgets.KSButton;
+import org.kuali.student.common.ui.client.widgets.headers.KSDocumentHeader;
+import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
+import org.kuali.student.common.ui.client.widgets.menus.impl.KSBlockMenuImpl;
+import org.kuali.student.common.ui.client.widgets.panels.collapsable.VerticalCollapsableDrawer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MenuSectionController extends LayoutController implements ContentNavLayoutController {
 
@@ -35,7 +34,9 @@ public class MenuSectionController extends LayoutController implements ContentNa
     private KSDocumentHeader header = new KSDocumentHeader();
     private FlowPanel rightPanel = new FlowPanel();
     private FlowPanel contentPanel = new FlowPanel();
-    private HorizontalBlockFlowPanel buttonPanel = new HorizontalBlockFlowPanel();
+    private FlowPanel buttonPanel = new FlowPanel();
+    private VerticalPanel leftPanel = new VerticalPanel();
+    private SimplePanel sideBar = new SimplePanel();
     private boolean refreshMenuOnAdd = true;
     private VerticalCollapsableDrawer collapsablePanel = new VerticalCollapsableDrawer();
 
@@ -58,27 +59,51 @@ public class MenuSectionController extends LayoutController implements ContentNa
         menuViewMap.put("", list);
         menu.setStyleName("ks-menu-layout-menu");
         rightPanel.setStyleName("ks-menu-layout-rightColumn");
-        collapsablePanel.setStyleName("ks-menu-layout-leftColumn");
+        collapsablePanel.addStyleName("ks-menu-layout-leftColumn");
+        layout.addStyleName("ks-menu-layout");
         menu.setTopLevelItems(topLevelMenuItems);
-        collapsablePanel.setContent(menu);
-        layout.add(collapsablePanel);
+        collapsablePanel.setContent(leftPanel);
+        leftPanel.add(menu);
+        leftPanel.add(sideBar);
         rightPanel.add(header);
         rightPanel.add(contentPanel);
         rightPanel.add(buttonPanel);
+        layout.add(collapsablePanel);
         layout.add(rightPanel);
+        header.setVisible(false);
         this.initWidget(layout);
+        
+    }
+
+    public void removeMenuNavigation() {
+        collapsablePanel.removeFromParent();
     }
 
     public void setContentTitle(String title) {
         header.setTitle(title);
+        header.setVisible(true);
     }
 
     public void addContentWidget(Widget w) {
         header.addWidget(w);
+        header.setVisible(true);
     }
 
-    public void setContentWarning(String text) {
-        header.setInfo(text);
+    public void setSideBarWidget(Widget w) {
+        sideBar.setWidget(w);
+    }
+
+    public void setContentInfo(String info) {
+        header.getInfoLabel().setHTML(info);
+        header.getInfoLabel().removeStyleName("content-warning");
+        header.getInfoLabel().addStyleName("content-info");
+    }
+
+    public void setContentWarning(String info) {
+        header.getInfoLabel().setHTML(info);
+        header.getInfoLabel().removeStyleName("content-info");
+        header.getInfoLabel().addStyleName("content-warning");
+
     }
 
     public void addCommonButton(String parentMenu, KSButton button) {
@@ -87,6 +112,19 @@ public class MenuSectionController extends LayoutController implements ContentNa
             if (views != null) {
                 for (int i = 0; i < views.size(); i++) {
                     addButtonForView(views.get(i).getViewEnum(), button);
+                }
+            }
+        }
+    }
+
+    public void addCommonButton(String parentMenu, KSButton button, List<Enum<?>> excludedViews) {
+        if (parentMenu != null) {
+            List<View> views = menuViewMap.get(parentMenu);
+            if (views != null) {
+                for (int i = 0; i < views.size(); i++) {
+                    if (!excludedViews.contains(views.get(i).getViewEnum())) {
+                        addButtonForView(views.get(i).getViewEnum(), button);
+                    }
                 }
             }
         }
@@ -103,6 +141,7 @@ public class MenuSectionController extends LayoutController implements ContentNa
         List<KSButton> buttons = viewButtonsMap.get(viewType);
         if (buttons == null) {
             buttons = new ArrayList<KSButton>();
+            button.addStyleName("ks-button-spacing");
             buttons.add(button);
             viewButtonsMap.put(viewType, buttons);
         } else {
@@ -130,6 +169,8 @@ public class MenuSectionController extends LayoutController implements ContentNa
             item.setSelected(true, false);
         }
     }
+
+    /* Adds 'name' of the menu above menu items. This menu name has no view */
 
     public void addMenu(String title) {
         if (title != null && !title.equals("")) {
@@ -260,6 +301,6 @@ public class MenuSectionController extends LayoutController implements ContentNa
         }
 
     }
-	
-	
+
+
 }

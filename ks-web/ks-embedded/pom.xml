@@ -8,57 +8,12 @@
   <parent>
     <groupId>org.kuali.student.web</groupId>
     <artifactId>ks-web</artifactId>
-    <version>1.1.0-poc-M7-SNAPSHOT</version>
+    <version>1.1.0-M9-SNAPSHOT</version>
   </parent>
   <properties>
     <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>
     <ks.gwt.module.lum>org.kuali.student.lum.lu.ui.main.LUMMain</ks.gwt.module.lum>
-    <gwt.draftCompile>false</gwt.draftCompile>
   </properties>
-  <profiles>
-    <profile>
-      <id>drop-db</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.kuali.maven.properties</groupId>
-            <artifactId>maven-kuali-properties-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>import-ks-embedded-properties</id>
-                <goals>
-                  <goal>read-properties</goal>
-                </goals>
-                <configuration>
-                  <environment>${ks.environment}</environment>
-                  <locations>
-                    <param>${basedir}/src/main/resources/org/kuali/rice/standalone/config/standalone-config.xml</param>
-                  </locations>
-                </configuration>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.kuali.rice</groupId>
-                <artifactId>rice-impl</artifactId>
-                <version>${kuali.rice.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.kuali.student.lum</groupId>
-                <artifactId>ks-lum-impl</artifactId>
-                <version>${project.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>org.kuali.student.core</groupId>
-                <artifactId>ks-core-impl</artifactId>
-                <version>${project.version}</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
   <build>
     <plugins>
       <plugin>
@@ -84,9 +39,6 @@
             <module>${ks.gwt.module.org}</module>
             <module>${ks.gwt.module.lum}</module>
           </modules>
-          <style>PRETTY</style>
-          <soyc>false</soyc>
-          <draftCompile>${gwt.draftCompile}</draftCompile>
         </configuration>
       </plugin>
       <plugin>
@@ -247,6 +199,13 @@
     <dependency>
       <groupId>org.kuali.student.lum</groupId>
       <artifactId>ks-lum-program</artifactId>
+      <classifier>sources</classifier>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kuali.student.lum</groupId>
+      <artifactId>ks-lum-ui-common</artifactId>
       <classifier>sources</classifier>
       <version>${project.version}</version>
       <scope>provided</scope>

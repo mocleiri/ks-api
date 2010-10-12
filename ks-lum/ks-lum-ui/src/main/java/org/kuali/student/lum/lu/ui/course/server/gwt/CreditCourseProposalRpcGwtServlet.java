@@ -15,114 +15,39 @@
 
 package org.kuali.student.lum.lu.ui.course.server.gwt;
 
-import org.apache.log4j.Logger;
-import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
-import org.kuali.student.common.ui.server.gwt.AbstractBaseDataOrchestrationRpcGwtServlet;
-import org.kuali.student.core.assembly.data.AssemblyException;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.proposal.dto.ProposalInfo;
-import org.kuali.student.core.proposal.service.ProposalService;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.dto.FormatInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.lu.assembly.ModifyCreditCourseProposalManager;
+import java.util.List;
+
+import org.kuali.student.common.ui.server.gwt.DataGwtServlet;
+import org.kuali.student.core.dto.StatusInfo;
+import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.lum.lu.ui.course.client.service.CreditCourseProposalRpcService;
 
-public class CreditCourseProposalRpcGwtServlet extends
-		AbstractBaseDataOrchestrationRpcGwtServlet implements
-		CreditCourseProposalRpcService {
+import org.apache.log4j.Logger;
 
-	private static final long serialVersionUID = 1L;
+public class CreditCourseProposalRpcGwtServlet extends DataGwtServlet implements
+        CreditCourseProposalRpcService {
+
 	final static Logger LOG = Logger.getLogger(CreditCourseProposalRpcGwtServlet.class);
 
-	public static final String COURSE_TYPE = "kuali.lu.type.CreditCourse";
-	public static final String COURSE_FORMAT_TYPE = "kuali.lu.type.CreditCourseFormatShell";
-	
-	private static final String DEFAULT_METADATA_STATE = "draft";
+	private static final long serialVersionUID = 1L;
 
-	private ModifyCreditCourseProposalManager modifyCourseManager;	
-	private CourseService courseService;
-	private ProposalService proposalService;
-	
+    @Override
+    public List<StatementTreeViewInfo> getCourseStatements(String courseId, String nlUsageTypeKey, String language) throws Exception {
+        return null;  
+    }
 
-	@Override
-	protected Object get(String id) throws Exception {
-		CourseInfo courseInfo;
-		try {
-			courseInfo = courseService.getCourse(id);
-		} catch (Exception e) {
-			//This could be a proposal id
-			ProposalInfo proposalInfo = proposalService.getProposal(id);
-			String courseId = proposalInfo.getProposalReference().get(0);
-			courseInfo = courseService.getCourse(courseId);
-		}		
-		
-		return courseInfo; 
-	}
+    @Override
+    public StatementTreeViewInfo updateCourseStatement(String courseId, StatementTreeViewInfo statementTreeViewInfo) throws Exception {
+        return null;  
+    }
 
-	@Override
-	protected Object save(Object dto) throws Exception {
-		CourseInfo courseInfo = (CourseInfo)dto;
-	
-		courseInfo.setType(COURSE_TYPE);
-		courseInfo.setState(DEFAULT_METADATA_STATE);
-		
-		//Set types (should this happen here)
-        courseInfo.setType(COURSE_TYPE);
-        for (FormatInfo format:courseInfo.getFormats()){
-        	format.setType(COURSE_FORMAT_TYPE);
-        }            
-		
-		if (courseInfo.getId() == null){
-			courseInfo = courseService.createCourse(courseInfo);
-		} else {
-			courseInfo = courseService.updateCourse(courseInfo);
-		}
-		return courseInfo;
-	}
+    @Override
+    public StatementTreeViewInfo createCourseStatement(String courseId, StatementTreeViewInfo statementTreeViewInfo) throws Exception {
+        return null;  
+    }
 
-	@Override
-	public Data getNewProposalWithCopyOfClu(String dataId) throws OperationFailedException {
-		try {
-			return modifyCourseManager.getNewProposalWithCopyOfClu(dataId);
-		} catch (AssemblyException e) {
-			LOG.error("Copy Failed on id:"+dataId, e);
-			throw new OperationFailedException("Copy Failed on id:"+dataId,e);
-		}
-	}
-	
-	@Override
-	protected String getDefaultMetaDataState() {
-		return DEFAULT_METADATA_STATE;
-	}
-
-	@Override
-	protected String getDefaultWorkflowDocumentType() {
-		return CourseWorkflowFilter.WF_TYPE_CLU_DOCUMENT;
-	}
-
-	@Override
-	protected boolean checkDocumentLevelPermissions() {
-		return true;
-	}
-
-	@Override
-	protected Class<?> getDtoClass() {
-		return CourseInfo.class;
-	}
-
-	public void setModifyCourseManager(
-			ModifyCreditCourseProposalManager modifyCourseManager) {
-		this.modifyCourseManager = modifyCourseManager;
-	}
-
-	public void setCourseService(CourseService courseService) {
-		this.courseService = courseService;
-	}
-
-	public void setProposalService(ProposalService proposalService) {
-		this.proposalService = proposalService;
-	}
-
-	
+    @Override
+    public StatusInfo deleteCourseStatement(String courseId, StatementTreeViewInfo statementTreeViewInfo) throws Exception {
+        return null;  
+    }
 }

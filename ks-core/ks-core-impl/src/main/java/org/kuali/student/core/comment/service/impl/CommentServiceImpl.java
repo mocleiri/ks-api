@@ -57,7 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 @WebService(endpointInterface = "org.kuali.student.core.comment.service.CommentService", serviceName = "CommentService", portName = "CommentService", targetNamespace = "http://student.kuali.org/wsdl/commentService")
-@Transactional(rollbackFor={Throwable.class})
+@Transactional(noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
 public class CommentServiceImpl implements CommentService {
     
     final Logger logger = Logger.getLogger(CommentServiceImpl.class);
@@ -356,7 +356,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentInfo updateComment(String referenceId, String referenceTypeKey, CommentInfo commentInfo) throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         try {
 			Comment entity = commentDao.fetch(Comment.class, commentInfo.getId());
-			if (!String.valueOf(entity.getVersionInd()).equals(commentInfo.getMetaInfo().getVersionInd())){
+			if (!String.valueOf(entity.getVersionNumber()).equals(commentInfo.getMetaInfo().getVersionInd())){
 				throw new VersionMismatchException("ResultComponent to be updated is not the current version");
 			}
 

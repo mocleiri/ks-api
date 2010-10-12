@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kuali.student.core</groupId>
     <artifactId>ks-core</artifactId>
-    <version>1.1.0-poc-M7-SNAPSHOT</version>
+    <version>1.1.0-M9-SNAPSHOT</version>
   </parent>
   <dependencies>
     <!--
@@ -106,6 +106,7 @@
       <artifactId>ks-rice-lessdep</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kuali.rice</groupId>
@@ -199,7 +200,7 @@
         <dependency>
           <groupId>org.kuali.student.core</groupId>
           <artifactId>ks-core-impl</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
           <groupId>org.springframework</groupId>

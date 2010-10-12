@@ -4,36 +4,9 @@
   <parent>
     <groupId>org.kuali.student.db</groupId>
     <artifactId>ks-db</artifactId>
-    <version>1.1.0-M7-SNAPSHOT</version>
+    <version>1.1.0-M9-SNAPSHOT</version>
   </parent>
   <artifactId>ks-embedded-db</artifactId>
   <name>KS Embedded DB</name>
   <description>Kuali Student Embedded Database</description>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <!-- Override the attach-sources execution as we don't need sources attached -->
-            <id>attach-sources</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.kuali.maven.impex</groupId>
-        <artifactId>maven-impex-plugin</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.kuali.student.db</groupId>
-            <artifactId>ks-embedded-db</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
 </project>

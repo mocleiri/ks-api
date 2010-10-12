@@ -25,7 +25,11 @@ import com.google.gwt.resources.client.ImageResource;
 public interface KSClientBundle extends ClientBundleWithLookup{
 	public static final KSClientBundle INSTANCE =  GWT.create(KSClientBundle.class);
 
-    @Source("org/kuali/student/common/ui/theme/standard/public/css/KSGeneral.css")
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/KSSummaryTable.css")
+    @CssResource.NotStrict
+    public CssResource summaryTableCss();
+
+	@Source("org/kuali/student/common/ui/theme/standard/public/css/KSGeneral.css")
 	@CssResource.NotStrict
 	public CssResource generalCss();
     @Source("org/kuali/student/common/ui/theme/standard/public/css/KSBlockingProgressIndicator.css")
@@ -127,6 +131,24 @@ public interface KSClientBundle extends ClientBundleWithLookup{
 	@Source("org/kuali/student/common/ui/theme/standard/public/css/MenuLayout.css")
 	@CssResource.NotStrict
 	public CssResource menuLayoutCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RuleTable.css")
+    @CssResource.NotStrict
+    public CssResource ruleTableCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/ReqCompEditWidget.css")
+    @CssResource.NotStrict
+    public CssResource reqEditWidgetCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RuleManageWidget.css")
+    @CssResource.NotStrict
+    public CssResource reqManageWidgetCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/SubrulePreviewWidget.css")
+    @CssResource.NotStrict
+    public CssResource reqSummaryDisplayWidgetCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RulePreviewWidget.css")
+    @CssResource.NotStrict
+    public CssResource ruleSummaryDisplayWidgetCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RuleObjectView.css")
+    @CssResource.NotStrict
+    public CssResource ruleObjectViewCss();
 
 	//Reset Css
 	@Source("org/kuali/student/common/ui/theme/standard/public/css/Reset.css")
@@ -296,10 +318,10 @@ public interface KSClientBundle extends ClientBundleWithLookup{
     @Source("org/kuali/student/common/ui/theme/standard/public/images/common/users.png")
     public ImageResource peopleIcon();
 
-    @Source("org/kuali/student/common/ui/theme/standard/public/images/common/users.png")
+    @Source("org/kuali/student/common/ui/theme/standard/public/images/common/disclosure_opened.png")
     public ImageResource disclosureOpenedIcon();
 
-    @Source("org/kuali/student/common/ui/theme/standard/public/images/common/users.png")
+    @Source("org/kuali/student/common/ui/theme/standard/public/images/common/disclosure_closed.png")
     public ImageResource disclosureClosedIcon();
 
 }

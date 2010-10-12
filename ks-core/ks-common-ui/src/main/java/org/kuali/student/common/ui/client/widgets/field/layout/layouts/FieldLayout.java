@@ -21,27 +21,33 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
-import org.kuali.student.common.ui.client.configurable.mvc.sections.InfoMessage;
-import org.kuali.student.common.ui.client.widgets.KSLabel;
+import org.kuali.student.common.ui.client.configurable.mvc.sections.WarnContainer;
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ButtonLayout;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.AbbrButton;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.FieldElement;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel;
+import org.kuali.student.common.ui.client.widgets.field.layout.element.AbbrButton.AbbrButtonType;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
 
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FieldLayout extends SpanPanel implements FieldLayoutComponent{
+public abstract class FieldLayout extends FlowPanel implements FieldLayoutComponent{
 	protected Map<String, FieldElement> fieldMap = new HashMap<String, FieldElement>();
 	protected Map<String, FieldLayout> layoutMap = new HashMap<String, FieldLayout>();
 	protected LinkedHashMap<String, Widget> drawOrder = new LinkedHashMap<String, Widget>();
-	protected KSLabel instructions = new KSLabel();
-	protected InfoMessage message = new InfoMessage();
+	protected SpanPanel instructions = new SpanPanel();
+	protected WarnContainer message = new WarnContainer(false);
 	protected FieldLayout parentLayout;
 	protected boolean hasValidation = false;
+	private HTML messagePanel;
 	private static int generatedKeyNum = 0;
 	private String key;
 	private ButtonLayout buttonLayout;
 	protected SectionTitle layoutTitle = null;
+	private AbbrButton help = null;
 
 
 	private static String getNextId() {
@@ -170,7 +176,7 @@ public abstract class FieldLayout extends SpanPanel implements FieldLayoutCompon
 	public void setInstructions(String instructions) {
 		if(instructions != null && !instructions.equals("")){
 			this.instructions.addStyleName("ks-section-instuctions");
-			this.instructions.setText(instructions);
+			this.instructions.setHTML(instructions);
 			this.instructions.setVisible(true);
 		}
 		else{
@@ -178,12 +184,25 @@ public abstract class FieldLayout extends SpanPanel implements FieldLayoutCompon
 		}
 	}
 
-	public void setMessage(String text, boolean show) {
-		this.message.setMessage(text, show);
+	public void setMessage(String html, boolean show) {
+		if(messagePanel == null){
+			messagePanel = new HTML(html);
+			message.addWarnWidget(messagePanel);
+		}
+		else{
+			messagePanel.setHTML(html);
+		}
+		message.setVisible(show);
+		message.showWarningLayout(show);
 	}
 
 	public void showMessage(boolean show) {
-		this.message.setVisible(show);
+		message.setVisible(show);
+		message.showWarningLayout(show);
+	}
+	
+	public WarnContainer getMessageWarnContainer(){
+		return message;
 	}
 
 	@Override
@@ -255,5 +274,24 @@ public abstract class FieldLayout extends SpanPanel implements FieldLayoutCompon
 	}
 
 	public abstract void addButtonLayoutToLayout(ButtonLayout buttonLayout);
+	
+	public void setHelp(String html){
+		if(layoutTitle != null){
+			if(help == null){
+				help = new AbbrButton(AbbrButtonType.HELP);
+				layoutTitle.add(help);
+			}
+			
+	    	if(html != null && !html.trim().equals("")){
+	    		help.setVisible(true);
+	    		help.setHoverHTML(html);
+	    	}
+	    	else{
+	    		help.setVisible(false);
+	    	}
+	    	
+	    	
+		}
+	}
 
 }
