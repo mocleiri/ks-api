@@ -4,7 +4,7 @@ import org.kuali.student.common.ui.client.configurable.mvc.Configurer;
 import org.kuali.student.lum.common.client.configuration.AbstractControllerConfiguration;
 import org.kuali.student.lum.common.client.configuration.Configuration;
 import org.kuali.student.lum.common.client.configuration.ConfigurationManager;
-import org.kuali.student.lum.program.client.major.edit.ProgramSummaryConfiguration;
+import org.kuali.student.lum.program.client.major.edit.MajorSummaryConfiguration;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import java.util.ArrayList;
  */
 public abstract class AbstractProgramConfigurer extends Configurer {
 
-    private ProgramController viewController;
+    private ProgramController programController;
 
     protected ConfigurationManager programSectionConfigManager;
 
     public void configure(ProgramController viewController) {
-        this.viewController = viewController;
+        this.programController = viewController;
         configureProgramSections();
     }
 
@@ -28,21 +28,21 @@ public abstract class AbstractProgramConfigurer extends Configurer {
      */
     private void configureProgramSections() {
         String programSectionLabel = ProgramProperties.get().program_menu_sections();
-        viewController.addMenu(programSectionLabel);
+        programController.addMenu(programSectionLabel);
         ArrayList<Configuration> configurations = programSectionConfigManager.getConfigurations();
         for (Configuration configuration : configurations) {
             if (configuration instanceof AbstractControllerConfiguration) {
-                ((AbstractControllerConfiguration) configuration).setController(viewController);
+                ((AbstractControllerConfiguration) configuration).setController(programController);
             }
-            if (configuration instanceof ProgramSummaryConfiguration) {
-                viewController.addSpecialMenuItem(configuration.getView(), programSectionLabel);
+            if (configuration instanceof MajorSummaryConfiguration) {
+                programController.addSpecialMenuItem(configuration.getView(), programSectionLabel);
             } else {
-                viewController.addMenuItem(programSectionLabel, configuration.getView());
+                programController.addMenuItem(programSectionLabel, configuration.getView());
             }
         }
     }
 
-    public ProgramController getViewController() {
-        return viewController;
+    public ProgramController getProgramController() {
+        return programController;
     }
 }
