@@ -1,6 +1,5 @@
 package org.kuali.student.lum.program.client.major.edit;
 
-import com.google.gwt.core.client.GWT;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
 import org.kuali.student.lum.common.client.configuration.AbstractControllerConfiguration;
@@ -25,12 +24,12 @@ public class MajorSummaryConfiguration extends AbstractControllerConfiguration {
     protected void buildLayout() {
         rootSection.addWidget(new SummaryActionPanel());
         ConfigurationManager configurationManager = new ConfigurationManager(configurer);
-        configurationManager.registerConfiguration(new MajorInformationViewConfiguration());
-        configurationManager.registerConfiguration(new ManagingBodiesViewConfiguration());
-        configurationManager.registerConfiguration(new SpecializationsViewConfiguration());
-        configurationManager.registerConfiguration(new CatalogInformationViewConfiguration());
+        configurationManager.registerConfiguration(MajorInformationViewConfiguration.createSpecial());
+        configurationManager.registerConfiguration(ManagingBodiesViewConfiguration.createSpecial());
+        configurationManager.registerConfiguration(SpecializationsViewConfiguration.createSpecial());
+        configurationManager.registerConfiguration(CatalogInformationViewConfiguration.createSpecial());
         configurationManager.registerConfiguration(new ProgramRequirementsViewConfiguration());
-        configurationManager.registerConfiguration(new LearningObjectivesViewConfiguration());
+        configurationManager.registerConfiguration(LearningObjectivesViewConfiguration.createSpecial());
         for (Configuration configuration : configurationManager.getConfigurations()) {
             if (configuration instanceof AbstractControllerConfiguration) {
                 ((AbstractControllerConfiguration) configuration).setController(controller);

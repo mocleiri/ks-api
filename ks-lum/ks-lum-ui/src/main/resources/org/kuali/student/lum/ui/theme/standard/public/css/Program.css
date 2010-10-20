@@ -104,6 +104,21 @@
     padding-right: 3px;
 }
 
+.editableHeader {
+    height: 20px;
+}
+
+.editableHeader .sectionTitle {
+    font-size: 17px;
+    float: left;
+}
+
+.editableHeader .editButton {
+    padding-left: 2px;
+    padding-top: 2px;
+    position:relative;
+}
+
 .gwt-PopupPanel {
     z-index: 3;
 }
