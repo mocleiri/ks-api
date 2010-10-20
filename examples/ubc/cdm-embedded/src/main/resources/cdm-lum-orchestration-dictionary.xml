@@ -257,5 +257,26 @@
         <property name="additionalLookups">
             <list />
         </property>
-    </bean> 	
+    </bean>
+		<bean id="fees.justification" parent="dataFieldDescriptor">
+			<property name="name" value="justification" />
+			<property name="writeAccess" value="ALWAYS" />
+			<property name="onChangeRefreshMetadata" value="false" />
+			<property name="dataType" value="STRING" />
+			<property name="constraints">
+				<list>
+					<ref bean="constraint.single" />
+					<ref bean="constraint.optional" />
+					<bean parent="constraint.multi.line.text">
+						<property name="minLength" value="0" />
+					</bean>
+					<bean parent="constraint">
+						<property name="serverSide" value="false" />
+						<property name="maxLength" value="1000" />
+					</bean>
+					<ref bean="constraint.optional" />
+				</list>
+			</property>
+			<property name="canEdit" value="false" />
+		</bean>
 </beans>

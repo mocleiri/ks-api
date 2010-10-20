@@ -7,26 +7,36 @@
       <description>Credit Course Proposal</description>
       <label>Credit Course Proposal</label>
       <postProcessorName>org.kuali.student.lum.workflow.CluPostProcessor</postProcessorName>
-      <docHandler>${lum.application.url}/org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp</docHandler>
       <active>true</active>
       <routingVersion>2</routingVersion>
       <routePaths>
         <routePath>
           <start name="PreRoute" nextNode="Department Curriculum Committee Review" />
           <role name="Department Curriculum Committee Review" nextNode="Department Review" />
-          <role name="Department Review" nextNode="Faculty Curriculum Committee Review" />
-          <role name="Faculty Curriculum Committee Review" nextNode="Faculty Review" />
-          <role name="Faculty Review" nextNode="CourseTypeSplit" />
-          <split name="CourseTypeSplit" nextNode="Senate Review">
-            <branch name="UnderGraduate">
-              <role name="SCC - Science Subcommittee" nextNode="Join" />                            
+          <role name="Department Review" nextNode="PilotCourseSplit" />
+          <split name="PilotCourseSplit" nextNode="Publication Review">
+            <branch name="PilotCourse">
+              <simple name="PilotNoOp" nextNode="PilotJoin" />
             </branch>
-            <branch name="Graduate">
-              <role name="SCC - Graduate Subcommittee" nextNode="Join" />
+            <branch name="RegularCourse">
+		          <role name="Faculty Curriculum Committee Review" nextNode="Faculty Review" />
+		          <role name="Faculty Review" nextNode="CourseTypeSplit" />
+		          <split name="CourseTypeSplit" nextNode="Senate Review">
+		            <branch name="UnderGraduate">
+		              <role name="SCC - Science Subcommittee" nextNode="CourseTypeJoin" />                            
+		            </branch>
+		            <branch name="Graduate">
+		              <role name="SCC - Graduate Subcommittee" nextNode="CourseTypeJoin" />
+		            </branch>
+		            <branch name="Cat2">
+		              <simple name="Cat2NoOp" nextNode="CourseTypeJoin" />
+		            </branch>
+		            <join name="CourseTypeJoin" />
+		          </split>
+		          <role name="Senate Review" nextNode="PilotJoin" />
             </branch>
-            <join name="Join" />
+            <join name="PilotJoin" />
           </split>
-          <role name="Senate Review" nextNode="Publication Review" />
           <role name="Publication Review" />
         </routePath>
       </routePaths>
@@ -36,13 +46,6 @@
           <mandatoryRoute>false</mandatoryRoute>
           <finalApproval>false</finalApproval>
         </start>
-        <split name="CourseTypeSplit">
-          <activationType>P</activationType>
-          <mandatoryRoute>false</mandatoryRoute>
-          <finalApproval>false</finalApproval>        
-          <type>ca.ubc.student.kuali.lum.workflow.actions.CourseTypeLogicSplitNode</type>
-        </split>
-        <join name="Join" />
         <role name="Department Curriculum Committee Review">
           <activationType>P</activationType>
           <qualifierResolverClass>org.kuali.student.lum.workflow.qualifierresolver.DepartmentCommitteeQualifierResolver</qualifierResolverClass>
@@ -51,6 +54,26 @@
           <activationType>P</activationType>
           <qualifierResolverClass>org.kuali.student.lum.workflow.qualifierresolver.AdminOrganizationQualifierResolver</qualifierResolverClass>
         </role>
+        <split name="PilotCourseSplit">
+          <activationType>P</activationType>
+          <mandatoryRoute>false</mandatoryRoute>
+          <finalApproval>false</finalApproval>        
+          <type>ca.ubc.student.kuali.lum.workflow.actions.PilotCourseLogicSplitNode</type>
+        </split>
+        <simple name="PilotNoOp">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>        
+        <simple name="Cat2NoOp">
+          <type>org.kuali.rice.kew.engine.node.NoOpNode</type>
+        </simple>
+        <join name="PilotJoin" />
+        <split name="CourseTypeSplit">
+          <activationType>P</activationType>
+          <mandatoryRoute>false</mandatoryRoute>
+          <finalApproval>false</finalApproval>        
+          <type>ca.ubc.student.kuali.lum.workflow.actions.CourseTypeLogicSplitNode</type>
+        </split>        
+        <join name="CourseTypeJoin" />        
         <role name="Faculty Curriculum Committee Review">
           <activationType>P</activationType>
           <qualifierResolverClass>ca.ubc.student.kuali.lum.workflow.qualifierresolver.FacultyCurriculumCommitteeQualifierResolver</qualifierResolverClass>
@@ -78,8 +101,7 @@
           <qualifierResolverClass>ca.ubc.student.kuali.lum.workflow.qualifierresolver.OrganizationQualifierResolver</qualifierResolverClass>
           <orgId>1032</orgId>
           <orgName>GraduateSubcommittee</orgName>
-        </role>
-        
+        </role>        
       </routeNodes>
     </documentType>
   </documentTypes>

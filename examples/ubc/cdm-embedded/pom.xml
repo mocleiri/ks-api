@@ -1,22 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>ca.ubc.student.cdm</groupId>
   <artifactId>cdm-embedded</artifactId>
-  <version>1.1.0-M6</version>
   <packaging>war</packaging>
   <name>CDM Embedded</name>
   <description>Contains all KS modules and Rice for UBC CDM</description>
   <parent>
     <groupId>org.kuali.student.web</groupId>
 	<artifactId>ks-web</artifactId>
-	<version>1.1.0-M6</version>
+  <version>1.1.0-M8</version>
   </parent>	
   <properties>
-	<ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>
-	<ks.gwt.module.lum>ca.ubc.student.kuali.lum.lu.ui.CDMLUMMain</ks.gwt.module.lum>		
+	  <ks.gwt.module.org>org.kuali.student.core.organization.ui.OrgEntry</ks.gwt.module.org>
+	  <ks.gwt.module.lum>ca.ubc.student.kuali.lum.lu.ui.CDMLUMMain</ks.gwt.module.lum>		
+    <gwt.draftCompile>false</gwt.draftCompile>
   </properties>		
-		
   <build>
     <plugins>
       <plugin>
@@ -26,22 +24,42 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>${ks.gwt.compile.phase}</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <modules>
+            <module>${ks.gwt.module.org}</module>
+            <module>${ks.gwt.module.lum}</module>
+          </modules>
+          <style>PRETTY</style>
+          <soyc>false</soyc>
+          <draftCompile>${gwt.draftCompile}</draftCompile>
+        </configuration>
+      </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>1.0-beta-1</version>
 				<configuration>
-					<path>/ks-embedded-dev</path>
-					<port>8081</port>
+					<path>/cdm-embedded</path>
+					<port>8080</port>
 				</configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.oracle</groupId>
-                        <artifactId>ojdbc14</artifactId>
-                        <version>10.2.0.3.0</version>
-                    </dependency>
-                </dependencies>
+        <dependencies>
+	        <dependency>
+	          <groupId>com.oracle</groupId>
+	          <artifactId>ojdbc14</artifactId>
+	          <version>${oracle.ojdbc.version}</version>
+	        </dependency>
+	      </dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -50,7 +68,7 @@
 				<configuration>
                     <attachClasses>true</attachClasses>
             <webappDirectory>${project.build.directory}/${project.artifactId}-webapp</webappDirectory>
-          <dependentWarExcludes>**/web.xml,WEB-INF/lib/**,**/sampleTravelApplication.tag</dependentWarExcludes>
+          <dependentWarExcludes>**/web.xml,WEB-INF/lib/**,**/sampleTravelApplication.tag </dependentWarExcludes>
         </configuration>
       </plugin>
     </plugins>
@@ -102,7 +120,6 @@
       <artifactId>ks-common-ui</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
      <dependency>
       <groupId>org.kuali.student.security</groupId>
       <artifactId>ks-sts</artifactId>
@@ -135,7 +152,7 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!--  Sources for GWT Compile -->
+    <!--  Sources for GWT Compile -->    
     <dependency>
       <groupId>org.kuali.student.core</groupId>
       <artifactId>ks-core-ui</artifactId>
@@ -187,46 +204,112 @@
     </dependency>
     <dependency>
       <groupId>org.kuali.student.lum</groupId>
+      <artifactId>ks-lum-program</artifactId>
+      <classifier>sources</classifier>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kuali.student.lum</groupId>
+      <artifactId>ks-lum-ui-common</artifactId>
+      <classifier>sources</classifier>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kuali.student.lum</groupId>
       <artifactId>ks-lum-api</artifactId>
       <version>${project.version}</version>
       <classifier>sources</classifier>
       <scope>provided</scope>
-    </dependency>
+    </dependency>    
   </dependencies>
-    <profiles>
-      <profile>
-        <id>default</id>
-        <activation>
-          <activeByDefault>true</activeByDefault>
-        </activation>	    
-        <build>
-          <plugins>
-    		<plugin>
-    			<groupId>org.codehaus.mojo</groupId>
-    			<artifactId>gwt-maven-plugin</artifactId>
-    			<executions>
-    				<execution>
-    					<goals>
-    						<goal>compile</goal>
-    					</goals>
-    					<phase>${ks.gwt.compile.phase}</phase>
-    				</execution>
-    			</executions>
-    			<configuration>
-    				<modules>
-    
-    					<module>${ks.gwt.module.org}</module>
-    					<module>${ks.gwt.module.lum}</module>
-    
-    				</modules>
-    				<style>PRETTY</style>
-    			</configuration>
-    		</plugin>	      
-          </plugins>
-        </build>
-      </profile>
-      <profile>
-      	<id>skip-gwt</id>
-      </profile>
-    </profiles>
+  <profiles>
+        <profile>
+            <id>build-codehaus-gwt</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webappDirectory>target/${project.artifactId}-webapp</webappDirectory>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <configuration>
+                            <runTarget>org.kuali.student.lum.lu.ui.main.LUMMain/LUMMain.jsp</runTarget>
+                            <module>org.kuali.student.lum.lu.ui.main.LUMMain</module>
+                            <localWorkers>2</localWorkers>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <!-- Required dependencies for testing core-ui -->
+            <dependencies>
+                <dependency>
+                    <!--
+                             Jax-ws impl dependency so client isn't created using jaxws bundled w/jdk 1.6,
+                             which has problems finding exception beans.
+                         -->
+                    <groupId>org.kuali.student.core</groupId>
+                    <artifactId>ks-cxf</artifactId>
+                    <version>${project.version}</version>
+                    <type>pom</type>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+
+                <!-- core-impl used to get mock message service impl -->
+                <dependency>
+                    <groupId>org.kuali.student.core</groupId>
+                    <artifactId>ks-core-impl</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.derby</groupId>
+                    <artifactId>derbyclient</artifactId>
+                    <version>10.4.2.0</version>
+                    <scope>runtime</scope>
+                </dependency>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc14</artifactId>
+                    <version>${oracle.ojdbc.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.kuali.rice</groupId>
+                    <artifactId>rice-impl</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>  
+  
+  </profiles>  
 </project>

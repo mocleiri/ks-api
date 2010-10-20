@@ -22,6 +22,5 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
 		<dict:minOccurs>2</dict:minOccurs>
 		<dict:maxOccurs>2</dict:maxOccurs>
 	</dict:constraint>		
-	 -->	
-		
+	 -->		
 </beans>

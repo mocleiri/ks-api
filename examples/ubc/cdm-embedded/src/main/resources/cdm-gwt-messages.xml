@@ -24,6 +24,9 @@
         <property name="locale" value="en" />
         <property name="groupName" value="course" />
     </bean> 
-    <bean parent="enCourse" p:id="cluDivision" p:value="Subject Code: " />
-    <bean parent="enCourse" p:id="cluSuffixCode" p:value="Course Code: " /> 
+    <bean parent="enCourse" p:id="cluDivision" p:value="Course Subject" />
+    <bean parent="enCourse" p:id="cluCourseNumber" p:value="Course Number" />
+    <bean parent="enCourse" p:id="cluSuffixCode" p:value="Course Number" />
+    <bean parent="enCourse" p:id="cluInstructors" p:value="UBC Instructor(s)" />
+    <bean parent="enCourse" p:id="cluChangeCategory" p:value="Change Category" />
 </beans>
