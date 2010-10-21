@@ -162,5 +162,8 @@ public class CommonImagesImpl implements CommonImages{
 		return new KSImage(KSClientBundle.INSTANCE.footerImage());
 	}
 	
+	public KSImage getRiceIcon() {
+		return new KSImage(KSClientBundle.INSTANCE.riceIcon());
+	}
 	
 }

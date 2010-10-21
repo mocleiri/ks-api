@@ -47,4 +47,5 @@ public interface CommonImages {
 	public KSImage getNodeIcon();
 	public KSImage getDisclosureOpenedIcon();
 	public KSImage getDisclosureClosedIcon();
+	public KSImage getRiceIcon();
 }

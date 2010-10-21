@@ -218,7 +218,7 @@ public class ApplicationHeader extends Composite{
 						docSearchDialog.show();
 					}})
     	);
-    	items.add(new KSMenuItemData(getMessage("wrapperPanelTitleRice"), Theme.INSTANCE.getCommonImages().getSpacerIcon(),
+    	items.add(new KSMenuItemData(getMessage("wrapperPanelTitleRice"), Theme.INSTANCE.getCommonImages().getRiceIcon(),
     			new WrapperNavigationHandler(
     					appUrl+"/portal.do?selectedTab=main"))
     	);
