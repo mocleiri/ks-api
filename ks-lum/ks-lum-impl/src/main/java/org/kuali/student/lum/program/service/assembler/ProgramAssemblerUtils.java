@@ -41,6 +41,7 @@ import org.kuali.student.lum.lu.dto.CluPublicationInfo;
 import org.kuali.student.lum.lu.dto.CluResultInfo;
 import org.kuali.student.lum.lu.dto.LuCodeInfo;
 import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
 import org.kuali.student.lum.service.assembler.CluAssemblerUtils;
 
 public class ProgramAssemblerUtils {
@@ -173,40 +174,80 @@ public class ProgramAssemblerUtils {
      }
 
 
-    //TODO assembleRequirements .  Or maybe this should be in CluAssemblerUtils??
+    //TODO maybe this should be in CluAssemblerUtils??
     public Object assembleRequirements(CluInfo clu, Object o) throws AssemblyException {
-
-//        Method method;
-//        Class[] parms;
-//        Object[] value;
-//
-//       try    {
-
-//            if (clu.getDescr() != null) {
-//                parms = new Class[]{RichTextInfo.class};
-//                method = o.getClass().getMethod("setDescr", parms);
-//                value = new Object[]{clu.getDescr()};
-//                method.invoke(o, value);
-//            }
-//    }
-//    catch (IllegalAccessException   e){
-//        throw new AssemblyException("Error assembling program basics", e);
-//    }
-//    catch (InvocationTargetException e){
-//        throw new AssemblyException("Error assembling program basics", e);
-//    }
-//    catch (NoSuchMethodException e)
-//    {
-//        throw new AssemblyException("Error assembling program basics", e);
-//    }
+   	
+		try {
+			List<String> requirements = luService.getRelatedCluIdsByCluId(clu.getId(), ProgramAssemblerConstants.HAS_PROGRAM_REQUIREMENT);
+			if (requirements != null && requirements.size() > 0) {
+			    Class[] parms = new Class[]{List.class};
+			    Method method = o.getClass().getMethod("setProgramRequirements", parms);
+			    method.invoke(o, requirements);
+			}
+	    }
+	    catch (IllegalAccessException   e){
+	        throw new AssemblyException("Error assembling program requirements", e);
+	    }
+	    catch (InvocationTargetException e){
+	        throw new AssemblyException("Error assembling program requirements", e);
+	    }
+	    catch (NoSuchMethodException e)
+	    {
+	        throw new AssemblyException("Error assembling program requirements", e);
+	    }
+	    catch (Exception e)
+	    {
+	        throw new AssemblyException("Error assembling program requirements", e);
+	    }
 
         return o;
 
     }
 
-    //TODO   disassembleRequirements    Or maybe this should be in CluAssemblerUtils??
-    public CluInfo disassembleRequirements(CluInfo clu, Object o, NodeOperation operation) throws AssemblyException {
+    //TODO  maybe this should be in CluAssemblerUtils??
+    public CluInfo disassembleRequirements(CluInfo clu, Object o, NodeOperation operation, BaseDTOAssemblyNode<?, ?> result) throws AssemblyException {
+        try {
+            Method method = o.getClass().getMethod("getProgramRequirements", null);
+            List<String> requirements = (List<String>)method.invoke(o, null);
 
+            if (requirements != null && !requirements.isEmpty()) {
+               	Map<String, String> currentRelations = null;
+
+                if (!NodeOperation.CREATE.equals(operation)) {
+                	currentRelations = getCluCluRelations(clu.getId(), ProgramAssemblerConstants.HAS_PROGRAM_REQUIREMENT);
+                }
+                
+    	    	for (String requirementId : requirements){
+    	    		List<BaseDTOAssemblyNode<?, ?>> reqResults = addAllRelationNodes(clu.getId(), requirementId, ProgramAssemblerConstants.HAS_PROGRAM_REQUIREMENT, operation, currentRelations);
+    	            if (reqResults != null && reqResults.size()> 0) {
+    	                result.getChildNodes().addAll(reqResults);
+    	            }
+    	    	}
+    	    	
+    	        if(currentRelations != null && currentRelations.size() > 0){
+	    	        for (Map.Entry<String, String> entry : currentRelations.entrySet()) {
+	    	            // Create a new relation with the id of the relation we want to
+	    	            // delete
+	    	            CluCluRelationInfo relationToDelete = new CluCluRelationInfo();
+	    	            relationToDelete.setId( entry.getValue() );
+	    	            BaseDTOAssemblyNode<Object, CluCluRelationInfo> relationToDeleteNode = new BaseDTOAssemblyNode<Object, CluCluRelationInfo>(
+	    	                    null);
+	    	            relationToDeleteNode.setNodeData(relationToDelete);
+	    	            relationToDeleteNode.setOperation(NodeOperation.DELETE);
+	    	            result.getChildNodes().add(relationToDeleteNode);
+	    	        }
+    	        }
+            }
+        } catch (NoSuchMethodException e) {
+        	throw new AssemblyException("Error while disassembling program requirements", e); 
+        } catch (InvocationTargetException e) {
+        	throw new AssemblyException("Error while disassembling program requirements", e); 
+        } catch (IllegalAccessException e) {
+            throw new AssemblyException("Error while disassembling program requirements", e); 
+	    } catch (Exception e) {
+	        throw new AssemblyException("Error while disassembling program requirements", e);
+	    }
+	    
         return clu;
 
     }
@@ -456,11 +497,8 @@ public class ProgramAssemblerUtils {
      */
     public Object assembleAdminOrgIds(CluInfo clu, Object o) throws AssemblyException {
 
-
         try {
-
             if (clu.getAdminOrgs() != null) {
-                clearProgramAdminOrgs(o);
                 for (AdminOrgInfo cluOrg : clu.getAdminOrgs()) {
                     if (cluOrg.getType().equals(ProgramAssemblerConstants.CONTENT_OWNER_DIVISION)) {
                         addOrgIdToProgram(o, cluOrg, "getDivisionsContentOwner", "setDivisionsContentOwner");
@@ -507,35 +545,6 @@ public class ProgramAssemblerUtils {
         }
 
         return o;
-    }
-
-    private void clearProgramAdminOrgs(Object o) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        clearAdminOrgs(o, "setDivisionsContentOwner");
-        clearAdminOrgs(o, "setDivisionsStudentOversight");
-        clearAdminOrgs(o, "setDivisionsDeployment");
-        clearAdminOrgs(o, "setDivisionsFinancialResources");
-        clearAdminOrgs(o, "setDivisionsFinancialControl");
-        clearAdminOrgs(o, "setUnitsContentOwner");
-        clearAdminOrgs(o, "setUnitsStudentOversight");
-        clearAdminOrgs(o, "setUnitsDeployment");
-        clearAdminOrgs(o, "setUnitsFinancialResources");
-        clearAdminOrgs(o, "setUnitsFinancialControl");
-    }
-
-    private void clearAdminOrgs(Object o, String setMethodName) throws InvocationTargetException, IllegalAccessException {
-        Class[] parms =  new Class[]{List.class};
-        Method  method = null;
-        try {
-            method = o.getClass().getMethod(setMethodName, parms);
-            List<String> objOrgs = new ArrayList<String>();
-
-            Object[] value = new Object[]{objOrgs};
-            method.invoke(o, value);
-        } catch (NoSuchMethodException ignore) {
-            // Not all programs have all org types.
-            //  This will be fixed by JIRA KSLUM-414 later
-        }
-
     }
 
 
@@ -957,7 +966,7 @@ public class ProgramAssemblerUtils {
             // be deleted at the end
             currentRelations.remove(relatedCluId);
         }
-
+        
         if(currentRelations != null && currentRelations.size() > 0){
 	        for (Map.Entry<String, String> entry : currentRelations.entrySet()) {
 	            // Create a new relation with the id of the relation we want to
@@ -973,15 +982,62 @@ public class ProgramAssemblerUtils {
         }
         return results;
     }
+    public List<BaseDTOAssemblyNode<?, ?>> addAllRelationNodes(String cluId, String relatedCluId, String relationType, NodeOperation operation, Map<String, String> currentRelations)throws AssemblyException{
+    	List<BaseDTOAssemblyNode<?, ?>> results = new ArrayList<BaseDTOAssemblyNode<?, ?>>();
+
+		if (NodeOperation.CREATE == operation
+		        || (NodeOperation.UPDATE == operation && !currentRelations.containsKey(relatedCluId) )) {
+		    // the relation does not exist, so create
+			addCreateRelationNode(cluId, relatedCluId, relationType, results);
+		} else if (NodeOperation.UPDATE == operation
+		        && currentRelations.containsKey(relatedCluId)) {
+		    // If the relationship already exists update it
+		
+		    // remove this entry from the map so we can tell what needs to
+		    // be deleted at the end
+		    currentRelations.remove(relatedCluId);
+		} else if (NodeOperation.DELETE == operation
+		        && currentRelations.containsKey(relatedCluId))  {
+		    // Delete the Format and its relation
+			addDeleteRelationNodes(currentRelations, results);
+		
+		    // remove this entry from the map so we can tell what needs to
+		    // be deleted at the end
+		    currentRelations.remove(relatedCluId);
+		}
+        
+        return results;
+    }
     public Map<String, String> getCluCluRelations(String cluId, String relationType) throws AssemblyException{
         Map<String, String> currentRelations = new HashMap<String, String>();
 
             try {
                 List<CluCluRelationInfo> cluRelations = luService.getCluCluRelationsByClu(cluId);
-
+               
                 for (CluCluRelationInfo cluRelation : cluRelations) {
                     if (relationType.equals(cluRelation.getType())) {
                         currentRelations.put(cluRelation.getRelatedCluId(), cluRelation.getId());
+                    }
+                }
+            } catch (DoesNotExistException e) {
+            } catch (InvalidParameterException e) {
+            } catch (MissingParameterException e) {
+            } catch (OperationFailedException e) {
+                throw new AssemblyException("Error getting related clus", e);
+            }
+
+            return currentRelations;
+    }
+    
+    public Map<String, CluCluRelationInfo> getCluCluActiveRelations(String cluId, String relationType) throws AssemblyException{
+        Map<String, CluCluRelationInfo> currentRelations = new HashMap<String, CluCluRelationInfo>();
+
+            try {
+                List<CluCluRelationInfo> cluRelations = luService.getCluCluRelationsByClu(cluId);
+
+                for (CluCluRelationInfo cluRelation : cluRelations) {
+                    if (relationType.equals(cluRelation.getType()) && (!cluRelation.getState().isEmpty() && cluRelation.getState().equalsIgnoreCase(ProgramAssemblerConstants.ACTIVE))) {
+                        currentRelations.put(cluRelation.getRelatedCluId(), cluRelation);
                     }
                 }
             } catch (DoesNotExistException e) {
@@ -1023,7 +1079,20 @@ public class ProgramAssemblerUtils {
             results.add(relationToDeleteNode);
         }
     }
-
+    
+    public void addInactiveRelationNodes(Map<String, CluCluRelationInfo> currentRelations, List<BaseDTOAssemblyNode<?, ?>> results){
+        for (Map.Entry<String, CluCluRelationInfo> entry : currentRelations.entrySet()) {
+            CluCluRelationInfo inactiveRelation = new CluCluRelationInfo();
+            inactiveRelation = entry.getValue();
+            inactiveRelation.setState(ProgramAssemblerConstants.INACTIVE);
+            BaseDTOAssemblyNode<Object, CluCluRelationInfo> inactiveRelationNode = new BaseDTOAssemblyNode<Object, CluCluRelationInfo>(
+                    null);
+            inactiveRelationNode.setNodeData(inactiveRelation);
+            inactiveRelationNode.setOperation(NodeOperation.UPDATE);
+            results.add(inactiveRelationNode);
+        }
+    }
+    
     private LuCodeInfo buildLuCodeFromProgram(Object o, String methodName, String codeType) throws AssemblyException {
 
         LuCodeInfo code = null;
@@ -1057,11 +1126,7 @@ public class ProgramAssemblerUtils {
     private void addOrgIdToProgram(Object o, AdminOrgInfo cluOrg, String getMethod, String setMethod) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 
         Method method = o.getClass().getMethod(getMethod, null);
-        List<String> objOrgs = (List<String>) method.invoke(o, null);
-
-        if (objOrgs == null)     {
-            objOrgs = new ArrayList<String>();
-        }
+        List<String> objOrgs= new ArrayList<String>();
         objOrgs.add(cluOrg.getOrgId());
         Class[] parms =  new Class[]{List.class};
         method = o.getClass().getMethod(setMethod, parms);

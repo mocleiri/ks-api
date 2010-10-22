@@ -54,6 +54,8 @@ public abstract class ProgramController extends MenuSectionController {
 
     protected ProgramSideBar sideBar;
 
+    private boolean needToLoadOldModel = false;
+
     /**
      * Constructor.
      *
@@ -68,9 +70,10 @@ public abstract class ProgramController extends MenuSectionController {
         initializeModel();
     }
 
+
     @Override
-    public void beforeViewChange(final Callback<Boolean> okToChange) {
-        super.beforeViewChange(new Callback<Boolean>() {
+    public void beforeViewChange(Enum<?> viewChangingTo, final Callback<Boolean> okToChange) {
+        super.beforeViewChange(viewChangingTo, new Callback<Boolean>() {
 
             @Override
             public void exec(Boolean result) {
@@ -85,13 +88,13 @@ public abstract class ProgramController extends MenuSectionController {
                                 switch (result) {
                                     case YES:
                                         dialog.hide();
-                                        eventBus.fireEvent(new UpdateEvent());
+                                        eventBus.fireEvent(new UpdateEvent(okToChange));
                                         resetFieldInteractionFlag();
-                                        okToChange.exec(true);
                                         break;
                                     case NO:
                                         dialog.hide();
                                         resetModel();
+                                        needToLoadOldModel = true;
                                         resetFieldInteractionFlag();
                                         okToChange.exec(true);
                                         break;
@@ -118,7 +121,10 @@ public abstract class ProgramController extends MenuSectionController {
     }
 
     protected void resetFieldInteractionFlag() {
-        ((Section) getCurrentView()).resetFieldInteractionFlags();
+        View currentView = getCurrentView();
+        if (currentView instanceof Section) {
+            ((Section) currentView).resetFieldInteractionFlags();
+        }
     }
 
     /**
@@ -177,7 +183,12 @@ public abstract class ProgramController extends MenuSectionController {
                 setHeaderTitle();
                 setStatus();
                 callback.onModelReady(programModel);
-                eventBus.fireEvent(new ModelLoadedEvent(programModel));
+                //We don't want to throw ModelLoadedEvent when we just want to rollback the model
+                if (needToLoadOldModel) {
+                    needToLoadOldModel = false;
+                } else {
+                    eventBus.fireEvent(new ModelLoadedEvent(programModel));
+                }
             }
         });
     }
@@ -296,6 +307,5 @@ public abstract class ProgramController extends MenuSectionController {
     }
 
     protected void doSave() {
-
     }
 }
