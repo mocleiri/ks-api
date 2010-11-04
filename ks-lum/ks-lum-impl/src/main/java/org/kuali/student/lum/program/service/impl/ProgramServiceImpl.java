@@ -512,7 +512,7 @@ public class ProgramServiceImpl implements ProgramService {
 
         List<ValidationResultInfo> validationResults = new ArrayList<ValidationResultInfo>();
         if ( ! ProgramAssemblerConstants.DRAFT.equals(credentialProgramInfo.getState()) ) {
-            ObjectStructureDefinition objStructure = this.getObjectStructure(CoreProgramInfo.class.getName());
+            ObjectStructureDefinition objStructure = this.getObjectStructure(CredentialProgramInfo.class.getName());
             Validator validator = validatorFactory.getValidator();
             validationResults.addAll(validator.validateObject(credentialProgramInfo, objStructure));
         }
@@ -536,8 +536,8 @@ public class ProgramServiceImpl implements ProgramService {
             MissingParameterException, OperationFailedException {
 
         List<ValidationResultInfo> validationResults = new ArrayList<ValidationResultInfo>();
-        if ( ! ProgramAssemblerConstants.DRAFT.equals(majorDisciplineInfo.getState()) ) {
-            ObjectStructureDefinition objStructure = this.getObjectStructure(CoreProgramInfo.class.getName());
+        if ( ! ProgramAssemblerConstants.DRAFT.equalsIgnoreCase(majorDisciplineInfo.getState()) ) {
+            ObjectStructureDefinition objStructure = this.getObjectStructure(MajorDisciplineInfo.class.getName());
             Validator validator = validatorFactory.getValidator();
             validationResults.addAll(validator.validateObject(majorDisciplineInfo, objStructure));
         }
