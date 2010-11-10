@@ -1,44 +1,22 @@
 package org.kuali.student.lum.lu.ui.course.client.views;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
-import org.kuali.student.common.ui.client.application.ViewContext;
-import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
-import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.ViewComposite;
 import org.kuali.student.common.ui.client.service.MetadataRpcService;
 import org.kuali.student.common.ui.client.service.MetadataRpcServiceAsync;
-import org.kuali.student.common.ui.client.widgets.KSButton;
-import org.kuali.student.common.ui.client.widgets.KSLightBox;
-import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel;
-import org.kuali.student.common.ui.client.widgets.menus.KSListPanel;
-import org.kuali.student.common.ui.client.widgets.search.KSPicker;
-import org.kuali.student.common.ui.client.widgets.search.SelectedResults;
-import org.kuali.student.common.ui.shared.IdAttributes;
-import org.kuali.student.common.ui.shared.IdAttributes.IdType;
 import org.kuali.student.core.assembly.data.Metadata;
 import org.kuali.student.core.rice.authorization.PermissionType;
-import org.kuali.student.lum.common.client.lo.CategoryManagement;
 import org.kuali.student.lum.lu.ui.course.client.service.CreditCourseProposalRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CreditCourseProposalRpcServiceAsync;
 import org.kuali.student.lum.lu.ui.main.client.configuration.CurriculumHomeConfigurer;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.gen2.table.client.SelectionGrid.SelectionPolicy;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import org.kuali.student.common.ui.client.widgets.KSErrorDialog;
 
 public class CurriculumHomeView extends ViewComposite{
 	
@@ -52,16 +30,43 @@ public class CurriculumHomeView extends ViewComposite{
 		this.initWidget(container);
 		setup();
 	}
-	
+
+//  private String formatMetadata (Metadata md, String fieldKey) {
+//  String msg = "metadata for fieldKey=" + fieldKey
+////    + "\n Name=" + md.getName ()
+//    + "\n LabelKey=" + md.getLabelKey ()
+//    + "\n defaultValuePath=" + md.getDefaultValuePath ()
+//    + "\n LookupContextPath="  + md.getLookupContextPath ()
+////    + "\n maskForatter="  + md.getMaskFormatter ()
+////    + "\n partialMaskFormatter="  + md.getPartialMaskFormatter ()
+//    + "\n dataType="  + md.getDataType ()
+//    + "\n defaultValue="  + md.getDefaultValue ()
+//    + "\n WriteAccess="  + md.getWriteAccess ()
+//    + "\n initialLookup="  + md.getInitialLookup ()
+//    + "\n additionalLookups="  + md.getAdditionalLookups ()
+//    ;
+//  if (md.getProperties () != null) {
+//   msg += "\n It has " + md.getProperties ().size () + " properties: \n";
+//   for (String fk : md.getProperties ().keySet ()) {
+//    msg += "\n" + formatMetadata (md.getProperties ().get (fk), fk);
+//   }
+//  }
+//  return msg;
+// }
+
 	protected void setup(){
-        metadataServiceAsync.getMetadata("search", "", "", new KSAsyncCallback<Metadata>() {
+        metadataServiceAsync.getMetadata("search", null, null, new KSAsyncCallback<Metadata>() {
             @Override
             public void handleFailure(Throwable caught) {
             	container.add(configurer.configure(null));
-                throw new RuntimeException("Could not verify authorization: " + caught.getMessage(), caught);
+//             			KSErrorDialog.show (caught);
+                throw new RuntimeException("Could not retreive metadata: " + caught.getMessage(), caught);
             }
             @Override
             public void onSuccess(Metadata metadata) {
+//			           KSErrorDialog.show (new NullPointerException
+//              ("metadata."
+//             + formatMetadata (metadata, "search")));
             	container.add(configurer.configure(metadata));
             }
         });       

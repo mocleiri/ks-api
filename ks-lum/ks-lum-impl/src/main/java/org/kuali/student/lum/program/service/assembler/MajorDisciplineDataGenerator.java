@@ -133,6 +133,12 @@ public class MajorDisciplineDataGenerator {
         if("credentialProgramId".equals(name)){
             return "00f5f8c5-fff1-4c8b-92fc-789b891e0849";
         }
+        if("programRequirements".equals(name)){
+        	return "REQ-200";
+        }
+        if("catalogPublicationTargets".equals(name)){
+			return ProgramAssemblerConstants.CATALOG;
+		}
 		if("type".equals(name)){
 			
 			if(null==parentPropertyName){
@@ -184,7 +190,7 @@ public class MajorDisciplineDataGenerator {
 			}
             if("unitsFinancialControl".equals(parentPropertyName)){
 				return ProgramAssemblerConstants.FINANCIAL_CONTROL_UNIT;
-			}
+            }
 
 			//Temporary change added because of addition of type field to AdminOrgInfo.
 			// Please add the type values for MajorDisciplineInfo admin orgs

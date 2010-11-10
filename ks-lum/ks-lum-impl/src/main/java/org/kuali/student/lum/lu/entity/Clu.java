@@ -15,7 +15,6 @@
 
 package org.kuali.student.lum.lu.entity;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +24,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -38,7 +36,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import org.kuali.student.common.util.UUIDHelper;
 import org.kuali.student.core.entity.Amount;
 import org.kuali.student.core.entity.AttributeOwner;
 import org.kuali.student.core.entity.TimeAmount;
@@ -96,10 +93,6 @@ import org.kuali.student.core.entity.VersionEntity;
     @NamedQuery(name = "Clu.getClusByRelation", query = "SELECT c FROM Clu c WHERE c.id IN (SELECT ccr.relatedClu.id FROM CluCluRelation ccr WHERE ccr.clu.id = :parentCluId AND ccr.luLuRelationType.id = :luLuRelationTypeKey)")
 })
 public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
-
-    @Id
-    @Column(name = "ID")
-    private String id;
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "OFFIC_CLU_ID")
@@ -175,7 +168,7 @@ public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
     private String nextReviewPeriod;
 
     @Column(name = "IS_ENRL")
-    private boolean isEnrollable;
+    private boolean enrollable;
     
     @OneToMany(cascade=CascadeType.ALL, mappedBy="clu")
     private List<CluAtpTypeKey> offeredAtpTypes;
@@ -190,7 +183,7 @@ public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
     private int defaultMaximumEnrollment;
 
     @Column(name = "IS_HAZR_DISBLD_STU")
-    private boolean isHazardousForDisabledStudents;
+    private boolean hazardousForDisabledStudents;
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "FEE_ID")
@@ -210,20 +203,6 @@ public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
     @Column(name = "ST")
     private String state;
     
-    @Override
-    protected void onPrePersist() {
-        super.onPrePersist();
-        this.id = UUIDHelper.genStringUUID(this.id);
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public LuType getLuType() {
         return luType;
     }
@@ -339,11 +318,11 @@ public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
      }
 
      public boolean isEnrollable() {
-         return isEnrollable;
+         return enrollable;
      }
 
-     public void setEnrollable(boolean isEnrollable) {
-         this.isEnrollable = isEnrollable;
+     public void setEnrollable(boolean enrollable) {
+         this.enrollable = enrollable;
      }
 
      public List<CluAtpTypeKey> getOfferedAtpTypes() {
@@ -379,12 +358,12 @@ public class Clu extends VersionEntity implements AttributeOwner<CluAttribute> {
      }
 
      public boolean isHazardousForDisabledStudents() {
-         return isHazardousForDisabledStudents;
+         return hazardousForDisabledStudents;
      }
 
      public void setHazardousForDisabledStudents(
-             boolean isHazardousForDisabledStudents) {
-         this.isHazardousForDisabledStudents = isHazardousForDisabledStudents;
+             boolean hazardousForDisabledStudents) {
+         this.hazardousForDisabledStudents = hazardousForDisabledStudents;
      }
 
      public CluFee getFee() {

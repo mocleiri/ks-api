@@ -54,9 +54,9 @@ public class CoreProgramAssembler implements BOAssembler<CoreProgramInfo, CluInf
         programAssemblerUtils.assembleAtps(clu, cpInfo);
         programAssemblerUtils.assembleLuCodes(clu, cpInfo);
         programAssemblerUtils.assembleRequirements(clu, cpInfo);
-        programAssemblerUtils.assemblePublicationInfo(clu, cpInfo);
+        programAssemblerUtils.assemblePublications(clu, cpInfo);
 
-        cpInfo.setLearningObjectives(cluAssemblerUtils.assembleLearningObjectives(clu.getId(), shallowBuild));
+        cpInfo.setLearningObjectives(cluAssemblerUtils.assembleLos(clu.getId(), shallowBuild));
 
         cpInfo.setDescr(clu.getDescr());
         
@@ -88,8 +88,11 @@ public class CoreProgramAssembler implements BOAssembler<CoreProgramInfo, CluInf
         programAssemblerUtils.disassembleAdminOrgs(clu, core, operation);
         programAssemblerUtils.disassembleAtps(clu, core, operation);    
         programAssemblerUtils.disassembleLuCodes(clu, core, operation);
-        programAssemblerUtils.disassemblePublicationInfo(clu, core, operation);
-        programAssemblerUtils.disassembleRequirements(clu, core, operation);
+        programAssemblerUtils.disassemblePublications(clu, core, operation, result);
+        
+        if(core.getProgramRequirements() != null && !core.getProgramRequirements().isEmpty()) {
+        	programAssemblerUtils.disassembleRequirements(clu, core, operation, result);
+        }
         
         if (core.getLearningObjectives() != null) {
             disassembleLearningObjectives(core, operation, result);

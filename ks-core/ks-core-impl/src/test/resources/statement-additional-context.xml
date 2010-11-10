@@ -235,14 +235,6 @@
         <property name="naturalLanguageTranslator" ref="naturalLanguageTranslator"/>
     </bean>
 
-    <bean id="ks.messageServiceMock" class="org.kuali.student.core.messages.service.impl.MessageServiceMock">
-        <property name="messageFiles">
-            <list>
-                <value>classpath:org/kuali/student/common/ui/gwt-messages.xml</value>
-            </list>
-        </property>
-    </bean>
-
    <bean id="StatementServiceImpl"
         class="org.kuali.student.core.statement.service.impl.StatementServiceImpl" autowire="no">
         <property name="statementAssembler" ref="statementAssembler"/>
@@ -256,7 +248,6 @@
         </property>
         <property name="naturalLanguageTranslator" ref="naturalLanguageTranslator" />
 		<property name="validatorFactory" ref="validatorFactory"/>
-        <property name="validator" ref="serviceValidator"/>
         <property name="searchManager" ref="statementSearchManager"/>
     </bean>
     

@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.kuali.student.common.util.UUIDHelper;
@@ -61,9 +61,9 @@ import org.kuali.student.lum.lu.dto.CluLoRelationInfo;
 import org.kuali.student.lum.lu.dto.CluResultInfo;
 import org.kuali.student.lum.lu.dto.LuCodeInfo;
 import org.kuali.student.lum.lu.dto.ResultOptionInfo;
-import org.kuali.student.lum.lu.entity.CluCluRelation;
 import org.kuali.student.lum.lu.service.LuService;
 import org.kuali.student.lum.service.assembler.CluAssemblerUtils;
+import org.springframework.util.StringUtils;
 /**
  * Assembler for CourseInfo. Provides assemble and disassemble operation on
  * CourseInfo from/to CluInfo and other base DTOs
@@ -91,12 +91,12 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
 		// Copy all the data from the clu to the course
 		
-
 		course.setAttributes(clu.getAttributes());
 		course.setCampusLocations(clu.getCampusLocations());
 		course.setCode(clu.getOfficialIdentifier().getCode());
 		course.setCourseNumberSuffix(clu.getOfficialIdentifier()
 				.getSuffixCode());
+		course.setLevel(clu.getOfficialIdentifier().getLevel());
 		course.setOutOfClassHours(clu.getIntensity());
 		course.setInstructors(clu.getInstructors());
 		course.setStartTerm(clu.getExpectedFirstAtp());
@@ -260,7 +260,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 			}
 			
 			//Learning Objectives
-            course.getCourseSpecificLOs().addAll(cluAssemblerUtils.assembleLearningObjectives(course.getId(), shallowBuild));
+            course.getCourseSpecificLOs().addAll(cluAssemblerUtils.assembleLos(course.getId(), shallowBuild));
 			
 		}
 
@@ -317,6 +317,13 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 			identifier.setCode(null);
 		}
 		
+		//Custom logic to set the level
+		if(StringUtils.hasText(course.getLevel())) {
+		    identifier.setLevel(course.getLevel());
+		} else if(course.getCourseNumberSuffix()!=null&&course.getCourseNumberSuffix().length()>=3){
+			identifier.setLevel(course.getCourseNumberSuffix().substring(0, 1)+"00");
+		}
+		
 		clu.setOfficialIdentifier(identifier);
 
 		clu.setAdminOrgs(new ArrayList<AdminOrgInfo>());
@@ -353,6 +360,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 			cluIdentifier.setSuffixCode(crossListing.getCourseNumberSuffix());
 			cluIdentifier.setDivision(crossListing.getSubjectArea());
 			cluIdentifier.setState(course.getState());
+			cluIdentifier.setOrgId(crossListing.getDepartment());
 			clu.getAlternateIdentifiers().add(cluIdentifier);
 		}
 
@@ -572,7 +580,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 						Collections.sort(creditOption.getResultValues());
 						StringBuilder sb = new StringBuilder(CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX);
 						for(Iterator<String> iter = creditOption.getResultValues().iterator();iter.hasNext();){
-							sb.append(Integer.parseInt(iter.next()));
+							sb.append(iter.next());
 							if(iter.hasNext()){
 								sb.append(",");
 							}
@@ -581,19 +589,29 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 						type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE;
 						resultValues = creditOption.getResultValues();
 					}else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE.equals(creditOption.getType())){
-						String minCreditValue = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE);
+					    /*
+					     * For variable credits create a Result values that goes from min to max with the specified increment. 
+					     * If no increment is specified, use 1.0 as the increment. The increment can be specified as a float.
+					     */
+					  					   
+					    String minCreditValue = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE);
 						String maxCreditValue = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE);
-						int minCredits = Integer.parseInt(minCreditValue);
-						int maxCredits = Integer.parseInt(maxCreditValue);
+						String creditValueIncr = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR);
+						float minCredits = Float.parseFloat(minCreditValue);
+						float maxCredits = Float.parseFloat(maxCreditValue);
+												
+						float increment = (null != creditValueIncr && creditValueIncr.length() > 0 ) ? Float.parseFloat(creditValueIncr) : 1.0f ;
+												
 						id = CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX + minCreditValue + "-" + maxCreditValue;
 						type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE;
 						resultValues = new ArrayList<String>();
-						for(int i = minCredits; i <= maxCredits; i++){
+						for(float i = minCredits; i <= maxCredits; i+=increment){
 							resultValues.add(String.valueOf(i));
 						}
 						attributes = new HashMap<String,String>();
 						attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE, minCreditValue);
 						attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE, maxCreditValue);
+                        attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR, creditValueIncr);
 					}
 	
 					//Set the id
@@ -1067,6 +1085,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 					crosslisting.setType(cluIdent.getType());
 					crosslisting.setCourseNumberSuffix(cluIdent.getSuffixCode());
 					crosslisting.setSubjectArea(cluIdent.getDivision());
+					crosslisting.setDepartment(cluIdent.getOrgId());
 					crossListings.add(crosslisting);
 				}
 			}

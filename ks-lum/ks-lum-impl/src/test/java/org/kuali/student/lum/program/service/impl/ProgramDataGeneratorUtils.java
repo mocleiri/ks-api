@@ -120,7 +120,15 @@ public class ProgramDataGeneratorUtils {
 			   return null;
             }
 		}
-		
+
+        if("programRequirements".equals(name)){
+        	return "REQ-200";
+        }
+
+        if("catalogPublicationTargets".equals(name)){
+			return ProgramAssemblerConstants.CATALOG;
+		}
+        
 		if("type".equals(name)){
 			
 			if(null==parentPropertyName){
