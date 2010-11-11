@@ -1,12 +1,18 @@
 package org.kuali.student.common.ui.client.mvc.breadcrumb;
 
-import com.google.gwt.user.client.ui.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.history.HistoryManager;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.SpanPanel;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class BreadcrumbManager extends Composite{
 	
@@ -17,6 +23,8 @@ public class BreadcrumbManager extends Composite{
 	private static Controller root;
 	private static ComplexPanel panel = new SpanPanel();
 	private static boolean panelEmpty = true;
+	
+	private static Panel parentPanel;
 	
 	private static class BreadcrumbData{
 		private String name;
@@ -41,6 +49,7 @@ public class BreadcrumbManager extends Composite{
 		
 		String[] arr = HistoryManager.splitHistoryStack(historyStack);
 		List<BreadcrumbData> breadcrumbs = new ArrayList<BreadcrumbData>();
+
 		if(arr.length == names.size()){
 			String path = "";
 			//account for applicationController - skip first item from both
@@ -82,6 +91,16 @@ public class BreadcrumbManager extends Composite{
 			}
 		}
 		
+		if(parentPanel != null){
+			if(breadcrumbs.size() == 1){
+				panel.getParent().setVisible(false);
+			}
+			else{
+				panel.getParent().setVisible(true);
+
+			}
+		}
+		
 		for(int i = 0; i < breadcrumbs.size(); i++){
 			if(i < breadcrumbs.size() - 1){
 				createLink(breadcrumbs.get(i).name, breadcrumbs.get(i).path);
@@ -116,6 +135,11 @@ public class BreadcrumbManager extends Composite{
 	
 	public static ComplexPanel getBreadcrumbPanel(){
 		return panel;
+	}
+	
+	public static void setParentPanel(Panel panel){
+		parentPanel = panel;
+		parentPanel.setVisible(false);
 	}
 
 }

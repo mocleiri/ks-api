@@ -23,10 +23,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 public class RuleTable extends Composite {
 
@@ -34,8 +34,8 @@ public class RuleTable extends Composite {
     private SimplePanel simplePanel;   //TODO do we need simple panel?
     private boolean showControls;
     
-    public RuleTable() {
-        showControls = true;
+    public RuleTable(Boolean showCheckbox) {
+        showControls = showCheckbox;
         treeTable = new TreeTable();
         treeTable.setStyleName("KS-Rules-Table");
         simplePanel = new SimplePanel();

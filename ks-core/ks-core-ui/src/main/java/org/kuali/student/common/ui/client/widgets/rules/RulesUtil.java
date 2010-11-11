@@ -21,7 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.kuali.student.core.dto.MetaInfo;
-import org.kuali.student.core.statement.dto.*;
+import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
+import org.kuali.student.core.statement.dto.ReqCompFieldTypeInfo;
+import org.kuali.student.core.statement.dto.ReqComponentInfo;
+import org.kuali.student.core.statement.dto.ReqComponentTypeInfo;
+import org.kuali.student.core.statement.dto.StatementInfo;
+import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 
 public class RulesUtil {
 
@@ -29,7 +34,7 @@ public class RulesUtil {
         StatementVO cloned = doClone(inStatementVO);
         return cloned;
     }
-    
+
     private static StatementVO doClone(StatementVO inStatementVO) {
         StatementVO cloned = null;
         StatementInfo clonedLuStatementInfo = null;
@@ -52,7 +57,7 @@ public class RulesUtil {
         }
         return cloned;
     }
-    
+
     public static StatementInfo clone(StatementInfo inStatementInfo) {
         StatementInfo clonedLuStatementInfo = null;
         if (inStatementInfo != null) {
@@ -70,7 +75,7 @@ public class RulesUtil {
         }
         return clonedLuStatementInfo;
     }
-    
+
     private static Map<String, String> clone(Map<String, String> inAttributes) {
         Map<String, String> clonedAttributes = null;
         if (inAttributes != null) {
@@ -79,7 +84,7 @@ public class RulesUtil {
         }
         return clonedAttributes;
     }
-    
+
     private static MetaInfo clone(MetaInfo inMetaInfo) {
         MetaInfo clonedMetaInfo = null;
         if (inMetaInfo != null) {
@@ -96,7 +101,7 @@ public class RulesUtil {
         }
         return clonedMetaInfo;
     }
-    
+
     private static ReqComponentVO clone(ReqComponentVO inReqComponentVO) {
         ReqComponentVO clonedReqComponentVO = null;
         if (inReqComponentVO != null) {
@@ -109,11 +114,11 @@ public class RulesUtil {
         }
         return clonedReqComponentVO;
     }
-    
-    public static ReqComponentInfo clone(ReqComponentInfo inReqComponentInfo) {
-        ReqComponentInfo clonedReqComponentInfo = null;
+
+    public static ReqComponentInfoUi clone(ReqComponentInfo inReqComponentInfo) {
+    	ReqComponentInfoUi clonedReqComponentInfo = null;
         if (inReqComponentInfo != null) {
-            clonedReqComponentInfo = new ReqComponentInfo();
+            clonedReqComponentInfo = new ReqComponentInfoUi();
             clonedReqComponentInfo.setDesc(inReqComponentInfo.getDesc());
             clonedReqComponentInfo.setReqCompFields(clone(inReqComponentInfo.getReqCompFields()));
             if (inReqComponentInfo.getEffectiveDate() != null) {
@@ -129,10 +134,13 @@ public class RulesUtil {
             clonedReqComponentInfo.setId(inReqComponentInfo.getId());
 //            clonedReqComponentInfo.setRequiredComponentType(inReqComponentInfo.getRequiredComponentType());
             clonedReqComponentInfo.setNaturalLanguageTranslation(inReqComponentInfo.getNaturalLanguageTranslation());
+            if (inReqComponentInfo instanceof ReqComponentInfoUi) {
+            	clonedReqComponentInfo.setPreviewNaturalLanguageTranslation(((ReqComponentInfoUi)inReqComponentInfo).getPreviewNaturalLanguageTranslation());
+            }
         }
         return clonedReqComponentInfo;
     }
-    
+
     private static List<ReqCompFieldInfo> clone(List<ReqCompFieldInfo> inReqComponentInfos) {
         List<ReqCompFieldInfo> clonedFields = null;
         if (inReqComponentInfos != null) {
@@ -143,7 +151,7 @@ public class RulesUtil {
         }
         return clonedFields;
     }
-    
+
     private static ReqCompFieldInfo clone(ReqCompFieldInfo inReqCompFieldInfo) {
         ReqCompFieldInfo clonedField = null;
         if (inReqCompFieldInfo != null) {
@@ -211,9 +219,14 @@ public class RulesUtil {
         }
         return clonedStatementTreeViewInfoInfo;
     }
-    
+
     public static boolean isCluSetWidget(String fieldType) {
         return ((fieldType.toLowerCase().indexOf("course.cluSet".toLowerCase()) > 0) ||
                 (fieldType.toLowerCase().indexOf("program.cluSet".toLowerCase()) > 0));
+    }
+
+    public static boolean isCluWidget(String fieldType) {
+        return ((fieldType.toLowerCase().indexOf("course.clu".toLowerCase()) > 0) ||
+                (fieldType.toLowerCase().indexOf("program.clu".toLowerCase()) > 0));
     }
 }

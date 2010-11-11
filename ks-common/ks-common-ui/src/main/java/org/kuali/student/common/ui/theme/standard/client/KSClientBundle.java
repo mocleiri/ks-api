@@ -53,9 +53,6 @@ public interface KSClientBundle extends ClientBundleWithLookup{
     @Source("org/kuali/student/common/ui/theme/standard/public/css/Header.css")
     @CssResource.NotStrict
 	public CssResource helpLinkCss();
-    @Source("org/kuali/student/common/ui/theme/standard/public/css/KSImage.css")
-	@CssResource.NotStrict
-	public CssResource imageCss();
     @Source("org/kuali/student/common/ui/theme/standard/public/css/KSLabel.css")
 	@CssResource.NotStrict
 	public CssResource labelCss();
@@ -152,6 +149,9 @@ public interface KSClientBundle extends ClientBundleWithLookup{
     @Source("org/kuali/student/common/ui/theme/standard/public/css/PrintPage.css")
     @CssResource.NotStrict
     public CssResource printPageCss();
+    @Source("org/kuali/student/common/ui/theme/standard/public/css/RuleLogicView.css")
+    @CssResource.NotStrict
+    public CssResource ruleLogicViewCss();    
 
 	//Reset Css
 	@Source("org/kuali/student/common/ui/theme/standard/public/css/Reset.css")
@@ -329,5 +329,8 @@ public interface KSClientBundle extends ClientBundleWithLookup{
     
     @Source("org/kuali/student/common/ui/theme/standard/public/images/common/printer.png")
     public ImageResource print();
+
+    @Source("org/kuali/student/common/ui/theme/standard/public/images/common/rice-mark-icon.png")
+    public ImageResource riceIcon();
 
 }

@@ -42,8 +42,10 @@
 
   	<inherits name="com.google.gwt.visualization.Visualization"/>
   	<inherits name="com.google.gwt.libideas.ImmutableResources" />
-    <inherits name='com.google.gwt.gen2.table.Table'/>
-
+    <inherits name='com.google.gwt.gen2.table.ScrollTable'/>
+	
+	<!-- Inherit a ks version of widgetideas module to cut down on gwt compile warnings.-->
+	<inherits name="com.google.gwt.widgetideas.KSWidgetIdeas"/>
  
 	<script src="http://www.google.com/jsapi"/>
     
@@ -66,6 +68,10 @@
         <when-type-is class="org.kuali.student.common.ui.client.widgets.KSStackPanel"/>
     </replace-with> 
     -->
+	
+	<!-- RPC Blacklist - Classes gwt should not attempt to serialze b/c they are deprecated and just bloats the javascript -->	
+	<!-- GWT attempts to serialize all subclasses of Exception when RPC method throws Exception, -->
+	<extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.rpc.SerializableException"/>
 	
 	<source path='client' />
 	<source path='shared' />	

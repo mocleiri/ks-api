@@ -1,8 +1,11 @@
 package org.kuali.student.lum.program.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import org.kuali.student.common.ui.client.application.ViewContext;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.MenuSectionController;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.Section;
@@ -25,23 +28,19 @@ import org.kuali.student.lum.program.client.events.ModelLoadedEvent;
 import org.kuali.student.lum.program.client.events.UpdateEvent;
 import org.kuali.student.lum.program.client.properties.ProgramProperties;
 import org.kuali.student.lum.program.client.rpc.AbstractCallback;
-import org.kuali.student.lum.program.client.rpc.ProgramRpcService;
-import org.kuali.student.lum.program.client.rpc.ProgramRpcServiceAsync;
+import org.kuali.student.lum.program.client.rpc.MajorDisciplineRpcService;
+import org.kuali.student.lum.program.client.rpc.MajorDisciplineRpcServiceAsync;
 import org.kuali.student.lum.program.client.widgets.ProgramSideBar;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Igor
  */
 public abstract class ProgramController extends MenuSectionController {
 
-    protected final ProgramRpcServiceAsync programRemoteService = GWT.create(ProgramRpcService.class);
+    protected MajorDisciplineRpcServiceAsync programRemoteService;
 
     protected boolean initialized = false;
 
@@ -55,6 +54,8 @@ public abstract class ProgramController extends MenuSectionController {
 
     protected ProgramSideBar sideBar;
 
+    private boolean needToLoadOldModel = false;
+
     /**
      * Constructor.
      *
@@ -62,11 +63,19 @@ public abstract class ProgramController extends MenuSectionController {
      */
     public ProgramController(String name, DataModel programModel, ViewContext viewContext, HandlerManager eventBus) {
         super(name);
+        programRemoteService = createProgramRemoteService();
         this.eventBus = eventBus;
         this.programModel = programModel;
-        sideBar = new ProgramSideBar(eventBus);
         setViewContext(viewContext);
         initializeModel();
+    }
+
+
+    /**
+     * Create a ProgramRpcServiceAsync appropriate for this Controller
+     */
+    protected MajorDisciplineRpcServiceAsync createProgramRemoteService() {
+        return GWT.create(MajorDisciplineRpcService.class);
     }
 
     @Override
@@ -86,13 +95,12 @@ public abstract class ProgramController extends MenuSectionController {
                                 switch (result) {
                                     case YES:
                                         dialog.hide();
-                                        eventBus.fireEvent(new UpdateEvent());
-                                        resetFieldInteractionFlag();
-                                        okToChange.exec(true);
+                                        fireUpdateEvent(okToChange);
                                         break;
                                     case NO:
                                         dialog.hide();
                                         resetModel();
+                                        needToLoadOldModel = true;
                                         resetFieldInteractionFlag();
                                         okToChange.exec(true);
                                         break;
@@ -114,14 +122,18 @@ public abstract class ProgramController extends MenuSectionController {
         });
     }
 
+    protected void fireUpdateEvent(final Callback<Boolean> okToChange) {
+        eventBus.fireEvent(new UpdateEvent(okToChange));
+    }
+
     protected void resetModel() {
         programModel.resetRoot();
     }
 
     protected void resetFieldInteractionFlag() {
-        //rule screen is not a section
-        if (getCurrentView() instanceof Section) {
-            ((Section) getCurrentView()).resetFieldInteractionFlags();
+        View currentView = getCurrentView();
+        if (currentView instanceof Section) {
+            ((Section) currentView).resetFieldInteractionFlags();
         }
     }
 
@@ -181,7 +193,12 @@ public abstract class ProgramController extends MenuSectionController {
                 setHeaderTitle();
                 setStatus();
                 callback.onModelReady(programModel);
-                eventBus.fireEvent(new ModelLoadedEvent(programModel));                
+                //We don't want to throw ModelLoadedEvent when we just want to rollback the model
+                if (needToLoadOldModel) {
+                    needToLoadOldModel = false;
+                } else {
+                    eventBus.fireEvent(new ModelLoadedEvent(programModel));
+                }
             }
         });
     }
@@ -300,6 +317,9 @@ public abstract class ProgramController extends MenuSectionController {
     }
 
     protected void doSave() {
+    }
 
+    public DataModel getProgramModel() {
+        return programModel;
     }
 }

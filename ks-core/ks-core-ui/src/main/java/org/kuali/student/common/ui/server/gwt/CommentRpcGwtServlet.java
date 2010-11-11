@@ -78,13 +78,14 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
 	}
 
 	@Override
-    public Boolean isAuthorizedAddComment(String referenceId, String referenceTypeKey) {
-		if (referenceId != null && (!"".equals(referenceId.trim()))) {
-			AttributeSet permissionDetails = new AttributeSet();
-			AttributeSet roleQuals = new AttributeSet();
-			roleQuals.put(StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_TYPE,referenceTypeKey);
-			roleQuals.put(StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_ID, referenceId);
-			return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(getCurrentUser(), PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails, roleQuals));
+    public Boolean isAuthorizedAddComment(String id, String referenceTypeKey) {
+		if (id != null && (!"".equals(id.trim()))) {
+			AttributeSet permissionDetails = new AttributeSet(StudentIdentityConstants.KS_REFERENCE_TYPE_KEY, referenceTypeKey);
+			if (getPermissionService().isPermissionDefinedForTemplateName(PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails)) {
+	            AttributeSet roleQuals = new AttributeSet();
+	            roleQuals.put(referenceTypeKey, id);
+	            return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(getCurrentUser(), PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails, roleQuals));
+			}
 		}
 		return Boolean.TRUE;
     }

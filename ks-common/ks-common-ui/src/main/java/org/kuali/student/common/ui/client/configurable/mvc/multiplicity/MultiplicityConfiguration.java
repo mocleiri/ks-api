@@ -15,22 +15,16 @@
  */
 package org.kuali.student.common.ui.client.configurable.mvc.multiplicity;
 
-import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
-import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
-import org.kuali.student.common.ui.client.widgets.field.layout.element.MessageKeyInfo;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.QueryPath;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptor;
-import org.kuali.student.common.ui.client.configurable.mvc.FieldDescriptorReadOnly;
+import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.widgets.field.layout.element.MessageKeyInfo;
 import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.core.assembly.data.QueryPath;
 
 /**
   *
@@ -165,7 +159,11 @@ public class MultiplicityConfiguration {
         if (getNestedConfig() != null) {
             copy.setNestedConfig(getNestedConfig().copy());
         }
-        copy.setParent(new FieldDescriptor(getParentFd().getFieldKey(), getParentFd().getMessageKey(), getParentFd().getMetadata()));
+        FieldDescriptor parent = new FieldDescriptor(getParentFd().getFieldKey(), getParentFd().getMessageKey(), getParentFd().getMetadata());
+        if(!getParentFd().isLabelShown()){
+        	parent.hideLabel();
+        }
+        copy.setParent(parent);
         for (Integer row  : getFields().keySet()) {
             List<MultiplicityFieldConfiguration> fields = getFields().get(row);
             for (MultiplicityFieldConfiguration fieldConfig : fields) {

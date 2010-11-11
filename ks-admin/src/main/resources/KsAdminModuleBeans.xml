@@ -9,8 +9,9 @@
                            http://www.springframework.org/schema/aop
                            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-  <bean id="kstestModuleConfiguration" class="org.kuali.rice.kns.bo.ModuleConfiguration">
+  <bean id="ksAdminModuleConfiguration" class="org.kuali.rice.kns.bo.ModuleConfiguration">
     <property name="namespaceCode" value="KS-ADMIN" />
+    <property name="dataSourceName" value="ksAdminDataSource" />
     <property name="databaseRepositoryFilePaths">
       <list>
         <value>OJB-repository-ksadmin.xml</value>
@@ -61,18 +62,34 @@
         <value>classpath:org/kuali/student/core/atp/document/datadictionary/AtpTypeMaintenanceDocument.xml</value>
         <value>classpath:org/kuali/student/core/atp/document/datadictionary/DateRangeTypeMaintenanceDocument.xml</value>
         <value>classpath:org/kuali/student/core/atp/document/datadictionary/MilestoneTypeMaintenanceDocument.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/AffiliatedOrg.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/Clu.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluAccreditation.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluAdminOrg.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluAtpTypeKey.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluAttribute.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluCampusLocation.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluCluRelation.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluFee.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluFeeAmount.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluFeeRecord.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluIdentifier.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/CluInstructor.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/LuCode.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/LuLuRelationType.xml</value>
+        <value>classpath:org/kuali/student/lum/lu/bo/datadictionary/LuType.xml</value>
       </list>
     </property>
   </bean>
 
-  <bean id="kstestModuleService" class="org.kuali.rice.kns.service.impl.ModuleServiceBase">
-    <property name="moduleConfiguration" ref="kstestModuleConfiguration" />
+  <bean id="ksAdminModuleService" class="org.kuali.rice.kns.service.impl.ModuleServiceBase">
+    <property name="moduleConfiguration" ref="ksAdminModuleConfiguration" />
   </bean>
 
   <bean class="org.kuali.rice.core.resourceloader.RiceSpringResourceLoaderConfigurer">
     <property name="localServiceName" value="KSCoreContext" />
   </bean>
 
-  <bean id="ks.messageService" class="org.kuali.student.core.messages.service.impl.MessageServiceImpl" />
+  <bean id="ks.messageService" class="org.kuali.student.admin.messages.service.impl.MessageServiceImpl" />
         
 </beans>

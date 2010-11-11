@@ -37,11 +37,8 @@ import org.kuali.student.core.search.dto.SearchResultCell;
 import org.kuali.student.core.search.dto.SearchResultRow;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SearchResultsTable extends Composite{
@@ -124,10 +121,12 @@ public class SearchResultsTable extends Composite{
         this.searchRequest = searchRequest;
         initializeTable(listResultMetadata, resultIdKey);
         if (this.searchRequest.getSearchKey().toLowerCase().contains("cross")) {
-
+            //FIXME Do we still need this if condition?
+            // Added an else to the if(pagedResults) line to prevent searches being executed
+            // twice if the search name includes cross
             performOnDemandSearch(0, 0);
         }
-        if(pagedResults){
+        else if(pagedResults){
         	performOnDemandSearch(0, PAGE_SIZE);
         }
         else{
