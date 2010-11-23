@@ -212,6 +212,9 @@
  <bean id="baseKualiAtpId" parent="baseKualiType" abstract="true">
   <!--TODO: Add a lookup to make sure the Id is a valid Ato -->
  </bean>
+ <bean id="baseKualiDocumentId" parent="baseKualiId" abstract="true">
+  <!--TODO: Add a lookup to make sure the Id is a valid document -->
+ </bean>
  <bean id="baseKualiProposalId" parent="baseKualiId" abstract="true">
   <!--TODO: Add a lookup to make sure the Id is a valid statement -->
  </bean>
