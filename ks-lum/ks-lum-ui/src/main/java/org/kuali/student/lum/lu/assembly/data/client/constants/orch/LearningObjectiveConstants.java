@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
+package org.kuali.student.lum.lu.assembly.data.client.constants.orch;
 
 
 

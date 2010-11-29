@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
+package org.kuali.student.lum.lu.assembly.data.client.constants.orch;
 
 
 
-public interface CreditCourseProposalConstants
+public interface SingleUseLoConstants
 {
-	public static final String PROPOSAL = "proposal";
-	public static final String COURSE = "course";
-	public static final String STATE = "state";
+	public static final String ID = "id";
+	public static final String NAME = "name";
+	public static final String DESCRIPTION = "description";
+	public static final String CATEGORIES = "categories";
+	public static final String LO_REPOSITORY = "loRepository";
+	public static final String CHILD_SINGLE_USE_LOS = "childSingleUseLos";
+	public static final String EFFECTIVE_DATE = "effectiveDate";
 	public static final String TYPE = "type";
-	public static final String SEARCH = "search";
+	public static final String STATE = "state";
+	public static final String _RUNTIME_DATA = "_runtimeData";
 }
 

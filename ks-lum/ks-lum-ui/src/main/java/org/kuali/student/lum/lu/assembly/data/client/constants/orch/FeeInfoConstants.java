@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.base;
+package org.kuali.student.lum.lu.assembly.data.client.constants.orch;
 
 
 
-public interface RichTextInfoConstants
+public interface FeeInfoConstants
 {
-	public static final String PLAIN = "plain";
-	public static final String FORMATTED = "formatted";
+	public static final String FIXED_RATE_FEE = "fixedRateFee";
+	public static final String VARIABLE_RATE_FEE = "variableRateFee";
+	public static final String MULTIPLE_RATE_FEE = "multipleRateFee";
+	public static final String PER_CREDIT_FEE = "perCreditFee";
+	public static final String FEE_RECORDS = "feeRecords";
+	public static final String REVENUE = "Revenue";
 }
 

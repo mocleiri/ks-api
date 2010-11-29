@@ -13,11 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
+package org.kuali.student.lum.lu.assembly.data.client.constants.orch;
 
-public interface CreditCourseLearningResultsConstants
+
+
+public interface CreditCourseCourseSpecificLOsConstants
 {
-	public static final String OUTCOME_TYPE = "outcomeType";
-	public static final String OUTCOME_CREDIT_VALUE = "outcomeCreditValue";
-	public static final String OUTCOME_MAX_CREDITS = "outcomeMaxCredits";
+	public static final String ID = "id";
+	public static final String INCLUDED_SINGLE_USE_LO = "includedSingleUseLo";
+	public static final String EFFECTIVE_DATE = "effectiveDate";
+	public static final String TYPE = "type";
+	public static final String STATE = "state";
+	public static final String SEQUENCE = "sequence";
 }
+

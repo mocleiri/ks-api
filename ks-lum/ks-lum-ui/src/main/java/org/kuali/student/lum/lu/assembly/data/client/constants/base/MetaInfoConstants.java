@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
+package org.kuali.student.lum.lu.assembly.data.client.constants.base;
 
 
 
-public interface FeeSelectorConstants
+public interface MetaInfoConstants
 {
-	public static final String FEE_TYPE = "feeType";
-	public static final String RATE_TYPE = "rateType";
+	public static final String VERSION_IND = "versionInd";
+	public static final String CREATE_TIME = "createTime";
+	public static final String CREATE_ID = "createId";
+	public static final String UPDATE_TIME = "updateTime";
+	public static final String UPDATE_ID = "updateId";
 }
 

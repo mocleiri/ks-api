@@ -13,15 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.lum.lu.assembly.data.client.refactorme.orch;
+package org.kuali.student.lum.lu.assembly.data.client.constants.orch;
 
-
-
-public interface FeeInfoFixedRateFeeConstants
+public interface CreditCourseLearningResultsConstants
 {
-	public static final String FEE_TYPE = "feeType";
-	public static final String RATE_TYPE = "rateType";
-	public static final String AMOUNT = "amount";
-	public static final String ID = "id";
+	public static final String OUTCOME_TYPE = "outcomeType";
+	public static final String OUTCOME_CREDIT_VALUE = "outcomeCreditValue";
+	public static final String OUTCOME_MAX_CREDITS = "outcomeMaxCredits";
 }
-
