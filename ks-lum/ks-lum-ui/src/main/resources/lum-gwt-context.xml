@@ -277,7 +277,7 @@
         <property name="assembler" ref="CluSetManagementFilterManager"/>
     </bean>
     
-    <bean id="CluSetManagementFilterManager" class="org.kuali.student.core.assembly.AssemblerFilterManager">
+    <bean id="CluSetManagementFilterManager" class="org.kuali.student.core.assembly.old.AssemblerFilterManager">
         <constructor-arg ref="cluSetManagementAssembler"/>
         <property name="filters">
             <list>
@@ -294,7 +294,7 @@
     
     <!--Program Servlet Declaration-->
     <bean id="statementRpcServlet" class="org.kuali.student.lum.program.server.StatementRpcServlet">
-        <property name="service" ref="luClient"/>
+        <property name="luService" ref="luClient"/>
         <property name="statementService" ref="statementServiceClient"/>
     </bean>
 
@@ -501,7 +501,7 @@
         <property name="metadataService" ref="metadataServiceImpl"/>
     </bean>
 
-    <bean id="idTranslatorAssemblerFilter" class="org.kuali.student.core.assembly.IdTranslatorAssemblerFilter">
+    <bean id="idTranslatorAssemblerFilter" class="org.kuali.student.core.assembly.old.IdTranslatorAssemblerFilter">
         <constructor-arg ref="idTranslator"/>
     </bean>
 
@@ -540,7 +540,7 @@
     </bean>
 
     <bean id="atpRpcGwtServlet"
-          class="org.kuali.student.lum.lu.ui.course.server.gwt.AtpRpcGwtServlet">
+          class="org.kuali.student.core.atp.ui.server.AtpRpcGwtServlet">
         <property name="service" ref="atpClient"/>
     </bean>
 

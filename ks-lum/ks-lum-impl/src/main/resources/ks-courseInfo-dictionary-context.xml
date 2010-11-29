@@ -428,7 +428,7 @@
        <property name="constraint">
         <!--Copy all the properties from above adding minOccurs = 1-->
         <bean parent="cluInfo.stdDuration-parent">
-         <property name="minOccurs" value="1" />
+         <property name="minOccurs" value="0" />
         </bean>
        </property>
       </bean>
@@ -619,33 +619,6 @@
   <property name="name" value="primaryInstructor" />
   <property name="dataObjectStructure"
             ref="org.kuali.student.lum.lu.dto.CluInstructorInfo" />
-  <property name="caseConstraint">
-   <bean parent="caseConstraint">
-    <property name="operator" value="EQUALS"/>
-    <property name="fieldPath" value="state"/>
-    <property name="caseSensitive" value="false"/>
-    <property name="whenConstraint">
-     <list>
-      <bean parent="whenConstraint">
-       <property name="values">
-        <list>
-         <value>SUBMITTED</value>
-         <value>APPROVED</value>
-         <value>ACTIVE</value>
-         <value>RETIRED</value>
-        </list>
-       </property>
-       <property name="constraint">
-        <!--Copy all the properties from above adding minOccurs = 1-->
-        <bean parent="cluInfo.primaryInstructor-parent">
-         <property name="minOccurs" value="1" />
-        </bean>
-       </property>
-      </bean>
-     </list>
-    </property>
-   </bean>
-  </property>
  </bean>
  <bean id="courseInfo.primaryInstructor" parent="courseInfo.primaryInstructor-parent" />
 
@@ -1285,26 +1258,31 @@
  </bean>
  <bean id="courseFeeInfo.feeAmounts.currencyAmountInfo.id" parent="courseFeeInfo.feeAmounts.currencyAmountInfo.id-parent" />
 
- <!-- Redefine the ResultComponentInfo to have dynamic attributes -->
- <bean id="courseInfo.creditOptions.ResultComponentInfo-parent" abstract="true"
-       parent="org.kuali.student.lum.lrc.dto.ResultComponentInfo-parent">
-  <property name="attributes">
-   <list merge="true">
-	<ref bean="resultComponentInfo.desc" />
-	<ref bean="resultComponentInfo.effectiveDate" />
-	<ref bean="resultComponentInfo.expirationDate" />
-	<ref bean="resultComponentInfo.id" />
-	<ref bean="resultComponentInfo.name" />
-	<ref bean="resultComponentInfo.resultValuesNumeric" />
-	<ref bean="resultComponentInfo.state" />
-	<ref bean="resultComponentInfo.type" />
-    <ref bean="resultComponentInfo.minCreditValue"/>
-    <ref bean="resultComponentInfo.maxCreditValue"/>
-    <ref bean="resultComponentInfo.fixedCreditValue"/>
-   </list>
-  </property>
+<!-- Redefine the ResultComponentInfo to have dynamic attributes -->
+<bean id="courseInfo.creditOptions.ResultComponentInfo-parent" abstract="true"
+      parent="org.kuali.student.lum.lrc.dto.ResultComponentInfo-parent">
+ <property name="attributes">
+  <list>
+   <ref bean="resultComponentInfo.desc" />
+   <ref bean="resultComponentInfo.effectiveDate" />
+   <ref bean="resultComponentInfo.expirationDate" />
+   <ref bean="resultComponentInfo.id" />
+   <ref bean="resultComponentInfo.name" />
+   <ref bean="resultComponentInfo.resultValuesNumeric" />
+   <ref bean="course.resultComponentInfo.state" />
+   <ref bean="resultComponentInfo.type" />
+   <ref bean="resultComponentInfo.minCreditValue"/>
+   <ref bean="resultComponentInfo.maxCreditValue"/>
+   <ref bean="resultComponentInfo.fixedCreditValue"/>
+  </list>
+ </property>
+</bean>
+<bean id="courseInfo.creditOptions.ResultComponentInfo" parent="courseInfo.creditOptions.ResultComponentInfo-parent" />
+
+ <bean id="course.resultComponentInfo.state-parent" abstract="true" parent="baseKualiState">
+  <property name="name" value="state"/>
  </bean>
- <bean id="courseInfo.creditOptions.ResultComponentInfo" parent="courseInfo.creditOptions.ResultComponentInfo-parent" />
+ <bean id="course.resultComponentInfo.state" parent="course.resultComponentInfo.state-parent"/>
 
  <bean id="resultComponentInfo.resultValuesNumeric-parent" abstract="true" parent="baseNumericString">
   <property name="name" value="resultValues" />

@@ -36,19 +36,17 @@ import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.lum.common.client.helpers.RecentlyViewedHelper;
 import org.kuali.student.lum.common.client.lu.LUUIConstants;
-import org.kuali.student.lum.lu.assembly.data.client.LuData;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseConstants;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.configuration.ViewCourseConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.requirements.CourseRequirementsDataModel;
@@ -144,7 +142,18 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     
      
     public Widget generateActionDropDown(){		    	
-    	CourseWorkflowActionList actionList = new CourseWorkflowActionList(this.getMessage("cluActionsLabel"), getViewContext(), "/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", cluModel);
+    	CourseWorkflowActionList actionList = new CourseWorkflowActionList(this.getMessage("cluActionsLabel"), getViewContext(), "/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", cluModel, new Callback<String>() {
+    		@Override
+    		public void exec(String newState) {
+    			if (newState != null) {
+                    KSNotifier.add(new KSNotification(getMessage("cluStateChangeNotification" + newState), false, 5000));
+                    // FIXME: this is not updating the cluModel so state will not be updated in the model.  May not be a problem.
+                    statusLabel.setText("Status: " + newState);
+    			} else {
+                    KSNotifier.add(new KSNotification(getMessage("cluStateChangeFailedNotification"), false, 5000));
+    			}
+    		}
+    	});
         actionDropDownWidgets.add(actionList);
         
     	return actionList;
@@ -192,10 +201,9 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     }
 
     private void updateCourseActionItems() {
-    	String cluState = cluModel.get("state").toString();    	
     	
 		for(CourseWorkflowActionList widget: actionDropDownWidgets){
-			widget.updateCourseActionItems(cluState);
+			widget.updateCourseActionItems(cluModel);
 			widget.setEnabled(true);
 			if(widget.isEmpty()) {
 				widget.setVisible(false);
@@ -262,7 +270,7 @@ public class ViewCourseController extends TabMenuController implements DocumentL
                 
                 callback.onModelReady(ref);
             }
-        }else if (modelType == LuData.class){
+        }else if (modelType == Data.class){
             requestModel(CourseConfigurer.CLU_PROPOSAL_MODEL, callback);
         } else {
             super.requestModel(modelType, callback);
@@ -323,7 +331,7 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     
     @SuppressWarnings("unchecked")
     private void createNewCluModel(final ModelRequestCallback callback, final Callback<Boolean> workCompleteCallback){
-        cluModel.setRoot(new LuData());
+        cluModel.setRoot(new Data());
         callback.onModelReady(cluModel);
         workCompleteCallback.exec(true);
     }
@@ -338,14 +346,14 @@ public class ViewCourseController extends TabMenuController implements DocumentL
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
-        this.cluModel.setRoot(new LuData());        
+        this.cluModel.setRoot(new Data());        
     }
        
     public void clear(String cluType){
         super.clear();
         this.cluType = cluType;
         if (cluModel != null){
-            this.cluModel.setRoot(new LuData());            
+            this.cluModel.setRoot(new Data());            
         }
         this.courseId = null;
     }    
@@ -388,14 +396,18 @@ public class ViewCourseController extends TabMenuController implements DocumentL
     	else{
     		title = "Course";
     	}
-
-    	if(cluModel.get("state") != null){
-    		statusLabel.setText("Status: " + cluModel.get("state"));
-    	}
+    	
+    	updateStatus();
     	
     	this.setContentTitle(title);
     	this.setName(title);
     	WindowTitleUtils.setContextTitle(title);
+    }
+    
+    private void updateStatus() {
+    	if(cluModel.get("state") != null){
+    		statusLabel.setText("Status: " + cluModel.get("state"));
+    	}
     }
     
     private CloseHandler<KSLightBox> createActionSubmitSuccessHandler() {

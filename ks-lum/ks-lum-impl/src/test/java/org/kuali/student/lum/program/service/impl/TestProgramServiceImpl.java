@@ -7,7 +7,11 @@ import static org.junit.Assert.fail;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +68,18 @@ public class TestProgramServiceImpl {
     @Autowired
     public StatementService statementService;
     private static final String OTHER_LO_CAT_ID = "550e8400-e29b-41d4-a716-446655440000";
+    
+    /**
+     * A set of methods that have a dummy implementation in ProgramServiceImpl.  Method names should be removed from here once
+     * they have a working implementation.
+     */
+    private final String[] DUMMY_SERVICE_METHODS = {"createHonorsProgram", "createMinorDiscipline", "deleteHonorsProgram", 
+            "deleteMinorDiscipline", "getCredentialProgramType", "getCredentialProgramTypes", 
+            "getHonorsByCredentialProgramType", "getHonorsProgram", "getMajorIdsByCredentialProgramType", 
+            "getMinorDiscipline", "getMinorsByCredentialProgramType", "updateHonorsProgram", "updateMinorDiscipline", 
+            "validateHonorsProgram", "validateMinorDiscipline", "getSearchCriteriaType", "getSearchCriteriaTypes", 
+            "getSearchResultType", "getSearchResultTypes", "getSearchType", "getSearchTypes", "getSearchTypesByCriteria", 
+            "getSearchTypesByResult", "search"};
 
     @Test
     public void testProgramServiceSetup() {
@@ -1438,4 +1454,111 @@ public class TestProgramServiceImpl {
        	assertEquals("3", Integer.toString(progReq2.getMinCredits()));
     	assertEquals("45", Integer.toString(progReq2.getMaxCredits()));
     }
+    
+    private class ServiceMethodInvocationData {
+        String methodName;
+        Object[] parameters;
+        Class<?>[] paramterTypes;
+    }
+    
+    private void invokeForExpectedException(Collection<ServiceMethodInvocationData> methods, Class<? extends Exception> expectedExceptionClass) throws Exception {
+        for(ServiceMethodInvocationData methodData : methods) {
+            Method method = programService.getClass().getMethod(methodData.methodName, methodData.paramterTypes);
+            Throwable expected = null;
+            Exception unexpected = null;
+            try {
+                method.invoke(programService, methodData.parameters);
+            }
+            catch(InvocationTargetException ex) {
+                if(ex.getCause() != null && ex.getCause().getClass().equals(expectedExceptionClass)) {
+                    expected = ex.getCause();
+                }
+                else {
+                    unexpected = ex;
+                    unexpected.printStackTrace();
+                }
+            }
+            catch(Exception other) {
+                unexpected = other;
+            }
+            finally {
+                assertNotNull("An exception of class: " + expectedExceptionClass.toString() + " was expected, but the method: " + methodData.methodName + " threw this exception: " + unexpected, expected);
+            }
+        }
+    }
+    
+    @Test
+    public void testGetVersionMethodsForInvalidParameters() throws Exception {
+        String[] getVersionMethods = {"getVersionBySequenceNumber", "getVersions", "getFirstVersion", "getVersionsInDateRange", "getCurrentVersion", "getCurrentVersionOnDate"};
+        
+        // build an object array with the appropriate number of arguments for each version method to be called
+        Object[][] getVersionParams = {new Object[3], new Object[2], new Object[2], new Object[4], new Object[2], new Object[3]};
+        
+        // build a class array with the parameter types for each method call
+        Class<?>[][] getVersionParamTypes = {{String.class, String.class, Long.class}, // for getVersionBySequenceNumber
+                {String.class, String.class}, // for getVersions
+                {String.class, String.class}, // for getFirstVersion
+                {String.class, String.class, Date.class, Date.class}, // for getVersionsInDateRange
+                {String.class, String.class}, // for getCurrentVersion
+                {String.class, String.class, Date.class}}; // for getCurrentVersionOnDate
+        
+        String badRefObjectTypeURI = "BADBADBAD";
+        Collection<ServiceMethodInvocationData> methods = new ArrayList<ServiceMethodInvocationData>(getVersionMethods.length);
+        for(int i = 0; i < getVersionMethods.length; i++) {
+            ServiceMethodInvocationData invocationData = new ServiceMethodInvocationData();
+            invocationData.methodName = getVersionMethods[i];
+            
+            // set the first parameter of each invocation to the invalid data
+            getVersionParams[i][0] = badRefObjectTypeURI;
+            
+            invocationData.parameters = getVersionParams[i];
+            invocationData.paramterTypes = getVersionParamTypes[i];
+            
+            methods.add(invocationData);
+        }
+        
+        invokeForExpectedException(methods, InvalidParameterException.class);
+    }
+    
+    /**
+     * 
+     * This method is a catch-all test for code coverage.  
+     * It calls methods in ProgramServiceImpl that have contracts in the interface but are not yet implemented
+     * All calls are expected to return null.  Once a method is implemented, its name should be removed from
+     * the DUMMY_SERVICE_METHODS array.
+     * 
+     * NOTE: This method does not work for methods that are overloaded (i.e. have two declarations with the same name, but different parameters)
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testCallDummyMethods() throws Exception {
+        // We need to get the Method objects, but we do not know or care about the parameter types for the methods
+        // so get the all methods of the service and load them into a hashtable, indexed by method name
+        Method[] serviceMethods = ProgramService.class.getMethods();
+        Map<String, Method> methodMap = new HashMap<String, Method>();
+        
+        for(Method m : serviceMethods) {
+            // if a method is already loaded into the map, ignore subsequent instances with the same name
+            if(!methodMap.containsKey(m.getName())) {
+                methodMap.put(m.getName(), m);
+            }
+        }
+        
+        for(String s : DUMMY_SERVICE_METHODS) {
+            Method dummyMethod = methodMap.get(s);
+            
+            if(dummyMethod == null) {
+                throw new Exception("No method " + s + " defined in ProgramService");
+            }
+            
+            // create a set of null parameters to pass to the method
+            Object[] params = new Object[dummyMethod.getParameterTypes().length];
+            
+            Object returned = dummyMethod.invoke(programService, params);
+            
+            assertTrue("The invocation of " + s + " returned a non-null value", returned == null);
+        }
+    }
+    
 }

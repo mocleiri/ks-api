@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
-import org.kuali.student.common.ui.client.application.ViewContext;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.BasicLayoutWithContentHeader;
 import org.kuali.student.common.ui.client.configurable.mvc.sections.HorizontalSection;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
@@ -18,16 +17,14 @@ import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
-import org.kuali.student.common.ui.shared.IdAttributes.IdType;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.lum.common.client.lu.LUUIConstants;
-import org.kuali.student.lum.lu.assembly.data.client.refactorme.orch.CreditCourseConstants;
 import org.kuali.student.lum.lu.ui.course.client.configuration.CourseSummaryConfigurer;
 import org.kuali.student.lum.lu.ui.course.client.requirements.CourseRequirementsDataModel;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcService;
@@ -282,15 +279,24 @@ public class VersionsController extends BasicLayoutWithContentHeader{
     	return actionList;
     }
     
-    private void updateState(DataModel cluModel) {
+    private void updateState(final DataModel cluModel) {
     	if(cluModel.get("state") != null){
 	    	statusLabel.setText("Status: " + cluModel.get("state"));
 	    	
-	    	String cluState = cluModel.get("state").toString();    	
-	    	
-			for(CourseWorkflowActionList widget: actionDropDownWidgets){
-				widget.init(getViewContext(), "/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", cluModel);    	
-				widget.updateCourseActionItems(cluState);
+	    	for(CourseWorkflowActionList widget: actionDropDownWidgets){
+				widget.init(getViewContext(), "/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", cluModel, new Callback<String>() {
+					@Override
+			        public void exec(String newState) {
+			            if (newState != null) {
+			                KSNotifier.add(new KSNotification(getMessage("cluStateChangeNotification" + newState), false, 5000));
+			                // FIXME: this is not updating the cluModel so state will not be updated in the model.  May not be a problem.
+			                statusLabel.setText("Status: " + newState);
+			            } else {
+			            	KSNotifier.add(new KSNotification(getMessage("cluStateChangeFailedNotification"), false, 5000));
+			            }
+			        }
+				});
+				widget.updateCourseActionItems(cluModel);
 				widget.setEnabled(true);
 				if(widget.isEmpty()) {
 					widget.setVisible(false);

@@ -193,6 +193,7 @@ public class ClusetView extends VerticalSectionView {
 //        this.addSection(generalClusInfoSection);
         this.addWidget(new KSLabel("Items in this Course Set"));
         this.addWidget(cluSetDisplay);
+        this.setStyleName("standard-content-padding");
     }
     
     private SummaryTableSection setupGeneralClusInfoSection() {
@@ -290,7 +291,7 @@ public class ClusetView extends VerticalSectionView {
         header.setTitle("Course Set Management");
         this.addWidget(header);
         
-        Anchor createCluSet = new Anchor("<h2>Create Course Set</h2>", true);
+        Anchor createCluSet = new Anchor("<h2 class=\"contentBlock-title\">Create Course Set</h2>", true);
         createCluSet.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -313,6 +314,7 @@ public class ClusetView extends VerticalSectionView {
             }
         });
         SectionTitle modifyCluSetTitle = SectionTitle.generateH2Title("View or Modify Course Sets");
+        modifyCluSetTitle.addStyleName("contentBlock-title");
         modifyCluSetTitle.getElement().getStyle().setPaddingTop(40, Style.Unit.PX);
         this.addWidget(modifyCluSetTitle);
         this.addWidget(cluSetPicker);
@@ -345,6 +347,7 @@ public class ClusetView extends VerticalSectionView {
         this.addSection(cluSetEditor);
         this.addWidget(spacer);
         this.addSection(defineCluSet);
+        this.setStyleName("standard-content-padding");
     }
     
     private static VerticalSection initSection(SectionTitle title, boolean withDivider) {

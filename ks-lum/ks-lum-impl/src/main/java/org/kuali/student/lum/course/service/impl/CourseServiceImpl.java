@@ -80,7 +80,6 @@ public class CourseServiceImpl implements CourseService {
     private CourseAssembler courseAssembler;
     private BusinessServiceMethodInvoker courseServiceMethodInvoker;
     private DictionaryService dictionaryServiceDelegate;
-    private Validator validator;
     private ValidatorFactory validatorFactory;
     private StatementService statementService;
 
@@ -509,6 +508,18 @@ public class CourseServiceImpl implements CourseService {
 			OperationFailedException, PermissionDeniedException {
 		if(CourseServiceConstants.COURSE_NAMESPACE_URI.equals(refObjectTypeURI)){
 			return luService.getFirstVersion(LuServiceConstants.CLU_NAMESPACE_URI, refObjectId);
+		}
+		throw new InvalidParameterException("Object type: " + refObjectTypeURI + " is not known to this implementation");
+
+	}
+
+	@Override
+	public VersionDisplayInfo getLatestVersion(String refObjectTypeURI,
+			String refObjectId) throws DoesNotExistException,
+			InvalidParameterException, MissingParameterException,
+			OperationFailedException, PermissionDeniedException {
+		if(CourseServiceConstants.COURSE_NAMESPACE_URI.equals(refObjectTypeURI)){
+			return luService.getLatestVersion(LuServiceConstants.CLU_NAMESPACE_URI, refObjectId);
 		}
 		throw new InvalidParameterException("Object type: " + refObjectTypeURI + " is not known to this implementation");
 
