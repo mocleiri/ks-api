@@ -17,13 +17,15 @@ package org.kuali.student.lum.common.client.lo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;   
 
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.mvc.Callback;
+import org.kuali.student.common.ui.client.service.DataSaveResult;
 import org.kuali.student.common.ui.client.widgets.DataHelper;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSDropDown;
@@ -43,13 +45,18 @@ import org.kuali.student.common.ui.client.widgets.field.layout.layouts.FieldLayo
 import org.kuali.student.common.ui.client.widgets.focus.FocusGroup;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
+import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
+import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
+import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
 import org.kuali.student.common.ui.client.widgets.suggestbox.KSSuggestBox;
 import org.kuali.student.common.ui.client.widgets.suggestbox.SearchSuggestOracle;
 import org.kuali.student.common.ui.client.widgets.suggestbox.SuggestPicker;
 import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.core.assembly.data.Data.DataValue;
-import org.kuali.student.lum.common.client.lo.rpc.LoRpcService;
-import org.kuali.student.lum.common.client.lo.rpc.LoRpcServiceAsync;
+
+import org.kuali.student.lum.common.client.lo.rpc.LoCategoryRpcServiceAsync;
+import org.kuali.student.lum.common.client.lo.rpc.LoCategoryRpcService;
 import org.kuali.student.lum.common.client.lu.LUUIConstants;
 import org.kuali.student.lum.lo.dto.LoCategoryInfo;
 import org.kuali.student.lum.lo.dto.LoCategoryTypeInfo;
@@ -93,7 +100,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
     private String repoKey;
     private String messageGroup;
 
-    private LoRpcServiceAsync loRpcServiceAsync ;
+    private LoCategoryRpcServiceAsync loCatRpcServiceAsync ;
     private LOCategoryPicker picker ;
     private AbbrButton help = new AbbrButton(AbbrButtonType.HELP);
 
@@ -106,6 +113,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
 
     private KSLightBox createCategoryWindow;
     Anchor browseCategoryLink = new Anchor("Browse for categories");
+    private final BlockingTask saving = new BlockingTask("Saving");
 
     public LOCategoryBuilder(String messageGroup, String type, String state, String loRepoKey) {
         super();
@@ -115,7 +123,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
         this.repoKey = loRepoKey;
         this.messageGroup = messageGroup;
 
-        loRpcServiceAsync = GWT.create(LoRpcService.class);
+        loCatRpcServiceAsync = GWT.create(LoCategoryRpcService.class);
         picker = new LOCategoryPicker();
         categoryList = new LOCategoryListNew();
 
@@ -243,7 +251,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
             showNewCategoryWindow();
         }
         else {
-            loRpcServiceAsync.getLoCategory(picker.getSelectedId(), new KSAsyncCallback<LoCategoryInfo>() {
+            loCatRpcServiceAsync.getData(picker.getSelectedId(),new KSAsyncCallback<Data>() {
 
                 @Override
                 public void handleFailure(Throwable caught) {
@@ -251,8 +259,10 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
                 }
 
                 @Override
-                public void onSuccess(LoCategoryInfo result) {
-                    addCategory(result);   
+                public void onSuccess(Data result) {
+                    final LoCategoryInfo newCategory = CategoryDataUtil.toLoCategoryInfo(result);
+                    addCategory(newCategory);
+
                 }
             });
         }
@@ -277,7 +287,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
         main.add(titleBar);
         main.add(layoutTable);
         
-        loRpcServiceAsync.getLoCategoryTypes(new KSAsyncCallback<List<LoCategoryTypeInfo>>() {
+        loCatRpcServiceAsync.getLoCategoryTypes(new KSAsyncCallback<List<LoCategoryTypeInfo>>() {
 
             @Override
             public void handleFailure(Throwable caught) {
@@ -298,30 +308,33 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
                     public void exec(LoCancelEnum result) {
                         switch(result){
                             case CREATE:
-                                final LoCategoryInfo loCategoryInfo = new LoCategoryInfo();
-                                loCategoryInfo.setName(nameTextBox.getText());
-                                loCategoryInfo.setState("active");
-                                loCategoryInfo.setLoRepository(repoKey);
-                                loCategoryInfo.setType(typesDropDown.getSelectedItem());
 
-                                loRpcServiceAsync.createLoCategory(repoKey, typesDropDown.getSelectedItem(),
-                                        loCategoryInfo, new AsyncCallback<LoCategoryInfo>() {
+                                LoCategoryInfoHelper catHelper = new LoCategoryInfoHelper(new Data());
+                                catHelper.setName(nameTextBox.getText());
+                                catHelper.setState("active");
+                                catHelper.setLoRepository(repoKey);
+                                catHelper.setType(typesDropDown.getSelectedItem());
 
+                                loCatRpcServiceAsync.saveData(catHelper.getData(), new KSAsyncCallback<DataSaveResult>(){
                                     @Override
-                                    public void onFailure(Throwable caught) {
-                                        Window.alert("createCategory failed " + caught.getMessage());                                                
+                                    public void handleFailure(Throwable caught) {
+                                        Window.alert("Create LO Category failed: " + caught.getMessage());
                                     }
-
                                     @Override
-                                    public void onSuccess(LoCategoryInfo result) {
-                                        addCategory(result);       
-                                        createCategoryWindow.hide();
+                                    public void onSuccess(DataSaveResult result) {
+                                        KSBlockingProgressIndicator.removeTask(saving);
+
+                                        if(result.getValidationResults()!=null && !result.getValidationResults().isEmpty()){
+                                            Window.alert("Create LO Category failed: " + result.getValidationResults().get(0).getMessage());
+                                       }else{
+
+                                            final LoCategoryInfo newCategory = CategoryDataUtil.toLoCategoryInfo(result.getValue());
+                                            addCategory(newCategory);
+                                            createCategoryWindow.hide();
+                                            KSNotifier.add(new KSNotification("Create LO Category Successful", false, 3000));
+                                        }
                                     }
-
-
                                 });
-
-
                                 break;
                             case CANCEL:
                                 createCategoryWindow.hide();
@@ -362,7 +375,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
             picker.reset();
         }
         else {
-            loRpcServiceAsync.getLoCategoryType(category.getType(), new KSAsyncCallback<LoCategoryTypeInfo> () {
+            loCatRpcServiceAsync.getLoCategoryType(category.getType(), new KSAsyncCallback<LoCategoryTypeInfo> () {
 
                 @Override
                 public void handleFailure(Throwable caught) {
@@ -580,7 +593,7 @@ public class LOCategoryBuilder extends Composite implements HasValue<List<LoCate
 
              if (null == categoryTypeMap || categoryTypeMap.isEmpty()) {
                               
-                 loRpcServiceAsync.getLoCategoryTypes(new KSAsyncCallback<List<LoCategoryTypeInfo>>() {
+                 loCatRpcServiceAsync.getLoCategoryTypes(new KSAsyncCallback<List<LoCategoryTypeInfo>>() {
                  
                      @Override
                      public void handleFailure(Throwable caught) {

@@ -68,7 +68,7 @@ public class LoAssembler implements BOAssembler<LoDisplayInfo, LoInfo> {
 	}
 
 	@Override
-	//Creation of categories is done in the LoRpcGwtServlet
+	//Creation of categories is done in the LoCategoryRpcGwtServlet
 	public BaseDTOAssemblyNode<LoDisplayInfo, LoInfo> disassemble(
 			LoDisplayInfo loDisplay, NodeOperation operation)
 			throws AssemblyException {

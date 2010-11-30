@@ -45,7 +45,6 @@ import org.kuali.student.core.search.dto.SearchResultTypeInfo;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
 import org.kuali.student.core.search.service.SearchManager;
 import org.kuali.student.core.validation.dto.ValidationResultInfo;
-import org.kuali.student.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.lo.dao.LoDao;
 import org.kuali.student.lum.lo.dto.LoCategoryInfo;
 import org.kuali.student.lum.lo.dto.LoCategoryTypeInfo;
@@ -477,16 +476,20 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
 	    
 		// Validate LoCategory
 		List<ValidationResultInfo> val = validateLoCategory("SYSTEM", loCategoryInfo);
-		if(null != val && val.size() > 0) {
-			for (ValidationResultInfo result : val) {
-				System.err.println("Validation error. Element: " + result.getElement() + ",  Value: " + result.getMessage());
-			}
-			throw new DataValidationErrorException("Validation error!");
-		}
-	    
+
 		//kslum-136 - don't allow dups w/ same name (case insensitive), type, state & repository
-		checkForLoCategoryExistence(loCategoryInfo.getLoRepository(), loCategoryInfo,  loCategoryId);
-		
+        if (doesLoCategoryExist(loCategoryInfo.getLoRepository(), loCategoryInfo, loCategoryId)) {
+            ValidationResultInfo vr = new ValidationResultInfo();
+            vr.setElement("LO Category Name");
+            vr.setError("LO Category already exists");
+            val.add(vr);
+        }
+        if(null != val && val.size() > 0) {
+            for (ValidationResultInfo result : val) {
+                System.err.println("Validation error. Element: " + result.getElement() + ",  Value: " + result.getMessage());
+            }
+            throw new DataValidationErrorException("Validation error!", val);
+        }
 	    LoCategory loCategory = loDao.fetch(LoCategory.class, loCategoryId);
         
         if (!String.valueOf(loCategory.getVersionNumber()).equals(loCategoryInfo.getMetaInfo().getVersionInd())){
@@ -604,7 +607,7 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
         ObjectStructureDefinition objStructure = this.getObjectStructure(LoCategoryInfo.class.getName());
         Validator validator = validatorFactory.getValidator();
         return validator.validateObject(loCategoryInfo, objStructure);
-	    
+
 	}
 
 	@Override
@@ -662,8 +665,10 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
      * @param loCategoryId
      * @throws MissingParameterException,OperationFailedException
      */
-    private void checkForLoCategoryExistence(String loRepositoryKey, LoCategoryInfo loCategoryInfo, String loCategoryId)
-            throws MissingParameterException, OperationFailedException {
+    private boolean doesLoCategoryExist(String loRepositoryKey, LoCategoryInfo loCategoryInfo, String loCategoryId)
+            throws MissingParameterException, DataValidationErrorException {
+
+        boolean exists = false;
 	    SearchRequest request = new SearchRequest();
 	    request.setSearchKey("lo.search.loCategoriesByNameRepoTypeState");
 	    
@@ -695,8 +700,9 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
 					List<SearchResultCell> srCells = srrow.getCells();
 					if(srCells != null && srCells.size() > 0){
 						for(SearchResultCell srcell : srCells){
-							if(!srcell.getValue().equals(loCategoryId))
-								throw new OperationFailedException("Cannot create a duplicate LoCategory in the same Learning Objective repository");
+							if(!srcell.getValue().equals(loCategoryId)) {
+                                exists = true;
+                            }
 						}
 					}
 				}
@@ -704,9 +710,10 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
 		}
 		else{
 			if (result.getRows().size() > 0) {
-				throw new OperationFailedException("Cannot create a duplicate LoCategory in the same Learning Objective repository");
-			}		
+                exists = true;
+			}
 		}
+        return exists;
     }
     
     @Override
@@ -930,17 +937,21 @@ public class LearningObjectiveServiceImpl implements LearningObjectiveService {
 	    
 		// Validate LoCategory
 		List<ValidationResultInfo> val = validateLoCategory("SYSTEM", loCategoryInfo);
-		if(null != val && val.size() > 0) {
+
+        //kslum-136 - don't allow dups w/ same name (case insensitive), type, state & repository       
+        if (doesLoCategoryExist(loRepositoryKey, loCategoryInfo, null)) {
+            ValidationResultInfo vr = new ValidationResultInfo();
+            vr.setElement("LO Category Name");
+            vr.setError("LO Category already exists");
+            val.add(vr);
+        }
+        if(null != val && val.size() > 0) {
 			for (ValidationResultInfo result : val) {
 				System.err.println("Validation error. Element: " + result.getElement() + ",  Value: " + result.getMessage());
 			}
-			throw new DataValidationErrorException("Validation error!");
+			throw new DataValidationErrorException("Validation error!", val);
 		}
-	    
-		
-		//kslum-136 - don't allow dups w/ same name (case insensitive), type, state & repository
-		checkForLoCategoryExistence(loRepositoryKey, loCategoryInfo, null);
-		
+
 	    LoCategory category = LearningObjectiveServiceAssembler.toLoCategory(loCategoryInfo, loDao);
 	    LoCategoryType loCatType = loDao.fetch(LoCategoryType.class, loCategoryTypeKey);
 	    category.setLoCategoryType(loCatType);

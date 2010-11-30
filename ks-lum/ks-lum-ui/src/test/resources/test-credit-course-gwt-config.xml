@@ -151,8 +151,8 @@
 		<property name="service" ref="atpClient" />
 	</bean>
 
-	<bean id="LoRpcGwtServlet"
-		class="org.kuali.student.lum.lu.ui.course.server.gwt.LoRpcGwtServlet">
+	<bean id="LoCategoryRpcGwtServlet"
+		class="org.kuali.student.lum.lu.ui.course.server.gwt.LoCategoryRpcGwtServlet">
 		<property name="service" ref="loClient" />
 	</bean>
 

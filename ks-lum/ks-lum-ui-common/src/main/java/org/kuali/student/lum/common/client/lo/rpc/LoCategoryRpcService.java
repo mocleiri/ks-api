@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2010 The Kuali Foundation Licensed under the
  * Educational Community License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may
@@ -15,35 +15,38 @@
 
 package org.kuali.student.lum.common.client.lo.rpc;
 
-import java.util.List;
-
-import org.kuali.student.common.ui.client.service.BaseRpcService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import org.kuali.student.common.ui.client.service.BaseDataOrchestrationRpcService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.lum.lo.dto.LoCategoryInfo;
 import org.kuali.student.lum.lo.dto.LoCategoryTypeInfo;
 import org.kuali.student.lum.lo.dto.LoInfo;
 
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.List;
+
 
 /**
  * 
  * @author Kuali Student Team
  */
-@RemoteServiceRelativePath("rpcservices/LoRpcService")
-public interface LoRpcService extends BaseRpcService {
+@RemoteServiceRelativePath("rpcservices/LoCategoryRpcService")
+public interface LoCategoryRpcService extends BaseDataOrchestrationRpcService {
+
     public List<LoCategoryInfo> getLoCategories(String loRepositoryKey);
-    public LoCategoryInfo updateLoCategory(String loCategoryId, LoCategoryInfo loCategoryInfo);
+//    public LoCategoryInfo updateLoCategory(String loCategoryId, LoCategoryInfo loCategoryInfo);
     public StatusInfo deleteLoCategory(String loCategoryId);
     public List<LoInfo> getLoByIdList(List<String> loId);
 
     public List<LoCategoryTypeInfo> getLoCategoryTypes();
 
-    public LoCategoryInfo createLoCategory(String loRepositoryKey,
-            String loCategoryTypeKey, LoCategoryInfo loCategoryInfo);
+//    public LoCategoryInfo createLoCategory(String loRepositoryKey,
+//            String loCategoryTypeKey, LoCategoryInfo loCategoryInfo);
 
-    public LoCategoryInfo getLoCategory(String loCategoryId);
-    
+//    public LoCategoryInfo getLoCategory(String loCategoryId);
+
     public LoCategoryTypeInfo getLoCategoryType(String loCategoryTypeKey);
-    
+
     public List<LoInfo> getLosByLoCategory(String loCategoryId);
+
+
 }
