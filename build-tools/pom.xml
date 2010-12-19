@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.kuali</groupId>
     <artifactId>kuali</artifactId>
-    <version>42-SNAPSHOT</version>
+    <version>45</version>
   </parent>
   <groupId>org.kuali.build</groupId>
   <artifactId>build-tools</artifactId>
@@ -13,6 +13,7 @@
   <description>Tools to assist with building, deploying Kuali software</description>
   <properties>
     <kuali.site.path>maven-plugins/${project.artifactId}/${project.version}/</kuali.site.path>
+    <kuali.site.download.dirs>org/kuali/build</kuali.site.download.dirs>
   </properties>
   <developers>
     <developer>
