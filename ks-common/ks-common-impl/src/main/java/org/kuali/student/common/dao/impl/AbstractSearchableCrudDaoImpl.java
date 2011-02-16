@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.dao.impl;
+package org.kuali.student.common.dao.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.dao.SearchableDao;
+import org.kuali.student.common.dao.SearchableDao;
 import org.kuali.student.core.search.dto.QueryParamInfo;
 import org.kuali.student.core.search.dto.ResultColumnInfo;
 import org.kuali.student.core.search.dto.SearchParam;

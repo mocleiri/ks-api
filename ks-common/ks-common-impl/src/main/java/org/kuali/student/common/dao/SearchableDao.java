@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.dao;
+package org.kuali.student.common.dao;
 
 import java.util.Map;
 

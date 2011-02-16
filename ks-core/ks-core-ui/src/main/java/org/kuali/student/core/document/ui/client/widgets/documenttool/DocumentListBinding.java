@@ -1,4 +1,4 @@
-package org.kuali.student.common.ui.client.widgets.documenttool;
+package org.kuali.student.core.document.ui.client.widgets.documenttool;
 
 import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBindingSupport;
 import org.kuali.student.common.ui.client.mvc.DataModel;

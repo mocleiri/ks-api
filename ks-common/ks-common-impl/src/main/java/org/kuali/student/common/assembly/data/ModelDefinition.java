@@ -16,11 +16,11 @@
 /**
  * 
  */
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 import java.io.Serializable;
 
-import org.kuali.student.core.assembly.data.Data.DataType;
+import org.kuali.student.common.assembly.data.Data.DataType;
 
 
 /**

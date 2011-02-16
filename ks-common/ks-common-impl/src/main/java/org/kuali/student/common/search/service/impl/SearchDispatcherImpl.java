@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.search.service.impl;
+package org.kuali.student.common.search.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.kuali.student.common.search.service.SearchDispatcher;
 import org.kuali.student.core.exceptions.OperationFailedException;
 import org.kuali.student.core.search.dto.SearchRequest;
 import org.kuali.student.core.search.dto.SearchResult;
 import org.kuali.student.core.search.dto.SearchTypeInfo;
-import org.kuali.student.core.search.service.SearchDispatcher;
 import org.kuali.student.core.search.service.SearchService;
 
 public class SearchDispatcherImpl implements SearchDispatcher{

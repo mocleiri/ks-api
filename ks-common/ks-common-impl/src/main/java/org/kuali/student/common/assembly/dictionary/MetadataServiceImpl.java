@@ -6,9 +6,8 @@
  * implied. See the License for the specific language governing permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.dictionary;
+package org.kuali.student.common.assembly.dictionary;
 
-import java.lang.ref.SoftReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,19 +15,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.assembly.data.ConstraintMetadata;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.LookupMetadata;
-import org.kuali.student.core.assembly.data.LookupParamMetadata;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.UILookupConfig;
-import org.kuali.student.core.assembly.data.UILookupData;
-import org.kuali.student.core.assembly.data.Data.DataType;
-import org.kuali.student.core.assembly.data.Data.Value;
-import org.kuali.student.core.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.assembly.data.ConstraintMetadata;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.LookupMetadata;
+import org.kuali.student.common.assembly.data.LookupParamMetadata;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.UILookupConfig;
+import org.kuali.student.common.assembly.data.UILookupData;
+import org.kuali.student.common.assembly.data.Data.DataType;
+import org.kuali.student.common.assembly.data.Data.Value;
+import org.kuali.student.common.assembly.data.Metadata.WriteAccess;
 import org.kuali.student.core.dictionary.dto.CaseConstraint;
 import org.kuali.student.core.dictionary.dto.CommonLookupParam;
 import org.kuali.student.core.dictionary.dto.Constraint;
@@ -622,10 +620,10 @@ public class MetadataServiceImpl {
         List<LookupParamMetadata> paramsMetadata;
         BeanUtils.copyProperties(lookupData, lookupMetadata, new String[]{"widget", "usage", "widgetOptions", "params"});
         if (lookupData.getWidget() != null) {
-            lookupMetadata.setWidget(org.kuali.student.core.assembly.data.LookupMetadata.Widget.valueOf(lookupData.getWidget().toString()));
+            lookupMetadata.setWidget(org.kuali.student.common.assembly.data.LookupMetadata.Widget.valueOf(lookupData.getWidget().toString()));
         }
         if (lookupData.getUsage() != null) {
-            lookupMetadata.setUsage(org.kuali.student.core.assembly.data.LookupMetadata.Usage.valueOf(lookupData.getUsage().toString()));
+            lookupMetadata.setUsage(org.kuali.student.common.assembly.data.LookupMetadata.Usage.valueOf(lookupData.getUsage().toString()));
         }
         if (lookupData.getWidgetOptions () != null) {
          lookupMetadata.setWidgetOptions (new HashMap ());
@@ -653,16 +651,16 @@ public class MetadataServiceImpl {
             paramMetadata.setChildLookup(mapLookupDatatoMeta((UILookupData) param.getChildLookup()));
         }
         if (param.getDataType() != null) {
-            paramMetadata.setDataType(org.kuali.student.core.assembly.data.Data.DataType.valueOf(param.getDataType().toString()));
+            paramMetadata.setDataType(org.kuali.student.common.assembly.data.Data.DataType.valueOf(param.getDataType().toString()));
         }
         if (param.getWriteAccess() != null) {
-            paramMetadata.setWriteAccess(org.kuali.student.core.assembly.data.Metadata.WriteAccess.valueOf(param.getWriteAccess().toString()));
+            paramMetadata.setWriteAccess(org.kuali.student.common.assembly.data.Metadata.WriteAccess.valueOf(param.getWriteAccess().toString()));
         }
         if (param.getUsage() != null) {
-            paramMetadata.setUsage(org.kuali.student.core.assembly.data.LookupMetadata.Usage.valueOf(param.getUsage().toString()));
+            paramMetadata.setUsage(org.kuali.student.common.assembly.data.LookupMetadata.Usage.valueOf(param.getUsage().toString()));
         }
         if (param.getWidget() != null) {
-            paramMetadata.setWidget(org.kuali.student.core.assembly.data.LookupParamMetadata.Widget.valueOf(param.getWidget().toString()));
+            paramMetadata.setWidget(org.kuali.student.common.assembly.data.LookupParamMetadata.Widget.valueOf(param.getWidget().toString()));
         }
 
         return paramMetadata;

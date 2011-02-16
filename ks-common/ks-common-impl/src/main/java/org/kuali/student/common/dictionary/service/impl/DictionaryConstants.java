@@ -1,4 +1,4 @@
-package org.kuali.student.core.dictionary.service.impl;
+package org.kuali.student.common.dictionary.service.impl;
 
 import org.kuali.student.core.dictionary.dto.FieldDefinition;
 import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;

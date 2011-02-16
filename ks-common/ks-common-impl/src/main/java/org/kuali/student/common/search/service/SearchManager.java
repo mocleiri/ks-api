@@ -13,11 +13,11 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.search.service;
+package org.kuali.student.common.search.service;
 
 import java.util.List;
 
-import org.kuali.student.core.dao.SearchableDao;
+import org.kuali.student.common.dao.SearchableDao;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.exceptions.MissingParameterException;

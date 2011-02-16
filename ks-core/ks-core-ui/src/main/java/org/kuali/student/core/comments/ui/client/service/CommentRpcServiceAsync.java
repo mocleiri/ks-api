@@ -13,10 +13,11 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.service;
+package org.kuali.student.core.comments.ui.client.service;
 
 import java.util.List;
 
+import org.kuali.student.common.ui.client.service.BaseRpcServiceAsync;
 import org.kuali.student.core.comment.dto.CommentInfo;
 import org.kuali.student.core.comment.dto.CommentTypeInfo;
 import org.kuali.student.core.dto.StatusInfo;

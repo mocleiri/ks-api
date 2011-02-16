@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
 /**
  * This is just a marker interface for all transform filters

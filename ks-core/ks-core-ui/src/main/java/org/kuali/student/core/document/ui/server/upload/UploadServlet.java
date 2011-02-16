@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.server.upload;
+package org.kuali.student.core.document.ui.server.upload;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

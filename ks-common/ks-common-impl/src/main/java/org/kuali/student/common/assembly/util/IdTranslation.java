@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.util;
+package org.kuali.student.common.assembly.util;
 
 import java.util.HashMap;
 import java.util.Map;

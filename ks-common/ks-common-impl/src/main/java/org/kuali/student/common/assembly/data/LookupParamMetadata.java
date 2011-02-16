@@ -13,13 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.kuali.student.core.assembly.data.LookupMetadata.Usage;
-import org.kuali.student.core.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.assembly.data.LookupMetadata.Usage;
+import org.kuali.student.common.assembly.data.Metadata.WriteAccess;
 
 
 public class LookupParamMetadata implements Serializable {

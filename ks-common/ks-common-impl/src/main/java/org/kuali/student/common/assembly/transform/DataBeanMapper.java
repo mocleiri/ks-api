@@ -1,7 +1,7 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
 
 public interface DataBeanMapper {
 

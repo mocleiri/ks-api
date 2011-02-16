@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -19,12 +19,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.Data.DataType;
-import org.kuali.student.core.assembly.data.Data.Key;
-import org.kuali.student.core.assembly.data.Data.Property;
-import org.kuali.student.core.assembly.data.Data.StringKey;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.Data.DataType;
+import org.kuali.student.common.assembly.data.Data.Key;
+import org.kuali.student.common.assembly.data.Data.Property;
+import org.kuali.student.common.assembly.data.Data.StringKey;
 
 
 public class DefaultDataBeanMapper implements DataBeanMapper {

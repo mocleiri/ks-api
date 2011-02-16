@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.dictionary.service.impl.old;
+package org.kuali.student.common.dictionary.service.impl.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;

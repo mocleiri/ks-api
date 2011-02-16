@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.service.impl;
+package org.kuali.student.common.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,17 +21,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.dao.CrudDao;
+import org.kuali.student.common.dao.CrudDao;
 import org.kuali.student.core.dto.MetaInfo;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.dto.TypeInfo;
-import org.kuali.student.core.entity.Attribute;
-import org.kuali.student.core.entity.AttributeOwner;
-import org.kuali.student.core.entity.Meta;
-import org.kuali.student.core.entity.MetaEntity;
-import org.kuali.student.core.entity.RichText;
-import org.kuali.student.core.entity.Type;
-import org.kuali.student.core.entity.Version;
+import org.kuali.student.common.entity.Attribute;
+import org.kuali.student.common.entity.AttributeOwner;
+import org.kuali.student.common.entity.Meta;
+import org.kuali.student.common.entity.MetaEntity;
+import org.kuali.student.common.entity.RichText;
+import org.kuali.student.common.entity.Type;
+import org.kuali.student.common.entity.Version;
 import org.kuali.student.core.exceptions.InvalidParameterException;
 import org.kuali.student.core.versionmanagement.dto.VersionInfo;
 import org.springframework.beans.BeanUtils;

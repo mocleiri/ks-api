@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +10,11 @@ import org.apache.log4j.Logger;
 import org.kuali.rice.kim.bo.role.dto.KimPermissionInfo;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityManagementService;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.QueryPath;
+import org.kuali.student.common.assembly.util.AssemblerUtils;
 import org.kuali.student.common.util.security.SecurityUtils;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.assembly.util.AssemblerUtils;
 import org.kuali.student.core.rice.StudentIdentityConstants;
 import org.kuali.student.core.rice.StudentWorkflowConstants;
 import org.kuali.student.core.rice.authorization.PermissionType;

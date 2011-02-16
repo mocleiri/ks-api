@@ -16,12 +16,12 @@
 /**
  * 
  */
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.kuali.student.core.assembly.data.Data.Key;
+import org.kuali.student.common.assembly.data.Data.Key;
 /**
  * QueryPath is used for retrieving and storing data in the DataModel.  A path is can be represented with
  * a "/" separated string.

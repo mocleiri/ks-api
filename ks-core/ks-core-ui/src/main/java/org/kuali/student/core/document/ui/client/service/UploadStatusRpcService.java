@@ -13,26 +13,15 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.server.gwt;
-
-import java.util.UUID;
+package org.kuali.student.core.document.ui.client.service;
 
 import org.kuali.student.common.ui.client.dto.UploadStatus;
-import org.kuali.student.common.ui.client.service.UploadStatusRpcService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-public class UploadStatusRpcGwtServlet extends RemoteServiceServlet implements UploadStatusRpcService{
-	private static final long serialVersionUID = 1L;
-
-	@Override
-	public UploadStatus getUploadStatus(String uploadId) {
-		UploadStatus status = (UploadStatus) (getThreadLocalRequest().getSession().getAttribute(uploadId));
-		return status;
-	}
-
-	@Override
-	public String getUploadId() {
-		return UUID.randomUUID().toString();
-	}
+@RemoteServiceRelativePath("rpcservices/UploadStatusRpcService")
+public interface UploadStatusRpcService extends RemoteService{
+	public UploadStatus getUploadStatus(String uploadId);
+	public String getUploadId();
 }

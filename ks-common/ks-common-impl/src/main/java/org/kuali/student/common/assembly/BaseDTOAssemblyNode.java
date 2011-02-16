@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.core.assembly;
+package org.kuali.student.common.assembly;
 
 import java.util.ArrayList;
 import java.util.List;

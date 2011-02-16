@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
 import java.util.Map;
 

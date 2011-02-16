@@ -1,4 +1,4 @@
-package org.kuali.student.core.dictionary.service.impl;
+package org.kuali.student.common.dictionary.service.impl;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.search.service.impl;
+package org.kuali.student.common.search.service.impl;
 
 import java.util.HashSet;
 import java.util.List;

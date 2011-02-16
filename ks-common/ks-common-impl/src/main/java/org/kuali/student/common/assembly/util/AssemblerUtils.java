@@ -13,18 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.util;
+package org.kuali.student.common.assembly.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.assembly.data.Data.DataType;
-import org.kuali.student.core.assembly.data.Data.Key;
-import org.kuali.student.core.assembly.helper.PropertyEnum;
-import org.kuali.student.core.assembly.helper.RuntimeDataHelper;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.QueryPath;
+import org.kuali.student.common.assembly.data.Data.DataType;
+import org.kuali.student.common.assembly.data.Data.Key;
+import org.kuali.student.common.assembly.helper.PropertyEnum;
+import org.kuali.student.common.assembly.helper.RuntimeDataHelper;
 
 public class AssemblerUtils {
 	public enum VersionProperties implements PropertyEnum {

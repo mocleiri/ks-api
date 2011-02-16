@@ -1,6 +1,6 @@
-package org.kuali.student.core.assembly;
+package org.kuali.student.common.assembly;
 
-import org.kuali.student.core.assembly.data.AssemblyException;
+import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.core.exceptions.AlreadyExistsException;
 import org.kuali.student.core.exceptions.CircularReferenceException;
 import org.kuali.student.core.exceptions.CircularRelationshipException;

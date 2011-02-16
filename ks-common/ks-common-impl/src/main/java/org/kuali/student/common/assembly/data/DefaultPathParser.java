@@ -16,11 +16,11 @@
 /**
  * 
  */
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 import java.util.Iterator;
 
-import org.kuali.student.core.assembly.data.Data.Key;
+import org.kuali.student.common.assembly.data.Data.Key;
 /**
  * @author wilj
  *

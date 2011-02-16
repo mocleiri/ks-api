@@ -13,15 +13,16 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.server.gwt;
+package org.kuali.student.core.document.ui.server;
 
 import java.util.List;
 
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
-import org.kuali.student.common.ui.client.service.DocumentRpcService;
+import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
 import org.kuali.student.core.document.dto.DocumentInfo;
 import org.kuali.student.core.document.dto.RefDocRelationInfo;
 import org.kuali.student.core.document.service.DocumentService;
+import org.kuali.student.core.document.ui.client.service.DocumentRpcService;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.exceptions.DoesNotExistException;
 import org.kuali.student.core.rice.StudentIdentityConstants;

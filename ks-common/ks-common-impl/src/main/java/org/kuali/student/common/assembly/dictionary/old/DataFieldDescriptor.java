@@ -13,12 +13,12 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.dictionary.old;
+package org.kuali.student.common.assembly.dictionary.old;
 
 import java.util.List;
 
-import org.kuali.student.core.assembly.data.ConstraintMetadata;
-import org.kuali.student.core.assembly.data.LookupMetadata;
+import org.kuali.student.common.assembly.data.ConstraintMetadata;
+import org.kuali.student.common.assembly.data.LookupMetadata;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.kuali.student.core.search.service.impl;
+package org.kuali.student.common.search.service.impl;
 
 import java.util.Map;
 import org.kuali.student.core.dictionary.dto.ObjectStructureDefinition;

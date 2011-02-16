@@ -13,15 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 import java.io.Serializable;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Kuali Student data representation.  Data is essentially a map of values.

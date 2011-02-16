@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.dictionary.old;
+package org.kuali.student.common.assembly.dictionary.old;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,12 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.assembly.data.ConstraintMetadata;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.Data.DataType;
-import org.kuali.student.core.assembly.data.Data.Value;
-import org.kuali.student.core.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.assembly.data.ConstraintMetadata;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.Data.DataType;
+import org.kuali.student.common.assembly.data.Data.Value;
+import org.kuali.student.common.assembly.data.Metadata.WriteAccess;
 import org.kuali.student.core.dictionary.old.dto.ConstraintDescriptor;
 import org.kuali.student.core.dictionary.old.dto.ConstraintSelector;
 import org.kuali.student.core.dictionary.old.dto.Field;

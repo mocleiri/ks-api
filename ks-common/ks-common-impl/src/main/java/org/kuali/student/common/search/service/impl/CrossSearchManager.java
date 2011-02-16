@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.search.service.impl;
+package org.kuali.student.common.search.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.common.search.service.SearchDispatcher;
 import org.kuali.student.core.search.dto.CrossSearchTypeInfo;
 import org.kuali.student.core.search.dto.JoinComparisonInfo;
-import org.kuali.student.core.search.dto.JoinComparisonInfo.ComparisonType;
 import org.kuali.student.core.search.dto.JoinCriteriaInfo;
-import org.kuali.student.core.search.dto.JoinCriteriaInfo.JoinType;
 import org.kuali.student.core.search.dto.JoinResultMappingInfo;
 import org.kuali.student.core.search.dto.SearchParam;
 import org.kuali.student.core.search.dto.SearchRequest;
@@ -38,7 +37,8 @@ import org.kuali.student.core.search.dto.SearchResultRow;
 import org.kuali.student.core.search.dto.SortDirection;
 import org.kuali.student.core.search.dto.SubSearchInfo;
 import org.kuali.student.core.search.dto.SubSearchParamMappingInfo;
-import org.kuali.student.core.search.service.SearchDispatcher;
+import org.kuali.student.core.search.dto.JoinComparisonInfo.ComparisonType;
+import org.kuali.student.core.search.dto.JoinCriteriaInfo.JoinType;
 
 /**
  * This still needs a few things

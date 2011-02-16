@@ -1,8 +1,8 @@
-package org.kuali.student.core.assembly.transform;
+package org.kuali.student.common.assembly.transform;
 
 import java.util.Map;
 
-import org.kuali.student.core.assembly.data.Metadata;
+import org.kuali.student.common.assembly.data.Metadata;
 
 /**
  * Implementations of the MetadataFilter can apply changes to the metadata structure 

@@ -1,4 +1,4 @@
-package org.kuali.student.common.ui.client.widgets.commenttool;
+package org.kuali.student.core.comments.ui.client.widgets.commenttool;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,8 +17,6 @@ import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
 import org.kuali.student.common.ui.client.mvc.dto.ReferenceModel;
-import org.kuali.student.common.ui.client.service.CommentRpcService;
-import org.kuali.student.common.ui.client.service.CommentRpcServiceAsync;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
@@ -29,6 +27,8 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumeration
 import org.kuali.student.common.ui.client.widgets.dialog.ConfirmationDialog;
 import org.kuali.student.common.ui.client.widgets.layout.VerticalFlowPanel;
 import org.kuali.student.core.comment.dto.CommentInfo;
+import org.kuali.student.core.comments.ui.client.service.CommentRpcService;
+import org.kuali.student.core.comments.ui.client.service.CommentRpcServiceAsync;
 import org.kuali.student.core.dto.RichTextInfo;
 import org.kuali.student.core.dto.StatusInfo;
 import org.kuali.student.core.dto.DtoConstants.DtoState;

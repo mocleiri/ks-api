@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.helper;
+package org.kuali.student.common.assembly.helper;
 
 // TODO merge this to common, when merging Norm's generated stuff
 public interface PropertyEnum {

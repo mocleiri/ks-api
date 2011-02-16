@@ -16,7 +16,7 @@
 /**
  * 
  */
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 /**
  * @author wilj

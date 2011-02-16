@@ -13,22 +13,22 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.util;
+package org.kuali.student.common.assembly.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.kuali.student.core.assembly.data.AssemblyException;
-import org.kuali.student.core.assembly.data.LookupMetadata;
-import org.kuali.student.core.assembly.data.LookupParamMetadata;
-import org.kuali.student.core.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.assembly.data.AssemblyException;
+import org.kuali.student.common.assembly.data.LookupMetadata;
+import org.kuali.student.common.assembly.data.LookupParamMetadata;
+import org.kuali.student.common.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.search.service.SearchDispatcher;
 import org.kuali.student.core.search.dto.SearchParam;
 import org.kuali.student.core.search.dto.SearchRequest;
 import org.kuali.student.core.search.dto.SearchResult;
 import org.kuali.student.core.search.dto.SearchResultCell;
 import org.kuali.student.core.search.dto.SearchResultRow;
-import org.kuali.student.core.search.service.SearchDispatcher;
 
 /**
  * Builds and issues SearchRequests parameterized with the information from LookupMetadata and the provided ID

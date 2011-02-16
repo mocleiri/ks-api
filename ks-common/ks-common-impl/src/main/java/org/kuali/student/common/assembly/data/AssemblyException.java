@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.common.assembly.data;
 
 public class AssemblyException extends Exception {
 
