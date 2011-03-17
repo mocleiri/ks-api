@@ -25,6 +25,7 @@
     <inherits name="org.kuali.student.lum.lu.ui.tools.Tools"/>
     <inherits name="org.kuali.student.core.organization.ui.OrgUI"/>
     <inherits name="org.kuali.student.core.proposal.ui.ProposalUI"/>
+	<inherits name="org.kuali.student.core.statement.ui.StatementUI"/>
 
 	<!-- TODO: Cleanup this package -->
     <inherits name='org.kuali.student.lum.lu.assembly.data.LuData'/>

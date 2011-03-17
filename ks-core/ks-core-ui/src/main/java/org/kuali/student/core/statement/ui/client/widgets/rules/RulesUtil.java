@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.rules;
+package org.kuali.student.core.statement.ui.client.widgets.rules;
 
 import java.util.ArrayList;
 import java.util.HashMap;

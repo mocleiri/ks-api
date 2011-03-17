@@ -3,11 +3,11 @@ package org.kuali.student.lum.lu.ui.dependency.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kuali.student.common.ui.client.widgets.rules.ReqComponentInfoUi;
-import org.kuali.student.common.ui.client.widgets.rules.RulesUtil;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.service.StatementService;
+import org.kuali.student.core.statement.ui.client.widgets.rules.ReqComponentInfoUi;
+import org.kuali.student.core.statement.ui.client.widgets.rules.RulesUtil;
 import org.kuali.student.lum.lu.ui.dependency.client.service.DependencyAnalysisRpcService;
 import org.kuali.student.lum.program.dto.ProgramRequirementInfo;
 import org.kuali.student.lum.program.service.ProgramService;

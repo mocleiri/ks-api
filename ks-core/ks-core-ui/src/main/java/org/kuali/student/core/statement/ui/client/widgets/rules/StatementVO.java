@@ -13,18 +13,18 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.rules;
+package org.kuali.student.core.statement.ui.client.widgets.rules;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.kuali.student.common.ui.client.widgets.table.Node;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.StatementInfo;
 import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
+import org.kuali.student.core.statement.ui.client.widgets.table.Node;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;

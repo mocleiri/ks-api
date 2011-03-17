@@ -13,10 +13,10 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.rules;
+package org.kuali.student.core.statement.ui.client.widgets.rules;
 
-import org.kuali.student.common.ui.client.widgets.table.Node;
-import org.kuali.student.common.ui.client.widgets.table.TreeTable;
+import org.kuali.student.core.statement.ui.client.widgets.table.Node;
+import org.kuali.student.core.statement.ui.client.widgets.table.TreeTable;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -13,9 +13,9 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.ui.client.widgets.table;
+package org.kuali.student.core.statement.ui.client.widgets.table;
 
-import org.kuali.student.common.ui.client.widgets.rules.Token;
+import org.kuali.student.core.statement.ui.client.widgets.rules.Token;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.EventTarget;
