@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.enrollment.lpr.service.adapter;
+package org.kuali.student.enrollment.lpr.mock;
 
 import java.util.List;
 
@@ -25,6 +25,7 @@ import org.kuali.student.common.exceptions.PermissionDeniedException;
 import org.kuali.student.common.infc.HoldsDataDictionaryService;
 import org.kuali.student.datadictionary.dto.DictionaryEntryInfo;
 import org.kuali.student.datadictionary.service.DataDictionaryService;
+import org.kuali.student.enrollment.lpr.mock.LuiPersonRelationServiceAdapter;
 import org.kuali.student.enrollment.lpr.service.LuiPersonRelationService;
 
 /**

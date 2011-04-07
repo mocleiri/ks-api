@@ -35,10 +35,9 @@ import static org.junit.Assert.*;
 /**
  * @author nwright
  */
-@Ignore
-public class LuiPersonRelationServiceSearchConformanceTest {
+public class TestLuiPersonRelationServiceSearchConformance {
 
-    public LuiPersonRelationServiceSearchConformanceTest() {
+    public TestLuiPersonRelationServiceSearchConformance() {
     }
 
     @BeforeClass

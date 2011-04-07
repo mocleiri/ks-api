@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.enrollment.lpr.service.impl.mock;
+package org.kuali.student.kim.identity.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,18 +46,7 @@ import org.kuali.rice.kim.bo.reference.dto.EntityTypeInfo;
 import org.kuali.rice.kim.bo.reference.dto.ExternalIdentifierTypeInfo;
 import org.kuali.rice.kim.bo.reference.dto.PhoneTypeInfo;
 import org.kuali.rice.kim.service.IdentityService;
-import org.kuali.student.kim.identity.mock.AddressTypeEnum;
-import org.kuali.student.kim.identity.mock.AffiliationTypeEnum;
-import org.kuali.student.kim.identity.mock.DataProviderForKimEntityInfoImpl;
-import org.kuali.student.kim.identity.mock.EmailTypeEnum;
-import org.kuali.student.kim.identity.mock.EmployeeStatusEnum;
-import org.kuali.student.kim.identity.mock.EmployeeTypeEnum;
-import org.kuali.student.kim.identity.mock.EntityNameTypeEnum;
-import org.kuali.student.kim.identity.mock.EntityTypeEnum;
-import org.kuali.student.kim.identity.mock.ExternalIdentifierTypeEnum;
-import org.kuali.student.kim.identity.mock.IdentityServiceConstants;
-import org.kuali.student.kim.identity.mock.PersonEnum;
-import org.kuali.student.kim.identity.mock.PhoneTypeEnum;
+import org.kuali.student.enrollment.lpr.mock.CriteriaMatcherInMemory;
 
 /**
  * @author nwright

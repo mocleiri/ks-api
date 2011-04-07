@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.kuali.student.enrollment.lpr.service.impl;
+package org.kuali.student.kim.identity.mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -30,7 +30,6 @@ import org.kuali.rice.kim.bo.reference.dto.EntityNameTypeInfo;
 import org.kuali.rice.kim.bo.reference.dto.EntityTypeInfo;
 import org.kuali.rice.kim.bo.reference.dto.ExternalIdentifierTypeInfo;
 import org.kuali.rice.kim.bo.reference.dto.PhoneTypeInfo;
-import org.kuali.student.enrollment.lpr.service.impl.mock.IdentityServiceMockImpl;
 import org.kuali.student.kim.identity.mock.AddressTypeEnum;
 import org.kuali.student.kim.identity.mock.AffiliationTypeEnum;
 import org.kuali.student.kim.identity.mock.EmailTypeEnum;

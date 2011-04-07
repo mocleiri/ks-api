@@ -17,16 +17,16 @@ package org.kuali.student.enrollment.lpr.service.impl;
 
 
 import org.junit.Ignore;
-import org.kuali.student.enrollment.lpr.service.conformance.tests.LuiPersonRelationServicePersistenceConformanceTest;
+import org.kuali.student.enrollment.lpr.service.conformance.tests.TestLuiPersonRelationServicePersistenceConformance;
 
 
 /**
  * @author nwright
  */
 @Ignore
-public class LuiPersonRelationServicePersistenceImplTest extends LuiPersonRelationServicePersistenceConformanceTest {
+public class TestLuiPersonRelationServicePersistenceImpl extends TestLuiPersonRelationServicePersistenceConformance {
 
-	public LuiPersonRelationServicePersistenceImplTest() {
+	public TestLuiPersonRelationServicePersistenceImpl() {
 	}
 
 

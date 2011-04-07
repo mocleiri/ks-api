@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kuali.student.enrollment.lpr.service.impl.mock;
+package org.kuali.student.enrollment.lpr.mock;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,11 +42,8 @@ import org.kuali.student.common.infc.StateInfc;
 import org.kuali.student.datadictionary.infc.DictionaryEntryInfc;
 import org.kuali.student.datadictionary.util.CriteriaValidatorParser;
 import org.kuali.student.enrollment.lpr.dto.LuiPersonRelationInfo;
-import org.kuali.student.enrollment.lpr.mock.LuiPersonRelationStateEnum;
-import org.kuali.student.enrollment.lpr.mock.LuiPersonRelationTypeEnum;
 import org.kuali.student.enrollment.lpr.service.LuiPersonRelationConstants;
 import org.kuali.student.enrollment.lpr.service.LuiPersonRelationService;
-import org.kuali.student.enrollment.lpr.service.adapter.LuiPersonRelationServiceAdapter;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.enrollment.lui.service.LuiService;
 
