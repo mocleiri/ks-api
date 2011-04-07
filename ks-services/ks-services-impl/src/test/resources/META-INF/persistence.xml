@@ -9,7 +9,7 @@
     <persistence-unit name="persistentUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
 
-        <class>org.kuali.student.enrollment.lpr.model.DynamicAttribute</class>
+        <class>org.kuali.student.r2.common.entity.BaseAttribute</class>
         <class>org.kuali.student.enrollment.lpr.model.LuiPersonRelation</class>
         <class>org.kuali.student.enrollment.lpr.model.LuiPersonRelationState</class>
         <class>org.kuali.student.enrollment.lpr.model.LuiPersonRelationType</class>
