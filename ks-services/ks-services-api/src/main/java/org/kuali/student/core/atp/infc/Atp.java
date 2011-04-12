@@ -26,9 +26,7 @@ import org.kuali.student.common.infc.KeyEntity;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface AtpInfc 
-    extends KeyEntity {
-
+public interface Atp extends KeyEntity {
 
     /**
      * Name: StartDate
@@ -40,12 +38,10 @@ public interface AtpInfc
      * specified, this field must be less than or equal to the
      * expiration date.
      */
-
     public Date getStartDate();
 
-
     /**
-     * Name: StartDate
+     * Name: EndDate
      * Date and time the academic time period expires. This does not
      * provide a bound on date ranges or milestones associated with
      * this time period, but instead indicates the time period
@@ -54,6 +50,5 @@ public interface AtpInfc
      * expiration date has been currently defined and should
      * automatically be considered greater than the effective date.
      */
-
     public Date getEndDate();
 }

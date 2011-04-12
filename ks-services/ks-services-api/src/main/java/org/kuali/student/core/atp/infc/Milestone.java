@@ -27,19 +27,16 @@ import org.kuali.student.common.infc.KeyEntity;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface MilestoneInfc
-    extends KeyEntity {
+public interface Milestone extends KeyEntity {
 
     /**
      * Name: IsDateRange
      * Tests if this milestone has a date range. 
      *
      * @return true if the end date is different than the start date,
-     *         false if the start end end date ar ethe same
+     *         false if the start end end date are the same
      */
-
     public Boolean getIsDateRange();
-
 
     /**
      * Name: StartDate
@@ -47,9 +44,7 @@ public interface MilestoneInfc
      *
      * @return the milestone start date 
      */
-
     public Date getStartDate();
-
 
     /**
      * Name: EndDate 
@@ -58,6 +53,5 @@ public interface MilestoneInfc
      *
      * @return the milestone end date
      */
-
     public Date getEndDate();
 }

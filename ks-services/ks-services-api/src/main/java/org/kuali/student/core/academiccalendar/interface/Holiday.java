@@ -16,7 +16,7 @@
 package org.kuali.student.core.academiccalendar.infc;
 
 import java.util.Date;
-import org.kuali.student.common.infc.KeyEntity;
+import org.kuali.student.common.interface.KeyEntity;
 
 
 /**
@@ -26,23 +26,23 @@ import org.kuali.student.common.infc.KeyEntity;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 
-public interface HolidayInfc extends KeyDateInfc {
+public interface Holiday extends KeyDate {
 
-    /**
-     * Name: IsDateRange
-     * Tests if this holiday is an instructional day. 
-     *
-     * @return true if this holiday is an instructional day, false if
-     *         it does not count as an instructional day
-     */
-    public Boolean getIsInstructionalDay();
+	/**
+	 * Name: IsDateRange
+	 * Tests if this holiday is an instructional day. 
+	 *
+	 * @return true if this holiday is an instructional day, false if
+	 *         it does not count as an instructional day
+	 */
+	public Boolean getIsInstructionalDay();
 
-    /**
-     * Name: IsDateRange
-     * Tests if this holiday is an exam day. 
-     *
-     * @return true if this holiday is an exam day, false if
-     *         it does not count as an exam day
-     */
-    public Boolean getIsExamDay();
+	/**
+	 * Name: IsDateRange
+	 * Tests if this holiday is an exam day. 
+	 *
+	 * @return true if this holiday is an exam day, false if
+	 *         it does not count as an exam day
+	 */
+	public Boolean getIsExamDay();
 }

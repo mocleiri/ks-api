@@ -18,9 +18,11 @@ package org.kuali.student.core.academiccalendar.dto;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import org.w3c.dom.Element;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
@@ -38,7 +40,7 @@ import org.kuali.student.core.academiccalendar.infc.CampusCalendarInfc;
  * @Since Tue Apr 05 14:22:34 EDT 2011
  */ 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CampusCalendarInfo", propOrder = {"key", "typeKey", "stateKey", "name", "descr", "startDate", "endDate", "holidays", "keyDates", "location", "metaInfo", "attributes", "_futureElements"})
+@XmlType(name = "CampusCalendarInfo", propOrder = {"key", "typeKey", "stateKey", "name", "descr", "startDate", "endDate", "location", "metaInfo", "attributes", "_futureElements"})
 public class CampusCalendarInfo extends KeyEntityInfo implements CampusCalendarInfc, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,21 +51,17 @@ public class CampusCalendarInfo extends KeyEntityInfo implements CampusCalendarI
     @XmlElement
     private final Date endDate;
 
-    @XmlElement 
-    private final List<HolidayInfo> holidays;
-
-    @XmlElement
-    private final List<KeyDateInfo> keyDates;
-
     @XmlElement
     private final String location;
 
+    @XmlAnyElement
+    private final List<Element> _futureElements;  
+
     private CampusCalendarInfo() {
-    	startDate = null;
-	endDate = null;
-	holidays = null;
-	keyDates = null;
-	location = null;
+        startDate = null;
+        endDate = null;
+        location = null;
+        _futureElements = null;
     }
 
     /**
@@ -73,13 +71,11 @@ public class CampusCalendarInfo extends KeyEntityInfo implements CampusCalendarI
      * @param campusCalendar the Campus Calendar to copy
      */
     public CampusCalendarInfo(CampusCalendarInfc campusCalendar) {
-	super(campusCalendar);
-	this.startDate = null != campusCalendar.getStartDate() ? new Date(campusCalendar.getStartDate().getTime()) : null;
-	this.endDate = null != campusCalendar.getEndDate() ? new Date(campusCalendar.getEndDate().getTime()) : null;
-	/* copy me */
-	this.holidays = null;
-	this.keyDates = null;
-	this.location = campusCalendar.getLocation();
+        super(campusCalendar);
+        this.startDate = null != campusCalendar.getStartDate() ? new Date(campusCalendar.getStartDate().getTime()) : null;
+        this.endDate = null != campusCalendar.getEndDate() ? new Date(campusCalendar.getEndDate().getTime()) : null;
+        this.location = campusCalendar.getLocation();
+        _futureElements = null;
     }
 
     /**
@@ -117,143 +113,96 @@ public class CampusCalendarInfo extends KeyEntityInfo implements CampusCalendarI
     }
 
     /**
-     * Name: Holidays
-     * Gets the holidays mapped to this calendar.
-     */
-    @Override
-    public List<HolidayInfo> getHolidays() {
-	return (holidays);
-    }
-
-    /**
-     * Name: KeyDates
-     * Gets the key dates mapped to this calendar.
-     */
-    @Override
-    public List<KeyDateInfo> getKeyDates() {
-	return keyDates;
-    }
-
-    /**
      * Name: Location
      * The campus or location to which this calendar pertains.
      */
     @Override
     public String getLocation() {
-	return location;
+        return location;
     }
 
     /**
      * The builder class for this CampusCalendarInfo.
      */
     public static class Builder extends KeyEntityInfo.Builder implements ModelBuilder<CampusCalendarInfo>, CampusCalendarInfc {
-    	
-    	private Date startDate;
-	private Date endDate;
-	private List<HolidayInfo> holidays;
-	private List<KeyDateInfo> keyDates;
-	private String location;
 
-	/**
-	 * Constructs a new builder.
-	 */
-	public Builder() {}
+        private Date startDate;
+        private Date endDate;
+        private String location;
 
-	/**
-	 * Constructs a new builder initialized from another CampusCalendar
-	 */
-    	public Builder(CampusCalendarInfc campusCalendar) {
-	    super(campusCalendar);
-	    this.startDate = campusCalendar.getStartDate();
-	    this.endDate = campusCalendar.getEndDate();
-	    /* copy me */
-	    this.holidays = null;
-	    this.keyDates = null;
-	    this.location = campusCalendar.getLocation();
-    	}
-		
-	/**
-	 * Builds the CampusCalendar.
-	 *
-	 * @return a new CampusCalendar
-	 */
+        /**
+         * Constructs a new builder.
+         */
+        public Builder() {}
+
+        /**
+         * Constructs a new builder initialized from another CampusCalendar
+         */
+        public Builder(CampusCalendarInfc campusCalendar) {
+            super(campusCalendar);
+            this.startDate = campusCalendar.getStartDate();
+            this.endDate = campusCalendar.getEndDate();
+            this.location = campusCalendar.getLocation();
+        }
+
+        /**
+         * Builds the CampusCalendar.
+         *
+         * @return a new CampusCalendar
+         */
         public CampusCalendarInfo build() {
             return new CampusCalendarInfo(this);
         }
 
-	/**
-	 * Gets the start date.
-	 *
-	 * @return the Campus Calendar start date
-	 */
-	@Override
-	public Date getStartDate() {
-	    return startDate;
-	}
+        /**
+         * Gets the start date.
+         *
+         * @return the Campus Calendar start date
+         */
+        @Override
+        public Date getStartDate() {
+            return startDate;
+        }
 
-	/**
-	 * Sets the Campus Calendar start date.
-	 *
-	 * @param startDate the start date for the Campus Calendar
-	 */
-	public void setStartDate(Date startDate) {
-	    this.startDate = startDate;
-	}
+        /**
+         * Sets the Campus Calendar start date.
+         *
+         * @param startDate the start date for the Campus Calendar
+         */
+        public void setStartDate(Date startDate) {
+            this.startDate = startDate;
+        }
 
-	/**
-	 * Gets the start date.
-	 *
-	 * @return the Campus Calendar end date
-	 */
-	@Override
-	public Date getEndDate() {
-	    return endDate;
-	}
-    	
-	/**
-	 * Sets the Campus Calendar end date.
-	 *
-	 * @param endDate the end date for the Campus Calendar
-	 */
+        /**
+         * Gets the start date.
+         *
+         * @return the Campus Calendar end date
+         */
+        @Override
+        public Date getEndDate() {
+            return endDate;
+        }
 
-	public void setEndDate(Date endDate) {
-	    this.endDate = endDate;
-	}
-	
-	/**
-	 * Gets the holidays mapped to this calendar.
-	 */
-	@Override
-	public List<HolidayInfo> getHolidays() {
-	    return (holidays);
-	}
+        /**
+         * Sets the Campus Calendar end date.
+         *
+         * @param endDate the end date for the Campus Calendar
+         */
 
-	public void setHolidays(List<HolidayInfo> holidays) {
-	    this.holidays = holidays;
-	}
-	
-	/**
-	 * Gets the key dates mapped to this calendar.
-	 */
-	@Override
-	public List<KeyDateInfo> getKeyDates() {
-	    return keyDates;
-	}
+        public void setEndDate(Date endDate) {
+            this.endDate = endDate;
+        }
 
-	public void setKeyDates(List<KeyDateInfo> keyDates) {
-	    this.keyDates = keyDates;
-	}
-	
-	/**
-	 * The campus or location to which this calendar pertains.
-	 */
-	@Override
-	public String getLocation() {
-	    return location;
-	}
+        /**
+         * The campus or location to which this calendar pertains.
+         */
+        @Override
+        public String getLocation() {
+            return location;
+        }
 
-	public void setLocation(String location) {
-	    this.location = location;
-	}
+        public void setLocation(String location) {
+            this.location = location;
+        }
     }
 }
