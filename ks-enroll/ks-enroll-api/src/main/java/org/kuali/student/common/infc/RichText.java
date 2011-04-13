@@ -15,23 +15,32 @@
  */
 package org.kuali.student.common.infc;
 
+/**
+ * A small object to hold rich text along with plain formatting that can be
+ * more easily searched.
+ *
+ * @author Kuali Student Team (Kamal)
+ *
+ */
 public interface RichText {
 
     /**
-     * Get ????
-     * <p/>
-     * Type: String
-     * <p/>
-     * ???
+     * Name: Plain Text
+     *
+     * Plain text version of the rich text with all the special formatting 
+     * stripped out.
+     *
+     * @author nwright
      */
     public String getPlain();
 
     /**
-     * Get ????
-     * <p/>
-     * Type: String
-     * <p/>
-     * ???
+     * Name: Formatted Text
+     *
+     * Formatted version of the rich text with all the formatting included.
+     *
+     * TODO: Define what format is to be used? Is it assumed to be HTML?  or WORD?
+     * or Wiki?
      */
     public String getFormatted();
 }
