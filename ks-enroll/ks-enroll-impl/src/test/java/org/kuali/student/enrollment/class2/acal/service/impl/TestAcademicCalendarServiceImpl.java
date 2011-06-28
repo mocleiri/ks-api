@@ -18,6 +18,7 @@ import org.kuali.student.enrollment.acal.dto.AcademicCalendarInfo;
 import org.kuali.student.enrollment.acal.dto.KeyDateInfo;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 import org.kuali.student.enrollment.acal.service.AcademicCalendarService;
+import org.kuali.student.r2.common.datadictionary.dto.DictionaryEntryInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StateInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -194,7 +195,7 @@ public class TestAcademicCalendarServiceImpl{
                 assertEquals("testDeletedAcalId", created.getKey());
 
                 StatusInfo ret = acalServiceValidation.deleteAcademicCalendar("testDeletedAcalId", callContext);
-                assertTrue(ret.isSuccess());
+                assertTrue(ret.getIsSuccess());
 
                 AcademicCalendarInfo existed = acalServiceValidation.getAcademicCalendar("testDeletedAcalId", callContext);
                 assertNull(existed);
@@ -268,7 +269,7 @@ public class TestAcademicCalendarServiceImpl{
 	        } 
 	    	
 	    	StatusInfo status = acalServiceValidation.addTermToAcademicCalendar("testAtpId1", "testTermId2", callContext);
-	    	assertTrue(status.isSuccess());
+	    	assertTrue(status.getIsSuccess());
     	} catch (Exception ex) {
             fail("exception from service call :" + ex.getMessage());
     	}
@@ -599,7 +600,7 @@ public class TestAcademicCalendarServiceImpl{
         StatusInfo status = acalServiceValidation.removeTermFromAcademicCalendar("termRelationTestingAcal2", "termRelationTestingTerm2", callContext);
         
         assertNotNull(status);
-        assertTrue(status.isSuccess());
+        assertTrue(status.getIsSuccess());
         
         // retrieve the terms for the acal and make sure it does not include the removed term
         List<TermInfo> results = acalServiceValidation.getTermsForAcademicCalendar("termRelationTestingAcal2", callContext);
@@ -625,7 +626,7 @@ public class TestAcademicCalendarServiceImpl{
         StatusInfo status = acalServiceValidation.removeTermFromTerm("termRelationTestingTerm3", "termRelationTestingTerm4", callContext);
         
         assertNotNull(status);
-        assertTrue(status.isSuccess());
+        assertTrue(status.getIsSuccess());
         
         // retrieve the terms for the parent term and make sure it does not include the removed term
         List<TermInfo> results = acalServiceValidation.getIncludedTermsInTerm("termRelationTestingTerm3", callContext);
@@ -694,7 +695,7 @@ public class TestAcademicCalendarServiceImpl{
     public void testDeleteTerm() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         StatusInfo status = acalServiceValidation.deleteTerm("termRelationTestingTermDelete", callContext);
         
-        assertTrue(status.isSuccess());
+        assertTrue(status.getIsSuccess());
         
         StatusInfo noStatus = null;
         try {
@@ -722,7 +723,7 @@ public class TestAcademicCalendarServiceImpl{
         StatusInfo status = acalServiceValidation.addTermToTerm("termRelationTestingTerm5", "termRelationTestingTerm6", callContext);
         
         assertNotNull(status);
-        assertTrue(status.isSuccess());
+        assertTrue(status.getIsSuccess());
         
         // retrieve the terms for the parent term and make sure it does include the added term
         List<TermInfo> results = acalServiceValidation.getIncludedTermsInTerm("termRelationTestingTerm5", callContext);
@@ -753,5 +754,31 @@ public class TestAcademicCalendarServiceImpl{
             assertNull(nullStatus);
         }
         
+    }
+    
+    @Test
+    public void testGetDataDictionaryEntryKeys() throws OperationFailedException, MissingParameterException, PermissionDeniedException {
+        List<String> results = acalServiceValidation.getDataDictionaryEntryKeys(callContext);
+        
+        assertNotNull(results);
+        assertTrue(!results.isEmpty());
+        
+        assertTrue(results.contains("http://student.kuali.org/wsdl/acal/AcademicCalendarInfo"));
+    }
+    
+    @Test
+    public void testGetDataDictionaryEntry() throws OperationFailedException, MissingParameterException, PermissionDeniedException, DoesNotExistException {
+        DictionaryEntryInfo value = acalServiceValidation.getDataDictionaryEntry("http://student.kuali.org/wsdl/acal/AcademicCalendarInfo", callContext);
+        
+        assertNotNull(value);
+        
+        DictionaryEntryInfo fakeEntry = null;
+        try {
+            fakeEntry = acalServiceValidation.getDataDictionaryEntry("fakeKey", callContext);
+            fail("Did not get a DoesNotExistException when expected");
+        }
+        catch(DoesNotExistException e) {
+            assertNull(fakeEntry);
+        }
     }
 }

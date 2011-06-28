@@ -31,7 +31,7 @@ import org.kuali.student.r2.common.infc.Comparison;
 import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ComparisonInfo", propOrder = {"fieldKey", "operator", "values", "ignoreCase", "_futureElements"})    
+@XmlType(name = "ComparisonInfo", propOrder = {"fieldKey", "operator", "values", "isIgnoreCase", "_futureElements"})    
 public class ComparisonInfo implements Comparison, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class ComparisonInfo implements Comparison, Serializable {
     private List<String> values;
     
     @XmlElement
-    private boolean ignoreCase;
+    private boolean isIgnoreCase;
 
     @XmlAnyElement
     private List<Element> _futureElements;
@@ -63,7 +63,7 @@ public class ComparisonInfo implements Comparison, Serializable {
         this.fieldKey = null;
         this.operator = null;
         this.values = null;
-        this.ignoreCase = false;
+        this.isIgnoreCase = false;
         this._futureElements = null;
     }
 
@@ -77,7 +77,7 @@ public class ComparisonInfo implements Comparison, Serializable {
         {
             this.values = Collections.unmodifiableList(bldr.getValues());
         }
-        this.ignoreCase = bldr.getIgnoreCase();
+        this.isIgnoreCase = bldr.getIsIgnoreCase();
         this._futureElements = null;
     }
 
@@ -109,11 +109,11 @@ public class ComparisonInfo implements Comparison, Serializable {
     }
 
     @Override
-    public Boolean getIgnoreCase() {
-        return this.ignoreCase;
+    public Boolean getIsIgnoreCase() {
+        return this.isIgnoreCase;
     }
 
     public void setIgnoreCase(Boolean ignoreCase) {
-        this.ignoreCase = ignoreCase;
+        this.isIgnoreCase = ignoreCase;
     }
 }
