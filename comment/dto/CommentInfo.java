@@ -13,28 +13,37 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.r2.core.comment.dto;
+package org.kuali.student.core.comment.dto;
 
-import org.kuali.student.r2.common.dto.IdEntityInfo;
-import org.kuali.student.r2.common.dto.RichTextInfo;
-import org.kuali.student.r2.core.comment.infc.Comment;
-import org.w3c.dom.Element;
-
-import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.kuali.student.common.dto.HasAttributes;
+import org.kuali.student.common.dto.HasTypeState;
+import org.kuali.student.common.dto.Idable;
+import org.kuali.student.common.dto.MetaInfo;
+import org.kuali.student.common.dto.RichTextInfo;
+import org.kuali.student.core.ws.binding.JaxbAttributeMapListAdapter;
 
 /**
- * Refer to interface javadoc
- * @Version 2.0
- * @Author Sri komandur@uw.edu
+ * Detailed information about a comment.
+ *
+ * @Author KSContractMojo
+ * @Author Neerav Agrawal
+ * @Since Fri Jun 05 14:27:31 EDT 2009
+ * @See <a href="https://test.kuali.org/confluence/display/KULSTR/commentInfo+Structure+v1.0-rc1">CommentInfo</>
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CommentInfo", propOrder = {"id", "typeKey", "stateKey", "name",
-        "descr", "commentText", "referenceTypeKey", "referenceId", "effectiveDate",
-        "expirationDate", "meta", "attributes", "_futureElements"})
-public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
+public class CommentInfo implements Serializable, Idable, HasTypeState, HasAttributes {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,44 +62,25 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
     @XmlElement
     private Date expirationDate;
 
-    @XmlAnyElement
-    private List<Element> _futureElements;
+    @XmlElement
+    @XmlJavaTypeAdapter(JaxbAttributeMapListAdapter.class)
+    private Map<String, String> attributes;
 
-    public static CommentInfo newInstance() {
-        return new CommentInfo();
-    }
+    @XmlElement
+    private MetaInfo metaInfo;
 
-    public static CommentInfo getInstance(Comment comment) {
-        return new CommentInfo(comment);
-    }
+    @XmlAttribute
+    private String type;
 
-    /**
-     * Default constructor needs to be provided as we have an explicit parameterized constructor
-     */
-    public CommentInfo() {
-    }
+    @XmlAttribute
+    private String state;
 
-    /**
-     * Constructs a new CommentInfo from another Comment.
-     *
-     * @param comment the COMMENT to copy
-     */
-    public CommentInfo(Comment comment) {
-        super(comment);
-        if (null != comment) {
-            this.commentText = new RichTextInfo(comment.getCommentText());
-            this.referenceTypeKey = comment.getReferenceTypeKey();
-            this.referenceId = comment.getReferenceId();
-            this.effectiveDate = new Date(comment.getEffectiveDate().getTime());
-            this.expirationDate = new Date(comment.getExpirationDate().getTime());
-            this._futureElements = null;
-        }
-    }
+    @XmlAttribute
+    private String id;
 
     /**
      * Narrative text of the comment
      */
-    @Override
     public RichTextInfo getCommentText() {
         return commentText;
     }
@@ -102,7 +92,6 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
     /**
      * Unique identifier for a reference type.
      */
-    @Override
     public String getReferenceTypeKey() {
         return referenceTypeKey;
     }
@@ -114,7 +103,6 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
     /**
      * Identifier component for a reference. This is an external identifier and such may not uniquely identify a particular reference unless combined with the type. A referenceId could be a cluId, a luiId, an orgId, a documentId, etc.
      */
-    @Override
     public String getReferenceId() {
         return referenceId;
     }
@@ -126,7 +114,6 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
     /**
      * Date and time that this comment became effective. This is a similar concept to the effective date on enumerated values. When an expiration date has been specified, this field must be less than or equal to the expiration date.
      */
-    @Override
     public Date getEffectiveDate() {
         return effectiveDate;
     }
@@ -138,7 +125,6 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
     /**
      * Date and time that this comment expires. This is a similar concept to the expiration date on enumerated values. If specified, this should be greater than or equal to the effective date. If this field is not specified, then no expiration date has been currently defined and should automatically be considered greater than the effective date.
      */
-    @Override
     public Date getExpirationDate() {
         return expirationDate;
     }
@@ -147,4 +133,61 @@ public class CommentInfo extends IdEntityInfo implements Comment, Serializable {
         this.expirationDate = expirationDate;
     }
 
+    /**
+     * List of key/value pairs, typically used for dynamic attributes.
+     */
+    public Map<String, String> getAttributes() {
+        if (attributes == null) {
+            attributes = new HashMap<String, String>();
+        }
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
+
+    /**
+     * Create and last update info for the structure. This is optional and treated as read only since the data is set by the internals of the service during maintenance operations.
+     */
+    public MetaInfo getMetaInfo() {
+        return metaInfo;
+    }
+
+    public void setMetaInfo(MetaInfo metaInfo) {
+        this.metaInfo = metaInfo;
+    }
+
+    /**
+     * Unique identifier for a comment type.
+     */
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     * The current status of the comment. The values for this field are constrained to those in the commentState enumeration. A separate setup operation does not exist for retrieval of the meta data around this value.
+     */
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * Unique identifier for a comment. This is optional, due to the identifier being set at the time of creation. Once the comment has been created, this should be seen as required.
+     */
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

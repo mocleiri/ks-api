@@ -34,12 +34,12 @@ import java.util.List;
 
 /**
  * Comment Service
+ * @Version 2.0
+ * @Author Sri komandur@uw.edu
  */
 
 @WebService(name = "CommentService", serviceName = "CommentService", portName = "CommentService", targetNamespace = "http://student.kuali.org/wsdl/comment")
-
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-//@XmlSeeAlso({org.kuali.student.core.dto.ReferenceTypeInfo.class})
 public interface CommentService extends DictionaryService {
     /**
      * Retrieves the list of types which can be tagged or commented.

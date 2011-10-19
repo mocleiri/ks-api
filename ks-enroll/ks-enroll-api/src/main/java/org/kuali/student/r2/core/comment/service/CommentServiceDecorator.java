@@ -29,8 +29,11 @@ import org.kuali.student.r2.core.comment.dto.TagTypeInfo;
 import java.util.List;
 
 /**
- * User: komandur
+ *  Refer to contract javadoc
+ * @Version 2.0
+ * @Author Sri komandur@uw.edu
  */
+
 public abstract class CommentServiceDecorator implements CommentService {
 
     private CommentService nextDecorator;

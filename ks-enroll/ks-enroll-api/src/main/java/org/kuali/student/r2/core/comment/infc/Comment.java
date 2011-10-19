@@ -7,7 +7,8 @@ import java.util.Date;
 
 /**
  * Comments associated with other objects in the system
- * User: komandur
+ * @Version 2.0
+ * @Author Sri komandur@uw.edu
  */
 public interface Comment extends IdEntity {
 

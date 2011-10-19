@@ -7,7 +7,8 @@ import java.util.Date;
 
 /**
  * Information about a Tag
- * User: komandur
+ * @Version 2.0
+ * @Author Sri komandur@uw.edu
  */
 public interface Tag extends IdNamelessEntity {
 
