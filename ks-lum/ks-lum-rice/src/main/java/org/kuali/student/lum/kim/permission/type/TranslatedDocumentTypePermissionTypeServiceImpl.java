@@ -26,7 +26,7 @@ import java.util.Set;
 import org.kuali.rice.kim.bo.impl.KimAttributes;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kns.service.impl.DocumentTypePermissionTypeServiceImpl;
-import org.kuali.student.core.rice.StudentIdentityConstants;
+import org.kuali.student.common.rice.StudentIdentityConstants;
 import org.kuali.student.lum.kim.KimQualificationHelper;
 
 /**
@@ -39,17 +39,25 @@ public class TranslatedDocumentTypePermissionTypeServiceImpl extends DocumentTyp
 
 	{
 		checkRequiredAttributes = true;
+		// add document number as one required attribute set
 		List<String> listOne = new ArrayList<String>();
 		listOne.add( KimAttributes.DOCUMENT_NUMBER );
 		attributes.add(listOne);
+		// add document type name and KEW application id as one required attribute set
 		List<String> listTwo = new ArrayList<String>();
 		listTwo.add( KimAttributes.DOCUMENT_TYPE_NAME );
 		listTwo.add( StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_ID );
 		attributes.add(listTwo);
-		List<String> listThree = new ArrayList<String>();
-		listThree.add( StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_ID );
-		listThree.add( StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_TYPE );
-		attributes.add(listThree);
+		// add each proposal reference type as a required attribute set
+		for (String proposalReferenceType : StudentIdentityConstants.QUALIFICATION_PROPOSAL_ID_REF_TYPES) {
+	        List<String> tempList = new ArrayList<String>();
+	        tempList.add( proposalReferenceType );
+	        attributes.add(tempList);
+        }
+//		List<String> listFour = new ArrayList<String>();
+//		listFour.add( StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_ID );
+//		listFour.add( StudentIdentityConstants.QUALIFICATION_KEW_OBJECT_TYPE );
+//		attributes.add(listFour);
 
 	}
 

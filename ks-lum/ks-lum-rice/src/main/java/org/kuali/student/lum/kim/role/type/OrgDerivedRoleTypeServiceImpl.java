@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.resourceloader.GlobalResourceLoader;
 import org.kuali.rice.kim.bo.Role;
 import org.kuali.rice.kim.bo.role.dto.RoleMembershipInfo;
@@ -61,11 +62,18 @@ public class OrgDerivedRoleTypeServiceImpl extends KimDerivedRoleTypeServiceBase
 		List<RoleMembershipInfo> members = new ArrayList<RoleMembershipInfo>();
 		
 		String orgId = qualification.get(KualiStudentKimAttributes.QUALIFICATION_ORG_ID);
-		String org = qualification.get(KualiStudentKimAttributes.QUALIFICATION_ORG);
-		
+//		String org = qualification.get(KualiStudentKimAttributes.QUALIFICATION_ORG);
+		if (LOG.isDebugEnabled()) {
+    		LOG.debug("Using Org Values:");
+    		LOG.debug("------ Org ID: " + orgId);
+//    		LOG.debug("------ Org Short Name: " + org);
+    	}
+		if (StringUtils.isEmpty(orgId)) {
+		    throw new RuntimeException("No valid qualifier value found for key: " + KualiStudentKimAttributes.QUALIFICATION_ORG_ID);
+		}
 		//Put the org name into the attribute set
 		AttributeSet attributes = new AttributeSet();
-		attributes.put(KualiStudentKimAttributes.QUALIFICATION_ORG, org);
+//		attributes.put(KualiStudentKimAttributes.QUALIFICATION_ORG, org);
 
 		try {
 			//If the includedOrgPersonRelationType is set, restrict members to that relationship type
