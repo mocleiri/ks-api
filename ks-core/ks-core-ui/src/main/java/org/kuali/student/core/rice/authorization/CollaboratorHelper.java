@@ -2,6 +2,7 @@ package org.kuali.student.core.rice.authorization;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,12 +21,12 @@ import org.kuali.rice.kim.bo.entity.dto.KimEntityDefaultInfo;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.IdentityManagementService;
 import org.kuali.rice.kim.service.RoleUpdateService;
-import org.kuali.rice.kim.service.IdentityManagementService;
+import org.kuali.student.common.exceptions.OperationFailedException;
+import org.kuali.student.common.rice.StudentIdentityConstants;
+import org.kuali.student.common.rice.StudentWorkflowConstants;
+import org.kuali.student.common.rice.StudentWorkflowConstants.ActionRequestType;
+import org.kuali.student.common.rice.authorization.PermissionType;
 import org.kuali.student.common.util.security.SecurityUtils;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.rice.StudentIdentityConstants;
-import org.kuali.student.core.rice.StudentWorkflowConstants;
-import org.kuali.student.core.rice.StudentWorkflowConstants.ActionRequestType;
 import org.kuali.student.core.workflow.dto.WorkflowPersonInfo;
 
 public class CollaboratorHelper implements Serializable {
@@ -44,7 +45,7 @@ public class CollaboratorHelper implements Serializable {
         }
 
 		//get a user name
-        String currentUserPrincipalId = SecurityUtils.getCurrentUserId();
+        String currentUserPrincipalId = SecurityUtils.getCurrentPrincipalId();
 
         ActionRequestType actionRequestType = ActionRequestType.getByCode(actionRequestTypeCode);
         if (actionRequestType == null) {
@@ -96,7 +97,7 @@ public class CollaboratorHelper implements Serializable {
     
     public Boolean removeCollaborator(String docId, String dataId, String actionRequestId) throws OperationFailedException {
         //get the current user
-        String currentUserPrincipalId = SecurityUtils.getCurrentUserId();
+        String currentUserPrincipalId = SecurityUtils.getCurrentPrincipalId();
 
         try {
             String recipientPrincipalId = null;
@@ -126,7 +127,11 @@ public class CollaboratorHelper implements Serializable {
     }
     
     public List<WorkflowPersonInfo> getCollaborators(String docId) throws OperationFailedException{
-		try{
+		//Check if there is no doc id
+    	if(docId==null){
+			return Collections.<WorkflowPersonInfo>emptyList();
+		}
+    	try{
 			LOG.info("Getting collaborators for docId: "+docId);
 
 	        if(getWorkflowUtilityService()==null){
@@ -226,7 +231,7 @@ public class CollaboratorHelper implements Serializable {
 			AttributeSet permissionDetails = new AttributeSet();
 			AttributeSet roleQuals = new AttributeSet();
 			roleQuals.put(StudentIdentityConstants.DOCUMENT_NUMBER,docId);
-			return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(SecurityUtils.getCurrentUserId(), PermissionType.ADD_ADHOC_REVIEWER.getPermissionNamespace(), 
+			return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(SecurityUtils.getCurrentPrincipalId(), PermissionType.ADD_ADHOC_REVIEWER.getPermissionNamespace(), 
 					PermissionType.ADD_ADHOC_REVIEWER.getPermissionTemplateName(), permissionDetails, roleQuals));
 		}
 		return Boolean.FALSE;

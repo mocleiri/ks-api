@@ -33,35 +33,35 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kuali.student.common.dto.AmountInfo;
+import org.kuali.student.common.dto.CurrencyAmountInfo;
+import org.kuali.student.common.dto.RichTextInfo;
+import org.kuali.student.common.dto.StatusInfo;
+import org.kuali.student.common.dto.TimeAmountInfo;
+import org.kuali.student.common.exceptions.AlreadyExistsException;
+import org.kuali.student.common.exceptions.CircularRelationshipException;
+import org.kuali.student.common.exceptions.DataValidationErrorException;
+import org.kuali.student.common.exceptions.DependentObjectsExistException;
+import org.kuali.student.common.exceptions.DoesNotExistException;
+import org.kuali.student.common.exceptions.IllegalVersionSequencingException;
+import org.kuali.student.common.exceptions.InvalidParameterException;
+import org.kuali.student.common.exceptions.MissingParameterException;
+import org.kuali.student.common.exceptions.OperationFailedException;
+import org.kuali.student.common.exceptions.PermissionDeniedException;
+import org.kuali.student.common.exceptions.UnsupportedActionException;
+import org.kuali.student.common.exceptions.VersionMismatchException;
+import org.kuali.student.common.search.dto.SearchParam;
+import org.kuali.student.common.search.dto.SearchRequest;
+import org.kuali.student.common.search.dto.SearchResult;
+import org.kuali.student.common.search.dto.SearchResultCell;
+import org.kuali.student.common.search.dto.SearchResultRow;
 import org.kuali.student.common.test.spring.AbstractServiceTest;
 import org.kuali.student.common.test.spring.Client;
 import org.kuali.student.common.test.spring.Dao;
 import org.kuali.student.common.test.spring.Daos;
 import org.kuali.student.common.test.spring.PersistenceFileLocation;
-import org.kuali.student.core.dto.AmountInfo;
-import org.kuali.student.core.dto.CurrencyAmountInfo;
-import org.kuali.student.core.dto.RichTextInfo;
-import org.kuali.student.core.dto.StatusInfo;
-import org.kuali.student.core.dto.TimeAmountInfo;
-import org.kuali.student.core.exceptions.AlreadyExistsException;
-import org.kuali.student.core.exceptions.CircularRelationshipException;
-import org.kuali.student.core.exceptions.DataValidationErrorException;
-import org.kuali.student.core.exceptions.DependentObjectsExistException;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.IllegalVersionSequencingException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.MissingParameterException;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.exceptions.PermissionDeniedException;
-import org.kuali.student.core.exceptions.UnsupportedActionException;
-import org.kuali.student.core.exceptions.VersionMismatchException;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
-import org.kuali.student.core.search.dto.SearchResultRow;
-import org.kuali.student.core.validation.dto.ValidationResultInfo;
-import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
+import org.kuali.student.common.validation.dto.ValidationResultInfo;
+import org.kuali.student.common.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.lum.lu.dto.AccreditationInfo;
 import org.kuali.student.lum.lu.dto.AdminOrgInfo;
 import org.kuali.student.lum.lu.dto.AffiliatedOrgInfo;
@@ -1538,7 +1538,7 @@ public class TestLuServiceImpl extends AbstractServiceTest {
 			ParseException, AlreadyExistsException, MissingParameterException,
 			DependentObjectsExistException {
 		try {
-			client.updateLuiState(null, "Inactive");
+			client.updateLuiState(null, "Suspended");
 			fail("LuService.updateLuiState() did not throw MissingParameterException for null Lui ID");
 		} catch (MissingParameterException e) {
 		}
@@ -2744,7 +2744,7 @@ public class TestLuServiceImpl extends AbstractServiceTest {
 		desc1.setPlain("Plain description");
 		dto.setDesc(desc1);
 		dto.setCluId("CLU-1");
-		dto.setState("inactive");
+		dto.setState("Suspended");
 		dto.setType("kuali.resultType.gradeCourseResult");
 		dto.setEffectiveDate(new Date());
 		dto.setExpirationDate(new Date());
@@ -2758,7 +2758,7 @@ public class TestLuServiceImpl extends AbstractServiceTest {
 		option.setExpirationDate(new Date());
 		option.setResultComponentId("kuali.resultComponent.grade.letter");
 		option.setResultUsageTypeKey(null);
-		option.setState("inactive");
+		option.setState("Suspended");
 		resultOptions.add(option);
 
         dto.setResultOptions(resultOptions);
@@ -2812,7 +2812,7 @@ public class TestLuServiceImpl extends AbstractServiceTest {
 		desc1.setPlain("Plain description");
 		dto.setDesc(desc1);
 		dto.setCluId("CLU-1");
-		dto.setState("inactive");
+		dto.setState("Suspended");
 		dto.setType("kuali.resultType.gradeCourseResult");
 		dto.setEffectiveDate(new Date());
 		dto.setExpirationDate(new Date());
@@ -2826,7 +2826,7 @@ public class TestLuServiceImpl extends AbstractServiceTest {
 		option.setExpirationDate(new Date());
 		option.setResultComponentId("kuali.resultComponent.grade.letter");
 		//option.setResultUsageTypeKey("lrType.finalGrade");
-		option.setState("inactive");
+		option.setState("Suspended");
 		resultOptions.add(option);
 
         dto.setResultOptions(resultOptions);

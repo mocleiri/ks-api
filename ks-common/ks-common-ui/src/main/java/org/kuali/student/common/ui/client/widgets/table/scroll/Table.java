@@ -1,25 +1,43 @@
 package org.kuali.student.common.ui.client.widgets.table.scroll;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.*;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.ui.*;
-import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.kuali.student.common.ui.client.util.BrowserUtils;
+import org.kuali.student.common.ui.client.util.DebugIdUtils;
 import org.kuali.student.common.ui.client.widgets.list.HasSelectionChangeHandlers;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeEvent;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
 import org.kuali.student.common.ui.client.widgets.notification.LoadingDiv;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasChangeHandlers;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 
 /**
  * A table with UiBinder.
@@ -31,10 +49,9 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
     private FocusType focusType = FocusType.NONE;
 
     private static TableUiBinder uiBinder = GWT.create(TableUiBinder.class);
-    private List<RetrieveAdditionalDataHandler> retrieveDataHandlers = new ArrayList<RetrieveAdditionalDataHandler>();
+    private final List<RetrieveAdditionalDataHandler> retrieveDataHandlers = new ArrayList<RetrieveAdditionalDataHandler>();
 
-    interface TableUiBinder extends UiBinder<Widget, Table> {
-    }
+    interface TableUiBinder extends UiBinder<Widget, Table> {}
 
     interface SelectionStyle extends CssResource {
         String selectedRow();
@@ -47,9 +64,7 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
     }
 
     private static enum FocusType {
-        HEADER,
-        BODY,
-        NONE
+        HEADER, BODY, NONE
     }
 
     @UiField
@@ -68,7 +83,7 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
     HTMLPanel panel;
 
     private TableModel tableModel;
-    private LoadingDiv loading = new LoadingDiv();
+    private final LoadingDiv loading = new LoadingDiv();
 
     public Table() {
         initWidget(uiBinder.createAndBindUi(this));
@@ -77,30 +92,33 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
             @Override
             public void onScroll(ScrollEvent event) {
                 int position = scrollPanel.getScrollPosition();
-                int size = scrollPanel.getWidget().getOffsetHeight();
-                int diff = size - scrollPanel.getOffsetHeight();
-                if (position == diff) {
-                    for (int i = 0; i < retrieveDataHandlers.size(); i++) {
-                        retrieveDataHandlers.get(i).onAdditionalDataRequest();
+                // see 6th comment in KSLAB-1790; possibly not created yet?
+                if (null != scrollPanel.getWidget()) {
+                    int size = scrollPanel.getWidget().getOffsetHeight();
+                    int diff = size - scrollPanel.getOffsetHeight();
+                    if (position == diff) {
+                        for (int i = 0; i < retrieveDataHandlers.size(); i++) {
+                            retrieveDataHandlers.get(i).onAdditionalDataRequest();
+                        }
                     }
                 }
             }
         });
         addHandlers();
     }
-    
-    public void removeAllRows(){
-    	table.removeAllRows();
+
+    public void removeAllRows() {
+        table.removeAllRows();
     }
 
-    public void removeContent(){
-    	getScrollPanel().clear();
+    public void removeContent() {
+        getScrollPanel().clear();
     }
- 
-    public void addContent(){
-    	getScrollPanel().setWidget(getContent());
+
+    public void addContent() {
+        getScrollPanel().setWidget(getContent());
     }
-    
+
     private void addHandlers() {
         focusPanel.addKeyDownHandler(new KeyDownHandler() {
 
@@ -218,15 +236,15 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
             ((AbstractTableModel) tableModel).fireTableStructureChanged();
         }
     }
-    
-    public TableModel getTableModel(){
-    	return tableModel;
+
+    public TableModel getTableModel() {
+        return tableModel;
     }
 
     @UiHandler("table")
     void onTableClicked(ClickEvent event) {
         removeHeaderSelection();
-        //changeFocus(FocusType.BODY);
+        // changeFocus(FocusType.BODY);
         Cell cell = table.getCellForEvent(event);
 
         if (cell == null) {
@@ -286,33 +304,31 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
         tableModel.sort(col);
     }
 
-    private void onTableClicked(int row, String columnId,
-                                TableCellWidget cellWidget) {
+    private void onTableClicked(int row, String columnId, TableCellWidget cellWidget) {
         onTableCellChanged(row, columnId, cellWidget);
     }
 
-    private void onTableCellChanged(int rowIndex, String columnId,
-                                    TableCellWidget cellWidget) {
+    private void onTableCellChanged(int rowIndex, String columnId, TableCellWidget cellWidget) {
         Row row = tableModel.getRow(rowIndex);
         if ("RowHeader".equals(columnId)) {
             row.setSelected(!row.isSelected());
             updateTableSelection();
         }
-        row.setCellData(columnId,
-                cellWidget.getCellEditorValue());
+        row.setCellData(columnId, cellWidget.getCellEditorValue());
     }
 
     private void updateTableSelection() {
         int count = tableModel.getRowCount();
+        String attrName = BrowserUtils.getClassAttr();
         for (int i = 0; i < count; i++) {
             Element tr = table.getRowFormatter().getElement(i);
             if (tableModel.getRow(i).isSelected()) {
-            	tr.setAttribute("class", "table-row-selected");
+                tr.setAttribute(attrName, "table-row-selected");
             } else {
-                tr.setAttribute("class", "table-row");
+                tr.setAttribute(attrName, "table-row");
             }
             if (tableModel.getRow(i).isHighlighted()) {
-            	tr.setAttribute("class", "table-row-hover");
+                tr.setAttribute(attrName, "table-row-hover");
             }
             if (tableModel.isMultipleSelectable()) {
                 updateTableCell(i, 0);
@@ -374,25 +390,37 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
             return;
         }
         final TableCellWidget widget = new TableCellWidget(v);
+        final StringBuilder debugId = new StringBuilder();
+        if ("RowHeader".equals(columnId)) {
+            //Setup debug id
+            //Skip the first 'row selection' column
+            for (int i = 1; i < columnCount; i++) {
+                Column column = tableModel.getColumn(i);
+                Object value = row.getCellData(column.getId());
+                debugId.append(value);
+                if (i != columnCount - 1) {
+                    debugId.append("-");
+                }
+            }
+            widget.getDefaultTableEditor().ensureDebugId(DebugIdUtils.createWebDriverSafeDebugId(debugId.toString()));
+        }
         widget.setCellEditorValue(v);
         if (widget instanceof HasClickHandlers) {
-            ((HasClickHandlers) widget)
-                    .addClickHandler(new ClickHandler() {
-                        @Override
-                        public void onClick(ClickEvent event) {
-                            onTableClicked(r, columnId, widget);
-                        }
-                    });
+            ((HasClickHandlers) widget).addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    onTableClicked(r, columnId, widget);
+                }
+            });
         }
         if (widget instanceof HasChangeHandlers) {
-            ((HasChangeHandlers) widget)
-                    .addChangeHandler(new ChangeHandler() {
-                        @Override
-                        public void onChange(ChangeEvent event) {
-                            onTableCellChanged(r, columnId, widget);
+            ((HasChangeHandlers) widget).addChangeHandler(new ChangeHandler() {
+                @Override
+                public void onChange(ChangeEvent event) {
+                    onTableCellChanged(r, columnId, widget);
 
-                        }
-                    });
+                }
+            });
         }
         table.setWidget(r, c, widget);
     }
@@ -422,8 +450,7 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
     }
 
     @Override
-    public HandlerRegistration addRetrieveAdditionalDataHandler(
-            final RetrieveAdditionalDataHandler handler) {
+    public HandlerRegistration addRetrieveAdditionalDataHandler(final RetrieveAdditionalDataHandler handler) {
         retrieveDataHandlers.add(handler);
         HandlerRegistration result = new HandlerRegistration() {
             @Override
@@ -451,12 +478,11 @@ public class Table extends Composite implements HasRetrieveAdditionalDataHandler
         }
     }
 
-	/**
-	 * @see org.kuali.student.common.ui.client.widgets.list.HasSelectionChangeHandlers#addSelectionChangeHandler(org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler)
-	 */
-	@Override
-	public HandlerRegistration addSelectionChangeHandler(
-			SelectionChangeHandler handler) {
-		return addHandler(handler, SelectionChangeEvent.getType());
-	}
+    /**
+     * @see org.kuali.student.common.ui.client.widgets.list.HasSelectionChangeHandlers#addSelectionChangeHandler(org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler)
+     */
+    @Override
+    public HandlerRegistration addSelectionChangeHandler(SelectionChangeHandler handler) {
+        return addHandler(handler, SelectionChangeEvent.getType());
+    }
 }

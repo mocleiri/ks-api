@@ -2,9 +2,9 @@ package org.kuali.student.common.ui.client.configurable.mvc.binding;
 
 import java.util.Iterator;
 
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Data.Property;
 import org.kuali.student.common.ui.client.mvc.DataModel;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Data.Property;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasText;
@@ -54,7 +54,13 @@ public class ListToTextBinding implements ModelWidgetBinding<HasText> {
                 		DataModel m = new DataModel();
                 		m.setRoot((Data)value);
                 		Object innerObject = m.get(innerObjectKey);
-                		resultString = resultString + innerObject.toString() + ", ";
+                        // KSLAB-1790 - sometime runtimeData isn't there; no idea why
+                        resultString = resultString + (null != innerObject ?
+                                                        innerObject.toString() :
+                                                        "<no value found for item #" +
+                                                            number.toString() +
+                                                            " in list of " +
+                                                            (path.startsWith("/") ? path.substring(1) : path) + ">") + ", ";
                 	}
                 	else{
                 		resultString = resultString + value.toString() + ", ";

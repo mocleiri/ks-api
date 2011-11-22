@@ -6,9 +6,18 @@
   <parent>
     <groupId>org.kuali.student.common</groupId>
     <artifactId>ks-common</artifactId>
-    <version>1.1.1-perf-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
   </parent>
   <dependencies>
+	<!-- This httpclient dependency must be declared above the gwt-dev dependency. 
+		The Selenium tests make use of this newer version of httpclient, but the 
+		gwt-dev dependency contains an older incompatible httpclient dependency that 
+		causes the tests to fail. Also the Selenium tests do work when this dependency 
+		is declared with 'test' scope, it has to be declared with 'compile' scope -->
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+	</dependency>
     <!--
 			GWT Dependencies - all dependencies here override "provided" scope
 			from ks-parent so they will be picked up by any project depending on
@@ -130,6 +139,36 @@
       <artifactId>commons-codec</artifactId>
       <version>20041127.091804</version>
     </dependency>
+        
+    <!-- Jasper Report dependencies -->
+    <dependency>
+		<groupId>net.sf.jasperreports</groupId>
+		<artifactId>jasperreports</artifactId>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.sf.jasperreports</groupId>
+		<artifactId>jasperreports-fonts</artifactId>
+		<scope>runtime</scope>
+		<version>4.0.0</version>
+	</dependency>
+    <dependency>
+		<groupId>com.lowagie</groupId>
+		<artifactId>itext</artifactId>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.sourceforge.jexcelapi</groupId>
+		<artifactId>jxl</artifactId>
+		<scope>compile</scope>
+	</dependency>
+    
+    
   </dependencies>
   <profiles>
     <profile>
