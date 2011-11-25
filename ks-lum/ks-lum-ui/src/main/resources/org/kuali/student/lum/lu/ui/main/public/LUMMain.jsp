@@ -15,7 +15,24 @@
 
 --%>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%
+// We need to detect the browser in order to populate the correct DOCTYPE
+String browser = request.getHeader("User-Agent");
+if(browser.indexOf("MSIE") > 0) {
+%>
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%}
+else if(browser.indexOf("Chrome")> 0) {
+%>
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%
+} else {
+%>
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<%
+}
+%>
+
 <%@page	import="org.kuali.student.common.ui.server.messages.MessageRPCPreloader"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
@@ -23,6 +40,39 @@
 
 <html>
 <head>
+<% if(browser.indexOf("MSIE") > 0) { %>
+	<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<% } %>
+
+<%
+	// When running in a multi-server system, it's important to know
+	// who you ar, your session id, and what machine you're using. 
+	String user = null;
+	String sessionId = null;
+	String hostName = java.net.InetAddress.getLocalHost().getHostName();
+	String hostIp = request.getLocalAddr();
+	try{
+		user = org.springframework.security.context.SecurityContextHolder.getContext().getAuthentication().getName();		
+	}catch(NullPointerException ex){
+		user = "null";
+	}
+	
+	try{
+		sessionId = request.getSession(false).getId();	
+	}catch(NullPointerException ex){
+		sessionId = "null";
+	}
+%>
+
+<!-- 
+Server Info:
+ User Name:  <%= user %>
+ Host Name:  <%= hostName %>
+ Host IP:    <%= hostIp %>
+ Session ID: <%= sessionId %>
+ -->
+ 
+ 
 </head>
 
 <body>

@@ -20,8 +20,6 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,27 +29,19 @@ import org.jasig.cas.client.validation.Assertion;
 import org.kuali.student.security.saml.service.SamlIssuerService;
 import org.kuali.student.security.util.SamlUtils;
 import org.opensaml.SAMLAssertion;
-import org.springframework.security.cas.authentication.CasAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.cas.CasAuthenticationToken;
+import org.springframework.security.ui.FilterChainOrder;
+import org.springframework.security.ui.SpringSecurityFilter;
 import org.w3c.dom.Document;
 
-public class ProxyTicketRetrieverFilter extends GenericFilterBean {
+public class ProxyTicketRetrieverFilter extends SpringSecurityFilter {
     
     private String proxyTargetService = null;
     private SamlIssuerService samlIssuerService;
     private boolean useCasProxyMechanism = false;
-   
-    public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-			doFilterHttp((HttpServletRequest) request,
-					(HttpServletResponse) response, chain);
-		} else {
-			// TODO: handle this
-		}
-	}
-        
+    
+    @Override
     public void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         CasAuthenticationToken cat = (CasAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -113,11 +103,10 @@ public class ProxyTicketRetrieverFilter extends GenericFilterBean {
         return false;
     }
 
-    /* I don't think we need this anymore
     @Override
     public int getOrder() {
         return FilterChainOrder.CAS_PROCESSING_FILTER + 2;
-    }*/
+    }
 
     public String getProxyTargetService() {
         return proxyTargetService;
