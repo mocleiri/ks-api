@@ -7,9 +7,9 @@ import org.kuali.student.enrollment.academicrecord.dto.GPAInfo;
 import org.kuali.student.enrollment.academicrecord.dto.StudentCourseRecordInfo;
 import org.kuali.student.enrollment.academicrecord.service.AcademicRecordService;
 import org.kuali.student.enrollment.class2.academicrecord.service.assembler.StudentCourseRecordAssembler;
-import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseregistration.dto.CourseRegistrationInfo;
 import org.kuali.student.enrollment.courseregistration.service.CourseRegistrationService;
+import org.kuali.student.enrollment.grading.service.GradingService;
 import org.kuali.student.r2.common.assembler.AssemblyException;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.exceptions.DisabledIdentifierException;
@@ -18,11 +18,42 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.lum.lrc.service.LRCService;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly=true,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
 public class AcademicRecordServiceImpl implements AcademicRecordService{
 	private CourseRegistrationService courseRegService;
+
+    public GradingService getGradingService() {
+        return gradingService;
+    }
+
+    public void setGradingService(GradingService gradingService) {
+        this.gradingService = gradingService;
+    }
+
+    public LRCService getLrcService() {
+        return lrcService;
+    }
+
+    public void setLrcService(LRCService lrcService) {
+        this.lrcService = lrcService;
+    }
+
+    private GradingService gradingService;
+    private LRCService lrcService;
+
+    public AtpService getAtpService() {
+        return atpService;
+    }
+
+    public void setAtpService(AtpService atpService) {
+        this.atpService = atpService;
+    }
+
+    private AtpService atpService;
 	private StudentCourseRecordAssembler courseRecordAssembler;
 	
 	public CourseRegistrationService getCourseRegService() {
@@ -40,7 +71,10 @@ public class AcademicRecordServiceImpl implements AcademicRecordService{
 
 	public void setCourseRecordAssembler(
 			StudentCourseRecordAssembler courseRecordAssembler) {
-		this.courseRecordAssembler = courseRecordAssembler;
+		courseRecordAssembler.setAtpService(atpService);
+        courseRecordAssembler.setGradingService(gradingService);
+        courseRecordAssembler.setLrcService(lrcService);
+        this.courseRecordAssembler = courseRecordAssembler;
 	}
 
 	@Override
@@ -73,7 +107,17 @@ public class AcademicRecordServiceImpl implements AcademicRecordService{
 			String personId, ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException {
-		throw new UnsupportedOperationException("Method not yet implemented!");
+		List<StudentCourseRecordInfo> courseRecords = new ArrayList<StudentCourseRecordInfo>();
+		try {
+			List<CourseRegistrationInfo> regs = courseRegService.getCourseRegistrationsForStudent(personId, context);
+			getCompletedCourseRecords(courseRecords, regs, context);
+		} catch (PermissionDeniedException e) {
+			throw new OperationFailedException();
+		} catch (DisabledIdentifierException e) {
+			throw new OperationFailedException();
+		}
+
+		return courseRecords;
 	}
 
 	@Override
@@ -84,15 +128,7 @@ public class AcademicRecordServiceImpl implements AcademicRecordService{
 		List<StudentCourseRecordInfo> courseRecords = new ArrayList<StudentCourseRecordInfo>();
 		try {
 			List<CourseRegistrationInfo> regs = courseRegService.getCourseRegistrationsForStudentByTerm(personId, termKey, context);
-			if(regs != null && !regs.isEmpty()){
-				for (CourseRegistrationInfo reg : regs ){
-					StudentCourseRecordInfo courseRecord = courseRecordAssembler.assemble(reg, context);
-					if (courseRecord != null) {
-						if(courseRecord.getAssignedGradeValue()!= null)
-							courseRecords.add(courseRecord);
-					}
-				}
-			}
+			getCompletedCourseRecords(courseRecords, regs, context);
 		} catch (PermissionDeniedException e) {
 			throw new OperationFailedException();
 		} catch (DisabledIdentifierException e) {

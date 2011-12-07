@@ -266,7 +266,7 @@ public class CourseOfferingAssembler implements DTOAssembler<CourseOfferingInfo,
 		courseOfferingInfo.setCourseOfferingCode(courseInfo.getCode());
 		courseOfferingInfo.setUnitsContentOwner(courseInfo.getUnitsContentOwner());
 		courseOfferingInfo.setUnitsDeployment(courseInfo.getUnitsDeployment());
-		courseOfferingInfo.setGradingOptionIds(courseInfo.getGradingOptions());
+		courseOfferingInfo.setGradingOptionKeys(courseInfo.getGradingOptions());
 		if (courseInfo.getCreditOptions() == null) {
 		    courseOfferingInfo.setCreditOptions(null);
 		} else if (courseInfo.getCreditOptions().isEmpty()) {

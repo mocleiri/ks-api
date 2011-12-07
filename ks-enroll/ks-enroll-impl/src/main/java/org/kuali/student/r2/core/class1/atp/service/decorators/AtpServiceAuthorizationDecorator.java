@@ -1,6 +1,11 @@
 package org.kuali.student.r2.core.class1.atp.service.decorators;
 
+import java.util.Date;
+import java.util.List;
+
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.rice.kim.service.PermissionService;
+import org.kuali.student.r2.common.datadictionary.dto.DictionaryEntryInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StateInfo;
 import org.kuali.student.r2.common.dto.StateProcessInfo;
@@ -10,6 +15,7 @@ import org.kuali.student.r2.common.dto.TypeTypeRelationInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.*;
 import org.kuali.student.r2.common.infc.HoldsPermissionService;
+import org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
 import org.kuali.student.r2.core.atp.service.AtpServiceDecorator;
@@ -17,6 +23,9 @@ import org.kuali.student.r2.core.atp.service.AtpServiceDecorator;
 public class AtpServiceAuthorizationDecorator extends AtpServiceDecorator implements HoldsPermissionService {
     
     private PermissionService permissionService;
+
+    public static final String ENRLLMENT_NAMESPACE = "KS-ENROLL";
+    public static final String SERVICE_NAME = "AtpService.";
 
     @Override
     public PermissionService getPermissionService() {
