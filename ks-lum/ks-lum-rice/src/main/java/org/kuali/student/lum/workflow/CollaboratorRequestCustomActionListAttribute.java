@@ -15,10 +15,10 @@
 
 package org.kuali.student.lum.workflow;
 
+import org.kuali.rice.kew.actionitem.ActionItem;
 import org.kuali.rice.kew.actionlist.CustomActionListAttribute;
-import org.kuali.rice.kew.api.action.ActionItem;
-import org.kuali.rice.kew.api.action.ActionSet;
-import org.kuali.rice.kew.api.actionlist.DisplayParameters;
+import org.kuali.rice.kew.actionlist.DisplayParameters;
+import org.kuali.rice.kew.actions.ActionSet;
 
 public class CollaboratorRequestCustomActionListAttribute implements
 		CustomActionListAttribute {
@@ -28,7 +28,7 @@ public class CollaboratorRequestCustomActionListAttribute implements
 	/**
 	 * Sets up the default ActionSet which includes only FYIs.
 	 */
-	private static ActionSet DEFAULT_LEGAL_ACTIONS = ActionSet.Builder.create().build();
+	private static ActionSet DEFAULT_LEGAL_ACTIONS = new ActionSet();
 	static {
 		DEFAULT_LEGAL_ACTIONS.addApprove();
 		DEFAULT_LEGAL_ACTIONS.addDisapprove();
@@ -45,7 +45,5 @@ public class CollaboratorRequestCustomActionListAttribute implements
     public DisplayParameters getDocHandlerDisplayParameters(String principalId, ActionItem actionItem) throws Exception{
         return null;
     }
-
-
 
 }

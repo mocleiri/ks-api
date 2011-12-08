@@ -31,7 +31,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
                 <ref bean="CourseOfferingInfoUI.termKey"/>
                 <ref bean="CourseOfferingInfoUI.subjectArea"/>
                 <ref bean="CourseOfferingInfoUI.courseOfferingCode"/>
-                <ref bean="CourseOfferingInfoUI.maximumEnrollment"/>
                 
                 <!--  other attributes not used by UI -->		
                 <ref bean="CourseOfferingInfo.typeKey"/>
@@ -40,6 +39,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
                 <ref bean="CourseOfferingInfo.courseTitle"/>
                 <ref bean="CourseOfferingInfo.isHonorsOffering"/>
                 <ref bean="CourseOfferingInfo.hasFinalExam"/>
+                <ref bean="CourseOfferingInfo.maximumEnrollment"/>
                 <ref bean="CourseOfferingInfo.minimumEnrollment"/>
                 <ref bean="CourseOfferingInfo.gradeRosterLevelTypeKey"/>
                 <ref bean="CourseOfferingInfo.hasWaitlist"/>
@@ -107,10 +107,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
         <property name="controlField">
             <bean parent="SelectControl"/>
         </property>
-        <!--
         <property name="optionsFinder">
             <bean class="org.kuali.student.enrollment.class2.acal.keyvalue.TermKeyValues"/>
-        </property> -->
+        </property>
     </bean>   
 
     <bean id="CourseOfferingInfoUI.subjectArea" parent="CourseOfferingInfo.subjectArea-parent">
@@ -122,11 +121,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
         </property>
     </bean>
 
-    <bean id="CourseOfferingInfoUI.maximumEnrollment" parent="CourseOfferingInfo.maximumEnrollment-parent">
-         <property name="required" value="true"/>
-         <property name="summary" value=""/>
-    </bean>
-
   <!-- Lookup View 
   <bean id="CourseOfferingInfo-LookupView" parent="KSLookupView">
     <property name="title" value="Course Offering Info Lookup" />
@@ -135,15 +129,15 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
   
     <property name="criteriaFields">
       <list>
-        <bean parent="LookupCriteriaInputField" p:propertyName="key" />
-        <bean parent="LookupCriteriaInputField" p:propertyName="typeKey"/>
+        <bean parent="LookupCriteriaAttributeField" p:propertyName="key" />
+        <bean parent="LookupCriteriaAttributeField" p:propertyName="typeKey"/> 
       </list>
     </property>
     <property name="resultFields">
       <list>
-		<bean parent="InputField" p:propertyName="key" />
-        <bean parent="InputField" p:propertyName="termKey" />
-        <bean parent="InputField" p:propertyName="courseId" />
+		<bean parent="AttributeField" p:propertyName="key" />
+        <bean parent="AttributeField" p:propertyName="termKey" /> 		
+        <bean parent="AttributeField" p:propertyName="courseId" />
       </list>
     </property>
   </bean>
@@ -152,29 +146,25 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
         <property name="title" value="Course Offering Maintenance"/>
         <property name="dataObjectClassName" value="org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo"/>
         <property name="viewHelperServiceClassName" value="org.kuali.student.enrollment.class2.courseoffering.service.CourseOfferingInfoMaintainableImpl" />
-        <property name="header">
-             <ref bean="KSHeader_Empty" />
-        </property>
         <property name="items">
-            <!--<list merge="true">-->
+            <list merge="true">
             <!-- remove merge="true" would not inherit Document Overview section -->
-            <list>
+            <!--<list>-->
                 <bean parent="MaintenanceGroupSectionGridLayout">
                     <property name="title" value="Create a New Course Offering"/>
                     <property name="items">
                         <list>
-                            <bean parent="InputField" p:propertyName="termKey">
+                            <bean parent="AttributeField" p:propertyName="termKey">
                                 <property name="fieldLookup.dataObjectClassName" value="org.kuali.student.enrollment.acal.dto.TermInfo"/>
                                 <property name="fieldLookup.fieldConversions" value="key:termKey"/>
                                 <property name="control">
               			            <bean parent="SelectControl"/>
             		            </property>
-                                <!--
                                 <property name="optionsFinder">
                                     <bean class="org.kuali.student.enrollment.class2.acal.keyvalue.TermKeyValues"/>
-                                </property>    -->
+                                </property>
                              </bean>
-                            <bean parent="InputField" p:propertyName="courseOfferingCode">
+                            <bean parent="AttributeField" p:propertyName="courseOfferingCode">
                                 <property name="fieldLookup.dataObjectClassName" value="org.kuali.student.lum.course.dto.CourseInfo"/>
                                 <property name="fieldLookup.fieldConversions">
                                     <map>
@@ -182,7 +172,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
                                     </map>
                                 </property> 
                             </bean>
-                            <bean parent="InputField" p:propertyName="maximumEnrollment" />
                         </list>
                     </property>             
                 </bean>
@@ -193,7 +182,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
                     <property name="propertyName" value="instructors"/>
                     <property name="items">
                         <list>
-                            <bean parent="InputField" p:propertyName="personId" p:label="Instructor ID">
+                            <bean parent="AttributeField" p:propertyName="personId" p:label="Instructor ID">
                                 <property name="fieldLookup.dataObjectClassName" value="org.kuali.rice.kim.bo.impl.PersonImpl"/>
                                 <property name="fieldLookup.fieldConversions">
                                     <map>
@@ -212,9 +201,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
                 </bean>  
            
             </list>
-        </property>
-        <property name="footer">
-	        <ref bean="KSFooter_SubmitCancel" />
         </property>
     </bean>  
 
