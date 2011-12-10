@@ -3,8 +3,8 @@ package org.kuali.student.enrollment.class1.hold.service.decorators;
 import java.util.List;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
-import org.kuali.rice.kim.service.PermissionService;
-
+// import org.kuali.rice.kim.service.PermissionService;
+import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.student.r2.common.datadictionary.dto.DictionaryEntryInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StateInfo;
@@ -25,7 +25,6 @@ import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.infc.HoldsPermissionService;
 import org.kuali.student.r2.core.hold.dto.HoldInfo;
 import org.kuali.student.r2.core.hold.dto.IssueInfo;
-import org.kuali.student.r2.core.hold.dto.RestrictionInfo;
 import org.kuali.student.r2.core.hold.service.HoldServiceDecorator;
 
 public class HoldServiceAuthorizationDecorator extends HoldServiceDecorator implements HoldsPermissionService {
@@ -218,20 +217,6 @@ public class HoldServiceAuthorizationDecorator extends HoldServiceDecorator impl
     }
 
     @Override
-    public List<HoldInfo> getHoldsByIds(List<String> holdIdList, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException,
-            PermissionDeniedException {
-        if (null == context) {
-            throw new MissingParameterException();
-        }
-
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getHoldsByIdList", null, null)) {
-            return getNextDecorator().getHoldsByIds(holdIdList, context);
-        } else {
-            throw new PermissionDeniedException();
-        }
-    }
-
-    @Override
     public List<HoldInfo> getHoldsByIssue(String issueId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         if (null == context) {
             throw new MissingParameterException();
@@ -357,19 +342,6 @@ public class HoldServiceAuthorizationDecorator extends HoldServiceDecorator impl
     }
 
     @Override
-    public List<String> getIssueKeysByType(String issueTypeKey, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        if (null == context) {
-            throw new MissingParameterException();
-        }
-
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getIssueKeysByType", null, null)) {
-            return getNextDecorator().getIssueKeysByType(issueTypeKey, context);
-        } else {
-            throw new PermissionDeniedException();
-        }
-    }
-
-    @Override
     public List<IssueInfo> getIssuesByOrg(String organizationId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         if (null == context) {
             throw new MissingParameterException();
@@ -377,20 +349,6 @@ public class HoldServiceAuthorizationDecorator extends HoldServiceDecorator impl
 
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getIssuesByOrg", null, null)) {
             return getNextDecorator().getIssuesByOrg(organizationId, context);
-        } else {
-            throw new PermissionDeniedException();
-        }
-    }
-
-    @Override
-    public List<String> searchForIssueKeys(QueryByCriteria criteria, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException,
-            PermissionDeniedException {
-        if (null == context) {
-            throw new MissingParameterException();
-        }
-
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "searchForIssueIds", null, null)) {
-            return getNextDecorator().searchForIssueKeys(criteria, context);
         } else {
             throw new PermissionDeniedException();
         }
