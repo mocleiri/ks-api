@@ -15,10 +15,9 @@
 package org.kuali.student.r2.common.util.constants;
 
 import org.kuali.student.enrollment.acal.dto.AcademicCalendarInfo;
-import org.kuali.student.enrollment.acal.dto.CampusCalendarInfo;
+import org.kuali.student.enrollment.acal.dto.HolidayCalendarInfo;
 import org.kuali.student.enrollment.acal.dto.HolidayInfo;
 import org.kuali.student.enrollment.acal.dto.KeyDateInfo;
-import org.kuali.student.enrollment.acal.dto.RegistrationDateGroupInfo;
 import org.kuali.student.enrollment.acal.dto.TermInfo;
 
 /**
@@ -31,18 +30,21 @@ public class AcademicCalendarServiceConstants {
     /**
      * Reference Object URI's
      */
-    public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "academiccalendar";
+    // TODO replace "acal" in namespace with "academiccalendar"
+    public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "acal";
+    public static final String SERVICE_NAME_LOCAL_PART = "AcademicCalendarService";
     public static final String REF_OBJECT_URI_TERM = NAMESPACE + "/" + TermInfo.class.getSimpleName();
     public static final String REF_OBJECT_URI_ACADEMIC_CALENDAR = NAMESPACE + "/" + AcademicCalendarInfo.class.getSimpleName();
-    public static final String REF_OBJECT_URI_CAMPUS_CALENDAR = NAMESPACE + "/" + CampusCalendarInfo.class.getSimpleName();
+    public static final String REF_OBJECT_URI_HOLIDAY_CALENDAR = NAMESPACE + "/" + HolidayCalendarInfo.class.getSimpleName();
     public static final String REF_OBJECT_URI_HOLIDAY = NAMESPACE + "/" + HolidayInfo.class.getSimpleName();
     public static final String REF_OBJECT_URI_KEY_DATE = NAMESPACE + "/" + KeyDateInfo.class.getSimpleName();
-    public static final String REF_OBJECT_URI_ENROLLMENT_DATE_GROUP = NAMESPACE + "/" + RegistrationDateGroupInfo.class.getSimpleName();
+
     /**
      * Academic Calendar Types
      */
     public static final String ACADEMIC_CALENDAR_TYPE_KEY = AtpServiceConstants.ATP_ACADEMIC_CALENDAR_TYPE_KEY;
-    public static final String CAMPUS_CALENDAR_TYPE_KEY = AtpServiceConstants.ATP_CAMPUS_CALENDAR_TYPE_KEY;
+    public static final String CAMPUS_CALENDAR_TYPE_KEY = AtpServiceConstants.ATP_HOLIDAY_CALENDAR_TYPE_KEY;
+
     /**
      * Registration Date Groups
      */

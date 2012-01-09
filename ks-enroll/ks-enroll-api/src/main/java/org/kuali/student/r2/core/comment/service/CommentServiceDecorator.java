@@ -154,37 +154,8 @@ public class CommentServiceDecorator implements CommentService {
     }
 
     @Override
-    public List<String> getDataDictionaryEntryKeys(ContextInfo contextInfo) throws OperationFailedException, MissingParameterException, PermissionDeniedException {
-        return getNextDecorator().getDataDictionaryEntryKeys(contextInfo);
-    }
-
-    @Override
-    public DictionaryEntryInfo getDataDictionaryEntry(String entryKey, ContextInfo contextInfo) throws OperationFailedException, MissingParameterException, PermissionDeniedException, DoesNotExistException {
-        return getNextDecorator().getDataDictionaryEntry(entryKey, contextInfo);
-    }
-
-    @Override
     public StatusInfo deleteTag(String tagId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         return getNextDecorator().deleteTag(tagId, contextInfo);
     }
 
-    @Override
-    public TypeInfo getType(String typeKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getType(typeKey, contextInfo);
-    }
-
-    @Override
-    public List<TypeInfo> getTypesByRefObjectURI(String refObjectURI, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getTypesByRefObjectURI(refObjectURI, contextInfo);
-    }
-
-    @Override
-    public List<TypeInfo> getAllowedTypesForType(String ownerTypeKey, String relatedRefObjectURI, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getAllowedTypesForType(ownerTypeKey, relatedRefObjectURI, contextInfo);
-    }
-
-    @Override
-    public List<TypeTypeRelationInfo> getTypeRelationsByOwnerType(String ownerTypeKey, String relationTypeKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        return getNextDecorator().getTypeRelationsByOwnerType(ownerTypeKey, relationTypeKey, contextInfo);
-    }
 }

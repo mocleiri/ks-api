@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,10 +26,6 @@ import org.kuali.student.r2.core.atp.dto.AtpAtpRelationInfo;
 import org.kuali.student.r2.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.dto.MilestoneInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
-import org.kuali.student.r2.core.class1.atp.service.decorators.AtpServiceValidationDecorator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -40,8 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager = "JtaTxManager", defaultRollback = true)
 public class TestAtpServiceImpl {
 
-    @Autowired
-    @Qualifier("atpServiceValidationDecorator")
+    @Resource(name="atpServiceAuthDecorator")
     public AtpService atpService;
 
     public static String principalId = "123";
@@ -66,7 +62,7 @@ public class TestAtpServiceImpl {
 		try{
 			AtpInfo atpInfo = atpService.getAtp("testAtpId1", callContext);
 			assertNotNull(atpInfo);
-			assertEquals("testAtpId1", atpInfo.getKey());
+			assertEquals("testAtpId1", atpInfo.getId());
 			assertEquals("testAtp1", atpInfo.getName());
 			assertEquals("Desc 101", atpInfo.getDescr().getPlain());
 			assertEquals("kuali.atp.state.Draft", atpInfo.getStateKey());
@@ -81,12 +77,12 @@ public class TestAtpServiceImpl {
 		}
     }
 
-    @Test 
+    @Test
     public void testAtpCrud()throws DoesNotExistException, InvalidParameterException,
     MissingParameterException, OperationFailedException, PermissionDeniedException {
         // test create
         AtpInfo atpInfo = new AtpInfo();
-        atpInfo.setKey("newId");
+        atpInfo.setId("newId");
         atpInfo.setName("newId");
         atpInfo.setTypeKey("kuali.atp.type.AcademicCalendar");
         atpInfo.setStateKey("kuali.atp.state.Draft");
@@ -99,7 +95,7 @@ public class TestAtpServiceImpl {
         try {
             created = atpService.createAtp("newId", atpInfo, callContext);
             assertNotNull(created);
-            assertEquals("newId", created.getKey());
+            assertEquals("newId", created.getId());
         } catch (AlreadyExistsException e) {
             fail(e.getMessage());
         } catch (DataValidationErrorException e) {
@@ -109,7 +105,7 @@ public class TestAtpServiceImpl {
         // test read
 		AtpInfo fetched = atpService.getAtp("newId", callContext);
 		assertNotNull(fetched);
-		assertEquals("newId", fetched.getKey());
+		assertEquals("newId", fetched.getId());
 		assertEquals("newId", fetched.getName());
 		assertEquals("TestDesc1", fetched.getDescr().getPlain());
 		assertEquals("kuali.atp.state.Draft", fetched.getStateKey());
@@ -117,11 +113,11 @@ public class TestAtpServiceImpl {
          
         // test update
         String atpNameOrig = fetched.getName();
-        AtpInfo modified = AtpInfo.getInstance(fetched);
+        AtpInfo modified = new AtpInfo(fetched);
         modified.setName(atpNameOrig + "updated");
         AtpInfo updated = null;
         try {
-	        updated = atpService.updateAtp(fetched.getKey(), modified, callContext);
+	        updated = atpService.updateAtp(fetched.getId(), modified, callContext);
         } catch (Exception e) {
             fail("Exception thrown when updating ATP: " + e.getMessage());
         }
@@ -131,7 +127,7 @@ public class TestAtpServiceImpl {
         // test delete
         atpInfo = atpService.getAtp("testDeleteAtpId1", callContext);
         assertNotNull(atpInfo);
-        assertEquals("testDeleteAtpId1", atpInfo.getKey());
+        assertEquals("testDeleteAtpId1", atpInfo.getId());
         
         try{
 	        atpService.deleteAtp("testDeleteAtpId1", callContext);
@@ -143,11 +139,11 @@ public class TestAtpServiceImpl {
             fail(e.getMessage());
         }
         // undo the update done above
-        updated = atpService.getAtp(updated.getKey(), callContext);
+        updated = atpService.getAtp(updated.getId(), callContext);
         updated.setName(atpNameOrig);
         
         try {
-	        updated = atpService.updateAtp(updated.getKey(), updated, callContext);
+	        updated = atpService.updateAtp(updated.getId(), updated, callContext);
         } catch (Exception e) {
             fail("Exception thrown when updating ATP: " + e.getMessage());
         }
@@ -160,14 +156,14 @@ public class TestAtpServiceImpl {
     MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException, VersionMismatchException {
         AtpInfo atpInfo = atpService.getAtp("testAtpId1", callContext);
         assertNotNull(atpInfo);
-        assertEquals("testAtpId1", atpInfo.getKey());
+        assertEquals("testAtpId1", atpInfo.getId());
         
         String atpNameOrig = atpInfo.getName();
-        AtpInfo modified = AtpInfo.getInstance(atpInfo);
+        AtpInfo modified = new AtpInfo(atpInfo);
         modified.setName(atpNameOrig + "updated");
         AtpInfo updated = null;
         try {
-            updated = atpService.updateAtp(atpInfo.getKey(), modified, callContext);
+            updated = atpService.updateAtp(atpInfo.getId(), modified, callContext);
         } catch (ReadOnlyException e) {
             fail(e.getMessage());
         }
@@ -178,8 +174,8 @@ public class TestAtpServiceImpl {
     @Test
     public void testCreateAtp()throws DoesNotExistException, InvalidParameterException,
     MissingParameterException, OperationFailedException, PermissionDeniedException{
-        AtpInfo atpInfo = AtpInfo.newInstance();
-        atpInfo.setKey("newId2");
+        AtpInfo atpInfo = new AtpInfo();
+        atpInfo.setId("newId2");
         atpInfo.setName("newId2");
         atpInfo.setTypeKey("kuali.atp.type.AcademicCalendar");
         atpInfo.setStateKey("kuali.atp.state.Draft");
@@ -188,7 +184,7 @@ public class TestAtpServiceImpl {
         try {
             AtpInfo created = atpService.createAtp("newId2", atpInfo, callContext);
             assertNotNull(created);
-            assertEquals("newId2", created.getKey());
+            assertEquals("newId2", created.getId());
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -197,7 +193,7 @@ public class TestAtpServiceImpl {
         AtpInfo retrieved = atpService.getAtp("newId2", callContext);
         
         assertNotNull(retrieved);
-        assertEquals("newId2", retrieved.getKey());
+        assertEquals("newId2", retrieved.getId());
     }
    
     @Test
@@ -205,7 +201,7 @@ public class TestAtpServiceImpl {
     InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
         AtpInfo atpInfo = atpService.getAtp("testDeleteAtpId2", callContext);
         assertNotNull(atpInfo);
-        assertEquals("testDeleteAtpId2", atpInfo.getKey());
+        assertEquals("testDeleteAtpId2", atpInfo.getId());
         
         try{
 	        atpService.deleteAtp("testDeleteAtpId2", callContext);
@@ -236,7 +232,7 @@ public class TestAtpServiceImpl {
 
         // make sure the required keys are in the retrieved list:
         for (AtpInfo atpInfo : atpInfos) {
-            requiredKeys.remove(atpInfo.getKey());
+            requiredKeys.remove(atpInfo.getId());
         }
         if (!requiredKeys.isEmpty()) {
             fail("Failed to find key '"+ requiredKeys.get(0) +"' in returned list");
@@ -246,7 +242,7 @@ public class TestAtpServiceImpl {
     @Test
     public void testCreateMilestone() throws DataValidationErrorException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DoesNotExistException {
         MilestoneInfo milestone = new MilestoneInfo();
-        milestone.setKey("newId");
+        milestone.setId("newId");
         milestone.setName("testCreate");
         
         Calendar cal = Calendar.getInstance();
@@ -265,7 +261,7 @@ public class TestAtpServiceImpl {
         try {
             MilestoneInfo created = atpService.createMilestone(milestone, callContext);
             assertNotNull(created);
-            assertEquals("newId", created.getKey());
+            assertEquals("newId", created.getId());
             assertEquals("testCreate", created.getName());
         } catch (ReadOnlyException e) {
             fail(e.getMessage());
@@ -289,7 +285,7 @@ public class TestAtpServiceImpl {
     @Test
     public void testUpdateMilestone() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException, VersionMismatchException {
         MilestoneInfo milestone = new MilestoneInfo();
-        milestone.setKey("newId2");
+        milestone.setId("newId2");
         milestone.setName("testCreate");
         
         Calendar cal = Calendar.getInstance();
@@ -309,7 +305,7 @@ public class TestAtpServiceImpl {
         try {
             MilestoneInfo created = atpService.createMilestone(milestone, callContext);
             assertNotNull(created);
-            assertEquals("newId2", created.getKey());
+            assertEquals("newId2", created.getId());
             assertEquals("testCreate", created.getName());
         } catch (ReadOnlyException e) {
             fail(e.getMessage());
@@ -328,13 +324,13 @@ public class TestAtpServiceImpl {
             fail(e.getMessage());
         }
         assertNotNull(updated);
-        assertEquals(updated.getKey(), "newId2");
+        assertEquals(updated.getId(), "newId2");
         assertEquals(updated.getName(), updatedName);
         
         // now fetch the updated milestone fresh, and check fields
         updated = atpService.getMilestone("newId2", callContext);
         assertNotNull(updated);
-        assertEquals(updated.getKey(), "newId2");
+        assertEquals(updated.getId(), "newId2");
         assertEquals(updated.getName(), updatedName);
         
         
@@ -381,7 +377,7 @@ public class TestAtpServiceImpl {
     public void testGetMilestone() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         MilestoneInfo milestoneInfo = atpService.getMilestone("testId", callContext);
         assertNotNull(milestoneInfo);
-        assertEquals("testId", milestoneInfo.getKey());
+        assertEquals("testId", milestoneInfo.getId());
         assertEquals("testId", milestoneInfo.getName());
         assertEquals("Desc 105", milestoneInfo.getDescr().getPlain());
         assertEquals(AtpServiceConstants.MILESTONE_DRAFT_STATE_KEY, milestoneInfo.getStateKey());
@@ -399,20 +395,20 @@ public class TestAtpServiceImpl {
     
     @Test
     public void testGetMilestonesByKeyList() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<String> milestoneKeys = new ArrayList<String>();
-        milestoneKeys.addAll(Arrays.asList("testId", "testId2"));
+        List<String> milestoneIds = new ArrayList<String>();
+        milestoneIds.addAll(Arrays.asList("testId", "testId2"));
         
-        List<MilestoneInfo> milestones = atpService.getMilestonesByIds(milestoneKeys, callContext);
+        List<MilestoneInfo> milestones = atpService.getMilestonesByIds(milestoneIds, callContext);
         
         assertNotNull(milestones);
-        assertEquals(milestoneKeys.size(), milestones.size());
+        assertEquals(milestoneIds.size(), milestones.size());
         
         // check that all the expected ids came back
         for(MilestoneInfo info : milestones) {
-            milestoneKeys.remove(info.getKey());
+            milestoneIds.remove(info.getId());
         }
         
-        assertTrue(milestoneKeys.isEmpty());
+        assertTrue(milestoneIds.isEmpty());
         
         // now make sure an exception is thrown for any not found keys
         
@@ -455,7 +451,7 @@ public class TestAtpServiceImpl {
 
         // check that all the expected ids came back
         for(MilestoneInfo info : milestones) {
-            expectedIds.remove(info.getKey());
+            expectedIds.remove(info.getId());
         }
         
         assertTrue(expectedIds.isEmpty());
@@ -473,8 +469,8 @@ public class TestAtpServiceImpl {
     @Test
     public void testGetMilestoneIdsByType() throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         String expectedMilestoneType = "kuali.atp.milestone.RegistrationPeriod";
-        List<String> milestoneKeys = atpService.getMilestoneIdsByType(expectedMilestoneType, callContext);
-        assertTrue(milestoneKeys.contains("testId2"));
+        List<String> milestoneIds = atpService.getMilestoneIdsByType(expectedMilestoneType, callContext);
+        assertTrue(milestoneIds.contains("testId2"));
         
         String fakeMilestoneType = "fakeTypeKey";
         List<String> shouldBeNull = null;
@@ -499,7 +495,7 @@ public class TestAtpServiceImpl {
         
         // check that all the expected ids came back
         for(MilestoneInfo info : milestones) {
-            expectedIds.remove(info.getKey());
+            expectedIds.remove(info.getId());
         }
         
         assertTrue(expectedIds.isEmpty());
@@ -517,142 +513,142 @@ public class TestAtpServiceImpl {
     }
     
 
-    @Test
-    public void testGetType() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
-        try {
-	        TypeInfo typeInfo = atpService.getType(AtpServiceConstants.ATP_CAMPUS_CALENDAR_TYPE_KEY, callContext);
-	        assertNotNull(typeInfo);
-	        try {
-		        typeInfo = atpService.getType("totally.bogus.type.key", callContext);
-		        fail("Did not receive DoesNotExistException when getting nonexistent TypeInfo");
-	        } catch (DoesNotExistException dnee) { /* expected */ }
-	    } catch (Exception e) {
-	        fail(e.getMessage());
-	    }
-    }
+//    @Test
+//    public void testGetType() throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
+//        try {
+//	        TypeInfo typeInfo = atpService.getType(AtpServiceConstants.ATP_HOLIDAY_CALENDAR_TYPE_KEY, callContext);
+//	        assertNotNull(typeInfo);
+//	        try {
+//		        typeInfo = atpService.getType("totally.bogus.type.key", callContext);
+//		        fail("Did not receive DoesNotExistException when getting nonexistent TypeInfo");
+//	        } catch (DoesNotExistException dnee) { /* expected */ }
+//	    } catch (Exception e) {
+//	        fail(e.getMessage());
+//	    }
+//    }
 
-    @Test
-    public void testGetTypesByRefObjectURI() {
-        try {
-            List<TypeInfo> typeInfos = atpService.getTypesByRefObjectURI(AtpServiceConstants.REF_OBJECT_URI_ATP, callContext);
-            assertNotNull("'getTypesByRefObjectURI()' should return a List<>, not null", typeInfos);
-
-            assertTrue("URI '" + AtpServiceConstants.REF_OBJECT_URI_ATP + "' should have returned at least 26 TypeInfo objects", typeInfos.size() >= 26);
-
-            typeInfos = atpService.getTypesByRefObjectURI(AtpServiceConstants.REF_OBJECT_URI_MILESTONE, callContext);
-            assertNotNull("'getTypesByRefObjectURI()' should return a List<>, not null", typeInfos);
-
-            List<String> requiredTypeKeys = new ArrayList<String>(Arrays.asList(
-                    "kuali.atp.milestone.AdvanceRegistrationPeriod",
-                    "kuali.atp.milestone.RegistrationPeriod",
-                    "kuali.atp.milestone.DropDate",
-                    "kuali.atp.milestone.GradesDue"));
-            int listSize = requiredTypeKeys.size();
-            assertTrue("URI '"+AtpServiceConstants.REF_OBJECT_URI_MILESTONE+"' should have returned at least "+listSize+" TypeInfo objects",
-                    typeInfos.size() >= listSize);
-
-            // make sure the required type keys are in the retrieved list:
-            for (TypeInfo typeInfo : typeInfos) {
-                requiredTypeKeys.remove(typeInfo.getKey());
-            }
-            if (!requiredTypeKeys.isEmpty()) {
-                fail("Failed to find type key '"+requiredTypeKeys.get(0)+"' in TypeInfo list");
-            }
-
-            try {
-	            typeInfos = atpService.getTypesByRefObjectURI("totally.bogus.object.uri", callContext);
-		        fail("Did not receive DoesNotExistException when getting TypeInfos for nonexistent refObjectURI");
-	        } catch (DoesNotExistException dnee) { /* expected */ }
-	    } catch (Exception e) {
-	        fail("Caught "+ e.toString() +": "+ e.getMessage());
-	    }
-    }
-
-    @Test
-    public void testGetState()
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException{
-    	try{
-    		StateInfo stateInfo = atpService.getState(AtpServiceConstants.ATP_PROCESS_KEY, AtpServiceConstants.ATP_DRAFT_STATE_KEY, callContext);
-    		assertNotNull(stateInfo);
-    		assertEquals(stateInfo.getKey(), AtpServiceConstants.ATP_DRAFT_STATE_KEY);
-    	 } catch (Exception e) {
- 	        fail("Caught "+ e.toString() +": "+ e.getMessage());
- 	    }
-    }
-
-    @Test
-    public void testGetStatesByProcess()
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException{
-    	try{
-    		List<StateInfo> stateInfos =
-                    atpService.getStatesByProcess(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
-    		assertNotNull("getStatesByProcess() should return a list, not null", stateInfos);
-
-    		 List<String> requiredKeys = new ArrayList<String>(Arrays.asList(
-                "kuali.atp.state.Draft", "kuali.atp.state.Official"));
-            int listSize = requiredKeys.size();
-            assertTrue("Key '"+ AtpServiceConstants.ATP_PROCESS_KEY +"' should return at least "+listSize+" records",
-                stateInfos.size()>=listSize);
-
-            // make sure the required keys are in the retrieved list:
-            for (StateInfo stateInfo : stateInfos) {
-                requiredKeys.remove(stateInfo.getKey());
-            }
-            if (!requiredKeys.isEmpty()) {
-                fail("Failed to find key '"+ requiredKeys.get(0) +"' in returned list");
-            }
-    	 } catch (Exception e) {
- 	        fail("Caught "+ e.toString() +": "+ e.getMessage());
- 	    }
-    }
-
-    @Test
-    public void testGetProcessByKey()
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-    	StateProcessInfo spInfo = atpService.getProcessByKey(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
-    	assertNotNull(spInfo);
-		assertEquals(AtpServiceConstants.ATP_PROCESS_KEY, spInfo.getKey());
-    }
-
-    @Test
-    public void testGetInitialValidStates()
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-        List<StateInfo> stateInfos =
-                atpService.getInitialValidStates(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
-        assertNotNull("'getInitialValidStates()' should return a list, not null", stateInfos);
-
-        List<String> requiredKeys = new ArrayList<String>(Arrays.asList("kuali.atp.state.Draft"));
-        int listSize = requiredKeys.size();
-        assertTrue("Key '"+ AtpServiceConstants.ATP_PROCESS_KEY +"' should return at least "+listSize+" records",
-                stateInfos.size() >= listSize);
-
-        // make sure the required keys are in the retrieved list:
-        for (StateInfo stateInfo : stateInfos) {
-            requiredKeys.remove(stateInfo.getKey());
-        }
-        if (!requiredKeys.isEmpty()) {
-            fail("Failed to find key '"+ requiredKeys.get(0) +"' in returned list");
-        }
-    }
-
-    @Test
-    public void testGetNextHappyState()
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException{
-        StateInfo stateInfo = atpService.getNextHappyState(AtpServiceConstants.ATP_PROCESS_KEY, AtpServiceConstants.ATP_DRAFT_STATE_KEY, callContext);
-        assertNotNull(stateInfo);
-        assertEquals(AtpServiceConstants.ATP_OFFICIAL_STATE_KEY, stateInfo.getKey());
-    }
+//    @Test
+//    public void testGetTypesByRefObjectURI() {
+//        try {
+//            List<TypeInfo> typeInfos = atpService.getTypesByRefObjectURI(AtpServiceConstants.REF_OBJECT_URI_ATP, callContext);
+//            assertNotNull("'getTypesByRefObjectURI()' should return a List<>, not null", typeInfos);
+//
+//            assertTrue("URI '" + AtpServiceConstants.REF_OBJECT_URI_ATP + "' should have returned at least 26 TypeInfo objects", typeInfos.size() >= 26);
+//
+//            typeInfos = atpService.getTypesByRefObjectURI(AtpServiceConstants.REF_OBJECT_URI_MILESTONE, callContext);
+//            assertNotNull("'getTypesByRefObjectURI()' should return a List<>, not null", typeInfos);
+//
+//            List<String> requiredTypeKeys = new ArrayList<String>(Arrays.asList(
+//                    "kuali.atp.milestone.AdvanceRegistrationPeriod",
+//                    "kuali.atp.milestone.RegistrationPeriod",
+//                    "kuali.atp.milestone.DropDate",
+//                    "kuali.atp.milestone.GradesDue"));
+//            int listSize = requiredTypeKeys.size();
+//            assertTrue("URI '"+AtpServiceConstants.REF_OBJECT_URI_MILESTONE+"' should have returned at least "+listSize+" TypeInfo objects",
+//                    typeInfos.size() >= listSize);
+//
+//            // make sure the required type keys are in the retrieved list:
+//            for (TypeInfo typeInfo : typeInfos) {
+//                requiredTypeKeys.remove(typeInfo.getKey());
+//            }
+//            if (!requiredTypeKeys.isEmpty()) {
+//                fail("Failed to find type key '"+requiredTypeKeys.get(0)+"' in TypeInfo list");
+//            }
+//
+//            try {
+//	            typeInfos = atpService.getTypesByRefObjectURI("totally.bogus.object.uri", callContext);
+//		        fail("Did not receive DoesNotExistException when getting TypeInfos for nonexistent refObjectURI");
+//	        } catch (DoesNotExistException dnee) { /* expected */ }
+//	    } catch (Exception e) {
+//	        fail("Caught "+ e.toString() +": "+ e.getMessage());
+//	    }
+//    }
+//
+//    @Test
+//    public void testGetState()
+//            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException{
+//    	try{
+//    		StateInfo stateInfo = atpService.getState(AtpServiceConstants.ATP_PROCESS_KEY, AtpServiceConstants.ATP_DRAFT_STATE_KEY, callContext);
+//    		assertNotNull(stateInfo);
+//    		assertEquals(stateInfo.getKey(), AtpServiceConstants.ATP_DRAFT_STATE_KEY);
+//    	 } catch (Exception e) {
+// 	        fail("Caught "+ e.toString() +": "+ e.getMessage());
+// 	    }
+//    }
+//
+//    @Test
+//    public void testGetStatesByProcess()
+//            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+//            OperationFailedException{
+//    	try{
+//    		List<StateInfo> stateInfos =
+//                    atpService.getStatesByProcess(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
+//    		assertNotNull("getStatesByProcess() should return a list, not null", stateInfos);
+//
+//    		 List<String> requiredKeys = new ArrayList<String>(Arrays.asList(
+//                "kuali.atp.state.Draft", "kuali.atp.state.Official"));
+//            int listSize = requiredKeys.size();
+//            assertTrue("Key '"+ AtpServiceConstants.ATP_PROCESS_KEY +"' should return at least "+listSize+" records",
+//                stateInfos.size()>=listSize);
+//
+//            // make sure the required keys are in the retrieved list:
+//            for (StateInfo stateInfo : stateInfos) {
+//                requiredKeys.remove(stateInfo.getKey());
+//            }
+//            if (!requiredKeys.isEmpty()) {
+//                fail("Failed to find key '"+ requiredKeys.get(0) +"' in returned list");
+//            }
+//    	 } catch (Exception e) {
+// 	        fail("Caught "+ e.toString() +": "+ e.getMessage());
+// 	    }
+//    }
+//
+//    @Test
+//    public void testGetProcessByKey()
+//            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+//            OperationFailedException {
+//    	StateProcessInfo spInfo = atpService.getProcessByKey(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
+//    	assertNotNull(spInfo);
+//		assertEquals(AtpServiceConstants.ATP_PROCESS_KEY, spInfo.getKey());
+//    }
+//
+//    @Test
+//    public void testGetInitialValidStates()
+//            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+//            OperationFailedException {
+//        List<StateInfo> stateInfos =
+//                atpService.getInitialValidStates(AtpServiceConstants.ATP_PROCESS_KEY, callContext);
+//        assertNotNull("'getInitialValidStates()' should return a list, not null", stateInfos);
+//
+//        List<String> requiredKeys = new ArrayList<String>(Arrays.asList("kuali.atp.state.Draft"));
+//        int listSize = requiredKeys.size();
+//        assertTrue("Key '"+ AtpServiceConstants.ATP_PROCESS_KEY +"' should return at least "+listSize+" records",
+//                stateInfos.size() >= listSize);
+//
+//        // make sure the required keys are in the retrieved list:
+//        for (StateInfo stateInfo : stateInfos) {
+//            requiredKeys.remove(stateInfo.getKey());
+//        }
+//        if (!requiredKeys.isEmpty()) {
+//            fail("Failed to find key '"+ requiredKeys.get(0) +"' in returned list");
+//        }
+//    }
+//
+//    @Test
+//    public void testGetNextHappyState()
+//            throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException{
+//        StateInfo stateInfo = atpService.getNextHappyState(AtpServiceConstants.ATP_PROCESS_KEY, AtpServiceConstants.ATP_DRAFT_STATE_KEY, callContext);
+//        assertNotNull(stateInfo);
+//        assertEquals(AtpServiceConstants.ATP_OFFICIAL_STATE_KEY, stateInfo.getKey());
+//    }
 
     @Test
     public void testValidateAtpAtpRelation()
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
         AtpAtpRelationInfo atpRel = new AtpAtpRelationInfo();
         atpRel.setId(UUIDHelper.genStringUUID());
-        atpRel.setAtpKey("testAtp1");
-        atpRel.setRelatedAtpKey("testAtp2");
+        atpRel.setAtpId("testAtp1");
+        atpRel.setRelatedAtpId("testAtp2");
         atpRel.setTypeKey(AtpServiceConstants.ATP_ATP_RELATION_ASSOCIATED_TYPE_KEY);
         atpRel.setStateKey(AtpServiceConstants.ATP_ATP_RELATION_ACTIVE_STATE_KEY);
         atpRel.setEffectiveDate(new Date());
@@ -671,8 +667,8 @@ public class TestAtpServiceImpl {
             OperationFailedException, PermissionDeniedException, DataValidationErrorException {
         AtpAtpRelationInfo atpRel = new AtpAtpRelationInfo();
         atpRel.setId(UUIDHelper.genStringUUID());
-        atpRel.setAtpKey("testAtpId1");
-        atpRel.setRelatedAtpKey("testAtpId2");
+        atpRel.setAtpId("testAtpId1");
+        atpRel.setRelatedAtpId("testAtpId2");
         atpRel.setTypeKey(AtpServiceConstants.ATP_ATP_RELATION_ASSOCIATED_TYPE_KEY);
         atpRel.setStateKey(AtpServiceConstants.ATP_ATP_RELATION_ACTIVE_STATE_KEY);
         atpRel.setEffectiveDate(new Date());
@@ -687,9 +683,9 @@ public class TestAtpServiceImpl {
 
         try{
             AtpInfo atpInfo = new AtpInfo();
-            atpInfo.setKey("testAtpId1-newCC");
-            atpInfo.setName("testAtpId1 to new campus calendar");
-            atpInfo.setTypeKey(AtpServiceConstants.ATP_CAMPUS_CALENDAR_TYPE_KEY);
+            atpInfo.setId("testAtpId1-newCC");
+            atpInfo.setName("testAtpId1 to new holiday calendar");
+            atpInfo.setTypeKey(AtpServiceConstants.ATP_HOLIDAY_CALENDAR_TYPE_KEY);
             atpInfo.setStateKey("kuali.atp.state.Draft");
             atpInfo.setStartDate(Calendar.getInstance().getTime());
             atpInfo.setEndDate(Calendar.getInstance().getTime());
@@ -697,53 +693,53 @@ public class TestAtpServiceImpl {
             cc = atpService.createAtp("testAtpId1-newCC", atpInfo, callContext);
             assertNotNull(cc);
 
-            atpRel.setRelatedAtpKey("testAtpId1-newCC");
+            atpRel.setRelatedAtpId("testAtpId1-newCC");
             AtpAtpRelationInfo created = atpService.createAtpAtpRelation("testAtpId1","testAtpId1-newCC",atpRel, callContext);
             assertNotNull(created);
 
             AtpAtpRelationInfo retrieved = atpService.getAtpAtpRelation(created.getId(), callContext);
-            assertEquals("testAtpId1", retrieved.getAtpKey());
-            assertEquals("testAtpId1-newCC", retrieved.getRelatedAtpKey());
+            assertEquals("testAtpId1", retrieved.getAtpId());
+            assertEquals("testAtpId1-newCC", retrieved.getRelatedAtpId());
             assertEquals(AtpServiceConstants.ATP_ATP_RELATION_ASSOCIATED_TYPE_KEY, retrieved.getTypeKey());
         } catch (Exception ex) {
             fail("exception from service call :" + ex.getMessage());
         }
     }
-
-    @Test
-    public void testGetDataDictionaryEntry()
-            throws OperationFailedException, MissingParameterException, PermissionDeniedException, DoesNotExistException {
-        DictionaryEntryInfo value = atpService.getDataDictionaryEntry("http://student.kuali.org/wsdl/atp/AtpInfo", callContext);
-
-        assertNotNull(value);
-
-        DictionaryEntryInfo fakeEntry = null;
-        try {
-            fakeEntry = atpService.getDataDictionaryEntry("fakeKey", callContext);
-            fail("Did not get a DoesNotExistException when expected");
-        }
-        catch(DoesNotExistException e) {
-            assertNull(fakeEntry);
-        }
-    }
-
-    @Test
-    public void testGetDataDictionaryEntryKeys()
-            throws OperationFailedException, MissingParameterException, PermissionDeniedException {
-        List<String> results = atpService.getDataDictionaryEntryKeys(callContext);
-
-        assertNotNull(results);
-        assertTrue(!results.isEmpty());
-
-        assertTrue(results.contains("http://student.kuali.org/wsdl/atp/AtpInfo"));
-    }
+//
+//    @Test
+//    public void testGetDataDictionaryEntry()
+//            throws OperationFailedException, MissingParameterException, PermissionDeniedException, DoesNotExistException {
+//        DictionaryEntryInfo value = atpService.getDataDictionaryEntry("http://student.kuali.org/wsdl/atp/AtpInfo", callContext);
+//
+//        assertNotNull(value);
+//
+//        DictionaryEntryInfo fakeEntry = null;
+//        try {
+//            fakeEntry = atpService.getDataDictionaryEntry("fakeKey", callContext);
+//            fail("Did not get a DoesNotExistException when expected");
+//        }
+//        catch(DoesNotExistException e) {
+//            assertNull(fakeEntry);
+//        }
+//    }
+//
+//    @Test
+//    public void testGetDataDictionaryEntryKeys()
+//            throws OperationFailedException, MissingParameterException, PermissionDeniedException {
+//        List<String> results = atpService.getDataDictionaryEntryKeys(callContext);
+//
+//        assertNotNull(results);
+//        assertTrue(!results.isEmpty());
+//
+//        assertTrue(results.contains("http://student.kuali.org/wsdl/atp/AtpInfo"));
+//    }
 
     @Test
     public void testGetAtpAtpRelationsByTypeAndAtp() {
         try {
             List<AtpAtpRelationInfo> aaRelInfos = atpService.getAtpAtpRelationsByTypeAndAtp("testTermId1", AtpServiceConstants.ATP_ATP_RELATION_INCLUDES_TYPE_KEY, callContext);
             assertEquals(1, aaRelInfos.size());
-            assertEquals("testTermId2", aaRelInfos.get(0).getRelatedAtpKey());
+            assertEquals("testTermId2", aaRelInfos.get(0).getRelatedAtpId());
 
 	            aaRelInfos = atpService.getAtpAtpRelationsByTypeAndAtp("totallyBogusAtpIdJustMadeUpForTesting", AtpServiceConstants.ATP_ATP_RELATION_INCLUDES_TYPE_KEY, callContext);
                 assertTrue(null == aaRelInfos || aaRelInfos.size() == 0);
@@ -761,25 +757,25 @@ public class TestAtpServiceImpl {
     @Test
     public void testGetAtpsByKeys()
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<String> atpKeys = new ArrayList<String>();
-        atpKeys.addAll(Arrays.asList("testAtpId1", "testAtpId2"));
+        List<String> atpIds = new ArrayList<String>();
+        atpIds.addAll(Arrays.asList("testAtpId1", "testAtpId2"));
         
-        List<AtpInfo> atps = atpService.getAtpsByKeys(atpKeys, callContext);
+        List<AtpInfo> atps = atpService.getAtpsByIds(atpIds, callContext);
         
         assertNotNull(atps);
-        assertEquals(atpKeys.size(), atps.size());
+        assertEquals(atpIds.size(), atps.size());
         
         // check that all the expected ids came back
         for(AtpInfo info : atps) {
-            atpKeys.remove(info.getKey());
+            atpIds.remove(info.getId());
         }
-        assertTrue(atpKeys.isEmpty());
+        assertTrue(atpIds.isEmpty());
         
         // now make sure an exception is thrown for any not found keys
         List<String> fakeKeys = Arrays.asList("testAtpId1", "fakeKey1", "fakeKey2");
         List<AtpInfo> shouldBeNull = null;
         try {
-            shouldBeNull = atpService.getAtpsByKeys(fakeKeys, callContext);
+            shouldBeNull = atpService.getAtpsByIds(fakeKeys, callContext);
             fail("Did not get a DoesNotExistException when expected");
         }
         catch(DoesNotExistException e) {
@@ -823,21 +819,21 @@ public class TestAtpServiceImpl {
     }
 
     @Test
-    public void testGetAtpKeysByType()
+    public void testGetAtpIdsByType()
             throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         String expectedAtpType = AtpServiceConstants.ATP_ACADEMIC_CALENDAR_TYPE_KEY;
-        List<String> atpKeys = atpService.getAtpKeysByType(expectedAtpType, callContext);
-        assertTrue(atpKeys.contains("testAtpId1"));
-        assertTrue(atpKeys.contains("termRelationTestingAcal1"));
+        List<String> atpIds = atpService.getAtpIdsByType(expectedAtpType, callContext);
+        assertTrue(atpIds.contains("testAtpId1"));
+        assertTrue(atpIds.contains("termRelationTestingAcal1"));
         
         String expectedEmptyAtpType = AtpServiceConstants.ATP_SESSION_G2_TYPE_KEY;
-        atpKeys = atpService.getAtpKeysByType(expectedEmptyAtpType, callContext);
-        assertTrue(atpKeys == null || atpKeys.isEmpty());
+        atpIds = atpService.getAtpIdsByType(expectedEmptyAtpType, callContext);
+        assertTrue(atpIds == null || atpIds.isEmpty());
         
         String fakeAtpType = "fakeTypeKey";
         List<String> shouldBeNull = null;
         try {
-            shouldBeNull = atpService.getAtpKeysByType(fakeAtpType, callContext);
+            shouldBeNull = atpService.getAtpIdsByType(fakeAtpType, callContext);
             fail("Did not get a InvalidParameterException when expected");
         }
         catch(InvalidParameterException e) {
@@ -845,25 +841,36 @@ public class TestAtpServiceImpl {
         }
     }
 
-    @Test
-    public void testGetAllowedTypesForType() {
-        try {
-            List<TypeInfo> typeInfos = atpService.getAllowedTypesForType(AtpServiceConstants.ATP_ACADEMIC_CALENDAR_TYPE_KEY, AtpServiceConstants.REF_OBJECT_URI_ATP, callContext);
-            assertEquals(6, typeInfos.size());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
+//    @Test
+//    public void testGetAllowedTypesForType() {
+//        try {
+//            List<TypeInfo> typeInfos = atpService.getAllowedTypesForType(AtpServiceConstants.ATP_ACADEMIC_CALENDAR_TYPE_KEY, AtpServiceConstants.REF_OBJECT_URI_ATP, callContext);
+//            assertEquals(6, typeInfos.size());
+//        } catch (Exception e) {
+//            fail(e.getMessage());
+//        }
+//    }
     
+//    @Test
+//    public void testGetTypeRelationsByOwnerType() {
+//        try {
+//            List<TypeTypeRelationInfo> typeInfos = atpService.getTypeRelationsByOwnerType(AtpServiceConstants.ATP_AY_TYPE_KEY, TypeServiceConstants.TYPE_TYPE_RELATION_CONTAINS_TYPE_KEY, callContext);
+//            assertNotNull(typeInfos);
+//            assertEquals(3, typeInfos.size());
+//	    } catch (Exception e) {
+//	        fail(e.getMessage());
+//	    }
+//    }
+
     @Test
-    public void testGetTypeRelationsByOwnerType() {
-        try {
-            List<TypeTypeRelationInfo> typeInfos = atpService.getTypeRelationsByOwnerType(AtpServiceConstants.ATP_AY_TYPE_KEY, TypeServiceConstants.TYPE_TYPE_RELATION_CONTAINS_TYPE_KEY, callContext);
-            assertNotNull(typeInfos);
-            assertEquals(3, typeInfos.size());
-	    } catch (Exception e) {
-	        fail(e.getMessage());
-	    }
+    public void testGetImpactedMilestones() throws InvalidParameterException, MissingParameterException, DoesNotExistException, PermissionDeniedException, OperationFailedException {
+        List<MilestoneInfo> impactedMilestones = atpService.getImpactedMilestones("FALLTERM1990INSTRUCTIONPERIOD", callContext);
+        assertNotNull(impactedMilestones);
+        List<String> impactedMilestoneIds = new ArrayList<String>();
+        for (MilestoneInfo impactedMilestone : impactedMilestones) {
+            impactedMilestoneIds.add(impactedMilestone.getId());
+        }
+        assertTrue(impactedMilestoneIds.contains("FALLTERM1990CENSUS"));
     }
 
 }

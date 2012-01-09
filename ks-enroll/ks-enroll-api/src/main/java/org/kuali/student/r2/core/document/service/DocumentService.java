@@ -30,6 +30,7 @@ import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.service.StateService;
 import org.kuali.student.r2.common.service.TypeService;
 import org.kuali.student.r2.common.util.constants.DocumentServiceConstants;
+
 import org.kuali.student.r2.core.document.dto.DocumentCategoryInfo;
 import org.kuali.student.r2.core.document.dto.DocumentInfo;
 import org.kuali.student.r2.core.document.dto.RefDocRelationInfo;
@@ -53,7 +54,7 @@ import java.util.List;
  */
 @WebService(name = "DocumentService", targetNamespace = DocumentServiceConstants.NAMESPACE)
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-public interface DocumentService extends DataDictionaryService, StateService, TypeService {
+public interface DocumentService {
 
     /**
      * Retrieves information about a document

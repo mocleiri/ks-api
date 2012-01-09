@@ -17,7 +17,8 @@ package org.kuali.student.enrollment.class2.grading.service.decorators;
 
 import java.util.List;
 
-import org.kuali.rice.kim.service.PermissionService;
+//import org.kuali.rice.kim.service.PermissionService;
+import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.student.enrollment.grading.dto.GradeRosterEntryInfo;
 import org.kuali.student.enrollment.grading.dto.GradeRosterInfo;
 import org.kuali.student.enrollment.grading.dto.GradeValuesGroupInfo;
@@ -50,20 +51,7 @@ public class GradingServiceAuthorizationDecorator extends GradingServiceDecorato
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
-	
-    @Override
-    public List<String> getDataDictionaryEntryKeys(ContextInfo context) throws OperationFailedException,
-            MissingParameterException, PermissionDeniedException {
-        return getNextDecorator().getDataDictionaryEntryKeys(context);
-    }
-
-    @Override
-    public DictionaryEntryInfo getDataDictionaryEntry(String entryKey, ContextInfo context)
-            throws OperationFailedException, MissingParameterException, PermissionDeniedException,
-            DoesNotExistException {
-        return getNextDecorator().getDataDictionaryEntry(entryKey, context);
-    }
-
+        
     @Override
     public TypeInfo getGradeRosterType(String gradeRosterTypeKey, ContextInfo context) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException {
@@ -77,10 +65,10 @@ public class GradingServiceAuthorizationDecorator extends GradingServiceDecorato
     }
 
     @Override
-    public List<GradeRosterInfo> getGradeRostersByGraderAndTerm(String graderId, String termKey, ContextInfo context)
+    public List<GradeRosterInfo> getGradeRostersByGraderAndTerm(String graderId, String termId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        return getNextDecorator().getGradeRostersByGraderAndTerm(graderId, termKey, context);
+        return getNextDecorator().getGradeRostersByGraderAndTerm(graderId, termId, context);
     }
 
     @Override

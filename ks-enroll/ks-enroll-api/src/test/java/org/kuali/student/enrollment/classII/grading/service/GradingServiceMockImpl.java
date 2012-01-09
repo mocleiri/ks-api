@@ -170,18 +170,6 @@ public class GradingServiceMockImpl implements GradingService {
         validGradesCache.put("percent", percentGradesResultValuesGroupInfo);
     }
 
-    @Override
-    public List<String> getDataDictionaryEntryKeys(ContextInfo context) throws OperationFailedException,
-            MissingParameterException, PermissionDeniedException {
-        return new ArrayList<String>();
-    }
-
-    @Override
-    public DictionaryEntryInfo getDataDictionaryEntry(String entryKey, ContextInfo context)
-            throws OperationFailedException, MissingParameterException, PermissionDeniedException,
-            DoesNotExistException {
-        return null;
-    }
 
     @Override
     public TypeInfo getGradeRosterType(String gradeRosterTypeKey, ContextInfo context) throws DoesNotExistException,
@@ -198,15 +186,15 @@ public class GradingServiceMockImpl implements GradingService {
     }
 
     @Override
-    public List<GradeRosterInfo> getGradeRostersByGraderAndTerm(String graderId, String termKey, ContextInfo context)
+    public List<GradeRosterInfo> getGradeRostersByGraderAndTerm(String graderId, String termId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
 
         List<GradeRosterInfo> gradeRosters = new ArrayList<GradeRosterInfo>();
-        if (termCourseOfferingsCache.get(termKey) != null) {
+        if (termCourseOfferingsCache.get(termId) != null) {
             for (GradeRosterInfo gradeRoster : gradeRostersCache.values()) {
                 if (gradeRoster.getGraderIds().contains(graderId)
-                        && termCourseOfferingsCache.get(termKey).contains(gradeRoster.getCourseOfferingId())) {
+                        && termCourseOfferingsCache.get(termId).contains(gradeRoster.getCourseOfferingId())) {
                     gradeRosters.add(gradeRoster);
                 }
 
@@ -370,28 +358,7 @@ public class GradingServiceMockImpl implements GradingService {
 
     }
 
-    @Override
-    public List<String> getValidGradeGroupKeysForStudentByRoster(String studentId, String rosterId, ContextInfo context)
-            throws DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException, PermissionDeniedException {
-
-        List<String> rvgIds = new ArrayList<String>();
-
-        if (studentId.equals("1100")) {
-            rvgIds.add("letter");
-        } else if (studentId.equals("1101")) {
-            rvgIds.add("percent");
-        } else if (studentId.equals("1102")) {
-            rvgIds.add("passFail");
-        } else if (studentId.equals("1103")) {
-            rvgIds.add("satisfactory");
-        } else {
-            rvgIds.add("letter");
-        }
-
-        return rvgIds;
-    }
-
+   
     @Override
     public GradeRosterEntryInfo getFinalGradeForStudentInCourseOffering(String studentId, String courseOfferingId,
             ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,

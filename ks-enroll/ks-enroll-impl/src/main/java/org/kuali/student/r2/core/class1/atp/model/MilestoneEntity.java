@@ -54,7 +54,14 @@ public class MilestoneEntity extends MetaEntity implements AttributeOwner<Milest
     
     @Column(name="IS_DATE_RANGE")
     private boolean isDateRange;
-    
+
+    @Column(name="IS_RELATIVE")
+    private boolean isRelative;
+
+    @ManyToOne
+    @JoinColumn(name="RELATIVE_MILESTONE_ID")
+    private MilestoneEntity relativeAnchorMilestone;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<MilestoneAttributeEntity> attributes;
 
@@ -63,7 +70,7 @@ public class MilestoneEntity extends MetaEntity implements AttributeOwner<Milest
 
     public MilestoneEntity(Milestone milestone) {
         super(milestone);
-        this.setId(milestone.getKey());
+        this.setId(milestone.getId());
         this.setAllDay(milestone.getIsAllDay());
         this.setDateRange(milestone.getIsDateRange());
         this.setDescr(new AtpRichTextEntity(milestone.getDescr()));
@@ -150,6 +157,22 @@ public class MilestoneEntity extends MetaEntity implements AttributeOwner<Milest
         this.isDateRange = isDateRange;
     }
 
+    public boolean isRelative() {
+        return isRelative;
+    }
+
+    public void setRelative(boolean relative) {
+        isRelative = relative;
+    }
+
+    public MilestoneEntity getRelativeAnchorMilestone() {
+        return relativeAnchorMilestone;
+    }
+
+    public void setRelativeAnchorMilestone(MilestoneEntity relativeAnchorMilestone) {
+        this.relativeAnchorMilestone = relativeAnchorMilestone;
+    }
+
     @Override
     public void setAttributes(List<MilestoneAttributeEntity> attributes) {
        this.attributes = attributes;
@@ -164,7 +187,7 @@ public class MilestoneEntity extends MetaEntity implements AttributeOwner<Milest
     public MilestoneInfo toDto() {
         MilestoneInfo info = new MilestoneInfo();
         
-        info.setKey(getId());
+        info.setId(getId());
         info.setName(getName());
         info.setTypeKey(null != atpType ? atpType.getId() : null);
         info.setStateKey(null != atpState ? atpState.getId() : null);

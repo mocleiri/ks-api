@@ -115,88 +115,73 @@ public class LuiServiceImpl implements LuiService {
 	public void setLuService(LuService luService) {
 		this.luService = luService;
 	}
-
-	@Override
-	public List<String> getDataDictionaryEntryKeys(ContextInfo context)
-			throws OperationFailedException, MissingParameterException,
-			PermissionDeniedException {
-	    return new ArrayList<String>();
-	}
-
-	@Override
-	public DictionaryEntryInfo getDataDictionaryEntry(String entryKey,
-			ContextInfo context) throws OperationFailedException,
-			MissingParameterException, PermissionDeniedException,
-			DoesNotExistException {
-	    return null;
-	}
-
-	@Override
-	public TypeInfo getType(String typeKey, ContextInfo context)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-	    return null;
-	}
-
-	@Override
-	public List<TypeInfo> getTypesByRefObjectURI(String refObjectURI,
-			ContextInfo context) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException {
-        List<LuiTypeEntity> luiTypeEntities = luiTypeDao.getLuiTypesByRefObjectUri(refObjectURI);
-        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
-        for (LuiTypeEntity luiTypeEntity : luiTypeEntities) {
-            typeInfos.add(luiTypeEntity.toDto());
-        }
-
-        return typeInfos;
-	}
-
-	@Override
-	public List<TypeInfo> getAllowedTypesForType(String ownerTypeKey,
-			String relatedRefObjectURI, ContextInfo context)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-		
-        if ( ! relatedRefObjectURI.startsWith(LuiServiceConstants.NAMESPACE) ) {
-            throw new DoesNotExistException("This method does not know how to handle object type:"
-                    + relatedRefObjectURI);
-        }
-
-        // get the TypeTypeRelations
-        List<TypeTypeRelationEntity> typeTypeRelations = typeTypeRelationDao
-                .getTypeTypeRelationsByOwnerAndRelationTypes(ownerTypeKey,
-                        TypeServiceConstants.TYPE_TYPE_RELATION_ALLOWED_TYPE_KEY);
-        
-//        System.out.println(">>> in LuiServiceImpl.getAllowedTypesForType,find typeTypeRelations.size() = "+typeTypeRelations.size()+
-//        		" for ownerTypeKey="+ownerTypeKey+" and RelationType="+TypeServiceConstants.TYPE_TYPE_RELATION_ALLOWED_TYPE_KEY);
-        
-        // create a List of the related Types' IDs
-        List<String> ids = new ArrayList<String>();
-        for (TypeTypeRelationEntity entity : typeTypeRelations) {
-            ids.add(entity.getRelatedTypeId());
-        }
-
-        // now get the List of the related Types based on those IDs
-        List<TypeEntity<? extends BaseAttributeEntity<?>>> typeEntities = new ArrayList<TypeEntity<? extends BaseAttributeEntity<?>>>();
-       	typeEntities.addAll(luiTypeDao.findByIds(ids));
-
-        // convert them to DTOs and return them
-        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
-        for (TypeEntity<? extends BaseAttributeEntity<?>> entity : typeEntities) {
-            typeInfos.add(entity.toDto());
-        }
-        
-        return typeInfos;
-	}
-
-	@Override
-	public List<TypeTypeRelationInfo> getTypeRelationsByOwnerType(
-			String ownerTypeKey, String relationTypeKey, ContextInfo context)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-	    return new ArrayList<TypeTypeRelationInfo>();
-	}
+//
+//	@Override
+//	public TypeInfo getType(String typeKey, ContextInfo context)
+//			throws DoesNotExistException, InvalidParameterException,
+//			MissingParameterException, OperationFailedException {
+//	    return null;
+//	}
+//
+//	@Override
+//	public List<TypeInfo> getTypesByRefObjectURI(String refObjectURI,
+//			ContextInfo context) throws DoesNotExistException,
+//			InvalidParameterException, MissingParameterException,
+//			OperationFailedException {
+//        List<LuiTypeEntity> luiTypeEntities = luiTypeDao.getLuiTypesByRefObjectUri(refObjectURI);
+//        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
+//        for (LuiTypeEntity luiTypeEntity : luiTypeEntities) {
+//            typeInfos.add(luiTypeEntity.toDto());
+//        }
+//
+//        return typeInfos;
+//	}
+//
+//	@Override
+//	public List<TypeInfo> getAllowedTypesForType(String ownerTypeKey,
+//			String relatedRefObjectURI, ContextInfo context)
+//			throws DoesNotExistException, InvalidParameterException,
+//			MissingParameterException, OperationFailedException {
+//		
+//        if ( ! relatedRefObjectURI.startsWith(LuiServiceConstants.NAMESPACE) ) {
+//            throw new DoesNotExistException("This method does not know how to handle object type:"
+//                    + relatedRefObjectURI);
+//        }
+//
+//        // get the TypeTypeRelations
+//        List<TypeTypeRelationEntity> typeTypeRelations = typeTypeRelationDao
+//                .getTypeTypeRelationsByOwnerAndRelationTypes(ownerTypeKey,
+//                        TypeServiceConstants.TYPE_TYPE_RELATION_ALLOWED_TYPE_KEY);
+//        
+////        System.out.println(">>> in LuiServiceImpl.getAllowedTypesForType,find typeTypeRelations.size() = "+typeTypeRelations.size()+
+////        		" for ownerTypeKey="+ownerTypeKey+" and RelationType="+TypeServiceConstants.TYPE_TYPE_RELATION_ALLOWED_TYPE_KEY);
+//        
+//        // create a List of the related Types' IDs
+//        List<String> ids = new ArrayList<String>();
+//        for (TypeTypeRelationEntity entity : typeTypeRelations) {
+//            ids.add(entity.getRelatedTypeId());
+//        }
+//
+//        // now get the List of the related Types based on those IDs
+//        List<TypeEntity<? extends BaseAttributeEntity<?>>> typeEntities = new ArrayList<TypeEntity<? extends BaseAttributeEntity<?>>>();
+//       	typeEntities.addAll(luiTypeDao.findByIds(ids));
+//
+//        // convert them to DTOs and return them
+//        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
+//        for (TypeEntity<? extends BaseAttributeEntity<?>> entity : typeEntities) {
+//            typeInfos.add(entity.toDto());
+//        }
+//        
+//        return typeInfos;
+//	}
+//
+//	@Override
+//	public List<TypeTypeRelationInfo> getTypeRelationsByOwnerType(
+//			String ownerTypeKey, String relationTypeKey, ContextInfo context)
+//			throws DoesNotExistException, InvalidParameterException,
+//			MissingParameterException, OperationFailedException {
+//	    return new ArrayList<TypeTypeRelationInfo>();
+//	}
 
 	@Override
 	public LuiInfo getLui(String luiId, ContextInfo context)
@@ -251,7 +236,7 @@ public class LuiServiceImpl implements LuiService {
 	}
 
 	@Override
-	public List<LuiInfo> getLuisInAtpByCluId(String cluId, String atpKey,
+	public List<LuiInfo> getLuisInAtpByCluId(String cluId, String atpId,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException {
@@ -266,7 +251,7 @@ public class LuiServiceImpl implements LuiService {
 	}
 
 	@Override
-	public List<String> getLuiIdsInAtpByCluId(String cluId, String atpKey,
+	public List<String> getLuiIdsInAtpByCluId(String cluId, String atpId,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
 			OperationFailedException {
@@ -420,19 +405,19 @@ public class LuiServiceImpl implements LuiService {
     	return true;
     }
     
-    private boolean checkExistenceForAtp(String atpKey, ContextInfo context) throws DoesNotExistException,
+    private boolean checkExistenceForAtp(String atpId, ContextInfo context) throws DoesNotExistException,
 	InvalidParameterException, MissingParameterException,
 	OperationFailedException, PermissionDeniedException {
  /*   	boolean existing = false;
     	try {
-			AtpInfo atp = atpService.getAtp(atpKey, context);
+			AtpInfo atp = atpService.getAtp(atpId, context);
 			
 			if(atp != null)
 				existing = true;
 			else
-				throw new DoesNotExistException("The ATP does not exist. atp " + atpKey);
+				throw new DoesNotExistException("The ATP does not exist. atp " + atpId);
 		} catch (DoesNotExistException e) {
-			throw new DoesNotExistException("The ATP does not exist. atp " + atpKey);
+			throw new DoesNotExistException("The ATP does not exist. atp " + atpId);
 		} catch (InvalidParameterException e) {
 		} catch (MissingParameterException e) {
 		} catch (OperationFailedException e) {
@@ -446,7 +431,7 @@ public class LuiServiceImpl implements LuiService {
     
 	@Override
 	@Transactional
-	public LuiInfo createLui(String cluId, String atpKey, LuiInfo luiInfo,
+	public LuiInfo createLui(String cluId, String atpId, LuiInfo luiInfo,
 			ContextInfo context) throws AlreadyExistsException,
 			DataValidationErrorException, DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
@@ -457,8 +442,8 @@ public class LuiServiceImpl implements LuiService {
         if( null != cluId && checkExistenceForClu(cluId, context))
         	entity.setCluId(cluId);
         
-        if(null != atpKey && checkExistenceForAtp(atpKey, context))
-        	entity.setAtpKey(atpKey);
+        if(null != atpId && checkExistenceForAtp(atpId, context))
+        	entity.setAtpId(atpId);
 
         if (null != luiInfo.getStateKey())
         	entity.setLuiState(findState(LuiServiceConstants.COURSE_OFFERING_PROCESS_KEY, luiInfo.getStateKey(), context));
@@ -505,9 +490,9 @@ public class LuiServiceImpl implements LuiService {
             if( null != cluId && checkExistenceForClu(cluId, context))
             	modifiedEntity.setCluId(cluId);
             
-            String atpKey = luiInfo.getAtpKey();
-            if(null != atpKey && checkExistenceForAtp(atpKey, context))
-            	modifiedEntity.setAtpKey(atpKey);
+            String atpId = luiInfo.getAtpId();
+            if(null != atpId && checkExistenceForAtp(atpId, context))
+            	modifiedEntity.setAtpId(atpId);
 
             if (null != luiInfo.getStateKey())
             	modifiedEntity.setLuiState(findState(LuiServiceConstants.COURSE_OFFERING_PROCESS_KEY, luiInfo.getStateKey(), context));

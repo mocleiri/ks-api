@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,22 +31,23 @@ import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.util.constants.LuiServiceConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:lui-test-context.xml"})
+@TransactionConfiguration(transactionManager = "JtaTxManager", defaultRollback = true)
+@Transactional
 public class TestLuiServiceImpl {
 
+    @Resource  // look up bean via variable name, then type
     private LuiService luiServiceValidation;
+
     public static String principalId = "123";
     public ContextInfo callContext = ContextInfo.newInstance();
-
-    @Autowired
-    public void setLuiServiceValidation(LuiService luiServiceValidation) {
-        this.luiServiceValidation = luiServiceValidation;
-    }
 
     @Before
     public void setUp() {
@@ -77,6 +79,7 @@ public class TestLuiServiceImpl {
             assertNotNull(obj.getOfficialIdentifier());
             assertEquals("Chem 123", obj.getOfficialIdentifier().getShortName());
 
+            // TODO - remove the following, or fix
             // List<OfferingInstructorInfo> instructors = obj.getInstructors();
             // assertTrue(instructors.size() == 1);
             // assertEquals("Pers-1", instructors.get(0).getPersonId());
@@ -91,28 +94,30 @@ public class TestLuiServiceImpl {
     }
 
     @Test
-    @Ignore
-    public void testGetLuiIdsByRelation()throws InvalidParameterException, MissingParameterException,
-		OperationFailedException {
+    public void testGetLuiIdsByRelation()
+            throws InvalidParameterException, MissingParameterException, OperationFailedException {
     	 try {
-    		 List<String> luiIds = luiServiceValidation.getLuiIdsByRelation("Lui-2", "kuali.lui.lui.relation.associated", callContext);
+    		 List<String> luiIds = luiServiceValidation.getLuiIdsByRelation(
+                     "Lui-2", "kuali.lui.lui.relation.associated", callContext);
     		 assertNotNull(luiIds);
-    	     assertEquals(1, luiIds.size());
-    	     assertEquals("Lui-2", luiIds.get(0));
+    	     assertEquals(2, luiIds.size());
+    	     assertEquals("Lui-1", luiIds.get(0));
+             assertEquals("Lui-5", luiIds.get(1));
     	 } catch (Exception e) {
     		 fail(e.getMessage());
     	 }
     }
     
     @Test
-    @Ignore
     public void testGetLuisByRelation()throws InvalidParameterException, MissingParameterException,
 		OperationFailedException {
     	 try {
-    		 List<LuiInfo> luis = luiServiceValidation.getLuisByRelation("Lui-2", "kuali.lui.lui.relation.associated", callContext);
+    		 List<LuiInfo> luis = luiServiceValidation.getLuisByRelation(
+                     "Lui-2", "kuali.lui.lui.relation.associated", callContext);
     		 assertNotNull(luis);
-    	     assertEquals(1, luis.size());
-    	     assertEquals("Lui-2", luis.get(0).getId());
+    	     assertEquals(2, luis.size());
+    	     assertEquals("Lui-1", luis.get(0).getId());
+             assertEquals("Lui-5", luis.get(1).getId());
     	 } catch (Exception e) {
     		 fail(e.getMessage());
     	 }
@@ -133,7 +138,7 @@ public class TestLuiServiceImpl {
         }
         // info.setStudySubjectArea("Math");
         info.setCluId("testCluId");
-        info.setAtpKey("testAtpId1");
+        info.setAtpId("testAtpId1");
 
         List<OfferingInstructorInfo> instructors = new ArrayList<OfferingInstructorInfo>();
         OfferingInstructorInfo instructor = new OfferingInstructorInfo();
@@ -153,7 +158,7 @@ public class TestLuiServiceImpl {
         assertEquals(Integer.valueOf(25), created.getMaximumEnrollment());
         assertEquals(Integer.valueOf(10), created.getMinimumEnrollment());
         assertEquals("testCluId", created.getCluId());
-        assertEquals("testAtpId1", created.getAtpKey());
+        assertEquals("testAtpId1", created.getAtpId());
         // assertEquals("Math", created.getStudySubjectArea());
         // assertTrue(created.getInstructors().size() == 1);
 
@@ -171,7 +176,7 @@ public class TestLuiServiceImpl {
             assertEquals(Integer.valueOf(25), retrieved.getMaximumEnrollment());
             assertEquals(Integer.valueOf(10), retrieved.getMinimumEnrollment());
             assertEquals("testCluId", retrieved.getCluId());
-            assertEquals("testAtpId1", retrieved.getAtpKey());
+            assertEquals("testAtpId1", retrieved.getAtpId());
             // assertEquals("Math", retrieved.getStudySubjectArea());
             // assertTrue(retrieved.getInstructors().size() == 1);
             // assertEquals("Org-1",

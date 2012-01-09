@@ -3,7 +3,8 @@ package org.kuali.student.enrollment.class2.courseoffering.service.decorators;
 import java.util.List;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
-import org.kuali.rice.kim.service.PermissionService;
+//import org.kuali.rice.kim.service.PermissionService;
+import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
@@ -44,39 +45,6 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 	}
 	
 	@Override
-	public List<String> getDataDictionaryEntryKeys(ContextInfo context)
-			throws OperationFailedException, MissingParameterException,
-			PermissionDeniedException {
-        if (null == context) {
-            throw new MissingParameterException();
-        }
-           
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getDataDictionaryEntryKeys", null, null)) {
-	        return getNextDecorator().getDataDictionaryEntryKeys(context);
-        }
-        else {
-           throw new PermissionDeniedException();
-        }
-	}
-
-	@Override
-	public DictionaryEntryInfo getDataDictionaryEntry(String entryKey,
-			ContextInfo context) throws OperationFailedException,
-			MissingParameterException, PermissionDeniedException,
-			DoesNotExistException {
-        if (null == context) {
-            throw new MissingParameterException();
-        }
-           
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getDataDictionaryEntry", null, null)) {
-	        return getNextDecorator().getDataDictionaryEntry(entryKey, context);
-        }
-        else {
-           throw new PermissionDeniedException();
-        }
-	}
-
-	@Override
 	public CourseOfferingInfo getCourseOffering(String courseOfferingId,
 			ContextInfo context) throws DoesNotExistException,
 			InvalidParameterException, MissingParameterException,
@@ -113,7 +81,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 
 	@Override
 	public List<CourseOfferingInfo> getCourseOfferingsForCourseAndTerm(
-			String courseId, String termKey, ContextInfo context)
+			String courseId, String termId, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -122,7 +90,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseOfferingsForCourseAndTerm", null, null)) {
-	        return getNextDecorator().getCourseOfferingsForCourseAndTerm(courseId, termKey, context);
+	        return getNextDecorator().getCourseOfferingsForCourseAndTerm(courseId, termId, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -130,7 +98,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 	}
 
 	@Override
-	public List<String> getCourseOfferingIdsForTerm(String termKey,
+	public List<String> getCourseOfferingIdsForTerm(String termId,
 			Boolean useIncludedTerm, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
@@ -140,7 +108,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseOfferingIdsForTerm", null, null)) {
-	        return getNextDecorator().getCourseOfferingIdsForTerm(termKey, useIncludedTerm, context);
+	        return getNextDecorator().getCourseOfferingIdsForTerm(termId, useIncludedTerm, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -149,7 +117,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 
 	@Override
 	public List<String> getCourseOfferingIdsByTermAndSubjectArea(
-			String termKey, String subjectArea, ContextInfo context)
+			String termId, String subjectArea, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -158,7 +126,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseOfferingIdsByTermAndSubjectArea", null, null)) {
-	        return getNextDecorator().getCourseOfferingIdsByTermAndSubjectArea(termKey, subjectArea, context);
+	        return getNextDecorator().getCourseOfferingIdsByTermAndSubjectArea(termId, subjectArea, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -167,7 +135,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 
 	@Override
 	public List<String> getCourseOfferingIdsByTermAndInstructorId(
-			String termKey, String instructorId, ContextInfo context)
+			String termId, String instructorId, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -176,7 +144,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseOfferingIdsByTermAndInstructorId", null, null)) {
-	        return getNextDecorator().getCourseOfferingIdsByTermAndInstructorId(termKey, instructorId, context);
+	        return getNextDecorator().getCourseOfferingIdsByTermAndInstructorId(termId, instructorId, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -185,7 +153,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 
 	@Override
 	public List<String> getCourseOfferingIdsByTermAndUnitContentOwner(
-			String termKey, String unitOwnerId, ContextInfo context)
+			String termId, String unitOwnerId, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -194,7 +162,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getCourseOfferingIdsByTermAndUnitContentOwner", null, null)) {
-	        return getNextDecorator().getCourseOfferingIdsByTermAndUnitContentOwner(termKey, unitOwnerId, context);
+	        return getNextDecorator().getCourseOfferingIdsByTermAndUnitContentOwner(termId, unitOwnerId, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -203,7 +171,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 
 	@Override
 	public CourseOfferingInfo createCourseOfferingFromCanonical(
-			String courseId, String termKey, List<String> formatIdList,
+			String courseId, String termId, List<String> formatIdList,
 			ContextInfo context) throws AlreadyExistsException,
 			DoesNotExistException, DataValidationErrorException,
 			InvalidParameterException, MissingParameterException,
@@ -213,7 +181,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
         }
            
         if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "createCourseOfferingFromCanonical", null, null)) {
-	        return getNextDecorator().createCourseOfferingFromCanonical(courseId, termKey, formatIdList, context);
+	        return getNextDecorator().createCourseOfferingFromCanonical(courseId, termId, formatIdList, context);
         }
         else {
            throw new PermissionDeniedException();

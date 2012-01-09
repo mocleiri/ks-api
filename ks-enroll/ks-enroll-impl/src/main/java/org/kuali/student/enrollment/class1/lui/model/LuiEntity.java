@@ -1,5 +1,6 @@
 package org.kuali.student.enrollment.class1.lui.model;
 
+import org.kuali.student.common.util.UUIDHelper;
 import org.kuali.student.enrollment.lui.dto.LuiInfo;
 import org.kuali.student.enrollment.lui.infc.Lui;
 import org.kuali.student.enrollment.lui.infc.LuiIdentifier;
@@ -13,17 +14,7 @@ import org.kuali.student.r2.common.model.StateEntity;
 import org.kuali.student.r2.lum.lu.dto.LuCodeInfo;
 import org.kuali.student.r2.lum.lu.infc.LuCode;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +43,7 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
 	private String cluId;
 	
 	@Column(name="ATP_ID")
-	private String atpKey;
+	private String atpId;
     
 	@Column(name="REF_URL")
 	private String referenceURL;
@@ -83,7 +74,10 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
     private List<LuiIdentifierEntity> alternateIdentifiers;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="lui")
-	private List<MeetingScheduleEntity> meetingSchedules;   
+	private List<MeetingScheduleEntity> meetingSchedules;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy="lui",orphanRemoval = true)
+    private List<LuiResultValuesGroupRelationEntity> resultValuesGroupRelationEntities;
 	
 //	@OneToMany(cascade = CascadeType.ALL, mappedBy="lui")
 //	private List<LuiCluRelationEntity> cluCluRelationIds;
@@ -115,7 +109,7 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
         try {   
         	this.setId(lui.getId());
         	this.setName(lui.getName());
-        	this.setAtpKey(lui.getAtpKey());
+        	this.setAtpId(lui.getAtpId());
         	this.setCluId(lui.getCluId());
         	this.setMaxSeats(lui.getMaximumEnrollment());        	
         	this.setMinSeats(lui.getMinimumEnrollment());     
@@ -160,7 +154,17 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
 	        		this.getMeetingSchedules().add(msEntity);
 	        	}
 	        }
-	        
+
+            List<LuiResultValuesGroupRelationEntity> resultValuesGroupRelationList = new ArrayList<LuiResultValuesGroupRelationEntity>();
+            if (lui.getResultValuesGroupKeys() != null){
+                for (String resValueGroupKey : lui.getResultValuesGroupKeys()) {
+                    LuiResultValuesGroupRelationEntity resultValuesGroupRelationEntity = new LuiResultValuesGroupRelationEntity(this,resValueGroupKey);
+                    resultValuesGroupRelationEntity.setId(UUIDHelper.genStringUUID());
+                    resultValuesGroupRelationList.add(resultValuesGroupRelationEntity);
+                }
+            }
+            this.setResultValuesGroupRelationEntities(resultValuesGroupRelationList);
+
 	        this.setAttributes(new ArrayList<LuiAttributeEntity>());
 	        if (null != lui.getAttributes()) {
 	            for (Attribute att : lui.getAttributes()) {
@@ -177,7 +181,7 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
     	LuiInfo obj = new LuiInfo();
     	obj.setId(getId());
     	obj.setName(name);
-    	obj.setAtpKey(atpKey);
+    	obj.setAtpId(atpId);
     	obj.setCluId(cluId);
         if (null != officialIdentifier) {
             obj.setOfficialIdentifier(officialIdentifier.toDto());
@@ -218,7 +222,15 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
         	schedules.add(msInfo);
         }
         obj.setMeetingSchedules(schedules);
-        
+
+        List<String> rvGroupIds = new ArrayList();
+        if (null != getResultValuesGroupRelationEntities()) {
+            for (LuiResultValuesGroupRelationEntity relationEntity : getResultValuesGroupRelationEntities()){
+                rvGroupIds.add(relationEntity.getResultValuesGroupKey());
+            }
+        }
+        obj.setResultValuesGroupKeys(rvGroupIds);
+
         List<AttributeInfo> atts = new ArrayList<AttributeInfo>();
         for (LuiAttributeEntity att : getAttributes()) {
             AttributeInfo attInfo = att.toDto();
@@ -277,12 +289,12 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
 		this.name = name;
 	}
 
-	public String getAtpKey() {
-		return atpKey;
+	public String getAtpId() {
+		return atpId;
 	}
 
-	public void setAtpKey(String atpKey) {
-		this.atpKey = atpKey;
+	public void setAtpId(String atpId) {
+		this.atpId = atpId;
 	}
 
 	public LuiRichTextEntity getDescr() {
@@ -382,6 +394,14 @@ public class LuiEntity extends MetaEntity implements AttributeOwner<LuiAttribute
 	public void setMeetingSchedules(List<MeetingScheduleEntity> meetingSchedules) {
 		this.meetingSchedules = meetingSchedules;
 	}
+
+    public List<LuiResultValuesGroupRelationEntity> getResultValuesGroupRelationEntities() {
+        return resultValuesGroupRelationEntities;
+    }
+
+    public void setResultValuesGroupRelationEntities(List<LuiResultValuesGroupRelationEntity> resultValuesGroupRelationEntities) {
+        this.resultValuesGroupRelationEntities = resultValuesGroupRelationEntities;
+    }
 
 /*	public List<LuiCluRelationEntity> getCluCluRelationIds() {
 		return cluCluRelationIds;

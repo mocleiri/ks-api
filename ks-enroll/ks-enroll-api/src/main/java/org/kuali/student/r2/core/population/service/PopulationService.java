@@ -60,8 +60,7 @@ import org.kuali.student.r2.common.util.constants.PopulationServiceConstants;
 @WebService(name = "PopulationService", serviceName = "PopulationService", portName = "PopulationService", targetNamespace = PopulationServiceConstants.NAMESPACE)
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
 
-public interface PopulationService 
-    extends DataDictionaryService, TypeService, StateService {
+public interface PopulationService {
 
     /** 
      * Tests if a Person is a member of a Population.
@@ -228,12 +227,12 @@ public interface PopulationService
      * @throws DoesNotExistException validationTypeId not found
      * @throws InvalidParameterException invalid validationTypeId,
      *         populationInfo, or contextInfo
-     * @throws MissingParameterException missing validationTypeId,
+     * @throws MissingParameterException missing validationTypeKey,
      *         populationInfo, or contextInfo
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
      */
-    public List<ValidationResultInfo> validatePopulation(@WebParam(name = "validationTypeId") String validationTypeId, @WebParam(name = "populationInfo") PopulationInfo populationInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
+    public List<ValidationResultInfo> validatePopulation(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "populationInfo") PopulationInfo populationInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /** 
      * Creates a new Population.

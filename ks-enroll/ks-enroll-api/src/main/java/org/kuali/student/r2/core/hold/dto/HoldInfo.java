@@ -29,112 +29,120 @@ import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HoldInfo", propOrder = { "id", "typeKey", "stateKey", "name",
-		"descr", "issueKey", "personId", "isWarning", "isOverridable",
-		"effectiveDate", "releasedDate", "meta", "attributes",
-		"_futureElements" })
-public class HoldInfo extends IdEntityInfo implements Hold, Serializable {
-	private static final long serialVersionUID = 1L;
+@XmlType(name = "HoldInfo", propOrder = {"id", "typeKey", "stateKey", "name",
+                "descr", "issueKey", "personId", "isWarning", "isOverridable",
+                "effectiveDate", "releasedDate", "meta", "attributes",
+                "_futureElements"})
 
-	@XmlElement
-	private String personId;
+public class HoldInfo 
+    extends IdEntityInfo 
+    implements Hold, Serializable {
 
-	@XmlElement
-	private String issueKey;
+    private static final long serialVersionUID = 1L;
 
-	@XmlElement
-	private Boolean isWarning;
+    @XmlElement
+    private String personId;
 
-	@XmlElement
-	private Boolean isOverridable;
+    @XmlElement
+    private String issueKey;
 
-	@XmlElement
-	private Date effectiveDate;
+    @XmlElement
+    private Boolean isWarning;
 
-	@XmlElement
-	private Date releasedDate;
+    @XmlElement
+    private Boolean isOverridable;
 
-	@XmlAnyElement
-	private List<Element> _futureElements;
+    @XmlElement
+    private Date effectiveDate;
 
-	public HoldInfo() {
-		super();
-		personId = null;
-		isWarning = false;
-		isOverridable = false;
-		issueKey = null;
-		effectiveDate = null;
-		releasedDate = null;
-		_futureElements = null;
-	}
+    @XmlElement
+    private Date releasedDate;
 
-	public HoldInfo(Hold hold) {
-		super(hold);
-		if (null != hold) {
-			this.personId = hold.getPersonId();
-			this.isWarning = hold.getIsWarning();
-			this.isOverridable = hold.getIsOverridable();
-			this.issueKey = hold.getIssueKey();
-			this.effectiveDate = new Date(hold.getEffectiveDate().getTime());
-			this.releasedDate = new Date(hold.getReleasedDate().getTime());
-		}
+    @XmlAnyElement
+    private List<Element> _futureElements;
 
-		_futureElements = null;
-	}
+    public HoldInfo() {
+        super();
+        personId = null;
+        isWarning = false;
+        isOverridable = false;
+        issueKey = null;
+        effectiveDate = null;
+        releasedDate = null;
+        _futureElements = null;
+    }
 
-	@Override
-	public String getPersonId() {
-		return personId;
-	}
+    public HoldInfo(Hold hold) {
+        super(hold);
+        if (null != hold) {
+            this.personId = hold.getPersonId();
+            this.isWarning = hold.getIsWarning();
+            this.isOverridable = hold.getIsOverridable();
+            this.issueKey = hold.getIssueKey();
+            if (hold.getEffectiveDate() != null) {
+                this.effectiveDate = new Date(hold.getEffectiveDate().getTime());
+            }
+            if (hold.getReleasedDate() != null) {
+                this.releasedDate = new Date(hold.getReleasedDate().getTime());
+            }
+        }
+    }
 
-	public void setPersonId(String personId) {
-		this.personId = personId;
-	}
+    @Override
+    public String getPersonId() {
+        return personId;
+    }
 
-	@Override
-	public String getIssueKey() {
-		return issueKey;
-	}
+    public void setPersonId(String personId) {
+        this.personId = personId;
+    }
 
-	public void setIssueKey(String issueKey) {
-		this.issueKey = issueKey;
-	}
+    @Override
+    public String getIssueKey() {
+        return issueKey;
+    }
 
-	@Override
-	public Boolean getIsWarning() {
-		return isWarning;
-	}
+    public void setIssueKey(String issueKey) {
+        this.issueKey = issueKey;
+    }
 
-	public void setIsWarning(Boolean isWarning) {
-		this.isWarning = isWarning;
-	}
+    @Override
+    public Boolean getIsWarning() {
+        return isWarning;
+    }
 
-	@Override
-	public Boolean getIsOverridable() {
-		return isOverridable;
-	}
+    public void setIsWarning(Boolean isWarning) {
+        this.isWarning = isWarning;
+    }
 
-	public void setIsOverridable(Boolean isOverridable) {
-		this.isOverridable = isOverridable;
-	}
+    @Override
+    public Boolean getIsOverridable() {
+        return isOverridable;
+    }
 
-	@Override
-	public Date getEffectiveDate() {
-		return effectiveDate != null ? new Date(effectiveDate.getTime()) : null;
-	}
+    public void setIsOverridable(Boolean isOverridable) {
+        this.isOverridable = isOverridable;
+    }
 
-	public void setEffectiveDate(Date effectiveDate) {
-		if (effectiveDate != null)
-			this.effectiveDate = new Date(effectiveDate.getTime());
-	}
+    @Override
+    public Date getEffectiveDate() {
+        return effectiveDate != null ? new Date(effectiveDate.getTime()) : null;
+    }
 
-	@Override
-	public Date getReleasedDate() {
-		return releasedDate != null ? new Date(releasedDate.getTime()) : null;
-	}
+    public void setEffectiveDate(Date effectiveDate) {
+        if (effectiveDate != null) {
+            this.effectiveDate = new Date(effectiveDate.getTime());
+        }
+    }
 
-	public void setReleasedDate(Date releasedDate) {
-		if (releasedDate != null)
-			this.releasedDate = new Date(releasedDate.getTime());
-	}
+    @Override
+    public Date getReleasedDate() {
+        return releasedDate != null ? new Date(releasedDate.getTime()) : null;
+    }
+
+    public void setReleasedDate(Date releasedDate) {
+        if (releasedDate != null) {
+            this.releasedDate = new Date(releasedDate.getTime());
+        }
+    }
 }

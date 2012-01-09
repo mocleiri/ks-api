@@ -7,9 +7,7 @@
     <import resource="classpath:ks-mock-lpr-service-configuration.xml"/>
     <bean id="mockLuiService" class="org.kuali.student.enrollment.classI.lui.mock.LuiServiceMockImpl" />
     <bean id="mockHoldService" class="org.kuali.student.enrollment.classI.hold.mock.HoldServiceMockImpl" />
-    <bean id="mockAcademicCalendarService" class= "org.kuali.student.enrollment.classII.acal.mock.AcademicCalendarServiceMockImpl">
-        <property name="atpService" ref="mockAtpService"/>
-    </bean>
+
     <bean id="testAtpInfoDictionaryLocation" class="java.lang.String">
         <constructor-arg value="classpath:ks-test-AtpInfo-dictionary.xml" />
     </bean>
@@ -18,13 +16,17 @@
     </bean>
     <bean id="testLuiInfoDictionaryLocation" class="java.lang.String">
         <constructor-arg value="classpath:ks-test-LuiInfo-dictionary.xml" />
-    </bean>  
+    </bean> 
+        <bean id="testCourseOfferingInfoDictionaryLocation" class="java.lang.String">
+        <constructor-arg value="classpath:ks-CourseOfferingInfo-dictionary.xml" />
+    </bean> 
     <bean name="testDictionaryFileLocations" class="java.util.ArrayList">
         <constructor-arg>
             <list>
                 <bean parent="testAtpInfoDictionaryLocation" />                 
                 <bean parent="testAcalInfoDictionaryLocation" /> 
                 <bean parent="testLuiInfoDictionaryLocation" />   
+                <bean parent="testCourseOfferingInfoDictionaryLocation" />                   
             </list>
         </constructor-arg>
     </bean>
