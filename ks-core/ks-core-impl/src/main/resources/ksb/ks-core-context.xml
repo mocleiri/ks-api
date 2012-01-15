@@ -22,11 +22,11 @@
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
                            http://www.springframework.org/schema/tx
-                           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+                           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
                            http://www.springframework.org/schema/aop
-                           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<!-- This context requires that a spring Transaction Manager named 'transactionManager' be defined -->
 
@@ -49,7 +49,8 @@
     <!-- JTA -->
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <bean id="coreDataSource" class="bitronix.tm.resource.jdbc.PoolingDataSource" init-method="init" destroy-method="close">
+<!-- uncomment and comment out other datasource to switch to bitronix -->
+    <!-- bean id="coreDataSource" class="bitronix.tm.resource.jdbc.PoolingDataSource" init-method="init" destroy-method="close">
     <property name="className" value="oracle.jdbc.xa.client.OracleXADataSource" />
     <property name="uniqueName" value="coreDataSource" />
     <property name="maxPoolSize" value="${ks.core.datasource.maxSize}" />
@@ -63,10 +64,9 @@
             <prop key="password">${ks.core.datasource.password}</prop>
         </props>
     </property>
-    </bean>
+    </bean -->
 
 	<!-- Default Datasource -->
-<!--
 	<bean id="coreDataSource" class="org.kuali.rice.student.core.database.DerbyXAPoolDataSource">
         <property name="transactionManager" ref="userTransaction" />
         <property name="driverClassName" value="${ks.core.datasource.driver.name}" />
@@ -78,7 +78,6 @@
         <property name="username" value="${ks.core.datasource.username}" />
         <property name="password" value="${ks.core.datasource.password}" />
 	</bean>
--->
 
     <!-- Default JPA EntityManagerFactory -->
     <bean id="coreDefaultEntityManagerFactory" abstract="true"
@@ -116,12 +115,22 @@
         class="org.kuali.student.core.organization.dao.impl.OrganizationDaoImpl">
         <property name="em" ref="orgEntityManager" />
     </bean>
+    
+    <bean id="organizationSearch" 
+    	class="org.kuali.student.core.organizationsearch.service.impl.OrganizationHierarchySearch">
+    	<property name="organizationDao" ref="orgDao" />
+    </bean>
 
     <bean id="orgServiceImpl"
         class="org.kuali.student.core.organization.service.impl.OrganizationServiceImpl">
         <property name="organizationDao" ref="orgDao" />
         <property name="searchManager" ref="orgSearchManager" />
         <property name="dictionaryServiceDelegate" ref="coreDictionaryServiceDelegate"/>
+        <property name="searchOperations">
+        	<map>
+        		<entry key="org.search.orgQuickViewByRelationTypeOrgTypeRelatedOrgIds" value-ref="organizationSearch"/>
+        	</map>
+        </property>
     </bean>
 
     <bean id="orgSearchManager"
@@ -433,6 +442,23 @@
             </bean>
         </property>
     </bean>
+    
+    <!-- Subject Code service -->
+	<bean id="subjectCodeServiceImpl"
+		class="org.kuali.student.core.subjectcode.service.impl.MockSubjectCodeServiceImpl"/>
+
+	<bean id="ks.exp.subjectCodeService" class="org.kuali.rice.ksb.messaging.KSBExporter">
+		<property name="serviceDefinition">
+			<bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition">
+				<property name="jaxWsService" value="true" />
+				<property name="service" ref="subjectCodeServiceImpl" />
+				<property name="serviceInterface" value="org.kuali.student.core.subjectcode.service.SubjectCodeService" />
+				<property name="localServiceName" value="SubjectCodeService" />
+				<property name="serviceNameSpaceURI" value="http://student.kuali.org/wsdl/subjectCode" />
+				<property name="busSecurity" value="${ks.core.bus.security}" />
+			</bean>
+		</property>
+	</bean>
 
     <!-- Proposal Service -->
     <bean id="proposalEntityManagerFactory" parent="coreDefaultEntityManagerFactory">
@@ -479,8 +505,7 @@
 
 
     <bean id="coreServiceValidator" class="org.kuali.student.common.validator.DefaultValidatorImpl">
-        <!--  TODO: Currently core services are not wired for lookup validation -->
-        <!--  <property name="searchDispatcher" ref="coreSearchDispatcher"/> -->
+        <property name="searchDispatcher" ref="coreSearchDispatcher"/>
     </bean>
 
     <bean id="coreValidatorFactory-parent"
@@ -493,7 +518,24 @@
 
     <bean id="coreValidatorFactory" parent="coreValidatorFactory-parent"/>
 
-
+    <bean id="coreSearchDispatcher"
+          class="org.kuali.student.common.search.service.impl.SearchDispatcherImpl">
+        <property name="services">
+            <list>
+                <ref bean="atpServiceClient"/>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="atpServiceClient"
+          class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
+        <property name="serviceEndpointInterface"
+                  value="org.kuali.student.core.atp.service.AtpService"/>
+        <property name="serviceQName"
+                  value="{http://student.kuali.org/wsdl/atp}AtpService"/>
+    </bean>
+    
+    
 	<bean id="mapExceptionAdvisor"
 		class="org.kuali.student.common.util.ExceptionMappingAdvice">
 		<property name="defaultException"
