@@ -8,6 +8,7 @@ import java.util.Map;
 import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.View;
+import org.kuali.student.common.ui.client.util.ExportElement;
 import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.headers.KSDocumentHeader;
 import org.kuali.student.common.ui.client.widgets.menus.KSMenuItemData;
@@ -19,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,18 +34,21 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class MenuSectionController extends LayoutController implements ContentNavLayoutController {
 
-    private KSBlockMenuImpl menu = new KSBlockMenuImpl();
-    private List<KSMenuItemData> topLevelMenuItems = new ArrayList<KSMenuItemData>();
+    protected KSBlockMenuImpl menu = new KSBlockMenuImpl();
+    protected List<KSMenuItemData> topLevelMenuItems = new ArrayList<KSMenuItemData>();
     protected Map<String, List<View>> menuViewMap = new HashMap<String, List<View>>();
     private Map<Enum<?>, List<KSButton>> viewButtonsMap = new HashMap<Enum<?>, List<KSButton>>();
+    private Map<Enum<?>, List<KSButton>> topViewButtonsMap = new HashMap<Enum<?>, List<KSButton>>();
     protected Map<Enum<?>, KSMenuItemData> viewMenuItemMap = new HashMap<Enum<?>, KSMenuItemData>();
     private List<View> menuOrder = new ArrayList<View>();
-    private FlowPanel layout = new FlowPanel();
+    private HorizontalPanel layout = new HorizontalPanel();
     private KSDocumentHeader header = new KSDocumentHeader();
-    private FlowPanel rightPanel = new FlowPanel();
+    protected FlowPanel rightPanel = new FlowPanel();
     private FlowPanel contentPanel = new FlowPanel();
-    private FlowPanel buttonPanel = new FlowPanel();
-    private VerticalPanel leftPanel = new VerticalPanel();
+    private FlowPanel infoPanel = new FlowPanel();
+    private FlowPanel bottomButtonPanel = new FlowPanel();
+    private FlowPanel topButtonPanel = new FlowPanel();
+    protected VerticalPanel leftPanel = new VerticalPanel();
     private SimplePanel sideBar = new SimplePanel();
     private boolean refreshMenuOnAdd = true;
     private VerticalCollapsableDrawer collapsablePanel = new VerticalCollapsableDrawer();
@@ -61,8 +66,8 @@ public class MenuSectionController extends LayoutController implements ContentNa
         }
     };
 
-    public MenuSectionController(String controllerId) {
-        super(controllerId);
+    public MenuSectionController() {
+        super();
         List<View> list = new ArrayList<View>();
         menuViewMap.put("", list);
         menu.setStyleName("ks-menu-layout-menu");
@@ -74,8 +79,10 @@ public class MenuSectionController extends LayoutController implements ContentNa
         leftPanel.add(menu);
         leftPanel.add(sideBar);
         rightPanel.add(header);
+        rightPanel.add(infoPanel);
+        rightPanel.add(topButtonPanel);
         rightPanel.add(contentPanel);
-        rightPanel.add(buttonPanel);
+        rightPanel.add(bottomButtonPanel);
         layout.add(collapsablePanel);
         layout.add(rightPanel);
         header.setVisible(false);
@@ -96,6 +103,10 @@ public class MenuSectionController extends LayoutController implements ContentNa
         header.addWidget(w);
         header.setVisible(true);
     }
+    
+    public void addInfoWidget(Widget w) {
+        infoPanel.add(w);
+    }
 
     public void setSideBarWidget(Widget w) {
         sideBar.setWidget(w);
@@ -113,9 +124,13 @@ public class MenuSectionController extends LayoutController implements ContentNa
         header.getInfoLabel().addStyleName("content-warning");
 
     }
+
+    public void showPrint(boolean show) {
+        header.showPrint(show);
+    }
     
-    public void showPrint(boolean show){
-    	header.showPrint(show);
+    public void showExport(boolean show) {
+        header.showExport(show);
     }
 
     /**
@@ -167,21 +182,44 @@ public class MenuSectionController extends LayoutController implements ContentNa
         }
     }
 
+    public void addTopButtonForView(Enum<?> viewType, KSButton button) {
+        List<KSButton> buttons = topViewButtonsMap.get(viewType);
+        if (buttons == null) {
+            buttons = new ArrayList<KSButton>();
+            button.addStyleName("ks-button-spacing");
+            buttons.add(button);
+            topViewButtonsMap.put(viewType, buttons);
+        } else {
+            buttons.add(button);
+        }
+    }
+
     @Override
     protected void hideView(View view) {
         contentPanel.clear();
-        buttonPanel.clear();
+        bottomButtonPanel.clear();
     }
 
     @Override
     protected void renderView(View view) {
         contentPanel.add(view.asWidget());
+
+        //Render bottom buttons
         List<KSButton> buttons = viewButtonsMap.get(view.getViewEnum());
         if (buttons != null) {
             for (KSButton button : buttons) {
-                buttonPanel.add(button);
+                bottomButtonPanel.add(button);
             }
         }
+        
+        //Render top buttons
+        buttons = topViewButtonsMap.get(view.getViewEnum());
+        if (buttons != null) {
+            for (KSButton button : buttons) {
+                topButtonPanel.add(button);
+            }
+        }
+
         KSMenuItemData item = viewMenuItemMap.get(view.getViewEnum());
         if (item != null) {
             item.setSelected(true, false);
@@ -189,7 +227,6 @@ public class MenuSectionController extends LayoutController implements ContentNa
     }
 
     /* Adds 'name' of the menu above menu items. This menu name has no view */
-
     public void addMenu(String title) {
         if (title != null && !title.equals("")) {
             KSMenuItemData item = new KSMenuItemData(title);
@@ -320,5 +357,13 @@ public class MenuSectionController extends LayoutController implements ContentNa
 
     }
 
-
+    @Override
+    public List<ExportElement> getExportElementsFromView() {
+        return super.getExportElementsFromView();
+        
+    }
+    
+    public void addStyleName(String style){
+    	layout.addStyleName(style);
+    }
 }
