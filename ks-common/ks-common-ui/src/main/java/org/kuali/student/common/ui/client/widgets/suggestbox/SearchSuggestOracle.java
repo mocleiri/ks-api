@@ -18,24 +18,25 @@ package org.kuali.student.common.ui.client.widgets.suggestbox;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kuali.student.common.assembly.data.LookupMetadata;
+import org.kuali.student.common.assembly.data.LookupParamMetadata;
+import org.kuali.student.common.assembly.data.Metadata.WriteAccess;
+import org.kuali.student.common.search.dto.SearchParam;
+import org.kuali.student.common.search.dto.SearchRequest;
+import org.kuali.student.common.search.dto.SearchResult;
+import org.kuali.student.common.search.dto.SearchResultCell;
+import org.kuali.student.common.search.dto.SearchResultRow;
+import org.kuali.student.common.search.dto.SortDirection;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.service.CachingSearchService;
 import org.kuali.student.common.ui.client.service.SearchRpcServiceAsync;
 import org.kuali.student.common.ui.client.service.SearchServiceFactory;
 import org.kuali.student.common.ui.client.widgets.KSErrorDialog;
 import org.kuali.student.common.ui.client.widgets.notification.LoadingDiv;
-import org.kuali.student.core.assembly.data.LookupMetadata;
-import org.kuali.student.core.assembly.data.LookupParamMetadata;
-import org.kuali.student.core.assembly.data.Metadata.WriteAccess;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
-import org.kuali.student.core.search.dto.SearchResultRow;
 
 import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SearchSuggestOracle extends IdableSuggestOracle{
     
@@ -48,6 +49,8 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
     private Callback pendingCallback;
     private HasText textWidget;
     private String resultDisplayKey;
+    private String resultSortKey;
+    private SortDirection sortDirection;
     private List<SearchParam> additionalParams = new ArrayList<SearchParam>();
     private List<IdableSuggestion> lastSuggestions = new ArrayList<IdableSuggestion>();
     
@@ -103,6 +106,8 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
         this.searchIdKey = lookupMetadata.getSearchParamIdKey();
         this.resultIdKey = lookupMetadata.getResultReturnKey();
         this.resultDisplayKey = lookupMetadata.getResultDisplayKey();
+        this.resultSortKey = lookupMetadata.getResultSortKey();
+        this.sortDirection = lookupMetadata.getSortDirection();
     }
 
     public void setAdditionalSearchParams(List<SearchParam> params){
@@ -129,7 +134,16 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
     
     @Override
     public void requestSuggestions(Request request, Callback callback) {
-        if (currentCallback == null) {
+        // Check if the request query is smaller than the minimum size allowed
+        String query = request.getQuery().trim();
+        int minQuerySize = 0;
+        
+        //[KSCOR-225] LO's currently use the depricated constructor that does not pass in the 
+        // lookupMetaData so we need to do a null check until that is fixed
+        if (lookupMetaData != null && lookupMetaData.getMinQuerySize() != null){
+            minQuerySize = lookupMetaData.getMinQuerySize().intValue();
+        }
+        if ((currentCallback == null) && (query.length() >= minQuerySize)){
           final int x = ((Widget)this.textWidget).getAbsoluteLeft() + ((Widget)this.textWidget).getOffsetWidth();
   		  final int y = ((Widget)this.textWidget).getAbsoluteTop() + ((Widget)this.textWidget).getOffsetHeight();
   		  loading.setPopupPositionAndShow(new PositionCallback(){
@@ -151,6 +165,8 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
     	SearchRequest sr = new SearchRequest();
     	sr.setNeededTotalResults(false);
     	sr.setSearchKey(this.searchTypeKey);
+    	sr.setSortColumn(this.resultSortKey);
+        sr.setSortDirection(this.sortDirection);
 
 		List<SearchParam> searchParams = new ArrayList<SearchParam>();
 		SearchParam param1 = createParam(this.searchTextKey, query);
@@ -167,6 +183,8 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
     	SearchRequest sr = new SearchRequest();
     	sr.setNeededTotalResults(false);
     	sr.setSearchKey(this.searchTypeKey);
+    	sr.setSortColumn(this.resultSortKey);
+        sr.setSortDirection(this.sortDirection);
 
 		List<SearchParam> searchParams = new ArrayList<SearchParam>();
 		SearchParam param2 = createParam(this.searchIdKey, searchId);
@@ -256,7 +274,9 @@ public class SearchSuggestOracle extends IdableSuggestOracle{
                                     String htmlString = itemText.substring(0,index) + "<b>" + itemText.substring(index, index + query.length()) + "</b>" + itemText.substring(index + query.length(), itemText.length());
                                     theSuggestion.setDisplayString(htmlString);
                                     theSuggestion.setReplacementString(itemText);
-
+                                    if (c.getKey().equals(resultIdKey)){
+                                        theSuggestion.setId(c.getValue());
+                                    }
                                 } else if(c.getKey().equals(resultIdKey)){
                                      theSuggestion.setId(c.getValue());
                                      theSuggestion.addAttr(c.getKey(), c.getValue());
