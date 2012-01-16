@@ -15,7 +15,7 @@
 package org.kuali.student.lum.kim.role.type;
 
 import org.apache.commons.lang.StringUtils;
-import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleMembership;
 import org.kuali.rice.kns.kim.role.DerivedRoleTypeServiceBase;
 
@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * Dummy class to test Hierarchy Node Test
- * 
+ *
  * @author delyea
  *
  */
@@ -37,17 +37,17 @@ public class HierarchyNodeTestRoleTypeServiceBase extends DerivedRoleTypeService
     @Override
     public List<RoleMembership> getRoleMembersFromApplicationRole(String namespaceCode, String roleName, Map<String, String> qualification) {
         List<RoleMembership> roleMembers = new ArrayList<RoleMembership>();
-        roleMembers.add(RoleMembership.Builder.create(null, null, "eric", Role.PRINCIPAL_MEMBER_TYPE, null).build());
-        roleMembers.add(RoleMembership.Builder.create(null, null, "fran", Role.PRINCIPAL_MEMBER_TYPE, null).build());
-        roleMembers.add(RoleMembership.Builder.create(null, null, "user1", Role.PRINCIPAL_MEMBER_TYPE, null).build());
-        roleMembers.add(RoleMembership.Builder.create(null, null, "user4", Role.PRINCIPAL_MEMBER_TYPE, null).build());
+        roleMembers.add(RoleMembership.Builder.create(null, null, "eric", KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
+        roleMembers.add(RoleMembership.Builder.create(null, null, "fran", KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
+        roleMembers.add(RoleMembership.Builder.create(null, null, "user1", KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
+        roleMembers.add(RoleMembership.Builder.create(null, null, "user4", KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
         return roleMembers;
     }
 
     /* (non-Javadoc)
      * @see org.kuali.rice.kim.service.support.impl.KimRoleTypeServiceBase#sortRoleMembers(java.util.List)
      */
-    @Override
+  //  @Override
     public List<RoleMembership> sortRoleMembers(List<RoleMembership> roleMembers) {
         List<RoleMembership> sortedRoleMembers = new ArrayList<RoleMembership>();
         int group = 0; // counter for the group number to add to the roleSortingCode

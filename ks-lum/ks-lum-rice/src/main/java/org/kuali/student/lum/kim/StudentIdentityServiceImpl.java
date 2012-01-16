@@ -14,7 +14,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.kuali.student.lum.kim;
 
@@ -24,20 +24,23 @@ import javax.jws.WebService;
 
 import org.kuali.rice.core.api.CoreApiServiceLocator;
 import org.kuali.rice.core.api.encryption.EncryptionService;
+import org.kuali.rice.kim.api.KimApiConstants;
 import org.kuali.rice.kim.api.identity.IdentityService;
 import org.kuali.rice.kim.api.identity.principal.Principal;
-import org.kuali.rice.kim.service.impl.IdentityServiceImpl;
-import org.kuali.rice.kim.util.KIMWebServiceConstants;
+import org.kuali.rice.kim.impl.identity.IdentityServiceImpl;
 import org.kuali.rice.krad.service.impl.DocumentServiceImpl;
 
 /**
  * This service override is used to facilitate a fix to the encrypted passwords in the
  * Rice database.
- * 
+ *
  * @author delyea
  *
  */
-@WebService(endpointInterface = KIMWebServiceConstants.IdentityService.INTERFACE_CLASS, serviceName = KIMWebServiceConstants.IdentityService.WEB_SERVICE_NAME, portName = KIMWebServiceConstants.IdentityService.WEB_SERVICE_PORT, targetNamespace = KIMWebServiceConstants.MODULE_TARGET_NAMESPACE)
+
+// TODO: RICE=M9 UPGRADE Check that the values for the portName and targetNamespace still make sense for rice-2.0
+// @see org.kuali.rice.kim.api.KimApiConstants.KIM_NAMESPACE_PREFIX
+@WebService(endpointInterface = KimIdentityServiceConstants.INTERFACE_CLASS, serviceName = KimApiConstants.ServiceNames.IDENTITY_SERVICE_SOAP, portName = KimIdentityServiceConstants.WEB_SERVICE_PORT, targetNamespace = KimIdentityServiceConstants.MODULE_TARGET_NAMESPACE)
 public class StudentIdentityServiceImpl extends IdentityServiceImpl implements IdentityService {
     private static org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DocumentServiceImpl.class);
 

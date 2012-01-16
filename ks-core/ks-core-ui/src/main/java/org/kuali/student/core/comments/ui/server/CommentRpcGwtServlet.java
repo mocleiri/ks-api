@@ -36,7 +36,7 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
 
 	private static final long serialVersionUID = 1L;
 	private IdentityService identityService;
-	
+
 	public IdentityService getIdentityService() {
         return identityService;
     }
@@ -85,7 +85,7 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
 		if (id != null && (!"".equals(id.trim()))) {
 			Map<String,String> permissionDetails = new LinkedHashMap<String,String>();
                         permissionDetails.put (StudentIdentityConstants.KS_REFERENCE_TYPE_KEY, referenceTypeKey);
-			if (getPermissionService().isPermissionDefinedForTemplateName(PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails)) {
+			if (getPermissionService().isPermissionDefinedByTemplateName(PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails)) {
 	            Map<String,String> roleQuals = new LinkedHashMap<String,String>();
 	            roleQuals.put(referenceTypeKey, id);
 	            return Boolean.valueOf(getPermissionService().isAuthorizedByTemplateName(getCurrentUser(), PermissionType.ADD_COMMENT.getPermissionNamespace(), PermissionType.ADD_COMMENT.getPermissionTemplateName(), permissionDetails, roleQuals));
@@ -93,7 +93,7 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
 		}
 		return Boolean.TRUE;
     }
-	
+
 	private String nvl(String inString) {
 	    return (inString == null)? "" : inString;
 	}
@@ -102,7 +102,7 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
     public String getUserRealName(String userId) {
         Entity kimEntityInfo = identityService.getEntityByPrincipalId(userId);
         EntityNameContract kimEntityNameInfo = (kimEntityInfo == null)? null : kimEntityInfo.getDefaultName();
-        StringBuilder name = new StringBuilder(); 
+        StringBuilder name = new StringBuilder();
         if (kimEntityNameInfo != null) {
             if (!nvl(kimEntityNameInfo.getFirstName()).trim().isEmpty()) {
                 if (!name.toString().isEmpty()) {
@@ -110,7 +110,7 @@ public class CommentRpcGwtServlet extends BaseRpcGwtServletAbstract<CommentServi
                 }
                 name.append(nvl(kimEntityNameInfo.getFirstName()));
             }
-            
+
             if (!nvl(kimEntityNameInfo.getMiddleName()).trim().isEmpty()) {
                 if (!name.toString().isEmpty()) {
                     name.append(" ");

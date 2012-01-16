@@ -29,12 +29,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
+import org.kuali.rice.core.api.criteria.QueryByCriteria;
+import org.kuali.rice.kim.api.identity.entity.EntityDefault;
+import org.kuali.rice.kim.api.identity.entity.EntityDefaultQueryResults;
 import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.identity.principal.EntityNamePrincipalName;
 import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.common.assembly.data.Data;
 import org.kuali.student.common.dto.StatusInfo;
 import org.kuali.student.common.ui.client.service.DataSaveResult;
+import org.kuali.student.common.ui.client.service.exceptions.OperationFailedException;
 import org.kuali.student.common.ui.server.gwt.old.AbstractBaseDataOrchestrationRpcGwtServlet;
 import org.kuali.student.common.validation.dto.ValidationResultInfo;
 import org.kuali.student.core.organization.dto.OrgHierarchyInfo;
@@ -61,6 +64,10 @@ import org.kuali.student.core.organization.ui.client.mvc.model.OrgPositionPerson
 import org.kuali.student.core.organization.ui.client.mvc.model.SectionConfigInfo;
 import org.kuali.student.core.organization.ui.client.mvc.model.SectionViewInfo;
 import org.kuali.student.core.organization.ui.client.service.OrgRpcService;
+
+import static org.kuali.rice.core.api.criteria.PredicateFactory.and;
+import static org.kuali.rice.core.api.criteria.PredicateFactory.equal;
+import static org.kuali.rice.core.api.criteria.PredicateFactory.in;
 
 public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet implements OrgRpcService{
 	final Logger LOG = Logger.getLogger(OrgRpcGwtServlet.class);
@@ -473,16 +480,23 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     @Override
     public Map<String, MembershipInfo> getNamesForPersonIds(List<String> personIds) {
-        Map<String, EntityNamePrincipalName> kimIdentities = identityServiceNonCached.getDefaultNamesForPrincipalIds(personIds);
+        QueryByCriteria.Builder builder = QueryByCriteria.Builder.create();
+        builder.setPredicates(and(in("id", personIds.toArray()),
+                                  equal("active", "Y"),
+                                  and(
+                                  equal("names.active", "Y"),
+                                  equal("names.defaultValue", "Y"))));
+        EntityDefaultQueryResults qr = identityServiceNonCached.findEntityDefaults(builder.build());
+
         Map<String, MembershipInfo> identities = new HashMap<String, MembershipInfo>();
-        for(String pId:personIds ){
-            EntityNamePrincipalName kimEntity = kimIdentities.get(pId);
+
+        for(EntityDefault entityDefault : qr.getResults()) {
             MembershipInfo memeberEntity = new MembershipInfo();
-            memeberEntity.setFirstName(kimEntity.getDefaultName().getFirstName());
-            memeberEntity.setLastName(kimEntity.getDefaultName().getLastName());
-            identities.put(pId, memeberEntity);
+            memeberEntity.setFirstName(entityDefault.getName().getFirstName());
+            memeberEntity.setLastName(entityDefault.getName().getLastName());
+            identities.put(entityDefault.getEntityId(), memeberEntity);
         }
-        
+
         return identities;
     }
 
@@ -510,5 +524,10 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     protected String getDefaultWorkflowDocumentType() {
         return null;
     }
+
+	@Override
+	public List<ValidationResultInfo> validate(Data data) throws OperationFailedException {
+		return null;
+	}
     
 }

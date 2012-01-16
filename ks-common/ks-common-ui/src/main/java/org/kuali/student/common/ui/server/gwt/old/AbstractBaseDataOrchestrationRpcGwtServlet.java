@@ -15,11 +15,15 @@
 
 package org.kuali.student.common.ui.server.gwt.old;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.kuali.rice.kew.service.WorkflowUtility;
+
+import org.kuali.rice.kew.api.action.WorkflowDocumentActionsService;
+import org.kuali.rice.kim.api.identity.IdentityService;
+import org.kuali.rice.kim.api.permission.PermissionService;
 import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.common.assembly.data.Data;
 import org.kuali.student.common.assembly.data.Metadata;
@@ -34,10 +38,6 @@ import org.kuali.student.common.ui.shared.IdAttributes;
 import org.kuali.student.common.util.security.SecurityUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import java.util.LinkedHashMap;
-import org.kuali.rice.kew.api.action.WorkflowDocumentActionsService;
-import org.kuali.rice.kim.api.identity.IdentityService;
-import org.kuali.rice.kim.api.permission.PermissionService;
 
 /**
  * Generic implementation of data orchestration calls and workflow calls
@@ -58,7 +58,6 @@ public abstract class AbstractBaseDataOrchestrationRpcGwtServlet extends RemoteS
 	private Assembler<Data, Void> assembler;
 
     private WorkflowDocumentActionsService simpleDocService;
-    private WorkflowUtility workflowUtilityService;
 	private PermissionService permissionService;
 	private IdentityService identityService;
 
@@ -104,7 +103,7 @@ public abstract class AbstractBaseDataOrchestrationRpcGwtServlet extends RemoteS
 
 
 	protected String getCurrentUser() {
-		String username = SecurityUtils.getCurrentUserId();
+		String username = SecurityUtils.getCurrentPrincipalId();
 		//backdoorId is only for convenience
 		if(username==null&&this.getThreadLocalRequest().getSession().getAttribute("backdoorId")!=null){
 			username=(String)this.getThreadLocalRequest().getSession().getAttribute("backdoorId");
@@ -178,10 +177,6 @@ public abstract class AbstractBaseDataOrchestrationRpcGwtServlet extends RemoteS
 		this.simpleDocService = simpleDocService;
 	}
 
-	public void setWorkflowUtilityService(WorkflowUtility workflowUtilityService) {
-		this.workflowUtilityService = workflowUtilityService;
-	}
-
 	protected Assembler<Data, Void> getAssembler() {
 		return assembler;
 	}
@@ -189,10 +184,5 @@ public abstract class AbstractBaseDataOrchestrationRpcGwtServlet extends RemoteS
 	protected WorkflowDocumentActionsService getSimpleDocService() {
 		return simpleDocService;
 	}
-
-	protected WorkflowUtility getWorkflowUtilityService() {
-		return workflowUtilityService;
-	}
-
 
 }
