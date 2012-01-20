@@ -19,12 +19,9 @@ import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.kew.api.KewApiServiceLocator;
 import org.kuali.rice.kew.api.action.WorkflowDocumentActionsService;
 import org.kuali.rice.kew.api.document.WorkflowDocumentService;
-import org.kuali.rice.kew.exception.WorkflowException;
-import org.kuali.rice.kew.service.KEWServiceLocator;
-import org.kuali.rice.kew.service.WorkflowUtility;
-import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kew.api.exception.WorkflowException;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleMembership;
-import org.kuali.rice.kim.util.KimConstants;
 import org.kuali.rice.kns.kim.role.DerivedRoleTypeServiceBase;
 import org.kuali.student.common.rice.StudentIdentityConstants;
 import org.kuali.student.lum.kim.KimQualificationHelper;
@@ -67,9 +64,9 @@ public class KSRouteLogDerivedRoleTypeServiceImpl extends DerivedRoleTypeService
         }
 	}
 
-	/** 
+	/**
 	 * The part about where the receivedAttributes list being empty does not return errors is copied from Rice base class.
-	 * 
+	 *
 	 * @see org.kuali.rice.kim.service.support.impl.KimTypeServiceBase#validateRequiredAttributesAgainstReceived(org.kuali.rice.kim.bo.types.dto.Map<String,String>)
 	 **/
 	@Override
@@ -126,10 +123,10 @@ public class KSRouteLogDerivedRoleTypeServiceImpl extends DerivedRoleTypeService
 	 *	- the roles that will be of this type are KR-WKFLW Initiator and KR-WKFLW Initiator or Reviewer, KR-WKFLW Router
 	 *	- only the initiator of the document in question gets the KR-WKFLW Initiator role
 	 *	- user who routed the document according to the route log should get the KR-WKFLW Router role
-	 *	- users who are authorized by the route log, 
-	 *		i.e. initiators, people who have taken action, people with a pending action request, 
-	 *		or people who will receive an action request for the document in question get the KR-WKFLW Initiator or Reviewer Role 
-	 * 
+	 *	- users who are authorized by the route log,
+	 *		i.e. initiators, people who have taken action, people with a pending action request,
+	 *		or people who will receive an action request for the document in question get the KR-WKFLW Initiator or Reviewer Role
+	 *
 	 * @see org.kuali.rice.kim.service.support.impl.KimRoleTypeServiceBase#getRoleMembersFromApplicationRole(String, String, Map<String,String>)
 	 */
 	@Override
@@ -143,19 +140,19 @@ public class KSRouteLogDerivedRoleTypeServiceImpl extends DerivedRoleTypeService
 			if (documentNumber != null) {
 				if (INITIATOR_ROLE_NAME.equals(roleName)) {
 				    String principalId = getWorkflowDocumentService().getDocumentInitiatorPrincipalId(documentNumber);
-	                members.add(RoleMembership.Builder.create(null/*roleId*/, null, principalId, Role.PRINCIPAL_MEMBER_TYPE, null).build());
+	                members.add(RoleMembership.Builder.create(null/*roleId*/, null, principalId, KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
 				} else if(INITIATOR_OR_REVIEWER_ROLE_NAME.equals(roleName)) {
 					List<String> ids = getWorkflowDocumentActionsService().getPrincipalIdsInRouteLog(documentNumber, isCheckFutureRequests());
 					if (ids != null) {
 					    for ( String id : ids ) {
 					    	if ( StringUtils.isNotBlank(id) ) {
-					    		members.add(RoleMembership.Builder.create(null/*roleId*/, null, id, Role.PRINCIPAL_MEMBER_TYPE, null).build());
+					    		members.add(RoleMembership.Builder.create(null/*roleId*/, null, id, KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build());
 					    	}
 					    }
 					}
 				} else if(ROUTER_ROLE_NAME.equals(roleName)) {
 				    String principalId = getWorkflowDocumentService().getRoutedByPrincipalIdByDocumentId(documentNumber);
-	                members.add(RoleMembership.Builder.create(null/*roleId*/, null, principalId, Role.PRINCIPAL_MEMBER_TYPE, null).build() );
+	                members.add(RoleMembership.Builder.create(null/*roleId*/, null, principalId, KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, null).build() );
 				}
 			}
 		} catch (WorkflowException wex) {
@@ -195,7 +192,7 @@ public class KSRouteLogDerivedRoleTypeServiceImpl extends DerivedRoleTypeService
 
 	/**
 	 * Returns false, as the Route Log changes often enough that role membership is highly volatile
-	 * 
+	 *
 	 * @see org.kuali.rice.kim.service.support.impl.KimRoleTypeServiceBase#shouldCacheRoleMembershipResults(java.lang.String, java.lang.String)
 	 */
 //	@Override

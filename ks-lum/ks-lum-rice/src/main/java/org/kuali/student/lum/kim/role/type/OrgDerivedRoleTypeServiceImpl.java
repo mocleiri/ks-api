@@ -17,7 +17,7 @@ package org.kuali.student.lum.kim.role.type;
 
 import org.apache.commons.lang.StringUtils;
 import org.kuali.rice.core.api.resourceloader.GlobalResourceLoader;
-import org.kuali.rice.kim.api.role.Role;
+import org.kuali.rice.kim.api.KimConstants;
 import org.kuali.rice.kim.api.role.RoleMembership;
 import org.kuali.rice.kns.kim.role.DerivedRoleTypeServiceBase;
 import org.kuali.rice.student.bo.KualiStudentKimAttributes;
@@ -28,20 +28,20 @@ import javax.xml.namespace.QName;
 import java.util.*;
 
 public class OrgDerivedRoleTypeServiceImpl extends DerivedRoleTypeServiceBase {
-	
-	private static final org.apache.log4j.Logger LOG = 
+
+	private static final org.apache.log4j.Logger LOG =
 			org.apache.log4j.Logger.getLogger(OrgDerivedRoleTypeServiceImpl.class);
-	
+
 	private OrganizationService orgService;
 	private List<String> includedOrgPersonRelationTypes = null;
 	private List<String> excludedOrgPersonRelationTypes = null;
-	
-	
+
+
 	/**
-	 * This method should grab the orgId from the qualification 
+	 * This method should grab the orgId from the qualification
 	 * use the org service to find person-org relations (getPersonIdsForOrgByRelationType)
 	 * return the members.
-	 * 
+	 *
 	 * See DerivedRoleTypeServiceBase
 	 */
 	/* (non-Javadoc)
@@ -53,10 +53,10 @@ public class OrgDerivedRoleTypeServiceImpl extends DerivedRoleTypeServiceBase {
 		if (null == orgService) {
 		   	orgService = (OrganizationService) GlobalResourceLoader.getService(new QName("http://student.kuali.org/wsdl/organization","OrganizationService"));
 		}
-		
+
 		validateRequiredAttributesAgainstReceived(qualification);
 		List<RoleMembership> members = new ArrayList<RoleMembership>();
-		
+
 		String orgId = qualification.get(KualiStudentKimAttributes.QUALIFICATION_ORG_ID);
 //		String org = qualification.get(KualiStudentKimAttributes.QUALIFICATION_ORG);
 		if (LOG.isDebugEnabled()) {
@@ -77,7 +77,7 @@ public class OrgDerivedRoleTypeServiceImpl extends DerivedRoleTypeServiceBase {
 				for(String orgPersonRelationType:includedOrgPersonRelationTypes){
 					List<String> principalIds = orgService.getPersonIdsForOrgByRelationType(orgId, orgPersonRelationType);
 					for(String principalId:principalIds){
-						RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, principalId, Role.PRINCIPAL_MEMBER_TYPE, attributes).build();
+						RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, principalId, KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, attributes).build();
 						members.add(member);
 					}
 				}
@@ -91,12 +91,12 @@ public class OrgDerivedRoleTypeServiceImpl extends DerivedRoleTypeServiceBase {
 					    //Add role membership only for memberships that are valid meaning expiration date is greater than or equal to current date.
 					    if(relation.getExpirationDate()!=null){
 					        if(relation.getExpirationDate().compareTo(now)>=0){
-					            RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, relation.getPersonId(), Role.PRINCIPAL_MEMBER_TYPE, attributes).build();
+					            RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, relation.getPersonId(), KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, attributes).build();
 					            members.add(member);
 					        }
 					    }
 					    else{
-                            RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, relation.getPersonId(), Role.PRINCIPAL_MEMBER_TYPE, attributes).build();
+                            RoleMembership member = RoleMembership.Builder.create(null/*roleId*/, null, relation.getPersonId(), KimConstants.KimGroupMemberTypes.PRINCIPAL_MEMBER_TYPE, attributes).build();
                             members.add(member);
 					    }
 					}
@@ -104,8 +104,8 @@ public class OrgDerivedRoleTypeServiceImpl extends DerivedRoleTypeServiceBase {
 			}
 		} catch (Exception e) {
 			LOG.warn("Error getting relations from Org Service for Org:"+orgId+". ",e);
-		} 
-	
+		}
+
 		return members;
 	}
 
