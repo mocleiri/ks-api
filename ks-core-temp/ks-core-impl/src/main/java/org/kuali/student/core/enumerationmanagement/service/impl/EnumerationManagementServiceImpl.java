@@ -20,278 +20,200 @@ import java.util.Date;
 import java.util.List;
 
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 
-import org.kuali.student.common.dictionary.dto.ObjectStructureDefinition;
+import org.kuali.student.common.dto.ContextInfo;
 import org.kuali.student.common.dto.StatusInfo;
+import org.kuali.student.common.dto.ValidationResultInfo;
 import org.kuali.student.common.exceptions.AlreadyExistsException;
+import org.kuali.student.common.exceptions.DataValidationErrorException;
 import org.kuali.student.common.exceptions.DoesNotExistException;
 import org.kuali.student.common.exceptions.InvalidParameterException;
 import org.kuali.student.common.exceptions.MissingParameterException;
 import org.kuali.student.common.exceptions.OperationFailedException;
 import org.kuali.student.common.exceptions.PermissionDeniedException;
-import org.kuali.student.common.search.dto.SearchCriteriaTypeInfo;
-import org.kuali.student.common.search.dto.SearchRequest;
-import org.kuali.student.common.search.dto.SearchResult;
-import org.kuali.student.common.search.dto.SearchResultTypeInfo;
-import org.kuali.student.common.search.dto.SearchTypeInfo;
-import org.kuali.student.common.search.service.SearchManager;
-import org.kuali.student.common.validation.dto.ValidationResultInfo;
-import org.kuali.student.core.enumerationmanagement.EnumerationException;
-import org.kuali.student.core.enumerationmanagement.dao.EnumerationManagementDAO;
+import org.kuali.student.common.exceptions.ReadOnlyException;
+import org.kuali.student.common.exceptions.VersionMismatchException;
+import org.kuali.student.common.util.constants.EnumerationManagementServiceConstants;
+import org.kuali.student.core.enumerationmanagement.dao.EnumContextValueDao;
+import org.kuali.student.core.enumerationmanagement.dao.EnumeratedValueDao;
+import org.kuali.student.core.enumerationmanagement.dao.EnumerationDao;
+import org.kuali.student.core.enumerationmanagement.model.EnumeratedValueEntity;
+import org.kuali.student.core.enumerationmanagement.model.EnumerationEntity;
 import org.kuali.student.core.enumerationmanagement.dto.EnumeratedValueInfo;
 import org.kuali.student.core.enumerationmanagement.dto.EnumerationInfo;
-import org.kuali.student.core.enumerationmanagement.entity.EnumeratedValue;
-import org.kuali.student.core.enumerationmanagement.entity.Enumeration;
 import org.kuali.student.core.enumerationmanagement.service.EnumerationManagementService;
-import org.kuali.student.core.enumerationmanagement.service.impl.util.EnumerationAssembler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-@WebService(endpointInterface = "org.kuali.student.core.enumerationmanagement.service.EnumerationManagementService", serviceName = "EnumerationManagementService", portName = "EnumerationManagementService", targetNamespace = "http://student.kuali.org/wsdl/EnumerationManagementService")
-@Transactional(readOnly=true,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-public class EnumerationManagementServiceImpl implements EnumerationManagementService{
-    
-	final static Logger logger = LoggerFactory.getLogger(EnumerationManagementServiceImpl.class);
-	
-    private SearchManager searchManager;
+/**
+ * Enumeration Management Service implementation class.
+ *
+ * @Version 2.0
+ */
+@WebService(name = "EnumerationManagementService", serviceName = "EnumerationManagementService", portName = "EnumerationManagementService", targetNamespace = EnumerationManagementServiceConstants.NAMESPACE)
+@Transactional(readOnly = true, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
+public class EnumerationManagementServiceImpl implements EnumerationManagementService {
 
-    private EnumerationManagementDAO enumDAO;
-	
-	public EnumerationManagementServiceImpl() {}
+    private EnumerationDao enumDao;
+    private EnumeratedValueDao enumValueDao;
+    private EnumContextValueDao enumContextValueDao;
     
-    private List<ValidationResultInfo> validateEnumeratedValue(EnumeratedValueInfo value){
-    	return null; //FIXME need real validation
+    public EnumerationDao getEnumDao() {
+        return enumDao;
     }
-     
-	@Override
-	public EnumerationInfo getEnumeration(String enumerationKey)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-        
-        Enumeration enumerationMetaEntity = null;
-        if (enumerationKey != null)
-        	enumerationMetaEntity = enumDAO.fetch(Enumeration.class, enumerationKey);
-        EnumerationInfo enumerationMeta = null;
-        if(enumerationMetaEntity != null){
-        	enumerationMeta = new EnumerationInfo();
-	        EnumerationAssembler.toEnumerationInfo(enumerationMetaEntity, enumerationMeta);
-        }
-        return enumerationMeta;
-	}
 
-	@Override
-	public List<EnumerationInfo> getEnumerations()
-			throws OperationFailedException {
-        List<Enumeration> entities =  this.enumDAO.findEnumerations();
+    public void setEnumDao(EnumerationDao enumDao) {
+        this.enumDao = enumDao;
+    }
+
+    public EnumeratedValueDao getEnumValueDao() {
+        return enumValueDao;
+    }
+
+    public void setEnumValueDao(EnumeratedValueDao enumValueDao) {
+        this.enumValueDao = enumValueDao;
+    }
+
+    public EnumContextValueDao getEnumContextValueDao() {
+        return enumContextValueDao;
+    }
+
+    public void setEnumContextValueDao(EnumContextValueDao enumContextValueDao) {
+        this.enumContextValueDao = enumContextValueDao;
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<EnumerationInfo> getEnumerations(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         
-        List<EnumerationInfo> dtos = EnumerationAssembler.toEnumerationMetaList(entities);
+        List<EnumerationEntity> enumEntities =  this.enumDao.findAll();
+        List<EnumerationInfo> enumInfos = new ArrayList<EnumerationInfo>(enumEntities.size());
+        
+        for (EnumerationEntity enumeration : enumEntities){
+            enumInfos.add(enumeration.toDto());
+        }
        
-        return dtos;
-	}
-	
-	@Override
-	@Transactional(readOnly=false)
-	public EnumeratedValueInfo addEnumeratedValue(String enumerationKey,
-			EnumeratedValueInfo enumeratedValue) throws AlreadyExistsException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException, PermissionDeniedException {
-    	Enumeration meta;
-		try {		    
-			meta = enumDAO.fetch(Enumeration.class, enumeratedValue.getEnumerationKey());			
-		} catch (DoesNotExistException e) {
-			throw new InvalidParameterException("Enumeration does not exist for key:"+enumerationKey);
-		}
-		
-    	if(meta != null){
-    		List<ValidationResultInfo> results = this.validateEnumeratedValue(enumeratedValue);
-    	
-    		if(null != results) {
-    		    for(ValidationResultInfo result:results){
-    		        if(result !=null && ValidationResultInfo.ErrorLevel.ERROR.equals(result.getErrorLevel())){
-    		            throw new EnumerationException("addEnumeratedValue failed because the EnumeratdValue failed to pass validation against its EnumerationMeta - With Messages: " + result.toString());//FIXME need to get messages here
-    		        }
-    		    }
-    		}
-    	}
-    	
-    	EnumeratedValue valueEntity = new EnumeratedValue();
-    	EnumerationAssembler.toEnumeratedValueEntity(enumeratedValue, valueEntity);
-    	valueEntity.setEnumeration(meta);
-    	
-        enumDAO.addEnumeratedValue(enumerationKey, valueEntity);
+        return enumInfos;
         
+    }
 
-        return enumeratedValue;
-	}
+    @Override
+    public EnumerationInfo getEnumeration(String enumerationKey, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        
+        EnumerationEntity entity = enumDao.find(enumerationKey);
+        
+        if(entity == null)
+            throw new DoesNotExistException(enumerationKey);
+        
+        return entity.toDto();
+    }
 
-	@Override
-	public List<EnumeratedValueInfo> getEnumeratedValues(String enumerationKey,
-			String contextType, String contextValue, Date contextDate)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-
-        List<EnumeratedValue> enumeratedValueEntityList = new ArrayList<EnumeratedValue>();
-        if(enumerationKey != null && contextType != null && contextValue != null && contextDate != null){
-        	enumeratedValueEntityList = enumDAO.fetchEnumeratedValuesWithContextAndDate(enumerationKey, contextType, contextValue, contextDate);
+    @Override
+    public List<EnumeratedValueInfo> getEnumeratedValues(String enumerationKey, String contextTypeKey, String contextValue, Date contextDate, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        
+        List<EnumeratedValueEntity> enumeratedValues = null;
+        
+        if(enumerationKey != null && contextTypeKey != null && contextValue != null && contextDate != null){
+            enumeratedValues = enumValueDao.getByContextAndDate(enumerationKey, contextTypeKey, contextValue, contextDate);
         }
-        else if(enumerationKey != null && contextType != null && contextValue != null){
-        	enumeratedValueEntityList = enumDAO.fetchEnumeratedValuesWithContext(enumerationKey, contextType, contextValue);
+        else if(enumerationKey != null && contextTypeKey != null && contextValue != null){
+            enumeratedValues = enumValueDao.getByContextTypeAndValue(enumerationKey, contextTypeKey, contextValue);
         }
         else if(enumerationKey != null && contextDate != null){
-        	enumeratedValueEntityList = enumDAO.fetchEnumeratedValuesWithDate(enumerationKey, contextDate);
+            enumeratedValues = enumValueDao.getByDate(enumerationKey, contextDate);
         }
         else if(enumerationKey != null){
-        	enumeratedValueEntityList = enumDAO.fetchEnumeratedValues(enumerationKey);
+            enumeratedValues = enumValueDao.getByEnumerationKey(enumerationKey);
         }
         
-        List<EnumeratedValueInfo> enumeratedValueList = EnumerationAssembler.toEnumeratedValueList(enumeratedValueEntityList);
-        return enumeratedValueList;
-	}
-
-
-	@Override
-	@Transactional(readOnly=false)
-	public EnumeratedValueInfo updateEnumeratedValue(String enumerationKey,
-			String code, EnumeratedValueInfo enumeratedValue)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException,
-			PermissionDeniedException {
+        if(enumeratedValues == null)
+            throw new DoesNotExistException(enumerationKey);
         
-        Enumeration meta;
-        try {           
-            meta = enumDAO.fetch(Enumeration.class, enumeratedValue.getEnumerationKey());           
-        } catch (DoesNotExistException e) {
-            throw new InvalidParameterException("Enumeration does not exist for key:"+enumerationKey);
+        List<EnumeratedValueInfo> enumeratedValueInfos = new ArrayList<EnumeratedValueInfo>(enumeratedValues.size());
+        for (EnumeratedValueEntity enumeratedValue : enumeratedValues){
+            enumeratedValueInfos.add(enumeratedValue.toDto());
         }
-    	
-    	if(meta != null){
-	        List<ValidationResultInfo> results = this.validateEnumeratedValue(enumeratedValue);
-
-	        if(null != results) {
-	            for(ValidationResultInfo result:results){
-	                if(result !=null && ValidationResultInfo.ErrorLevel.ERROR.equals(result.getErrorLevel())){
-	                    throw new EnumerationException("addEnumeratedValue failed because the EnumeratdValue failed to pass validation against its EnumerationMeta - With Messages: " + result.toString());//FIXME need to get messages here
-	                }
-	            }
-	        }
-    	}
-
-	    EnumeratedValue enumeratedValueEntity = new EnumeratedValue();    
-	    EnumerationAssembler.toEnumeratedValueEntity(enumeratedValue, enumeratedValueEntity);
-	    enumeratedValueEntity =  enumDAO.updateEnumeratedValue(meta, code, enumeratedValueEntity);
-	    EnumerationAssembler.toEnumeratedValueInfo(enumeratedValueEntity, enumeratedValue);
         
-        return enumeratedValue;
-	}
-	
-	@Override
-    @Transactional(readOnly=false)
-	public StatusInfo removeEnumeratedValue(String enumerationKey, String code) {
-        enumDAO.removeEnumeratedValue(enumerationKey, code);
-        return new StatusInfo();
-    }
-	
-	
-	@Override
-	public SearchCriteriaTypeInfo getSearchCriteriaType(
-			String searchCriteriaTypeKey) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException {
-
-		return searchManager.getSearchCriteriaType(searchCriteriaTypeKey);
-	}
-
-	@Override
-	public List<SearchCriteriaTypeInfo> getSearchCriteriaTypes()
-			throws OperationFailedException {
-		return searchManager.getSearchCriteriaTypes();
-	}
-
-	@Override
-	public SearchResultTypeInfo getSearchResultType(String searchResultTypeKey)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-		checkForMissingParameter(searchResultTypeKey, "searchResultTypeKey");
-		return searchManager.getSearchResultType(searchResultTypeKey);
-	}
-
-	@Override
-	public List<SearchResultTypeInfo> getSearchResultTypes()
-			throws OperationFailedException {
-		return searchManager.getSearchResultTypes();
-	}
-
-	@Override
-	public SearchTypeInfo getSearchType(String searchTypeKey)
-			throws DoesNotExistException, InvalidParameterException,
-			MissingParameterException, OperationFailedException {
-		checkForMissingParameter(searchTypeKey, "searchTypeKey");
-		return searchManager.getSearchType(searchTypeKey);
-	}
-
-	@Override
-	public List<SearchTypeInfo> getSearchTypes()
-			throws OperationFailedException {
-		return searchManager.getSearchTypes();
-	}
-
-	@Override
-	public List<SearchTypeInfo> getSearchTypesByCriteria(
-			String searchCriteriaTypeKey) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException {
-		checkForMissingParameter(searchCriteriaTypeKey, "searchCriteriaTypeKey");
-		return searchManager.getSearchTypesByCriteria(searchCriteriaTypeKey);
-	}
-
-	@Override
-	public List<SearchTypeInfo> getSearchTypesByResult(
-			String searchResultTypeKey) throws DoesNotExistException,
-			InvalidParameterException, MissingParameterException,
-			OperationFailedException {
-		checkForMissingParameter(searchResultTypeKey, "searchResultTypeKey");
-		return searchManager.getSearchTypesByResult(searchResultTypeKey);
-	}
-
-	@Override
-	public SearchResult search(SearchRequest searchRequest) throws MissingParameterException {
-		return searchManager.search(searchRequest, enumDAO);
-	}
-	
-	/**
-	 * Check for missing parameter and throw localized exception if missing
-	 *
-	 * @param param
-	 * @param parameter name
-	 * @throws MissingParameterException
-	 */
-	private void checkForMissingParameter(Object param, String paramName)
-			throws MissingParameterException {
-		if (param == null) {
-			throw new MissingParameterException(paramName + " can not be null");
-		}
-	}
-
-	public void setSearchManager(SearchManager searchManager) {
-		this.searchManager = searchManager;
-	}
-
-	public void setEnumDAO(EnumerationManagementDAO enumDAO) {
-		this.enumDAO = enumDAO;
-	}
-
-    @Override
-    public ObjectStructureDefinition getObjectStructure(String objectTypeKey) {
-        // TODO Kamal - THIS METHOD NEEDS JAVADOCS
-        return null;
+        return enumeratedValueInfos;
     }
 
     @Override
-    public List<String> getObjectTypes() {
-        // TODO Kamal - THIS METHOD NEEDS JAVADOCS
-        return null;
+    public List<ValidationResultInfo> validateEnumeratedValue(String validationTypeKey, String enumerationKey, String code, EnumeratedValueInfo enumeratedValueInfo, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        return null; //FIXME need real validation
     }
+
+    @Override
+    @Transactional(readOnly=false,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
+    public EnumeratedValueInfo updateEnumeratedValue(String enumerationKey, String code, EnumeratedValueInfo enumeratedValueInfo, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException {
+        EnumerationEntity enumerationEntity = enumDao.find(enumeratedValueInfo.getEnumerationKey());           
+        if(enumerationEntity == null)
+            throw new DoesNotExistException(enumeratedValueInfo.getEnumerationKey());
+        
+        /*if(enumerationEntity != null){
+            List<ValidationResultInfo> results = this.validateEnumeratedValue(enumeratedValueInfo);
+
+            if(null != results) {
+                for(ValidationResultInfo result:results){
+                    if(result !=null && ValidationResultInfo.ErrorLevel.ERROR.equals(result.getErrorLevel())){
+                        throw new EnumerationException("addEnumeratedValue failed because the EnumeratdValue failed to pass validation against its EnumerationMeta - With Messages: " + result.toString());//FIXME need to get messages here
+                    }
+                }
+            }
+        }*/
+
+        EnumeratedValueEntity entity = new EnumeratedValueEntity(enumeratedValueInfo);
+        
+        EnumeratedValueEntity existing = enumValueDao.find(entity.getId());
+        if( existing == null) {
+            throw new DoesNotExistException(entity.getId());
+        }
+        enumValueDao.merge(entity);
+        
+        return enumValueDao.find(entity.getId()).toDto();
+    }
+
+    @Override
+    public StatusInfo deleteEnumeratedValue(String enumerationKey, String code, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        StatusInfo status = new StatusInfo();
+        status.setSuccess(Boolean.TRUE);
+
+        EnumeratedValueEntity enumeratedValue = enumValueDao.getByEnumerationKeyAndCode(enumerationKey, code);
+        if (null != enumeratedValue) {
+            enumValueDao.remove(enumeratedValue);
+        } else
+            status.setSuccess(Boolean.FALSE);
+
+        return status;
+    }
+
+    @Override
+    @Transactional(readOnly=false,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
+    public EnumeratedValueInfo addEnumeratedValue(String enumerationKey, String code, EnumeratedValueInfo enumeratedValueInfo, ContextInfo contextInfo) throws AlreadyExistsException, DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException {
+        EnumerationEntity enumerationEntity = enumDao.find(enumeratedValueInfo.getEnumerationKey());           
+        if(enumerationEntity == null)
+            throw new DoesNotExistException(enumeratedValueInfo.getEnumerationKey());
+        
+        /*if(meta != null){
+            List<ValidationResultInfo> results = this.validateEnumeratedValue(enumeratedValueInfo);
+        
+            if(null != results) {
+                for(ValidationResultInfo result:results){
+                    if(result !=null && ValidationResultInfo.ErrorLevel.ERROR.equals(result.getErrorLevel())){
+                        throw new EnumerationException("addEnumeratedValue failed because the EnumeratdValue failed to pass validation against its EnumerationMeta - With Messages: " + result.toString());//FIXME need to get messages here
+                    }
+                }
+            }
+        }*/
+        
+        EnumeratedValueEntity entity = new EnumeratedValueEntity(enumeratedValueInfo);
+                
+        EnumeratedValueEntity existing = enumValueDao.find(entity.getId());
+        if( existing != null) {
+            throw new AlreadyExistsException();
+        }
+        enumValueDao.persist(entity);
+        
+        return enumValueDao.find(entity.getId()).toDto();
+        
+    }
+
 }

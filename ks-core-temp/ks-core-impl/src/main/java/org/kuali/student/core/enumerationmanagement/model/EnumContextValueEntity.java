@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.enumerationmanagement.entity;
+package org.kuali.student.r2.core.class1.enumerationmanagement.model;
 
 import java.util.List;
 
@@ -25,20 +25,31 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.kuali.student.common.entity.BaseEntity;
+import org.kuali.student.r2.common.entity.BaseVersionEntity;
+import org.kuali.student.r2.core.enumerationmanagement.infc.EnumContextValue;
 
 @Entity
 @Table(name="KSEM_CTX_T", uniqueConstraints={@UniqueConstraint(columnNames={"CTX_KEY", "CTX_VAL"})})
-public class ContextEntity extends BaseEntity {
-    
+public class EnumContextValueEntity extends BaseVersionEntity {
+
     @Column(name="CTX_KEY")
     String contextKey;
     
     @Column(name="CTX_VAL")
     String contextValue;
 
-    @ManyToMany(mappedBy="contextEntityList", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    List<EnumeratedValue> enumeratedValueList;
+    @ManyToMany(mappedBy="contextValueEntities", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    List<EnumeratedValueEntity> enumeratedValueList;
+    
+    public EnumContextValueEntity() {
+    }
+
+    public EnumContextValueEntity(EnumContextValue enumContextValue) {
+        //super(enumContextValue);
+        this.setContextKey(enumContextValue.getKey());
+        this.setContextValue(enumContextValue.getValue());
+        //this.setEnumeratedValueList(enumContextValue)
+    }
     
     public String getContextKey() {
         return contextKey;
@@ -56,11 +67,11 @@ public class ContextEntity extends BaseEntity {
         this.contextValue = value;
     }
     
-	public List<EnumeratedValue> getEnumeratedValueList() {
+	public List<EnumeratedValueEntity> getEnumeratedValueList() {
 		return enumeratedValueList;
 	}
 	public void setEnumeratedValueList(
-			List<EnumeratedValue> enumeratedValueList) {
+			List<EnumeratedValueEntity> enumeratedValueList) {
 		this.enumeratedValueList = enumeratedValueList;
 	}
     

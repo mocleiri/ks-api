@@ -13,25 +13,16 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.core.enumerationmanagement.entity;
+package org.kuali.student.r2.core.class1.enumerationmanagement.dao;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.kuali.student.enrollment.dao.GenericEntityDao;
+import org.kuali.student.r2.core.class1.enumerationmanagement.model.EnumerationEntity;
 
-import org.kuali.student.common.entity.BaseType;
+/**
+ * Enumeration Dao class.
+ *
+ * @Version 2.0
+ */
+public class EnumerationDao extends GenericEntityDao<EnumerationEntity> {
 
-
-@Entity
-@Table(name="KSEM_ENUM_T")
-@AttributeOverrides({
-    @AttributeOverride(name="id", column=@Column(name="ENUM_KEY")),
-    @AttributeOverride(name="descr", column=@Column(name="DESCR"))})
-
-public class Enumeration extends BaseType{
-
-    private static final long serialVersionUID = 1L;
-   
 }
