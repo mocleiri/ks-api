@@ -29,6 +29,13 @@ public class CourseRegistrationServiceDecorator implements CourseRegistrationSer
 
     private CourseRegistrationService nextDecorator;
 
+    public CourseRegistrationServiceDecorator() {
+    }
+
+    public CourseRegistrationServiceDecorator(CourseRegistrationService nextDecorator) {
+        this.nextDecorator = nextDecorator;
+    }
+
     public CourseRegistrationService getNextDecorator() throws OperationFailedException {
         if (null == nextDecorator) {
             throw new OperationFailedException("Misconfigured application: nextDecorator is null");
@@ -41,7 +48,7 @@ public class CourseRegistrationServiceDecorator implements CourseRegistrationSer
     }
 
     @Override
-    public Boolean checkStudentEligibility(String studentId, ContextInfo context) throws DoesNotExistException,
+    public  List<ValidationResultInfo> checkStudentEligibility(String studentId, ContextInfo context) throws DoesNotExistException,
             InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         return getNextDecorator().checkStudentEligibility(studentId, context);
     }

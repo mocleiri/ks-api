@@ -59,7 +59,7 @@ public interface CourseRegistrationService  {
      * 
      * @param studentId Identifier of the student
      * @param context
-     * @return
+     * @return list of errors, warnings or informational messages
      * @throws DoesNotExistException If student id does not exist student id not
      *             found
      * @throws InvalidParameterException Invalid student id in the input
@@ -67,7 +67,7 @@ public interface CourseRegistrationService  {
      * @throws OperationFailedException Unable to complete request
      * @throws PermissionDeniedException
      */
-    public Boolean checkStudentEligibility(@WebParam(name = "studentId") String studentId, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException,
+    public  List<ValidationResultInfo> checkStudentEligibility(@WebParam(name = "studentId") String studentId, @WebParam(name = "context") ContextInfo context) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
@@ -81,7 +81,7 @@ public interface CourseRegistrationService  {
      * @param studentId Identifier of the student
      * @param termId The unique key for the term
      * @param context
-     * @return
+     * @return list of errors, warnings or informational messages
      * @throws InvalidParameterException Invalid student id or term id
      * @throws MissingParameterException Student id or term id missing in the
      *             input

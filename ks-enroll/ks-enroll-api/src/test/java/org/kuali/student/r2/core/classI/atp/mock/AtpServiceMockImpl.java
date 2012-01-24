@@ -10,6 +10,8 @@
  */
 package org.kuali.student.r2.core.classI.atp.mock;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.common.util.UUIDHelper;
 import org.kuali.student.r2.common.datadictionary.dto.DictionaryEntryInfo;
@@ -34,6 +36,7 @@ public class AtpServiceMockImpl implements AtpService {
     private Map<String, AtpInfo> atpCache = new HashMap<String, AtpInfo>();
     private Map<String, MilestoneInfo> milestoneCache = new HashMap<String, MilestoneInfo>();
     private Map<String, AtpAtpRelationInfo> atpAtpRltnCache = new HashMap<String, AtpAtpRelationInfo>();
+    private Map<String, Set<String>> milestonesForAtp = new HashMap<String, Set<String>>();
 
 
     @Override
@@ -177,15 +180,28 @@ public class AtpServiceMockImpl implements AtpService {
 
     @Override
     public List<MilestoneInfo> getMilestonesForAtp(String atpId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException {
-        List<MilestoneInfo> milestoneList = new ArrayList<MilestoneInfo>();
-        return milestoneList;
+        List<MilestoneInfo> list = new ArrayList<MilestoneInfo>();
+        if (!this.milestonesForAtp.containsKey(atpId)) {
+            this.milestonesForAtp.put(atpId, new HashSet<String>());
+        }
+        Set<String> milestoneIds = this.milestonesForAtp.get(atpId);
+        for (String id : milestoneIds) {
+            MilestoneInfo info;
+            try {
+                info = this.getMilestone(id, context);
+            } catch (DoesNotExistException ex) {
+                throw new OperationFailedException("id in set not in milestone" + id, ex);
+            }
+            list.add(info);
+        }
+        return list;
     }
 
     @Override
     public List<MilestoneInfo> getMilestonesByDatesForAtp(@WebParam(name = "atpId") String atpId, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate,
             @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         return null; // To change body of implemented methods use File |
-                     // Settings | File Templates.
+        // Settings | File Templates.
     }
 
     @Override
@@ -273,7 +289,7 @@ public class AtpServiceMockImpl implements AtpService {
         atp.setMeta(helper.createMeta(context));
         atp.setId(UUIDHelper.genStringUUID());
         this.atpCache.put(atp.getId(), atp);
-        return atp;
+        return new AtpInfo(atp);
     }
 
     @Override
@@ -297,7 +313,7 @@ public class AtpServiceMockImpl implements AtpService {
         atp.setAttributes(atts);
         this.atpCache.put(atpId, atp);
 
-        return atp;
+        return new AtpInfo(atp);
     }
 
     @Override
@@ -348,7 +364,7 @@ public class AtpServiceMockImpl implements AtpService {
         MilestoneInfo mInfo = new MilestoneInfo(milestoneInfo);
         mInfo.setMeta(helper.createMeta(context));
         this.milestoneCache.put(milestoneInfo.getId(), mInfo);
-        return mInfo;
+        return new MilestoneInfo(mInfo);
     }
 
     @Override
@@ -365,7 +381,7 @@ public class AtpServiceMockImpl implements AtpService {
         mInfo.setMeta(new MockHelper().updateMeta(existing.getMeta(), context));
         this.milestoneCache.put(milestoneId, mInfo);
 
-        return mInfo;
+        return new MilestoneInfo(mInfo);
     }
 
     @Override
@@ -391,15 +407,34 @@ public class AtpServiceMockImpl implements AtpService {
     @Override
     public StatusInfo addMilestoneToAtp(@WebParam(name = "milestoneId") String milestoneId, @WebParam(name = "atpId") String atpId, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws AlreadyExistsException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null; // To change body of implemented methods use File |
-                     // Settings | File Templates.
+
+        if (!this.milestonesForAtp.containsKey(atpId)) {
+            this.milestonesForAtp.put(atpId, new HashSet<String>());
+        }
+        Set<String> milestones = this.milestonesForAtp.get(atpId);
+        if (milestones.contains(milestoneId)) {
+            throw new AlreadyExistsException();
+        }
+        milestones.add(milestoneId);
+        StatusInfo status = new StatusInfo();
+        status.setSuccess(Boolean.TRUE);
+        return status;
     }
 
     @Override
     public StatusInfo removeMilestoneFromAtp(@WebParam(name = "milestoneId") String milestoneId, @WebParam(name = "atpId") String atpId, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return null; // To change body of implemented methods use File |
-                     // Settings | File Templates.
+        if (!this.milestonesForAtp.containsKey(atpId)) {
+            this.milestonesForAtp.put(atpId, new HashSet<String>());
+        }
+        Set<String> milestones = this.milestonesForAtp.get(atpId);
+        if (!milestones.contains(milestoneId)) {
+            throw new DoesNotExistException();
+        }
+        milestones.remove(milestoneId);
+        StatusInfo status = new StatusInfo();
+        status.setSuccess(Boolean.TRUE);
+        return status;
     }
 
     @Override
@@ -410,7 +445,7 @@ public class AtpServiceMockImpl implements AtpService {
             throw new DoesNotExistException("No atp atp relationship found for: " + atpAtpRelationId);
         }
 
-        return atpRltn;
+        return new AtpAtpRelationInfo(atpRltn);
     }
 
     @Override
@@ -453,7 +488,7 @@ public class AtpServiceMockImpl implements AtpService {
         for (String id : atpRltnIds) {
             AtpAtpRelationInfo rltn = atpAtpRltnCache.get(id);
             if (rltn.getAtpId().equalsIgnoreCase(atpId) || rltn.getRelatedAtpId().equalsIgnoreCase(atpId)) {
-                atpRltnList.add(rltn);
+                atpRltnList.add(new AtpAtpRelationInfo(rltn));
             }
         }
 
@@ -537,5 +572,4 @@ public class AtpServiceMockImpl implements AtpService {
         status.setSuccess(Boolean.TRUE);
         return status;
     }
-
 }

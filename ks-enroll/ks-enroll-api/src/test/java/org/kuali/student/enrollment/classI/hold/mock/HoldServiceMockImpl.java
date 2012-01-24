@@ -32,6 +32,7 @@ public class HoldServiceMockImpl implements HoldService {
     private Map<String, HoldInfo> holds = new HashMap<String, HoldInfo>();
     private Map<String, IssueInfo> issues = new HashMap<String, IssueInfo>();
 
+ 
     @Override
     public HoldInfo getHold(String holdId, ContextInfo context)
             throws DoesNotExistException, InvalidParameterException,
@@ -201,8 +202,10 @@ public class HoldServiceMockImpl implements HoldService {
             throws AlreadyExistsException, DataValidationErrorException,
             InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
-        issues.put(issueInfo.getKey(), issueInfo);
-        return issueInfo;
+        IssueInfo copy = new IssueInfo(issueInfo);
+        copy.setMeta(newMeta(context));
+        issues.put(copy.getKey(), copy);
+        return new IssueInfo(copy);
     }
 
     @Override

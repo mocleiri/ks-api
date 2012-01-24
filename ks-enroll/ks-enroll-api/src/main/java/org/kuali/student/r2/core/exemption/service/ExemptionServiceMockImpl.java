@@ -185,7 +185,7 @@ public class ExemptionServiceMockImpl implements ExemptionService {
         List<ExemptionInfo> list = new ArrayList<ExemptionInfo>();
         for (ExemptionInfo info : this.exemptions.values()) {
             if (info.getTypeKey().equals(typeKey)) {
-                if (info.getExemptedPersonId().equals(personId)) {
+                if (info.getPersonId().equals(personId)) {
                     list.add(info);
                 }
             }
@@ -197,7 +197,7 @@ public class ExemptionServiceMockImpl implements ExemptionService {
     public List<ExemptionInfo> getExemptionsForPerson(String personId, ContextInfo context) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         List<ExemptionInfo> list = new ArrayList<ExemptionInfo>();
         for (ExemptionInfo info : this.exemptions.values()) {
-            if (info.getExemptedPersonId().equals(personId)) {
+            if (info.getPersonId().equals(personId)) {
                 list.add(info);
             }
         }
@@ -276,6 +276,13 @@ public class ExemptionServiceMockImpl implements ExemptionService {
     @Override
     public List<ValidationResultInfo> validateExemptionRequest(String validationTypeKey, ExemptionRequestInfo exemptionRequestInfo, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ExemptionInfo> getActiveExemptionsByTypeProcessAndCheckForPerson(String typeKey, String processKey, String checkKey, String personId, ContextInfo context)
+            throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
+        // TODO sambit - THIS METHOD NEEDS JAVADOCS
+        return null;
     }
 
 }

@@ -30,34 +30,24 @@ import org.w3c.dom.Element;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "HoldInfo", propOrder = {"id", "typeKey", "stateKey", "name",
-                "descr", "issueKey", "personId", "isWarning", "isOverridable",
-                "effectiveDate", "releasedDate", "meta", "attributes",
-                "_futureElements"})
-
-public class HoldInfo 
-    extends IdEntityInfo 
-    implements Hold, Serializable {
+    "descr", "issueKey", "personId", "isWarning", "isOverridable",
+    "effectiveDate", "releasedDate", "meta", "attributes",
+    "_futureElements"})
+public class HoldInfo extends IdEntityInfo implements Hold, Serializable {
 
     private static final long serialVersionUID = 1L;
-
     @XmlElement
     private String personId;
-
     @XmlElement
     private String issueKey;
-
     @XmlElement
     private Boolean isWarning;
-
     @XmlElement
     private Boolean isOverridable;
-
     @XmlElement
     private Date effectiveDate;
-
     @XmlElement
     private Date releasedDate;
-
     @XmlAnyElement
     private List<Element> _futureElements;
 
@@ -86,6 +76,8 @@ public class HoldInfo
                 this.releasedDate = new Date(hold.getReleasedDate().getTime());
             }
         }
+
+        _futureElements = null;
     }
 
     @Override
