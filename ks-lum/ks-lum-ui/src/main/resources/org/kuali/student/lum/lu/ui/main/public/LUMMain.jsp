@@ -15,7 +15,7 @@
 
 --%>
 
-<%@page import="org.kuali.rice.core.api.config.property.ConfigContext"%>
+<%@page import="org.kuali.rice.core.config.ConfigContext"%>
 <%
 // We need to detect the browser in order to populate the correct DOCTYPE
 String browser = request.getHeader("User-Agent");
@@ -53,7 +53,7 @@ else if(browser.indexOf("Chrome")> 0) {
 	String hostName = java.net.InetAddress.getLocalHost().getHostName();
 	String hostIp = request.getLocalAddr();
 	try{
-		user = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();		
+		user = org.springframework.security.context.SecurityContextHolder.getContext().getAuthentication().getName();		
 	}catch(NullPointerException ex){
 		user = "null";
 	}

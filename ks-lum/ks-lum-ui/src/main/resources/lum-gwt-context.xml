@@ -31,28 +31,8 @@
 
     <!-- This context requires that a spring Transaction Manager named 'transactionManager' be defined -->
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="properties" value="#{bootstrapConfig.getProperties()}" />
-	</bean>
-
-	<bean id="bootstrapConfig" class="org.kuali.rice.core.impl.config.property.ConfigFactoryBean">
-		<property name="configLocations">
-			<list>
-				<value>classpath:org/kuali/rice/standalone/config/standalone-config.xml</value>
-			</list>
-		</property>
-	</bean>
-	
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod" value="org.kuali.rice.core.impl.config.property.ConfigInitializer.initialize" />
-		<property name="arguments">
-			<list><ref bean="bootstrapConfig"/></list>
-		</property>
-	</bean>
-
-	<bean id="transactionManager" class="org.kuali.rice.krad.config.GlobalResourceLoaderServiceFactoryBean">
-		<property name="serviceName" value="transactionManager" />
-	</bean>
+    <bean id="propertyPlaceholder"
+          class="org.kuali.rice.core.config.spring.RiceConfigPropertyPlaceholderConfigurer"/>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
@@ -272,10 +252,9 @@
 
     <bean id="WorkflowRpcGwtServlet"
           class="org.kuali.student.core.workflow.ui.server.gwt.WorkflowRpcGwtServlet">
-        <property name="workflowDocumentActionsService" ref="workflowDocumentActionsClient"/>
-        <property name="permissionService" ref="permissionServiceClient"/>
+        <property name="simpleDocService" ref="simpleDocActionsClient"/>
         <property name="identityService" ref="identityServiceClient"/>
-        <property name="workflowDocumentService" ref="workflowDocumentClient"/>
+        <property name="workflowUtilityService" ref="workflowUtilityClient"/>
     </bean>
 
     <bean id="CourseRpcGwtServlet" class="org.kuali.student.lum.lu.ui.course.server.gwt.CourseRpcGwtServlet">
@@ -354,6 +333,7 @@
         <property name="proposalService" ref="proposalClient"/>
         <property name="luService" ref="luClient"/>
         <property name="transformationManager" ref="courseProposalTransformationManager"/>
+        <property name="workflowUtilityService" ref="workflowUtilityClient"/>
     </bean>
     
     <bean id="CluSetManagementRpcGwtServlet"
@@ -442,6 +422,7 @@
         <property name="programService" ref="programClient"/>
         <property name="luService" ref="luClient"/>
         <property name="atpService" ref="atpClient"/>
+        <property name="workflowUtilityService" ref="workflowUtilityClient"/>
     </bean>
 
     <bean id="credentialProgramDataService" class="org.kuali.student.lum.program.server.CredentialProgramDataService">
@@ -571,12 +552,11 @@
     </bean>
 
 	<bean id="collaboratorHelper" class = "org.kuali.student.core.rice.authorization.CollaboratorHelper">
-		<property name="workflowDocumentActionsService" ref="workflowDocumentActionsClient"/>
+		<property name="simpleDocService" ref="simpleDocActionsClient"/>
 		<property name="permissionService" ref="permissionServiceClient"/>
         <property name="identityService" ref="identityServiceClient"/>
-        <property name="workflowDocumentService" ref="workflowDocumentClient"/>
-        <property name="roleService" ref="roleServiceClient"/>
-        <property name="documentTypeService" ref="documentTypeServiceClient"/>
+        <property name="workflowUtilityService" ref="workflowUtilityClient"/>
+        <property name="roleUpdateService" ref="roleUpdateServiceClient"/>	
 	</bean>
 	
 	<bean id="collaboratorFilter" class = "org.kuali.student.core.assembly.transform.CollaboratorsFilter">
@@ -594,8 +574,8 @@
 	</bean>
 	
     <bean id="parentProposalWorkflowFilter" class="org.kuali.student.core.assembly.transform.ProposalWorkflowFilter" abstract="true">
-        <property name="workflowDocumentService" ref="workflowDocumentClient"/>
-        <property name="simpleDocService" ref="workflowDocumentActionsClient"/>
+        <property name="workflowUtilityService" ref="workflowUtilityClient"/>
+        <property name="simpleDocService" ref="simpleDocActionsClient"/>
         <property name="proposalService" ref="proposalClient"/>
         <property name="metadataService" ref="metadataServiceImpl"/>
     </bean>
@@ -882,21 +862,20 @@
         <property name="serviceQName" value="{http://student.kuali.org/wsdl/lrc}LearningResultService"/>
     </bean>
 
-    <!-- TODO: RICE-R2.0 UPGRADE - change the qName when R2.0 deploys this service -->
-    <bean id="workflowDocumentClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kew.api.document.WorkflowDocumentService"/>
-        <property name="serviceQName" value="{http://student.kuali.org/wsdl/kew}WorkflowDocumentServiceSOAP"/>
+    <bean id="workflowUtilityClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kew.service.WorkflowUtility"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kew}WorkflowUtilityServiceSOAP"/>
     </bean>
 
-    <bean id="workflowDocumentActionsClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
+    <bean id="simpleDocActionsClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
         <property name="serviceEndpointInterface"
-                  value="org.kuali.rice.kew.api.action.WorkflowDocumentActionsService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kew/v2_0}workflowDocumentActionsServiceSoap"/>
+                  value="org.kuali.rice.kew.webservice.SimpleDocumentActionsWebService"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kew}simpleDocumentActionsService"/>
     </bean>
 
     <bean id="documentService" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
         <property name="serviceEndpointInterface" value="org.kuali.student.core.document.service.DocumentService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/document}DocumentServiceSOAP"/>
+        <property name="serviceQName" value="{http://student.kuali.org/wsdl/document}DocumentService"/>
     </bean>
 
     <bean id="searchService" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
@@ -904,20 +883,19 @@
         <property name="serviceQName" value="{http://student.kuali.org/wsdl/search}SearchService"/>
     </bean>
 
-    <!-- TODO: RICE-R2.0 UPGRADE - caching disabled in M7 will be revisited prior to 2.0 release -->
     <bean id="permissionServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.permission.PermissionService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}permissionService"/>
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.service.IdentityManagementService"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kim}kimIdentityManagementServiceSOAP"/>
     </bean>
 
     <bean id="identityServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.identity.IdentityService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}identityService"/>
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.service.IdentityManagementService"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kim}kimIdentityManagementServiceSOAP"/>
     </bean>
     
     <bean id="identityServiceClientNonCached" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.identity.IdentityService" />
-        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}identityService" />
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.service.IdentityService" />
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kim}kimIdentityServiceSOAP" />
     </bean>
 
     <bean id="enumServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
@@ -927,14 +905,9 @@
                   value="{http://student.kuali.org/wsdl/enumerationmanagement}EnumerationManagementService"/>
     </bean>
 
-    <bean id="roleServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.api.role.RoleService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kim/v2_0}roleServiceSoap"/>
-    </bean>
-
-    <bean id="documentTypeServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
-        <property name="serviceEndpointInterface" value="org.kuali.rice.kew.api.doctype.DocumentTypeService"/>
-        <property name="serviceQName" value="{http://rice.kuali.org/kew/v2_0}documentTypeServiceSoap"/>
+    <bean id="roleUpdateServiceClient" class="org.kuali.rice.ksb.messaging.KSBClientProxyFactoryBean">
+        <property name="serviceEndpointInterface" value="org.kuali.rice.kim.service.RoleUpdateService"/>
+        <property name="serviceQName" value="{http://rice.kuali.org/wsdl/kim}kimRoleUpdateServiceSOAP"/>
     </bean>
 
 	<!-- Export services and service to present exported file to user in browser -->
