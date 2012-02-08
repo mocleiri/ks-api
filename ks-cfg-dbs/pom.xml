@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.kuali.student</groupId>
     <artifactId>student</artifactId>
-    <version>1.1.1-perf-SNAPSHOT</version>
+    <version>2.0.0-cm-SNAPSHOT</version>
   </parent>
   <groupId>org.kuali.student.db</groupId>
   <artifactId>ks-cfg-dbs</artifactId>
@@ -24,6 +24,7 @@
     </repository>
   </repositories>
   <properties>
+    <kuali.clover.generate.info.phase>none</kuali.clover.generate.info.phase>
     <ks.impex.sql.plugin.escapeProcessing>false</ks.impex.sql.plugin.escapeProcessing>
     <ks.impex.sql.plugin.orderFile>ascending</ks.impex.sql.plugin.orderFile>
     <ks.impex.sql.plugin.keepFormat>true</ks.impex.sql.plugin.keepFormat>
@@ -80,9 +81,11 @@
     <ks.impex.oracle.sql.create>
       CREATE USER ${ks.impex.username}
       IDENTIFIED BY ${ks.impex.password}
-      DEFAULT TABLESPACE ${ks.impex.oracle.defaultTablespace}
+      DEFAULT TABLESPACE
+      ${ks.impex.oracle.defaultTablespace}
       TEMPORARY TABLESPACE ${ks.impex.oracle.temporaryTablespace}
-      QUOTA ${ks.impex.oracle.quota} ON ${ks.impex.oracle.defaultTablespace}
+      QUOTA
+      ${ks.impex.oracle.quota} ON ${ks.impex.oracle.defaultTablespace}
       /
     </ks.impex.oracle.sql.create>
 
@@ -93,19 +96,22 @@
       , CREATE SESSION
       , CREATE SYNONYM
       , CREATE TABLE
-      , CREATE TRIGGER
+      ,
+      CREATE TRIGGER
       , CREATE TYPE
       , CREATE VIEW
       TO ${ks.impex.username}
       /
 
-      GRANT SELECT ON pending_trans$ to ${ks.impex.username}
+      GRANT SELECT ON pending_trans$ to
+      ${ks.impex.username}
       /
 
       GRANT SELECT ON dba_2pc_pending to ${ks.impex.username}
       /
 
-      GRANT SELECT ON dba_pending_transactions to ${ks.impex.username}
+      GRANT SELECT ON
+      dba_pending_transactions to ${ks.impex.username}
       /
 
       GRANT EXECUTE ON dbms_system to ${ks.impex.username}
@@ -320,9 +326,9 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.kuali.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.6</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -336,9 +342,9 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.kuali.maven.impex</groupId>
+        <groupId>org.kuali.maven.plugins</groupId>
         <artifactId>maven-impex-plugin</artifactId>
-        <version>1.0.17</version>
+        <version>1.0.23</version>
         <dependencies>
           <dependency>
             <groupId>mysql</groupId>
@@ -446,7 +452,7 @@
       </properties>
       <activation>
         <property>
-          <name>skipImpex</name>
+          <name>ks.impex.skip</name>
         </property>
       </activation>
     </profile>
@@ -500,7 +506,7 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.kuali.maven.impex</groupId>
+            <groupId>org.kuali.maven.plugins</groupId>
             <artifactId>maven-impex-plugin</artifactId>
             <executions>
               <execution>
@@ -574,7 +580,7 @@
             </executions>
           </plugin>
           <plugin>
-            <groupId>org.kuali.maven.impex</groupId>
+            <groupId>org.kuali.maven.plugins</groupId>
             <artifactId>maven-impex-plugin</artifactId>
             <executions>
               <execution>
@@ -640,7 +646,7 @@
                     <artifactItem>
                       <groupId>org.kuali.student.core</groupId>
                       <artifactId>ks-core-sql</artifactId>
-                      <version>${project.version}</version>
+                        <version>${ks-temp-project.version}</version>
                       <includes>**\/*.sql</includes>
                       <outputDirectory>${project.build.directory}/gen/data</outputDirectory>
                     </artifactItem>
@@ -666,7 +672,7 @@
               <dependency>
                 <groupId>org.kuali.student.core</groupId>
                 <artifactId>ks-core-sql</artifactId>
-                <version>${project.version}</version>
+                  <version>${ks-temp-project.version}</version>
               </dependency>
               <dependency>
                 <groupId>org.kuali.student.lum</groupId>
@@ -681,7 +687,7 @@
             </dependencies>
           </plugin>
           <plugin>
-            <groupId>org.kuali.maven.impex</groupId>
+            <groupId>org.kuali.maven.plugins</groupId>
             <artifactId>maven-impex-plugin</artifactId>
             <configuration>
               <forceMojoExecution>true</forceMojoExecution>
@@ -822,22 +828,71 @@
     <profile>
       <!-- This profile commits any Impex changes to SCM -->
       <id>commit-impex-changes</id>
+      <modules>
+        <module>ks-standalone-db</module>
+        <module>ks-embedded-db</module>
+      </modules>
       <build>
         <plugins>
           <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-scm-plugin</artifactId>
+            <groupId>org.kuali.maven.plugins</groupId>
+            <artifactId>maven-impex-plugin</artifactId>
             <executions>
               <execution>
-                <id>commit-impex-changes</id>
-                <phase>process-resources</phase>
+                <id>id-invalid</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>id-invalid-data-files</goal>
+                </goals>
+                <configuration>
+                  <schemaXMLFile>${project.basedir}/src/main/impex/schema.xml</schemaXMLFile>
+                </configuration>
+              </execution>
+              <execution>
+                <id>morph-xml</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>generate-data-dtd</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>generate-oracle-sql</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>generate-mysql-sql</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.kuali.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <configuration>
+              <message>Automated Impex update</message>
+            </configuration>
+            <executions>
+              <execution>
+                <id>add</id>
+                <phase>${scm.phase}</phase>
                 <goals>
                   <goal>add</goal>
                   <goal>checkin</goal>
                 </goals>
                 <configuration>
-                  <message>Automated Impex update</message>
                   <includes>**/src/main/impex/*.xml,**/src/main/impex/*.dtd</includes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>remove</id>
+                <phase>${scm.phase}</phase>
+                <goals>
+                  <goal>remove</goal>
+                  <goal>checkin</goal>
+                </goals>
+                <configuration>
+                  <includes>${impex.data.invalid}</includes>
                 </configuration>
               </execution>
             </executions>
