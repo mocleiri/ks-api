@@ -143,7 +143,7 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
 
 
     @Override
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=false,noRollbackFor={DoesNotExistException.class},rollbackFor={Throwable.class})
     public SaveResult<Data> save(Data input) throws AssemblyException {
         // TODO Neerav Agrawal - THIS METHOD NEEDS JAVADOCS
         OrgHelper orgHelper = OrgHelper.wrap((Data)input.get("orgInfo"));
@@ -204,10 +204,10 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
         OrgInfo orgInfo = new OrgInfo();
         OrgInfoData result = new OrgInfoData();
                 
-     // TODO KSCM        orgInfo.setType(org.getType());
-     // TODO KSCM        orgInfo.setLongDesc(org.getDescription());
+        orgInfo.setTypeKey(org.getType());
+        // TODO KSCM orgInfo.setLongDesc(org.getDescription());
         orgInfo.setShortName(org.getAbbreviation());
-     // TODO KSCMorgInfo.setLongName(org.getName());
+        // TODO KSCM orgInfo.setLongName(org.getName());
         orgInfo.setEffectiveDate(org.getEffectiveDate());
         orgInfo.setExpirationDate(org.getExpirationDate());
         if(org.getId()!=null){
@@ -246,10 +246,10 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
             if (orgProposalMeta.isCanEdit()) {
                 switch (input.getModificationState()) {
                     case CREATED:
-                    	// TODO KSCM                        result = orgService.createOrganization(orgInfo.getType(), orgInfo);
+                        // TODO KSCM result = orgService.createOrganization(orgInfo.getTypeKey(), orgInfo);
                         break;
                     case UPDATED:
-                    	// TODO KSCM                        result = orgService.updateOrganization(orgInfo.getId(), orgInfo);
+                        // TODO KSCM result = orgService.updateOrganization(orgInfo.getId(), orgInfo);
                     default:
                 }
             }
@@ -279,10 +279,10 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
     private OrgHelper buildOrgDataMap(OrgInfoData orgInfoData){
         OrgHelper org =  OrgHelper.wrap(new Data());
         org.setId(orgInfoData.getOrgInfo().getId());
-        org.setType(orgInfoData.getOrgInfo().getType());
-     // TODO KSCM        org.setName(orgInfoData.getOrgInfo().getLongName());
+        org.setType(orgInfoData.getOrgInfo().getTypeKey());
+        // TODO KSCM org.setName(orgInfoData.getOrgInfo().getLongName());
         org.setAbbreviation(orgInfoData.getOrgInfo().getShortName());
-     // TODO KSCM        org.setDescription(orgInfoData.getOrgInfo().getLongDesc());
+        // TODO KSCM org.setDescription(orgInfoData.getOrgInfo().getLongDesc());
         org.setEffectiveDate(orgInfoData.getOrgInfo().getEffectiveDate());
         org.setExpirationDate(orgInfoData.getOrgInfo().getExpirationDate());
         setUpdated(org.getData(), true);

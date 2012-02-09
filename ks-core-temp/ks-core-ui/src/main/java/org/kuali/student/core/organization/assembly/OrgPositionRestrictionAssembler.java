@@ -72,17 +72,17 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
     public Data get(String id) throws AssemblyException {
         List<OrgPositionRestrictionInfo> positions = new ArrayList<OrgPositionRestrictionInfo>();
         Data orgPositionMap = null;
-//        try{
-        	// TODO KSCM            positions = orgService.getPositionRestrictionsByOrg(id);
+        try{
+            //TODO KSCM positions = orgService.getPositionRestrictionsByOrg(id);
             orgPositionMap = buildOrgPositionMap(positions);
-//        }
-//        catch(DoesNotExistException dnee){
-//            return null;
-//            
-//        }
-//        catch(Exception e){
-//            LOG.error(e);
-//        }
+        }
+        //catch(DoesNotExistException dnee){
+        //    return null;
+            
+        //}
+        catch(Exception e){
+            LOG.error(e);
+        }
         return orgPositionMap;
     }
 
@@ -129,7 +129,7 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
                     orgPositionRestrictionInfo.setId(orgPositionHelper.getId());
                     try {
                         OrgPositionRestrictionInfo result = null;
-                     // TODO KSCM                        orgService.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
+                        //TODO KSCM OrgPositionRestrictionInfo result = orgService.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
                         addVersionIndicator(orgPositionHelper.getData(), OrgPositionRestrictionInfo.class.getName(), result.getId(), result.getMeta().getVersionInd());
                     } catch (Exception e) {
                         throw new AssemblyException();
@@ -141,8 +141,7 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
             else if(isDeleted(orgPositionHelper.getData())&&orgPositionHelper.getId()!=null){
                 try{
                     if(orgPositionHelper.getId()!=null){
-                        StatusInfo  result = null;
-                     // TODO KSCM                        orgService.removePositionRestrictionFromOrg(orgPositionHelper.getOrgId(), orgPositionHelper.getPersonRelationType());
+                        //TODO KSCM StatusInfo  result = orgService.removePositionRestrictionFromOrg(orgPositionHelper.getOrgId(), orgPositionHelper.getPersonRelationType());
                         propIter.remove();
                     }
                 }
@@ -155,9 +154,9 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
                 orgPositionHelper.setOrgId((OrgHelper.wrap((Data)input.get("orgInfo")).getId()));
                 OrgPositionRestrictionInfo orgPositionRestrictionInfo = buildOrgPositionRestrictionInfo(orgPositionHelper);
                 try{
-                    OrgPositionRestrictionInfo  result = null;
-                 // TODO KSCM                    orgService.addPositionRestrictionToOrg(orgPositionHelper.getOrgId(), 
-//                            orgPositionHelper.getPersonRelationType(), orgPositionRestrictionInfo);
+                    OrgPositionRestrictionInfo result = null;
+                    //TODO KSCM OrgPositionRestrictionInfo  result = orgService.addPositionRestrictionToOrg(orgPositionHelper.getOrgId(), 
+                    //TODO KSCM        orgPositionHelper.getPersonRelationType(), orgPositionRestrictionInfo);
                     orgPositionHelper.setId(result.getId());
                     addVersionIndicator(orgPositionHelper.getData(),OrgPositionRestrictionInfo.class.getName(),result.getId(),result.getMeta().getVersionInd());
                 }
@@ -184,10 +183,10 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
             orgPositionHelper.setId(position.getId());
             orgPositionHelper.setOrgId(position.getOrgId());
             orgPositionHelper.setPersonRelationType(position.getOrgPersonRelationTypeKey());
-         // TODO KSCM            orgPositionHelper.setTitle(position.getTitle());
-         // TODO KSCM            orgPositionHelper.setDesc(position.getTitle());
+            // TODO KSCM orgPositionHelper.setTitle(position.getTitle());
+            // TODO KSCM orgPositionHelper.setDesc(position.getTitle());
             orgPositionHelper.setMinNumRelations(position.getMinNumRelations());
-         // TODO KSCM            orgPositionHelper.setMaxNumRelations(position.getMaxNumRelations());
+            // TODO KSCM orgPositionHelper.setMaxNumRelations(position.getMaxNumRelations());
             addVersionIndicator(orgPositionHelper.getData(),OrgPositionRestrictionInfo.class.getName(),position.getId(),position.getMeta().getVersionInd());
             orgPositions.set(count,orgPositionHelper.getData());
             count = count +1;
@@ -198,10 +197,10 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
     private OrgPositionRestrictionInfo buildOrgPositionRestrictionInfo(OrgPositionHelper orgPositionHelper){
         OrgPositionRestrictionInfo orgPositionRestrictionInfo = new OrgPositionRestrictionInfo();
         orgPositionRestrictionInfo.setOrgPersonRelationTypeKey(orgPositionHelper.getPersonRelationType());
-     // TODO KSCM        orgPositionRestrictionInfo.setTitle(orgPositionHelper.getTitle());
-     // TODO KSCM        orgPositionRestrictionInfo.setDesc(orgPositionHelper.getDesc());
+        // TODO KSCM orgPositionRestrictionInfo.setTitle(orgPositionHelper.getTitle());
+        // TODO KSCM orgPositionRestrictionInfo.setDesc(orgPositionHelper.getDesc());
         orgPositionRestrictionInfo.setMinNumRelations(orgPositionHelper.getMinNumRelations());
-     // TODO KSCMorgPositionRestrictionInfo.setMaxNumRelations(orgPositionHelper.getMaxNumRelations());
+        // TODO KSCM orgPositionRestrictionInfo.setMaxNumRelations(orgPositionHelper.getMaxNumRelations());
         orgPositionRestrictionInfo.setOrgId(orgPositionHelper.getOrgId());
         if (isModified(orgPositionHelper.getData())) {
             if (isUpdated(orgPositionHelper.getData())) {

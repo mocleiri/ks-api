@@ -20,30 +20,37 @@ public class TransformationManager {
 
     private static ThreadLocal<Metadata> metadataCache = new ThreadLocal<Metadata>();
 
-	/**
-	 * This is an outbound transform request which will convert incoming DTO objects
-	 * to a Data map and apply outbound filter operation to both the data object
-	 * and the converted DTO object.
-	 *
-	 * @param value
-	 * @return
-	 * @throws Exception
-	 */
-	public Data transform(Object value) throws Exception{
-		applyOutboundFilters(value.getClass().getName(), value, new HashMap<String,Object>());
-		Data dataValue = mapper.convertFromBean(value);
-		applyOutboundFilters(value.getClass().getName(), dataValue, new HashMap<String,Object>());
+    /**
+     * This is an outbound transform request which will convert incoming DTO objects
+     * to a Data map and apply outbound filter operation to both the data object
+     * and the converted DTO object.
+     *
+     * @param value
+     * @param objectType TODO
+     * @return
+     * @throws Exception
+     */
+    public Data transform(Object value, String objectType) throws Exception{
+        Metadata metadata = null;
+        metadata = (metadata != null ? metadata:getMetadata(objectType, new HashMap<String,Object>()));
+        
+        applyOutboundFilters(value.getClass().getName(), value, new HashMap<String,Object>());
+        Data dataValue = mapper.convertFromBean(value, metadata);
+        applyOutboundFilters(value.getClass().getName(), dataValue, new HashMap<String,Object>());
 
-		return dataValue;
-	}
+        return dataValue;
+    }
 
-	public Data transform(Object value, Map<String,Object> filterProperties) throws Exception{
-		applyOutboundFilters(value.getClass().getName(), value, filterProperties);
-		Data dataValue = mapper.convertFromBean(value);
-		applyOutboundFilters(value.getClass().getName(), dataValue, filterProperties);
+	public Data transform(Object value, String objectType, Map<String,Object> filterProperties) throws Exception{
+        Metadata metadata = null;
+        metadata = (metadata != null ? metadata:getMetadata(objectType, new HashMap<String,Object>()));
 
-		return dataValue;
-	}
+        applyOutboundFilters(value.getClass().getName(), value, filterProperties);
+        Data dataValue = mapper.convertFromBean(value, metadata);
+        applyOutboundFilters(value.getClass().getName(), dataValue, filterProperties);
+
+        return dataValue;
+    }
 
 
 	/**

@@ -30,15 +30,14 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Data.Property;
 import org.kuali.student.common.assembly.data.Metadata;
 import org.kuali.student.common.assembly.data.QueryPath;
-import org.kuali.student.common.assembly.data.Data.Property;
 import org.kuali.student.common.assembly.old.Assembler;
 import org.kuali.student.common.assembly.old.data.SaveResult;
 import org.kuali.student.common.assembly.util.AssemblerUtils;
 import org.kuali.student.common.dto.MetaInfo;
 import org.kuali.student.common.dto.StatusInfo;
-import org.kuali.student.common.exceptions.DoesNotExistException;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
 import org.kuali.student.common.validation.dto.ValidationResultInfo;
@@ -126,12 +125,12 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
         if(orgorgRelationHelper.getOrgOrgRelationTypeKey().startsWith("REV_")){
             orgOrgRelationInfo.setOrgId(orgorgRelationHelper.getRelatedOrgId());
             orgOrgRelationInfo.setRelatedOrgId(orgorgRelationHelper.getOrgId());
-         // TODO KSCM            orgOrgRelationInfo.setType(orgorgRelationHelper.getOrgOrgRelationTypeKey().substring(4));
+            //TODO KSCM orgOrgRelationInfo.setType(orgorgRelationHelper.getOrgOrgRelationTypeKey().substring(4));
         }
         else{
             orgOrgRelationInfo.setOrgId(orgorgRelationHelper.getOrgId());
             orgOrgRelationInfo.setRelatedOrgId(orgorgRelationHelper.getRelatedOrgId());
-         // TODO KSCMorgOrgRelationInfo.setType(orgorgRelationHelper.getOrgOrgRelationTypeKey());
+            //TODO KSCM orgOrgRelationInfo.setType(orgorgRelationHelper.getOrgOrgRelationTypeKey());
         }
        
         
@@ -185,8 +184,8 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
 //              orgOrgRelationInfo.setId(orgOrgRelation.getId());
               try{
                   if(orgOrgRelation.getId()!=null){
-                      StatusInfo  result = null;
-                   // TODO KSCM                      orgService.removeOrgOrgRelation(orgOrgRelation.getId());
+                  	  StatusInfo result = null;
+                      //TODO KSCM StatusInfo result = orgService.removeOrgOrgRelation(orgOrgRelation.getId());
                       propIter.remove();
                   }
               }
@@ -201,8 +200,8 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
                 
                 OrgOrgRelationInfo orgOrgRelationInfo = buildOrgOrgRelationInfo(orgOrgRelation);
                 try{
-                    OrgOrgRelationInfo  result = null;
-                 // TODO KSCM orgService.createOrgOrgRelation(orgOrgRelationInfo.getOrgId(), orgOrgRelationInfo.getRelatedOrgId(), orgOrgRelationInfo.getType(), orgOrgRelationInfo);
+                    OrgOrgRelationInfo result = null;
+                    //TODO KSCM OrgOrgRelationInfo result = orgService.createOrgOrgRelation(orgOrgRelationInfo.getOrgId(), orgOrgRelationInfo.getRelatedOrgId(), orgOrgRelationInfo.getType(), orgOrgRelationInfo);
                     orgOrgRelation.setId(result.getId());
                     addVersionIndicator(orgOrgRelation.getData(),OrgOrgRelationInfo.class.getName(),result.getId(),result.getMeta().getVersionInd());
                 }
@@ -242,11 +241,11 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
             QueryPath metaPath = QueryPath.concat(null, ORGORG_PATH);
             Metadata orgOrgMeta =orgProposalModel.getMetadata(metaPath);
             if(!orgOrgMeta.isCanEdit()){
-            	// TODO KSCM                relationTypeTranslation =orgService.getOrgOrgRelationType(relation.getType()).getName();
-            	// TODO KSCM                orgOrgRelation.setOrgOrgRelationTypeKey(relationTypeTranslation);
+                //TODO KSCM relationTypeTranslation =orgService.getOrgOrgRelationType(relation.getType()).getName();
+                //TODO KSCM orgOrgRelation.setOrgOrgRelationTypeKey(relationTypeTranslation);
             }
             else{
-                orgOrgRelation.setOrgOrgRelationTypeKey(relation.getType());
+                orgOrgRelation.setOrgOrgRelationTypeKey(relation.getTypeKey());
             }
             orgOrgRelation.setEffectiveDate(relation.getEffectiveDate());
             orgOrgRelation.setExpirationDate(relation.getExpirationDate());
@@ -268,11 +267,11 @@ public class OrgOrgRelationAssembler implements Assembler<Data, OrgorgRelationHe
             QueryPath metaPath = QueryPath.concat(null, ORGORG_PATH);
             Metadata orgOrgMeta =orgProposalModel.getMetadata(metaPath);
             if(!orgOrgMeta.isCanEdit()){
-            	// TODO KSCM                relationTypeTranslation =orgService.getOrgOrgRelationType(relation.getType()).getRevName();
-            	// TODO KSCMorgOrgRelation.setOrgOrgRelationTypeKey(relationTypeTranslation);
+                //TODO KSCM relationTypeTranslation =orgService.getOrgOrgRelationType(relation.getType()).getRevName();
+                //TODO KSCM orgOrgRelation.setOrgOrgRelationTypeKey(relationTypeTranslation);
             }
             else{
-                orgOrgRelation.setOrgOrgRelationTypeKey("REV_" +relation.getType());
+                orgOrgRelation.setOrgOrgRelationTypeKey("REV_" +relation.getTypeKey());
             }
             orgOrgRelation.setEffectiveDate(relation.getEffectiveDate());
             orgOrgRelation.setExpirationDate(relation.getExpirationDate());

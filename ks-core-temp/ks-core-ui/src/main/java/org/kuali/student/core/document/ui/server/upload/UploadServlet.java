@@ -117,10 +117,9 @@ public class UploadServlet extends HttpServlet{
 			        if(name.equals("documentDescription")){
 			        	RichTextInfo text = new RichTextInfo();
 			        	text.setPlain(value);
-			        	// TODO KSCM			        	info.setDesc(text);
+			        	//TODO KSCM info.setDesc(text);
 			        }
-			    } 
-			    else {
+			    } else {
 			    	String fullFileName = item.getName();
 			    	if (fullFileName != null) {
 			            String filename = FilenameUtils.getName(fullFileName);
@@ -143,8 +142,8 @@ public class UploadServlet extends HttpServlet{
 				    	fileStatus.setStatus(FileTransferStatus.UPLOAD_FINISHED);
 				    	bInfo.setBinary(new String(Base64.encodeBase64(bytes.toByteArray())));
 				    	
-				    	// TODO KSCM				    	info.setDocumentBinaryInfo(bInfo);
-				    	// TODO KSCM				    	info.setState(DtoState.ACTIVE.toString());
+				    	//TODO KSCM info.setDocumentBinaryInfo(bInfo);
+				    	info.setState(DtoState.ACTIVE.toString());
 				    	info.setFileName(filename);
 				    	
 				    	int extSeperator = filename.lastIndexOf(".");
@@ -152,7 +151,7 @@ public class UploadServlet extends HttpServlet{
 				    	
 				    	//FIXME Probably temporary solution for type on document info
 				    	String type = "documentType." + filename.substring(extSeperator + 1);
-				    	// TODO KSCM				    	info.setType(type);
+				    	info.setType(type);
 			    	}
 			    	else{
 			    		//No file specified error
@@ -160,13 +159,14 @@ public class UploadServlet extends HttpServlet{
 			    	}
 			    }
 			     
-			 // TODO KSCM		    	if(info.getDesc() != null && info.getDocumentBinaryInfo() != null && info.getType() != null){
-		    		if (true) {	// TODO KSCM
+		    	if(//TODO KSCM info.getDesc() != null 
+		    	   //TODO KSCM && info.getDocumentBinaryInfo() != null && 
+		    	   info.getType() != null){
 		    		//FileStatus fileStatus = status.getFileStatusMap().get(info.getFileName());
 		    		FileStatus fileStatus = status.getFileStatusList().get(currentItem);
 		    		try{
-			    		DocumentInfo createdDoc = null;
-			    		// TODO KSCMdocumentService.createDocument(info.getType(), "documentCategory.proposal", info);
+		    		    DocumentInfo createdDoc = null;
+			    		//TODO KSCM DocumentInfo createdDoc = documentService.createDocument(info.getType(), "documentCategory.proposal", info);
 			    		fileStatus.setStatus(FileTransferStatus.COMMIT_FINISHED);
 			    		if(createdDoc != null){
 			    			status.getCreatedDocIds().add(createdDoc.getId());
@@ -174,16 +174,15 @@ public class UploadServlet extends HttpServlet{
 			    		}
 			    		
 			    		RefDocRelationInfo relationInfo = new RefDocRelationInfo();
-			    		// TODO KSCM			    		relationInfo.setState(DtoState.ACTIVE.toString());
-			    		// TODO KSCMrelationInfo.setDesc(info.getDesc());
+			    		//TODO KSCM relationInfo.setState(DtoState.ACTIVE.toString());
+			    		//TODO KSCM relationInfo.setDesc(info.getDesc());
 			    		relationInfo.setRefObjectId(request.getParameter("referenceId"));
 			    		relationInfo.setRefObjectTypeKey(request.getParameter("refObjectTypeKey"));
 			    		relationInfo.setTitle(info.getFileName());
 			    		relationInfo.setDocumentId(createdDoc.getId());
-			    		// TODO KSCM			    		relationInfo.setType(request.getParameter("refDocRelationTypeKey"));
-			    		// TODO KSCM			    		documentService.createRefDocRelation(relationInfo.getRefObjectTypeKey(),relationInfo.getRefObjectId(),relationInfo.getDocumentId(),relationInfo.getType(), relationInfo);
-		    		}
-		    		catch(Exception e){
+			    		//TODO KSCM relationInfo.setType(request.getParameter("refDocRelationTypeKey"));
+			    		//TODO KSCM documentService.createRefDocRelation(relationInfo.getRefObjectTypeKey(),relationInfo.getRefObjectId(),relationInfo.getDocumentId(),relationInfo.getType(), relationInfo);
+		    		}catch(Exception e){
 		    			fileError = true;
 		    			LOG.error(e);
 		    			fileStatus.setStatus(FileTransferStatus.ERROR);
@@ -212,20 +211,21 @@ public class UploadServlet extends HttpServlet{
 			throws ServletException, IOException {
 			DocumentInfo info = null;
 			try {
-				// TODO KSCM				info = documentService.getDocument(request.getParameter("docId"));
+			  //TODO KSCM info = documentService.getDocument(request.getParameter("docId"));
 			} catch (Exception e) {
 				LOG.error(e);
 			}
 			
-			// TODO KSCMif(info != null && info.getDocumentBinaryInfo() != null && info.getDocumentBinaryInfo().getBinary() != null && 
-			// TODO KSCM!(info.getDocumentBinaryInfo().getBinary().isEmpty())){
+			if(info != null 
+			      //TODO KSCM && info.getDocumentBinaryInfo() != null 
+			      //TODO KSCM && info.getDocumentBinaryInfo().getBinary() != null 
+			      //TODO KSCM && !(info.getDocumentBinaryInfo().getBinary().isEmpty())
+			        ){
 				
-				if (true) {
 				ServletOutputStream op = response.getOutputStream();
 				try {
-				
-					byte[] fileBytes = null;
-					// TODO KSCM					Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
+				    byte[] fileBytes = null;
+				    //TODO KSCM byte[] fileBytes = Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
 					int length = fileBytes.length;
 			        
 			        ServletContext context = getServletConfig().getServletContext();

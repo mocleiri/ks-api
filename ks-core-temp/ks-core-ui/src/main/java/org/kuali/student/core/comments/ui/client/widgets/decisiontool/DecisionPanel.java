@@ -143,8 +143,8 @@ public class DecisionPanel implements HasReferenceId, ToolView {
 	private void getPersonNames(final List<CommentInfo> comments) {
 		personIds = new ArrayList<String>();
 		for (CommentInfo comment : comments) {
-			if(comment.getMeta().getCreateId()!=null){
-				personIds.add(comment.getMeta().getCreateId());
+			if(comment.getMetaInfo().getCreateId()!=null){
+				personIds.add(comment.getMetaInfo().getCreateId());
 			}
 			else{
 				personIds.add("");
@@ -185,14 +185,14 @@ public class DecisionPanel implements HasReferenceId, ToolView {
                     theRow.setValue("Decision", drDetails.getLabel());
     				SimpleDateFormat dateformat = new SimpleDateFormat("MM/dd/yyyy");
     				StringBuilder rationaleDate = new StringBuilder(dateformat
-    						.format(commentInfo.getMeta().getCreateTime()));
+    						.format(commentInfo.getMetaInfo().getCreateTime()));
     
     				theRow.setId(commentInfo.getId());
     				theRow.setValue("Date", rationaleDate.toString());
     
-    				if (members.get(commentInfo.getMeta().getCreateId()) != null) {
+    				if (members.get(commentInfo.getMetaInfo().getCreateId()) != null) {
     					MembershipInfo memberInfo = members.get(commentInfo
-    							.getMeta().getCreateId());
+    							.getMetaInfo().getCreateId());
     					StringBuilder memberName = new StringBuilder();
     					memberName.append(memberInfo.getFirstName());
     					memberName.append(" ");
@@ -427,9 +427,8 @@ public class DecisionPanel implements HasReferenceId, ToolView {
     public boolean isExportButtonActive() {
         return false;
     }
-
- // TODO KSCM-268 
-    @Override
+    
+	@Override
 	public void showExport(boolean show) {
 		// TODO Auto-generated method stub
 		

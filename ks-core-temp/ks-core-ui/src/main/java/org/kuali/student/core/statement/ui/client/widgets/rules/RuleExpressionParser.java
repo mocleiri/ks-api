@@ -262,7 +262,7 @@ public class RuleExpressionParser {
             if (!doValidateExpression(new ArrayList<String>(), tokenList, rcs)) return null;
             List<Node<Token>> nodeList = toNodeList(tokenList);
             List<Node<Token>> rpnList = getRPN(nodeList);
-            parsedS = statementVOFromRPN(rpnList, rcs, statementType);
+            parsedS = statementVOFromRPN(rpnList, rcs, statementType, statementVO);
 
             if (parsedS != null) {
                 parsedS.simplify();
@@ -287,7 +287,7 @@ public class RuleExpressionParser {
     }
     
     /** Build the binary tree from list of tokens*/
-    private StatementVO statementVOFromRPN(List<Node<Token>> rpnList, List<ReqComponentVO> rcs, String statementType) {
+    private StatementVO statementVOFromRPN(List<Node<Token>> rpnList, List<ReqComponentVO> rcs, String statementType, StatementVO oldStatementVO) {
         StatementVO statementVO;        
 
         //if rule is empty
@@ -316,8 +316,11 @@ public class RuleExpressionParser {
                     op = StatementOperatorTypeKey.OR;
                 }
                 StatementInfo statementInfo = new StatementInfo();
-             // TODO KSCM                statementInfo.setOperator(op);
-             // TODO KSCM                statementInfo.setType(statementType);
+                //TODO KSCM statementInfo.setOperator(op);
+                statementInfo.setTypeKey(statementType);
+                statementInfo.setId(oldStatementVO.getStatementInfo().getId());
+                //Need to copy the metadata here to ensure that the statement can be updated correctly.
+                statementInfo.setMeta(oldStatementVO.getStatementInfo().getMeta());
                 subS.setStatementInfo(statementInfo);
                 Token right = conditionStack.pop().getUserObject();
                 Token left = conditionStack.pop().getUserObject();
@@ -357,7 +360,7 @@ public class RuleExpressionParser {
         } else {
             statementVO = (StatementVO)conditionStack.pop().getUserObject();
         }
-     // TODO KSCM        statementVO.getStatementInfo().setType(statementType);
+        statementVO.getStatementInfo().setTypeKey(statementType);
 
         return statementVO;
     }
@@ -365,8 +368,8 @@ public class RuleExpressionParser {
     private StatementVO wrapReqComponent(StatementOperatorTypeKey op, ReqComponentVO rc, String statementType) {
         StatementVO wrapS = new StatementVO();
         StatementInfo wrapStatementInfo = new StatementInfo();
-     // TODO KSCM        wrapStatementInfo.setOperator(op);
-     // TODO KSCM        wrapStatementInfo.setType(statementType);
+        //TODO KSCM wrapStatementInfo.setOperator(op);
+        wrapStatementInfo.setTypeKey(statementType);
         wrapS.setStatementInfo(wrapStatementInfo);
         wrapS.addReqComponentVO(rc);
         return wrapS;

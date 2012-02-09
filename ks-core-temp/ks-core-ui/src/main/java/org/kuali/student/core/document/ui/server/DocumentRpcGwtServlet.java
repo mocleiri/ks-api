@@ -25,12 +25,19 @@ import org.kuali.student.common.rice.StudentIdentityConstants;
 import org.kuali.student.common.rice.authorization.PermissionType;
 import org.kuali.student.common.ui.server.gwt.BaseRpcGwtServletAbstract;
 import org.kuali.student.core.document.dto.DocumentInfo;
+import org.kuali.student.core.document.dto.DocumentTypeInfo;
 import org.kuali.student.core.document.dto.RefDocRelationInfo;
 import org.kuali.student.core.document.service.DocumentService;
 import org.kuali.student.core.document.ui.client.service.DocumentRpcService;
 
 public class DocumentRpcGwtServlet extends BaseRpcGwtServletAbstract<DocumentService> implements DocumentRpcService{
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+    public List<DocumentTypeInfo> getDocumentTypes() throws Exception {
+        return null;
+        //TODO KSCM return service.getDocumentTypes();
+    }
 	
 	public DocumentInfo getDocument(String documentId) throws Exception{
 		return null;
@@ -108,4 +115,6 @@ public class DocumentRpcGwtServlet extends BaseRpcGwtServletAbstract<DocumentSer
 //		}
 		return new StatusInfo();
 	}
+
+    
 }

@@ -18,7 +18,6 @@ package org.kuali.student.core.statement.ui.client.widgets.rules;
 import java.util.List;
 
 import org.kuali.student.core.statement.dto.StatementInfo;
-import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
 import org.kuali.student.core.statement.ui.client.widgets.table.Node;
 
 public class RuleInfo {
@@ -34,8 +33,8 @@ public class RuleInfo {
 
     public StatementVO createNewStatementVO() {
         StatementInfo newStatementTree = new StatementInfo();
-     // TODO KSCM        newStatementTree.setOperator(StatementOperatorTypeKey.AND);
-     // TODO KSCM        newStatementTree.setType(getStatementTypeKey());
+        //TODO KSCM newStatementTree.setOperator(StatementOperatorTypeKey.AND);
+        newStatementTree.setTypeKey(getStatementTypeKey());
         StatementVO statementVO = new StatementVO();                            
         statementVO.setStatementInfo(newStatementTree);
         return statementVO;
@@ -124,7 +123,7 @@ public class RuleInfo {
         // create new statement to hold the new OR group
         StatementVO newStatementVO = createNewStatementVO();
         StatementInfo newLuStatementInfo = newStatementVO.getStatementInfo();
-     // TODO KSCM        newLuStatementInfo.setOperator(StatementOperatorTypeKey.OR);
+        //TODO KSCM newLuStatementInfo.setOperator(StatementOperatorTypeKey.OR);
         newStatementVO.setStatementInfo(newLuStatementInfo);
 
         // remove the selected RCs from original statement and move them into the new StatementVO
@@ -152,7 +151,7 @@ public class RuleInfo {
         // create new statement to hold the new OR group
         StatementVO newStatementVO = createNewStatementVO();
         StatementInfo newLuStatementInfo = newStatementVO.getStatementInfo();
-     // TODO KSCM        newLuStatementInfo.setOperator(StatementOperatorTypeKey.AND);
+        //TODO KSCM newLuStatementInfo.setOperator(StatementOperatorTypeKey.AND);
         newStatementVO.setStatementInfo(newLuStatementInfo);
 
         // remove the selected RCs from original statement and move them into the new StatementVO
@@ -359,7 +358,7 @@ public class RuleInfo {
 
     public String getStatementTypeKey() {
         String statementType = (statementVO == null || statementVO.getStatementInfo() == null)? null :
-            statementVO.getStatementInfo().getType();
+            statementVO.getStatementInfo().getTypeKey();
     	return statementType;
     }
 }

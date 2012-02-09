@@ -19,6 +19,7 @@ import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
 import org.kuali.student.common.ui.client.mvc.ModelProvider;
 import org.kuali.student.common.ui.client.mvc.ModelRequestCallback;
+import org.kuali.student.common.ui.client.util.DebugIdUtils;
 import org.kuali.student.common.ui.client.widgets.KSDropDown;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumerations;
@@ -86,6 +87,7 @@ public class ReqCompEditWidget extends FlowPanel {
 
         //wait until req. comp. types are loaded and user actually selects a type from drop down
         reqCompTypesList.setEnabled(false);
+        reqCompTypesList.ensureDebugId("Rule-Type");
         setEnableAddRuleButtons(false);
 
         setupReqCompTypesList();
@@ -141,7 +143,7 @@ public class ReqCompEditWidget extends FlowPanel {
                      createReqComp(selectedReqCompType);
                  } else {
                 	 //editedReqComp.setRequiredComponentType(selectedReqCompType);
-                	// TODO KSCM                     editedReqComp.setType(selectedReqCompType.getId());
+                     editedReqComp.setTypeKey(selectedReqCompType.getId());
                  }
 
                  displayFieldsSection();
@@ -176,7 +178,7 @@ public class ReqCompEditWidget extends FlowPanel {
 
                         ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
                         fieldInfo.setId(null);
-                     // TODO KSCM                        fieldInfo.setType(fieldTypeInfo.getId());
+                        fieldInfo.setTypeKey(fieldTypeInfo.getId());
                         String fieldValue = ruleFieldsData.getRoot().get(fieldTypeInfo.getId()).toString();
                         fieldInfo.setValue((fieldValue == null ? "" : fieldValue.toString()));
                         editedFields.add(fieldInfo);
@@ -213,7 +215,7 @@ public class ReqCompEditWidget extends FlowPanel {
                     }
                     ReqCompFieldInfo fieldInfo = new ReqCompFieldInfo();
                     fieldInfo.setId(null);
-                 // TODO KSCM                    fieldInfo.setType(fieldType);
+                    fieldInfo.setTypeKey(fieldType);
                     fieldInfo.setValue(widgetValue);
                     editedFields.add(fieldInfo);
 
@@ -230,7 +232,7 @@ public class ReqCompEditWidget extends FlowPanel {
     }
 
     private void finalizeRuleUpdate() {
-    	// TODO KSCM        editedReqComp.setType(selectedReqCompType.getId());
+        editedReqComp.setType(selectedReqCompType.getId());
 
         //callback needs to update NL for given req. component and the rule
         reqCompConfirmCallback.exec(editedReqComp);
@@ -250,12 +252,12 @@ public class ReqCompEditWidget extends FlowPanel {
         desc.setPlain("");
         desc.setFormatted("");
         editedReqComp = new ReqComponentInfoUi();
-     // TODO KSCM        editedReqComp.setDesc(desc);
+        //TODO KSCM editedReqComp.setDesc(desc);
         editedReqComp.setId(newReqCompId + Integer.toString(tempReqCompInfoID++));
         editedReqComp.setReqCompFields(null);
         //editedReqComp.setRequiredComponentType(reqCompTypeInfo);
         if (reqCompTypeInfo != null) {
-        	// TODO KSCM            editedReqComp.setType(reqCompTypeInfo.getId());
+            editedReqComp.setTypeKey(reqCompTypeInfo.getId());
         }
     }
 
@@ -271,14 +273,14 @@ public class ReqCompEditWidget extends FlowPanel {
 
         selectedReqCompType = null;
         for (ReqComponentTypeInfo aReqCompTypeInfoList : reqCompTypeInfoList) {
-            if (editedReqComp.getType().equals(aReqCompTypeInfoList.getId())) {
+            if (editedReqComp.getTypeKey().equals(aReqCompTypeInfoList.getId())) {
                 selectedReqCompType = aReqCompTypeInfoList;
                 break;
             }
         }
         if (selectedReqCompType == null) {
-            GWT.log("Unknown Requirement Component Type found: " + existingReqComp.getType(), null);
-            Window.alert("Unknown Requirement Component Type found: " + existingReqComp.getType());
+            GWT.log("Unknown Requirement Component Type found: " + existingReqComp.getTypeKey(), null);
+            Window.alert("Unknown Requirement Component Type found: " + existingReqComp.getTypeKey());
         }
 
         redraw();
@@ -499,7 +501,7 @@ public class ReqCompEditWidget extends FlowPanel {
         }
 
         for (ReqCompFieldInfo fieldInfo : fields) {
-            if (fieldInfo.getType().equals(key)) {
+            if (fieldInfo.getTypeKey().equals(key)) {
                 return (fieldInfo.getValue() == null ? "" : fieldInfo.getValue());
             }
         }

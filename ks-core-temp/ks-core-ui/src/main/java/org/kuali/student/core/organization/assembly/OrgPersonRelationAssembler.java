@@ -29,14 +29,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Data.Property;
 import org.kuali.student.common.assembly.data.Metadata;
 import org.kuali.student.common.assembly.data.QueryPath;
-import org.kuali.student.common.assembly.data.Data.Property;
 import org.kuali.student.common.assembly.old.Assembler;
 import org.kuali.student.common.assembly.old.data.SaveResult;
 import org.kuali.student.common.assembly.util.AssemblerUtils;
 import org.kuali.student.common.dto.MetaInfo;
-import org.kuali.student.common.exceptions.DoesNotExistException;
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.mvc.DataModelDefinition;
 import org.kuali.student.common.validation.dto.ValidationResultInfo;
@@ -76,17 +75,17 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
     public Data get(String id) throws AssemblyException {
         List<OrgPersonRelationInfo> relations = new ArrayList<OrgPersonRelationInfo>();
         Data orgRelationMap = null;
-//        try{
-        	// TODO KSCM            relations = orgService.getOrgPersonRelationsByOrg(id);
+        try{
+          //TODO KSCM relations = orgService.getOrgPersonRelationsByOrg(id);
             orgRelationMap = buildOrgPersonRelationMap(relations);
-//        }
-//        catch(DoesNotExistException dnee){
-//            return null;
-//            
-//        }
-//        catch(Exception e){
-//        	LOG.error(e);
-//        }
+        }
+        //catch(DoesNotExistException dnee){
+        //    return null;
+            
+        //}
+        catch(Exception e){
+        	LOG.error(e);
+        }
         return orgRelationMap;
     }
 
@@ -130,7 +129,7 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
                     orgPersonRelationInfo.setId(orgPersonHelper.getId());
                     try {
                         OrgPersonRelationInfo result = null;
-                     // TODO KSCM                        orgService.updateOrgPersonRelation(orgPersonHelper.getId(), orgPersonRelationInfo);
+                        //TODO KSCM OrgPersonRelationInfo result = orgService.updateOrgPersonRelation(orgPersonHelper.getId(), orgPersonRelationInfo);
                         addVersionIndicator(orgPersonHelper.getData(), OrgPersonRelationInfo.class.getName(), result.getId(), result.getMeta().getVersionInd());
                     } catch (Exception e) {
                         throw new AssemblyException();
@@ -140,7 +139,7 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
             }
             else if(isDeleted(orgPersonHelper.getData())&&orgPersonHelper.getId()!=null){
                 try{
-                	// TODO KSCM                    orgService.removeOrgPersonRelation(orgPersonHelper.getId());
+                    //TODO KSCM orgService.removeOrgPersonRelation(orgPersonHelper.getId());
                     propertyIter.remove();
                 }
                 catch(Exception e ){
@@ -153,7 +152,7 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
                 OrgPersonRelationInfo orgPersonRelationInfo = buildOrgPersonRelationInfo(orgPersonHelper);
                 try{
                     OrgPersonRelationInfo  result = null;
-                 // TODO KSCM                    orgService.createOrgPersonRelation(orgPersonHelper.getOrgId(), orgPersonHelper.getPersonId(), orgPersonHelper.getTypeKey(), orgPersonRelationInfo);
+                    //TODO KSCM OrgPersonRelationInfo  result = orgService.createOrgPersonRelation(orgPersonHelper.getOrgId(), orgPersonHelper.getPersonId(), orgPersonHelper.getTypeKey(), orgPersonRelationInfo);
                     orgPersonHelper.setId(result.getId());
                     addVersionIndicator(orgPersonHelper.getData(),OrgPersonRelationInfo.class.getName(),result.getId(),result.getMeta().getVersionInd());
                 }
@@ -172,12 +171,12 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
         OrgPersonRelationInfo orgPersonRelationInfo = new OrgPersonRelationInfo();
         orgPersonRelationInfo.setOrgId(orgPersonHelper.getOrgId());      
         orgPersonRelationInfo.setPersonId(orgPersonHelper.getPersonId());
-     // TODO KSCM        orgPersonRelationInfo.setType(orgPersonHelper.getTypeKey());
+        orgPersonRelationInfo.setTypeKey(orgPersonHelper.getTypeKey());
         orgPersonRelationInfo.setEffectiveDate(orgPersonHelper.getEffectiveDate());
         orgPersonRelationInfo.setExpirationDate(orgPersonHelper.getExpirationDate());
-//        if (orgPersonHelper.getState()!=null)
-        	// TODO KSCM        	orgPersonRelationInfo.setState(orgPersonHelper.getState());
-//        else
+        if (orgPersonHelper.getState()!=null)
+        	orgPersonRelationInfo.setStateKey(orgPersonHelper.getState());
+        else
         	orgPersonHelper.setState("Active");
         	
        
@@ -211,11 +210,11 @@ public class OrgPersonRelationAssembler implements Assembler<Data, OrgPersonHelp
             orgPersonHelper.setOrgId(relation.getOrgId());
             if(!orgPersonMeta.isCanEdit()){
                 
-            	// TODO KSCM                    orgPersonHelper.setTypeKey(orgService.getOrgPersonRelationType(relation.getType()).getName());
+              //TODO KSCM orgPersonHelper.setTypeKey(orgService.getOrgPersonRelationType(relation.getTypeKey()).getName());
                
             }
             else{
-                orgPersonHelper.setTypeKey(relation.getType());
+                orgPersonHelper.setTypeKey(relation.getTypeKey());
             }
             
             orgPersonHelper.setPersonId(relation.getPersonId());
