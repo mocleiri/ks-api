@@ -111,7 +111,7 @@
                 <dependency>
                     <groupId>org.kuali.student.core</groupId>
                     <artifactId>ks-core-impl</artifactId>
-                    <version>${project.version}</version>
+                    <version>${ks-temp-project.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.apache.derby</groupId>
@@ -217,5 +217,16 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+   <dependency>
+   <groupId>javax.validation</groupId>
+   <artifactId>validation-api</artifactId>
+   <version>1.0.0.GA</version>
+  </dependency>
+  <dependency>
+   <groupId>javax.validation</groupId>
+   <artifactId>validation-api</artifactId>
+   <version>1.0.0.GA</version>
+   <classifier>sources</classifier>
+  </dependency>        
+	</dependencies>
 </project>

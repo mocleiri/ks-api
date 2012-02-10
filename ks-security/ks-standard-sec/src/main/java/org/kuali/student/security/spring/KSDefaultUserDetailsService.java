@@ -104,13 +104,12 @@ public class KSDefaultUserDetailsService implements UserDetailsService{
         
         ArrayList<String> ksSpringRolesList = new ArrayList<String>();
        
-        //TODO: Uncomment these lines when R2 upgrade is done.
-        //if(roleService.principalHasRole(principalId, adminRoleIdList, null)){
+        if(roleService.principalHasRole(principalId, adminRoleIdList, null)){
         	ksSpringRolesList.add("ROLE_KS_ADMIN");
-        //}
-        //if(roleService.principalHasRole(principalId, ksUserRoleIdList, null)){
+        }
+        if(roleService.principalHasRole(principalId, ksUserRoleIdList, null)){
         	ksSpringRolesList.add("ROLE_KS_USER");
-        //}  
+        }  
          
         // Enable backdoor login. The LUMMain.jsp has will actually display the login. 
         if (enableBackdoorLogin()) {
