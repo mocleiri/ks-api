@@ -9,7 +9,6 @@ import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
 import org.kuali.student.enrollment.courseoffering.dto.RegistrationGroupInfo;
 import org.kuali.student.enrollment.courseoffering.dto.SeatPoolDefinitionInfo;
-import org.kuali.student.enrollment.courseoffering.service.CourseOfferingServiceDecorator;
 import org.kuali.student.enrollment.courseregistration.dto.CourseRegistrationInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
@@ -508,7 +507,7 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 	}
 
 	@Override
-	public List<RegistrationGroupInfo> getRegistrationGroupsByIdList(
+	public List<RegistrationGroupInfo> getRegistrationGroupsByIds(
 			List<String> registrationGroupIds, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
@@ -517,8 +516,8 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
             throw new MissingParameterException();
         }
            
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getRegistrationGroupsByIdList", null, null)) {
-	        return getNextDecorator().getRegistrationGroupsByIdList(registrationGroupIds, context);
+        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getRegistrationGroupsByIds", null, null)) {
+	        return getNextDecorator().getRegistrationGroupsByIds(registrationGroupIds, context);
         }
         else {
            throw new PermissionDeniedException();
@@ -526,8 +525,8 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
 	}
 
 	@Override
-	public List<RegistrationGroupInfo> getRegGroupsForCourseOffering(
-			String courseOfferingId, ContextInfo context)
+	public List<RegistrationGroupInfo> getRegistrationGroupsForCourseOffering(
+            String courseOfferingId, ContextInfo context)
 			throws DoesNotExistException, InvalidParameterException,
 			MissingParameterException, OperationFailedException,
 			PermissionDeniedException {
@@ -535,8 +534,8 @@ public class CourseOfferingServiceAuthorizationDecorator extends CourseOfferingS
             throw new MissingParameterException();
         }
            
-        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getRegGroupsForCourseOffering", null, null)) {
-	        return getNextDecorator().getRegGroupsForCourseOffering(courseOfferingId, context);
+        if (permissionService.isAuthorized(context.getPrincipalId(), ENRLLMENT_NAMESPACE, SERVICE_NAME + "getRegistrationGroupsForCourseOffering", null, null)) {
+	        return getNextDecorator().getRegistrationGroupsForCourseOffering(courseOfferingId, context);
         }
         else {
            throw new PermissionDeniedException();

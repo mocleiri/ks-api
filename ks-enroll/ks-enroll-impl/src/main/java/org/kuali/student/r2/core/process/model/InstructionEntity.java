@@ -1,14 +1,12 @@
 package org.kuali.student.r2.core.process.model;
 
 
-import org.kuali.rice.kim.impl.identity.PersonImpl;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.entity.AttributeOwner;
 import org.kuali.student.r2.common.entity.MetaEntity;
 import org.kuali.student.r2.common.infc.Attribute;
 import org.kuali.student.r2.core.class1.state.model.StateEntity;
-import org.kuali.student.r2.core.population.infc.Population;
-import org.kuali.student.r2.core.population.model.PopulationEntity;
+import org.kuali.student.r2.core.class1.population.model.PopulationEntity;
 import org.kuali.student.r2.core.process.dto.InstructionInfo;
 import org.kuali.student.r2.core.process.infc.Instruction;
 
@@ -29,8 +27,7 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
     @Column(name = "EXPIR_DT")
     private Date expirationDate;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "INSTRUCTION_TYPE")
+    @Column(name = "INSTRUCTION_TYPE")
     private String instructionType;
 
     @ManyToOne(optional = false)
@@ -65,8 +62,7 @@ public class InstructionEntity extends MetaEntity implements AttributeOwner<Inst
     @JoinTable(name = "KSEN_INSTR_POPLTN_RELTN", joinColumns = @JoinColumn(name = "INSTR_ID"), inverseJoinColumns = @JoinColumn(name = "POPLTN_ID"))
     private List<PopulationEntity> appliedPopulation;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
-    @JoinTable(name = "KSEN_INSTR_ATPTYPE_RELTN", joinColumns = @JoinColumn(name = "INSTR_ID"), inverseJoinColumns = @JoinColumn(name = "ATP_TYPE_ID"))
+    @Transient
     private List<String> appliedAtpTypes;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner",orphanRemoval = true)

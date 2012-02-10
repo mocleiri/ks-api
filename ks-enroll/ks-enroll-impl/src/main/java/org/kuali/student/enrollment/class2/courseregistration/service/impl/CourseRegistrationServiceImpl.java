@@ -38,7 +38,6 @@ import org.kuali.student.enrollment.lpr.dto.LuiPersonRelationInfo;
 import org.kuali.student.enrollment.lpr.service.LuiPersonRelationService;
 import org.kuali.student.lum.course.service.CourseService;
 import org.kuali.student.r2.common.assembler.AssemblyException;
-import org.kuali.student.r2.common.datadictionary.dto.DictionaryEntryInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.DateRangeInfo;
 import org.kuali.student.r2.common.dto.OperationStatusInfo;
@@ -612,7 +611,7 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
     }
 
     @Override
-    public List<RegRequestInfo> getRegRequestsByIdList(List<String> regRequestIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+    public List<RegRequestInfo> getRegRequestsByIds(List<String> regRequestIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         // TODO sambit - THIS METHOD NEEDS JAVADOCS
         return null;
@@ -726,12 +725,12 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
     }
 
     @Override
-    public List<CourseRegistrationInfo> getCourseRegistrationsByIdList(List<String> courseRegistrationIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException,
+    public List<CourseRegistrationInfo> getCourseRegistrationsByIds(List<String> courseRegistrationIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException,
             MissingParameterException, OperationFailedException, PermissionDeniedException {
 
         List<CourseRegistrationInfo> courseRegistrationInfos = new ArrayList<CourseRegistrationInfo>();
         ResultValuesGroup rvGroup = null;
-        List<LuiPersonRelationInfo> lprs = lprService.getLprsByIdList(courseRegistrationIds, context);
+        List<LuiPersonRelationInfo> lprs = lprService.getLprsByIds(courseRegistrationIds, context);
         for (LuiPersonRelationInfo lpr : lprs) {
             for (String rvGroupKey : lpr.getResultValuesGroupKeys()) {
                 rvGroup = lrcService.getResultValuesGroup(rvGroupKey, context);
@@ -792,7 +791,7 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
                 if (courseOfferinglprInfo.getTypeKey().equals(LuiPersonRelationServiceConstants.REGISTRANT_TYPE_KEY)) {
                     CourseOfferingInfo courseOfferingInfo = courseOfferingService.getCourseOffering(courseOfferinglprInfo.getLuiId(), context);
 
-                    List<RegistrationGroupInfo> regGroupList = courseOfferingService.getRegGroupsForCourseOffering(courseOfferinglprInfo.getLuiId(), context);
+                    List<RegistrationGroupInfo> regGroupList = courseOfferingService.getRegistrationGroupsForCourseOffering(courseOfferinglprInfo.getLuiId(), context);
 
                     for (RegistrationGroupInfo regGroup : regGroupList) {
 
@@ -949,7 +948,7 @@ public class CourseRegistrationServiceImpl implements CourseRegistrationService 
     }
 
     @Override
-    public RegResponseInfo dropStudentsFromRegGroups(List<String> regGroupIdList, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
+    public RegResponseInfo dropStudentsFromRegGroups(List<String> regGroupIds, ContextInfo context) throws DoesNotExistException, InvalidParameterException, MissingParameterException,
             OperationFailedException, PermissionDeniedException {
         // TODO sambit - THIS METHOD NEEDS JAVADOCS
         return null;
