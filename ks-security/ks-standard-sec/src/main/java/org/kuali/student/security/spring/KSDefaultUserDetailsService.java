@@ -16,22 +16,24 @@
 package org.kuali.student.security.spring;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import org.kuali.rice.core.config.Config;
-import org.kuali.rice.core.config.ConfigContext;
-import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
-import org.kuali.rice.kim.bo.role.dto.KimRoleInfo;
-import org.kuali.rice.kim.service.IdentityService;
-import org.kuali.rice.kim.service.RoleService;
+import org.kuali.rice.core.api.config.property.Config;
+import org.kuali.rice.core.api.config.property.ConfigContext;
+import org.kuali.rice.kim.api.identity.principal.Principal;
+import org.kuali.rice.kim.api.identity.IdentityService;
+import org.kuali.rice.kim.api.role.RoleService;
+import org.kuali.rice.kim.api.role.Role;
 import org.kuali.student.common.rice.StudentIdentityConstants;
-import org.kuali.student.common.util.security.UserWithId;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
-import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.security.util.AuthorityUtils;
-import org.springframework.util.StringUtils;
 
+import org.kuali.student.common.util.security.UserWithId;
+import org.springframework.util.StringUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * This is a description of what this class does - Rich don't forget to fill this in. 
@@ -63,7 +65,7 @@ public class KSDefaultUserDetailsService implements UserDetailsService{
         // This is for the dummy KS Login
         password = username;        
         
-        KimPrincipalInfo kimPrincipalInfo = null;
+        Principal kimPrincipalInfo = null;
         kimPrincipalInfo = identityService.getPrincipalByPrincipalName(username);                
         
         String userId;
@@ -78,27 +80,26 @@ public class KSDefaultUserDetailsService implements UserDetailsService{
             throw new KimUserNotFoundException("Invalid username or password");  
         }
         UserWithId ksuser = new UserWithId(username, password, enabled, true, true, nonlocked, getGrantedAuthority(userId));
-        ksuser.setUserId(userId);                     
-        
+        ksuser.setUserId(userId);
         return ksuser;
     }
     
-    protected GrantedAuthority[] getGrantedAuthority(String principalId){
+    protected List<GrantedAuthority> getGrantedAuthority(String principalId){
     	
     	String springRoles = "";
     	
     	// KS Administrator
     	ArrayList<String> adminRoleIdList = new ArrayList<String>();
-     	KimRoleInfo adminRole = roleService.getRoleByName(StudentIdentityConstants.KS_NAMESPACE_CD, StudentIdentityConstants.KSCM_ADMIN_ROLE_NAME);
+     	Role adminRole = roleService.getRoleByNameAndNamespaceCode(StudentIdentityConstants.KS_NAMESPACE_CD, StudentIdentityConstants.KSCM_ADMIN_ROLE_NAME);
     	if(adminRole != null) {
-    		adminRoleIdList.add(adminRole.getRoleId());
+    		adminRoleIdList.add(adminRole.getId());
     	}
 
     	// KS User
         ArrayList<String> ksUserRoleIdList = new ArrayList<String>();
-        KimRoleInfo ksUserRole = roleService.getRoleByName(StudentIdentityConstants.KS_NAMESPACE_CD, StudentIdentityConstants.KSCM_USER_ROLE_NAME);
+        Role ksUserRole = roleService.getRoleByNameAndNamespaceCode(StudentIdentityConstants.KS_NAMESPACE_CD, StudentIdentityConstants.KSCM_USER_ROLE_NAME);
         if(ksUserRole != null) {
-        	ksUserRoleIdList.add(ksUserRole.getRoleId());
+        	ksUserRoleIdList.add(ksUserRole.getId());
         }            
         
         ArrayList<String> ksSpringRolesList = new ArrayList<String>();
@@ -116,10 +117,10 @@ public class KSDefaultUserDetailsService implements UserDetailsService{
         }
         
         springRoles = StringUtils.collectionToCommaDelimitedString(ksSpringRolesList);
-        return AuthorityUtils.commaSeparatedStringToAuthorityArray(springRoles);                
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(springRoles);
         
     }
-    
+
     public Config getConfig() {
     	if(this.config == null){
     		this.config = ConfigContext.getCurrentContextConfig();

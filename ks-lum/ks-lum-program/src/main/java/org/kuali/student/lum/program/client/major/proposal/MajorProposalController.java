@@ -46,6 +46,7 @@ import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableSection;
 import org.kuali.student.common.ui.shared.IdAttributes;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
+import org.kuali.student.common.util.ContextUtils;
 import org.kuali.student.common.validation.dto.ValidationResultInfo;
 import org.kuali.student.core.proposal.dto.ProposalInfo;
 import org.kuali.student.core.proposal.ui.client.service.ProposalRpcService;
@@ -126,8 +127,9 @@ public class MajorProposalController extends MajorController implements Workflow
         cancelButton = new KSButton(getLabel(ProgramMsgConstants.COMMON_CANCEL), KSButtonAbstract.ButtonStyle.ANCHOR_LARGE_CENTERED);
         
         proposalPath = configurer.getProposalPath();
-        workflowUtil = new WorkflowUtilities(MajorProposalController.this, proposalPath, "Proposal Actions",
-   				ProgramSections.WF_APPROVE_DIALOG,"Required Fields", ProgramConstants.PROGRAM_MODEL_ID);
+        //TODO KSCM
+        //workflowUtil = new WorkflowUtilities(MajorProposalController.this, proposalPath, "Proposal Actions",
+   		//		ProgramSections.WF_APPROVE_DIALOG,"Required Fields", ProgramConstants.PROGRAM_MODEL_ID,ContextUtils.getContextInfo());
 
         sideBar.setState(ProgramSideBar.State.EDIT);
         initHandlers();
@@ -434,7 +436,8 @@ public class MajorProposalController extends MajorController implements Workflow
 			@Override
 			public void onEvent(ModelLoadedEvent event) {
 				if (workflowUtil != null){
-					workflowUtil.requestAndSetupModel(NO_OP_CALLBACK);
+					//TODO KSCM
+					//workflowUtil.requestAndSetupModel(NO_OP_CALLBACK);
 					
 				}
 			}        	
@@ -910,17 +913,18 @@ public class MajorProposalController extends MajorController implements Workflow
 
         if (modelProposalId != null && !modelProposalId.isEmpty()) {
             String workflowId = programModel.get(QueryPath.parse(proposalPath + "/workflowId"));
-            proposalServiceAsync.getProposalByWorkflowId(workflowId, new KSAsyncCallback<ProposalInfo>() {
-                @Override
-                public void handleFailure(Throwable caught) {
-                    statusLabel.setText("Proposal status: Unknown");
-                }
-
-                @Override
-                public void onSuccess(ProposalInfo result) {
-                    statusLabel.setText("Proposal status: " + result.getState());
-                }
-            });
+            //TODO KSCM 
+//            proposalServiceAsync.getProposalByWorkflowId(workflowId, new KSAsyncCallback<ProposalInfo>() {
+//                @Override
+//                public void handleFailure(Throwable caught) {
+//                    statusLabel.setText("Proposal status: Unknown");
+//                }
+//
+//                @Override
+//                public void onSuccess(ProposalInfo result) {
+//                    statusLabel.setText("Proposal status: " + result.getState());
+//                }
+//            });
         }
     }
 	
@@ -932,7 +936,8 @@ public class MajorProposalController extends MajorController implements Workflow
         return reqDataModelComp;
     }
 
-	@Override
+    //TODO KSCM I commented out @override
+	//@Override
 	public void getMetadataForFinalState(final KSAsyncCallback<Metadata> callback) {
 		//Setup View Context
 		String idType = null;
@@ -966,41 +971,41 @@ public class MajorProposalController extends MajorController implements Workflow
 	}
 
 	@Override
-	public void checkAuthorization(final AuthorizationCallback callbackLocatedOnBaseControllerClass) {
-		
-		Map<String,String> attributes = new HashMap<String,String>();
-		GWT.log("Attempting Auth Check.", null);
-		if (programModel != null && programModel.getRoot() != null) {
-			//This is to handle the case where entry into the proposal screens is by clicking parent breadcrumb or 
-			//parent link from within specialization
-			attributes.put(IdType.KS_KEW_OBJECT_ID.toString(), ProgramUtils.getProposalId(programModel));
-    		attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_MAJOR_DISCIPLINE_MODIFY);
-		} else if ( (getViewContext().getId() != null) && (!"".equals(getViewContext().getId())) && getViewContext().getIdType() != null ) {
-			if (getViewContext().getIdType() == IdType.KS_KEW_OBJECT_ID || getViewContext().getIdType() == IdType.DOCUMENT_ID){
-				attributes.put(getViewContext().getIdType().toString(), getViewContext().getId());
-			}
-		}
-		programRemoteService.isAuthorized(getViewContext().getPermissionType(), attributes, new KSAsyncCallback<Boolean>(){
+    public void checkAuthorization(final AuthorizationCallback callbackLocatedOnBaseControllerClass) {
+        
+        Map<String,String> attributes = new HashMap<String,String>();
+        GWT.log("Attempting Auth Check.", null);
+        if (programModel != null && programModel.getRoot() != null) {
+            //This is to handle the case where entry into the proposal screens is by clicking parent breadcrumb or 
+            //parent link from within specialization
+            attributes.put(IdType.KS_KEW_OBJECT_ID.toString(), ProgramUtils.getProposalId(programModel));
+            attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_MAJOR_DISCIPLINE_MODIFY);
+        } else if ( (getViewContext().getId() != null) && (!"".equals(getViewContext().getId())) && getViewContext().getIdType() != null ) {
+            if (getViewContext().getIdType() == IdType.KS_KEW_OBJECT_ID || getViewContext().getIdType() == IdType.DOCUMENT_ID){
+                attributes.put(getViewContext().getIdType().toString(), getViewContext().getId());
+            }
+        }
+        programRemoteService.isAuthorized(getViewContext().getPermissionType(), attributes, new KSAsyncCallback<Boolean>(){
 
-			@Override
-			public void handleFailure(Throwable caught) {
-				callbackLocatedOnBaseControllerClass.isNotAuthorized("Error checking authorization.");
-				GWT.log("Error checking proposal authorization.", caught);
+            @Override
+            public void handleFailure(Throwable caught) {
+                callbackLocatedOnBaseControllerClass.isNotAuthorized("Error checking authorization.");
+                GWT.log("Error checking proposal authorization.", caught);
                 Window.alert("Error Checking Proposal Authorization: "+caught.getMessage());
-			}
+            }
 
-			@Override
-			public void onSuccess(Boolean result) {
-				GWT.log("Succeeded checking auth for permission type '" + getViewContext().getPermissionType().toString() + "' with result: " + result, null);
-				if (Boolean.TRUE.equals(result)) {
-					callbackLocatedOnBaseControllerClass.isAuthorized();
-				}
-				else {
-					callbackLocatedOnBaseControllerClass.isNotAuthorized("User is not authorized: " + getViewContext().getPermissionType().toString());
-				}
-			}
-    	});
-	}
+            @Override
+            public void onSuccess(Boolean result) {
+                GWT.log("Succeeded checking auth for permission type '" + getViewContext().getPermissionType().toString() + "' with result: " + result, null);
+                if (Boolean.TRUE.equals(result)) {
+                    callbackLocatedOnBaseControllerClass.isAuthorized();
+                }
+                else {
+                    callbackLocatedOnBaseControllerClass.isNotAuthorized("User is not authorized: " + getViewContext().getPermissionType().toString());
+                }
+            }
+        });
+    }
 
 
 	@Override

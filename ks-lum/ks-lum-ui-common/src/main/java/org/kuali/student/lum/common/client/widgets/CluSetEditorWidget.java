@@ -71,10 +71,6 @@ public class CluSetEditorWidget extends VerticalSectionView {
     private enum CluSetManagementField {
         APPROVED, PROPOSED, CLUSETS, RANGE
     }
-    
-    public CluSetEditorWidget() {
-        super();
-    }
 
     public CluSetEditorWidget(CluSetRetriever cluSetRetriever, Enum<?> viewEnum,
             String name, String modelId, boolean showTitle,

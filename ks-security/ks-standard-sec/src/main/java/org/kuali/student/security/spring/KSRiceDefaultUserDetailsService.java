@@ -15,11 +15,12 @@
 
 package org.kuali.student.security.spring;
 
-import org.kuali.rice.kim.bo.entity.dto.KimPrincipalInfo;
+import org.kuali.rice.kim.api.identity.principal.Principal;
 import org.kuali.student.common.util.security.UserWithId;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * This is a description of what this class does. 
@@ -43,9 +44,9 @@ public class KSRiceDefaultUserDetailsService extends KSDefaultUserDetailsService
             throw new UsernameNotFoundException("Username cannot be null or empty");
         }                
                                
-        KimPrincipalInfo kimPrincipalInfo = null;
+        Principal kimPrincipalInfo = null;
         kimPrincipalInfo = getIdentityService().getPrincipalByPrincipalName(username);
-        
+
         String userId;
         String password; 
         if (null != kimPrincipalInfo) {

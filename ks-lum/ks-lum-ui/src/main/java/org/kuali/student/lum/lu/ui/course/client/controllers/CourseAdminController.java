@@ -73,8 +73,7 @@ public class CourseAdminController extends CourseProposalController{
    		super.setDefaultModelId(cfg.getModelId());
    		super.registerModelsAndHandlers();
    		super.addStyleName("ks-course-admin");
-   		currentDocType = LUConstants.PROPOSAL_TYPE_COURSE_CREATE_ADMIN;	 
-   		
+   		currentDocType = LUConstants.PROPOSAL_TYPE_COURSE_CREATE_ADMIN;     
         setViewContext(getViewContext());
     }
 
@@ -360,8 +359,8 @@ public class CourseAdminController extends CourseProposalController{
 			}
 		};
 	}
-
-    @Override
+	
+	@Override
     public void setViewContext(ViewContext viewContext) {
         //Determine the permission type being checked
         if (viewContext.getId() != null && !viewContext.getId().isEmpty()) {
@@ -401,7 +400,7 @@ public class CourseAdminController extends CourseProposalController{
     		}
     	} else{
     		//No id in view context, so creating new empty proposal
-			attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_COURSE_CREATE_ADMIN);    		
+    		attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_COURSE_CREATE_ADMIN);    		
     	}    	
 	}
 	

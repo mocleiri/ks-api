@@ -4,7 +4,6 @@ package org.kuali.student.lum.program.client.major.view;
 
 import org.kuali.student.common.assembly.data.Data;
 import org.kuali.student.common.assembly.data.Data.Property;
-import org.kuali.student.common.rice.authorization.PermissionType;
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.application.ViewContext;
@@ -21,6 +20,7 @@ import org.kuali.student.common.ui.client.widgets.KSLightBox;
 import org.kuali.student.common.ui.client.widgets.KSRadioButton;
 import org.kuali.student.common.ui.shared.IdAttributes;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
+import org.kuali.student.common.util.ContextUtils;
 import org.kuali.student.lum.common.client.lu.LUUIPermissions;
 import org.kuali.student.lum.common.client.widgets.AppLocations;
 import org.kuali.student.lum.common.client.widgets.DropdownList;
@@ -42,10 +42,11 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
-public class MajorViewController extends MajorController implements RequiresAuthorization{
+public class MajorViewController extends MajorController implements RequiresAuthorization {
 
     // TODO: Change to program and copy msgs
     private static final String MSG_GROUP = "program";
@@ -372,7 +373,7 @@ public class MajorViewController extends MajorController implements RequiresAuth
                 }
 
  			}        	
-        });
+        }, ContextUtils.getContextInfo());
     	
    	
     	// Get the reference ID of the proposal from the XML model
@@ -395,7 +396,7 @@ public class MajorViewController extends MajorController implements RequiresAuth
 	                }
 	              
 	            }           
-	        });
+	        }, ContextUtils.getContextInfo());
         }
     } 
   
@@ -461,29 +462,30 @@ public class MajorViewController extends MajorController implements RequiresAuth
     }
     
     @Override
-	public boolean isAuthorizationRequired() {
-		return true;
-	}
+    public boolean isAuthorizationRequired() {
+        return true;
+    }
 
-	@Override
-	public void setAuthorizationRequired(boolean required) {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void checkAuthorization(final AuthorizationCallback authCallback) {
-		Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_SCREEN, new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
+    @Override
+    public void setAuthorizationRequired(boolean required) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void checkAuthorization(final AuthorizationCallback authCallback) {
+        Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_SCREEN, new Callback<Boolean>() {
+            @Override
+            public void exec(Boolean result) {
 
-				final boolean isAuthorized = result;
-	        
-				if(isAuthorized){
-					authCallback.isAuthorized();
-				}
-				else
-					authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_FIND_PROGRAM_SCREEN);
-			}	
-		});
-	}
+                final boolean isAuthorized = result;
+            
+                if(isAuthorized){
+                    authCallback.isAuthorized();
+                }
+                else
+                    authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_FIND_PROGRAM_SCREEN);
+            }   
+        });
+    }
+    
 }

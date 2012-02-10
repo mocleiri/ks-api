@@ -44,12 +44,10 @@ import org.kuali.student.common.ui.client.widgets.KSButton;
 import org.kuali.student.common.ui.client.widgets.KSButtonAbstract.ButtonStyle;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.KSLightBox;
-import org.kuali.student.common.ui.client.widgets.field.layout.layouts.VerticalFieldLayout;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
-import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableSection;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.lum.common.client.helpers.RecentlyViewedHelper;
@@ -69,7 +67,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -78,7 +75,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Kuali Student Team
  *
  */
-public class ViewCourseController extends TabMenuController implements DocumentLayoutController, HasRequirements, RequiresAuthorization{
+public class ViewCourseController extends TabMenuController implements DocumentLayoutController, HasRequirements, RequiresAuthorization {
     private final DataModel cluModel = new DataModel(); 
    
     private WorkQueue modelRequestQueue;
@@ -150,8 +147,9 @@ public class ViewCourseController extends TabMenuController implements DocumentL
                 
             }
             
-        });	
+        });
     }
+    
      
     public Widget generateActionDropDown(){		    	
     	CourseWorkflowActionList actionList = new CourseWorkflowActionList(this.getMessage("cluActionsLabel"), getViewContext(), "/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", cluModel, new Callback<String>() {
@@ -502,30 +500,30 @@ public class ViewCourseController extends TabMenuController implements DocumentL
         return exportElements;
     }
     
-	@Override
-	public boolean isAuthorizationRequired() {
-		return true;
-	}
+    @Override
+    public boolean isAuthorizationRequired() {
+        return true;
+    }
 
-	@Override
-	public void setAuthorizationRequired(boolean required) {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void checkAuthorization(final AuthorizationCallback authCallback) {
-		Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_FIND_COURSE_SCREEN, new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
+    @Override
+    public void setAuthorizationRequired(boolean required) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void checkAuthorization(final AuthorizationCallback authCallback) {
+        Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_FIND_COURSE_SCREEN, new Callback<Boolean>() {
+            @Override
+            public void exec(Boolean result) {
 
-				final boolean isAuthorized = result;
-	        
-				if(isAuthorized){
-					authCallback.isAuthorized();
-				}
-				else
-					authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_FIND_COURSE_SCREEN);
-			}	
-		});
-	}
+                final boolean isAuthorized = result;
+            
+                if(isAuthorized){
+                    authCallback.isAuthorized();
+                }
+                else
+                    authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_FIND_COURSE_SCREEN);
+            }   
+        });
+    }
 }

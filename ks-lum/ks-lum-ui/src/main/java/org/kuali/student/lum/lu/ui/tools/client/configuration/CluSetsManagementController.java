@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.kuali.student.common.assembly.data.Data;
 import org.kuali.student.common.assembly.data.Metadata;
-import org.kuali.student.common.rice.authorization.PermissionType;
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.BasicLayout;
@@ -57,7 +56,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CluSetsManagementController extends BasicLayout implements RequiresAuthorization{  
+public class CluSetsManagementController extends BasicLayout implements RequiresAuthorization {  
 
     private final DataModel cluSetModel = new DataModel();    
     private WorkQueue cluSetModelRequestQueue;
@@ -394,30 +393,30 @@ public class CluSetsManagementController extends BasicLayout implements Requires
     }
     
     @Override
-	public boolean isAuthorizationRequired() {
-		return true;
-	}
+    public boolean isAuthorizationRequired() {
+        return true;
+    }
 
-	@Override
-	public void setAuthorizationRequired(boolean required) {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void checkAuthorization(final AuthorizationCallback authCallback) {
-		Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS, new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
+    @Override
+    public void setAuthorizationRequired(boolean required) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void checkAuthorization(final AuthorizationCallback authCallback) {
+        Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS, new Callback<Boolean>() {
+            @Override
+            public void exec(Boolean result) {
 
-				final boolean isAuthorized = result;
-	        
-				if(isAuthorized){
-					authCallback.isAuthorized();
-				}
-				else
-					authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS);
-			}	
-		});
-	}
+                final boolean isAuthorized = result;
+            
+                if(isAuthorized){
+                    authCallback.isAuthorized();
+                }
+                else
+                    authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS);
+            }   
+        });
+    }
     
 }

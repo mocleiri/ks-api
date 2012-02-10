@@ -47,10 +47,10 @@ public class CurriculumHomeConfigurer implements CurriculumHomeConstants {
 	protected Metadata searchMetadata;
 	protected final KSCheckBox useCurricReviewCheckbox = new KSCheckBox(getMessage("useCurriculumReview"));
 
-    public Widget configure(Metadata searchMeta) {
+	public Widget configure(Metadata searchMeta) {
         this.searchMetadata = searchMeta;
         final ContentBlockLayout layout = new ContentBlockLayout(getMessage(CURRICULUM_MANAGEMENT));
-        ArrayList<String> permissionList=new ArrayList<String>();
+        ArrayList<String> permissionList = new ArrayList<String>();
         
         layout.addContentTitleWidget(getHowToWidget());
         layout.addContentTitleWidget(getActionListLink());
@@ -74,101 +74,101 @@ public class CurriculumHomeConfigurer implements CurriculumHomeConstants {
         
         Application.getApplicationContext().getSecurityContext().loadScreenPermissions(permissionList, new Callback<Boolean>(){
 
-			@Override
-			public void exec(Boolean result) {
-				//Create Block
-		        final LinkContentBlock create = new LinkContentBlock(getMessage(CREATE), getMessage(CREATE_DESC));
-		        
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_COURSE_BY_PROPOSAL)||
-						Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_COURSE_BY_ADMIN_PROPOSAL)){
-						
-				    create.addNavLinkWidget(getMessage(CREATE_COURSE), getCreateCourseClickHandler());
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_PROGRAM_BY_PROPOSAL)){
+            @Override
+            public void exec(Boolean result) {
+                //Create Block
+                final LinkContentBlock create = new LinkContentBlock(getMessage(CREATE), getMessage(CREATE_DESC));
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_COURSE_BY_PROPOSAL)||
+                        Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_COURSE_BY_ADMIN_PROPOSAL)){
+                        
+                    create.addNavLinkWidget(getMessage(CREATE_COURSE), getCreateCourseClickHandler());
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_CREATE_PROGRAM_BY_PROPOSAL)){
                  
-				    create.addNavLinkWidget(getMessage(CREATE_PROGRAM), AppLocations.Locations.EDIT_PROGRAM.getLocation());
-				}
-				
-		        //View + Modify
-		        final LinkContentBlock viewModify = new LinkContentBlock(getMessage(VIEW_MODIFY), getMessage(VIEW_MODIFY_DESC));
-		        SectionTitle courses = SectionTitle.generateH4Title(getMessage("courses"));
-		        courses.addStyleName("bold");
-		        viewModify.add(courses);
-				
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_BROWSE_CATALOG_SCREEN)){
-					
-				    viewModify.addNavLinkWidget(getMessage(BROWSE_CATALOG), AppLocations.Locations.BROWSE_CATALOG.getLocation());
-			    }
-			
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_COURSE_SCREEN)){
+                    create.addNavLinkWidget(getMessage(CREATE_PROGRAM), AppLocations.Locations.EDIT_PROGRAM.getLocation());
+                }
+                
+                //View + Modify
+                final LinkContentBlock viewModify = new LinkContentBlock(getMessage(VIEW_MODIFY), getMessage(VIEW_MODIFY_DESC));
+                SectionTitle courses = SectionTitle.generateH4Title(getMessage("courses"));
+                courses.addStyleName("bold");
+                viewModify.add(courses);
+                
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_BROWSE_CATALOG_SCREEN)){
+                    
+                    viewModify.addNavLinkWidget(getMessage(BROWSE_CATALOG), AppLocations.Locations.BROWSE_CATALOG.getLocation());
+                }
+            
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_COURSE_SCREEN)){
                                  
-					viewModify.add(getFindCoursesWidget());
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_COURSE_PROPOSAL_SCREEN)){
+                    viewModify.add(getFindCoursesWidget());
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_COURSE_PROPOSAL_SCREEN)){
                     
-					viewModify.add(getFindCourseProposalsWidget());	
-				}
-				
-				SectionTitle programs = SectionTitle.generateH4Title(getMessage("programs"));
-			    programs.addStyleName("bold");
-			    viewModify.add(programs);
-			     					
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_BROWSE_PROGRAM_SCREEN)){
+                    viewModify.add(getFindCourseProposalsWidget()); 
+                }
+                
+                SectionTitle programs = SectionTitle.generateH4Title(getMessage("programs"));
+                programs.addStyleName("bold");
+                viewModify.add(programs);
+                                    
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_BROWSE_PROGRAM_SCREEN)){
                     
-					 viewModify.addNavLinkWidget(getMessage(BROWSE_PROGRAM), AppLocations.Locations.BROWSE_PROGRAM.getLocation());
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_SCREEN)){
+                     viewModify.addNavLinkWidget(getMessage(BROWSE_PROGRAM), AppLocations.Locations.BROWSE_PROGRAM.getLocation());
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_SCREEN)){
                     
                     viewModify.add(getFindMajorsWidget());
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_PROPOSAL_SCREEN)){
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_FIND_PROGRAM_PROPOSAL_SCREEN)){
                     
                     viewModify.add(getFindProgramProposalsWidget());        
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_CORE_PROGRAMS_SCREEN)){
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_CORE_PROGRAMS_SCREEN)){
                     
                     viewModify.add(getViewCoreProgramWidget());
-				}
-				
-				if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_CREDENTIAL_PROGRAMS_SCREEN)){
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_CREDENTIAL_PROGRAMS_SCREEN)){
                     
                     viewModify.add(getViewCredentialProgramWidget());
-				}
-				
-				//RecentlyViewed
-		        RecentlyViewedBlock recent = new RecentlyViewedBlock(getMessage(RECENTLY_VIEWED), getMessage(RV_DESC));
-		        recent.addStyleName("recentlyViewed-block");
+                }
+                
+                //RecentlyViewed
+                RecentlyViewedBlock recent = new RecentlyViewedBlock(getMessage(RECENTLY_VIEWED), getMessage(RV_DESC));
+                recent.addStyleName("recentlyViewed-block");
 
-		        //Tools
-		        final LinkContentBlock tools = new LinkContentBlock(getMessage(TOOLS), getMessage(TOOLS_DESC));
-		        
-		        if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS)){
+                //Tools
+                final LinkContentBlock tools = new LinkContentBlock(getMessage(TOOLS), getMessage(TOOLS_DESC));
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_VIEW_COURSE_SET_MANAGEMENT_SCREENS)){
                     
-		        	 tools.addNavLinkWidget(getMessage(COURSE_SETS), AppLocations.Locations.MANAGE_CLU_SETS.getLocation());
-		        }
-		        
-		        if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_LO_CATEGORY_SCREEN)){
+                     tools.addNavLinkWidget(getMessage(COURSE_SETS), AppLocations.Locations.MANAGE_CLU_SETS.getLocation());
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_LO_CATEGORY_SCREEN)){
                     
-		        	tools.addNavLinkWidget(getMessage(LO_CATEGORIES), AppLocations.Locations.MANAGE_LO_CATEGORIES.getLocation());
-		        }
-		        
-		        if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_DEPENDENCY_ANALYSIS_SCREEN)){
+                    tools.addNavLinkWidget(getMessage(LO_CATEGORIES), AppLocations.Locations.MANAGE_LO_CATEGORIES.getLocation());
+                }
+                
+                if(Application.getApplicationContext().getSecurityContext().checkCachedScreenPermission(LUUIPermissions.USE_DEPENDENCY_ANALYSIS_SCREEN)){
                     
-		        	tools.addNavLinkWidget(getMessage(DEP_ANALYSIS), AppLocations.Locations.DEPENDENCY_ANALYSIS.getLocation());
-		        }
-		        
-		        //Add all blocks
-		        layout.addContentBlock(create);
-		        layout.addContentBlock(viewModify);
-		        recent.addBlock(tools);
-		        layout.addContentBlock(recent);
-			}}
+                    tools.addNavLinkWidget(getMessage(DEP_ANALYSIS), AppLocations.Locations.DEPENDENCY_ANALYSIS.getLocation());
+                }
+                
+                //Add all blocks
+                layout.addContentBlock(create);
+                layout.addContentBlock(viewModify);
+                recent.addBlock(tools);
+                layout.addContentBlock(recent);
+            }}
         );
         return layout;
     }
@@ -576,7 +576,7 @@ public class CurriculumHomeConfigurer implements CurriculumHomeConstants {
             public void onClick(ClickEvent event) {
                 final KSLightBox pop = new KSLightBox();
                 pop.setWidget((Widget)GWT.create(CurriculumHomeHelpTable.class));
-//                pop.setWidget(new CurriculumHomeHelpTable());
+                //pop.setWidget(new CurriculumHomeHelpTable());
                 pop.setSize(800, 680);
                 pop.show();
             }

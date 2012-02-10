@@ -14,11 +14,10 @@ public class CurriculumHomeHelpTable extends Composite{
 	  
 	public CurriculumHomeHelpTable() {
 	    initialize();
-	}
-	
+    }
+    
     protected void initialize() {
         initWidget(uiBinder.createAndBindUi(this));
     }
-
 
 }

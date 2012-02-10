@@ -80,6 +80,7 @@ import org.kuali.student.common.ui.client.widgets.search.KSPicker;
 import org.kuali.student.common.ui.client.widgets.table.summary.SummaryTableSection;
 import org.kuali.student.common.ui.shared.IdAttributes;
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
+import org.kuali.student.common.util.ContextUtils;
 import org.kuali.student.common.validation.dto.ValidationResultInfo;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
 import org.kuali.student.core.workflow.ui.client.widgets.WorkflowEnhancedNavController;
@@ -164,24 +165,23 @@ public class CourseProposalController extends MenuEditableSectionController impl
    		cfg.setState(DtoConstants.STATE_DRAFT);
    		
    		//Add an extra menu item to copy the proposal to a new proposal.
-   		workflowUtil.getAdditionalItems().add(new KSMenuItemData(this.getMessage("cluCopyItem"), new ClickHandler(){
-			@Override
-			public void onClick(ClickEvent event) {
-			    if(getViewContext() != null && getViewContext().getId() != null && !getViewContext().getId().isEmpty()){
-		    		getViewContext().setId((String)cluProposalModel.get(cfg.getProposalPath()+"/id"));
-		    		getViewContext().setIdType(IdType.COPY_OF_KS_KEW_OBJECT_ID);
-		    		getViewContext().getAttributes().remove(StudentIdentityConstants.DOCUMENT_TYPE_NAME);
-		    		cluProposalModel.resetRoot(); // Reset the root so that the model can be reloaded from the copied proposal.
-		        }
+        workflowUtil.getAdditionalItems().add(new KSMenuItemData(this.getMessage("cluCopyItem"), new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (getViewContext() != null && getViewContext().getId() != null && !getViewContext().getId().isEmpty()) {
+                    getViewContext().setId((String) cluProposalModel.get(cfg.getProposalPath() + "/id"));
+                    getViewContext().setIdType(IdType.COPY_OF_KS_KEW_OBJECT_ID);
+                    getViewContext().getAttributes().remove(StudentIdentityConstants.DOCUMENT_TYPE_NAME);
+                    cluProposalModel.resetRoot(); // Reset the root so that the model can be reloaded from the copied proposal.
+                }
                 HistoryManager.navigate("/HOME/CURRICULUM_HOME/COURSE_PROPOSAL", getViewContext());
-			}
-		}));
+            }
+        }));
    		
    		super.setDefaultModelId(cfg.getModelId());
    		registerModelsAndHandlers();
    		
         addStyleName("courseProposal");
-        
         setViewContext(getViewContext());
     }
     
@@ -439,7 +439,7 @@ public class CourseProposalController extends MenuEditableSectionController impl
 							    KSLabel descLabel = new KSLabel();
 							    descLabel.setText(Application.getApplicationContext().getUILabel("course", LUUIConstants.FINAL_APPROVAL_DIALOG));
 							    if (workflowUtil.getApproveDialogue() != null) {
-							        workflowUtil.getApproveDialogue().addWidget(descLabel);
+// TODO KSCM Paul will fix with ks-core-ui							        workflowUtil.getApproveDialogue().addWidget(descLabel);
 							    }
 							    workflowUtil.addApproveDialogField("", "startTerm", cfg.generateMessageInfo(LUUIConstants.PROPOSAL_START_TERM), modelDefinition, true, true);
 							    workflowUtil.addApproveDialogField("proposal", "prevEndTerm", cfg.generateMessageInfo(LUUIConstants.PROPOSAL_PREV_END_TERM), modelDefinition, false);
@@ -717,7 +717,7 @@ public class CourseProposalController extends MenuEditableSectionController impl
                 createNewCluProposalModel(callback, workCompleteCallback);
                 KSBlockingProgressIndicator.removeTask(loadDataTask);
 			}
-		});
+		}, ContextUtils.getContextInfo());
     }
     
     @SuppressWarnings("unchecked")
@@ -750,7 +750,7 @@ public class CourseProposalController extends MenuEditableSectionController impl
                 createNewCluProposalModel(callback, workCompleteCallback);
                 KSBlockingProgressIndicator.removeTask(loadDataTask);
 			}
-		});
+		}, ContextUtils.getContextInfo());
     }
     
     public void doSaveAction(final SaveActionEvent saveActionEvent){
@@ -987,7 +987,7 @@ public class CourseProposalController extends MenuEditableSectionController impl
 	 */
 	public void checkAuthorization(final AuthorizationCallback authCallback) {
 		GWT.log("Attempting Auth Check.", null);
-        
+
 		//Get attributes required for permission check
 		Map<String,String> attributes = new HashMap<String,String>();
 		addPermissionAttributes(attributes);
@@ -1006,18 +1006,18 @@ public class CourseProposalController extends MenuEditableSectionController impl
 
 			@Override
 			public void onSuccess(Boolean result) {
-				GWT.log("Succeeded checking auth for permission type '" + getViewContext().getPermissionType().toString() + "' with result: " + result, null);
+			    GWT.log("Succeeded checking auth for permission type '" + getViewContext().getPermissionType().toString() + "' with result: " + result, null);
 				if (Boolean.TRUE.equals(result)) {
 					authCallback.isAuthorized();
 				}
 				else {
-					authCallback.isNotAuthorized("User is not authorized: " + getViewContext().getPermissionType().toString());
+				    authCallback.isNotAuthorized("User is not authorized: " + getViewContext().getPermissionType().toString());
 				}
 			}
     	});
 	}
-
-    @Override
+	
+	@Override
     public void setViewContext(ViewContext viewContext) {
         //Determine the permission type being checked
         
@@ -1065,7 +1065,7 @@ public class CourseProposalController extends MenuEditableSectionController impl
     		}
     	} else{
     		//No id in view context, so creating new empty proposal
-			attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_COURSE_CREATE);    		
+    		attributes.put(StudentIdentityConstants.DOCUMENT_TYPE_NAME, LUConstants.PROPOSAL_TYPE_COURSE_CREATE);    		
     	}    	
 	}
 	

@@ -17,7 +17,6 @@ package org.kuali.student.lum.lu.ui.tools.client.configuration;
 
 import org.kuali.student.common.assembly.data.Data;
 import org.kuali.student.common.assembly.data.Metadata;
-import org.kuali.student.common.rice.authorization.PermissionType;
 import org.kuali.student.common.ui.client.application.Application;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.layouts.TabMenuController;
@@ -154,30 +153,30 @@ public class CatalogBrowserController extends TabMenuController implements Requi
 	}
 	
 	@Override
-	public boolean isAuthorizationRequired() {
-		return true;
-	}
+    public boolean isAuthorizationRequired() {
+        return true;
+    }
 
-	@Override
-	public void setAuthorizationRequired(boolean required) {
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void checkAuthorization(final AuthorizationCallback authCallback) {
-		Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_BROWSE_CATALOG_SCREEN, new Callback<Boolean>() {
-			@Override
-			public void exec(Boolean result) {
+    @Override
+    public void setAuthorizationRequired(boolean required) {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public void checkAuthorization(final AuthorizationCallback authCallback) {
+        Application.getApplicationContext().getSecurityContext().checkScreenPermission(LUUIPermissions.USE_BROWSE_CATALOG_SCREEN, new Callback<Boolean>() {
+            @Override
+            public void exec(Boolean result) {
 
-				final boolean isAuthorized = result;
-	        
-				if(isAuthorized){
-					authCallback.isAuthorized();
-				}
-				else
-					authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_BROWSE_CATALOG_SCREEN);
-			}	
-		});
-	}
+                final boolean isAuthorized = result;
+            
+                if(isAuthorized){
+                    authCallback.isAuthorized();
+                }
+                else
+                    authCallback.isNotAuthorized("User is not authorized: " + LUUIPermissions.USE_BROWSE_CATALOG_SCREEN);
+            }   
+        });
+    }
 
 }
