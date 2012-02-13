@@ -35,9 +35,9 @@
   
   <alias alias="ksAdminDataSource" name="riceDataSource" />
   
-  <bean id="ks.exp.messageService" class="org.kuali.rice.ksb.api.bus.support.ServiceBusExporter">
+  <bean id="ks.exp.messageService" class="org.kuali.rice.ksb.messaging.KSBExporter">
     <property name="serviceDefinition">
-      <bean class="org.kuali.rice.ksb.api.bus.support.SoapServiceDefinition">
+      <bean class="org.kuali.rice.ksb.messaging.SOAPServiceDefinition">
         <property name="jaxWsService" value="true" />
         <property name="service" ref="ks.messageService" />
         <property name="serviceInterface"
