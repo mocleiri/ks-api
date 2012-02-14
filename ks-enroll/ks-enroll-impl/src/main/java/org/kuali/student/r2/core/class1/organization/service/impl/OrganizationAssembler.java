@@ -77,7 +77,7 @@ public class OrganizationAssembler {
 		OrgHierarchyInfo orgHierarchyInfo = new OrgHierarchyInfo();
 
 		BeanUtils.copyProperties(orgHierarchy, orgHierarchyInfo, new String[] { "rootOrgId",
-				"attributes" });
+				"attributes", "descr" });
 
 		// copy attributes and RootOrg
 		orgHierarchyInfo.setAttributes(toAttributeList(orgHierarchy.getAttributes()));
@@ -105,12 +105,22 @@ public class OrganizationAssembler {
 		OrgInfo orgInfo = new OrgInfo();
 
 		BeanUtils.copyProperties(org, orgInfo, new String[] { "type",
-				"attributes", "metaInfo" });
+				"attributes", "meta", "shortDesc", "longDesc" });
 
 		// copy attributes, metadata, and Type
 		orgInfo.setAttributes(toAttributeList(org.getAttributes()));
 		orgInfo.setMeta(toMetaInfo(org.getMeta(), org.getVersionNumber()));
 		orgInfo.setTypeKey(org.getType().getId());
+		
+		RichTextInfo shortDescr = new RichTextInfo();
+		shortDescr.setFormatted(org.getShortDesc());
+		shortDescr.setPlain(org.getShortDesc());
+		orgInfo.setShortDescr(shortDescr);
+		
+		RichTextInfo longDescr = new RichTextInfo();
+		longDescr.setFormatted(org.getLongDesc());
+		longDescr.setPlain(org.getLongDesc());
+		orgInfo.setLongDescr(longDescr);
 
 		return orgInfo;
 	}
@@ -127,7 +137,7 @@ public class OrganizationAssembler {
 		OrgPersonRelationInfo relationInfo = new OrgPersonRelationInfo();
 
 		BeanUtils.copyProperties(relation, relationInfo, new String[] { "type",
-				"attributes", "metaInfo", "orgId"});
+				"attributes", "meta", "orgId"});
 
 		relationInfo.setOrgId(relation.getOrg().getId());
 		relationInfo.setAttributes(toAttributeList(relation.getAttributes()));
@@ -154,7 +164,7 @@ public class OrganizationAssembler {
 		OrgOrgRelationInfo orgOrgRelationInfo = new OrgOrgRelationInfo();
 
 		BeanUtils.copyProperties(orgOrgRelation, orgOrgRelationInfo, new String[] { "type",
-				"attributes", "metaInfo","orgId","relatedOrgId" });
+				"attributes", "meta","orgId","relatedOrgId" });
 
 		// copy attributes, metadata, Type, and related orgs
 		orgOrgRelationInfo.setAttributes(toAttributeList(orgOrgRelation.getAttributes()));
@@ -169,7 +179,7 @@ public class OrganizationAssembler {
 	public static OrgPositionRestrictionInfo toOrgPositionRestrictionInfo(OrgPositionRestriction restriction) {
 		OrgPositionRestrictionInfo restrictionInfo = new OrgPositionRestrictionInfo();
 
-		BeanUtils.copyProperties(restriction, restrictionInfo, new String[] { "attributes", "metaInfo","orgId","personRelationType","stdDuration" });
+		BeanUtils.copyProperties(restriction, restrictionInfo, new String[] { "attributes", "meta", "orgId","personRelationType","stdDuration", "descr" });
 		
 		if(restriction.getStdDuration()!=null){
 			restrictionInfo.setStdDuration(new TimeAmountInfo());
@@ -208,11 +218,7 @@ public class OrganizationAssembler {
 	}
 
 	public static TypeInfo toOrgPersonRelationTypeInfo(OrgPersonRelationType orgPersonRelationType) {
-		TypeInfo orgPersonRelationTypeInfo = new TypeInfo();
-		BeanUtils.copyProperties(orgPersonRelationType, orgPersonRelationTypeInfo, new String[] { "attributes", "orgHierarchy"});
-
-		orgPersonRelationTypeInfo.setAttributes(toAttributeList(orgPersonRelationType.getAttributes()));
-		return orgPersonRelationTypeInfo;
+	    return toGenericTypeInfo(orgPersonRelationType);
 	}
 
 	public static List<TypeInfo> toOrgPersonRelationTypeInfos(List<OrgPersonRelationType> orgPersonRelationTypes) {
@@ -224,16 +230,7 @@ public class OrganizationAssembler {
 	}
 
 	public static TypeInfo toOrgOrgRelationTypeInfo(OrgOrgRelationType orgOrgRelationType) {
-		if (orgOrgRelationType == null) {
-			return null;
-		}
-		
-		TypeInfo orgOrgRelationTypeInfo = new TypeInfo();
-		BeanUtils.copyProperties(orgOrgRelationType, orgOrgRelationTypeInfo, new String[] { "attributes", "orgHierarchy"});
-
-		orgOrgRelationTypeInfo.setAttributes(toAttributeList(orgOrgRelationType.getAttributes()));
-		orgOrgRelationTypeInfo.setKey(orgOrgRelationType.getOrgHierarchy().getId());
-		return orgOrgRelationTypeInfo;
+	    return toGenericTypeInfo(orgOrgRelationType);
 	}
 
 	public static List<TypeInfo> toOrgOrgRelationTypeInfos(List<OrgOrgRelationType> orgOrgRelationTypes) {
@@ -266,7 +263,11 @@ public class OrganizationAssembler {
 
 		// Copy all basic properties
 		BeanUtils.copyProperties(orgInfo, org, new String[] { "type",
-				"attributes", "metaInfo", "orgPersonRelationTypes" });
+				"attributes", "meta", "orgPersonRelationTypes", "longDesc", "shortDesc" });
+		
+		// Copy Description
+		org.setLongDesc(orgInfo.getLongDescr().getPlain());
+		org.setShortDesc(orgInfo.getShortDescr().getPlain());
 
 		// Copy Attributes
 		org.setAttributes(toGenericAttributes(OrgAttribute.class, orgInfo.getAttributes(), org, dao));
@@ -309,7 +310,7 @@ public class OrganizationAssembler {
 
 		// Copy all basic properties
 		BeanUtils.copyProperties(orgOrgRelationInfo, orgOrgRelation, new String[] { "type",
-				"attributes", "metaInfo", "org", "relatedOrg" });
+				"attributes", "meta", "org", "relatedOrg" });
 
 		// Copy Attributes
 		orgOrgRelation.setAttributes(toGenericAttributes(OrgOrgRelationAttribute.class, orgOrgRelationInfo.getAttributes(), orgOrgRelation, dao));
@@ -378,7 +379,7 @@ public class OrganizationAssembler {
 
 		// Copy all basic properties
 		BeanUtils.copyProperties(orgPersonRelationInfo, orgPersonRelation, new String[] { "type",
-				"attributes", "metaInfo", "org", "personId" });
+				"attributes", "meta", "org", "personId" });
 
 		// Copy Attributes
 		orgPersonRelation.setAttributes(toGenericAttributes(OrgPersonRelationAttribute.class, orgPersonRelationInfo.getAttributes(), orgPersonRelation, dao));
@@ -444,7 +445,12 @@ public class OrganizationAssembler {
 
 		// Copy all basic properties
 		BeanUtils.copyProperties(orgPositionRestrictionInfo, orgPositionRestriction, new String[] { "personRelationType",
-				"attributes", "metaInfo", "org", "stdDuration" });
+				"attributes", "meta", "org", "stdDuration", "descr" });
+		
+		//Copy Description
+		orgPositionRestriction.setDescr(orgPositionRestrictionInfo.getDescr().getPlain());
+		
+		//Copy std duration
 		if(orgPositionRestrictionInfo.getStdDuration()!=null){
 			orgPositionRestriction.setStdDuration(new TimeAmount());
 			BeanUtils.copyProperties(orgPositionRestrictionInfo.getStdDuration(), orgPositionRestriction.getStdDuration());
@@ -486,8 +492,9 @@ public class OrganizationAssembler {
 	public static <A extends Attribute<O>, O extends AttributeOwner<A>> List<A> toGenericAttributes(
             Class<A> attributeClass, List<AttributeInfo> attributeList, O owner,
             CrudDao dao) throws InvalidParameterException {
+	    
         List<A> attributes = new ArrayList<A>();
-
+        
         if(owner.getAttributes()==null){
             owner.setAttributes(new ArrayList<A>());
         }
@@ -497,12 +504,15 @@ public class OrganizationAssembler {
         // Find all the old attributes(if the owner is not null)
         for (A attribute : owner.getAttributes()) {
             currentAttributes.put(attribute.getName(), attribute);
-            
         }
         
         //Clear out the attributes
         owner.getAttributes().clear();
-    
+
+        if(attributeList==null){
+            return attributes;
+        }
+        
         //Update anything that exists, or create a new attribute if it doesn't
         for (AttributeInfo attributeEntry : attributeList) {
             
@@ -569,7 +579,9 @@ public class OrganizationAssembler {
             // properties
             typeInfo = new TypeInfo();
             BeanUtils.copyProperties(typeEntity, typeInfo,
-                    new String[] { "attributes" });
+                    new String[] { "attributes", "descr" });
+            
+            typeInfo.setKey(typeEntity.getId());
 
             // Copy the attributes
             typeInfo.setAttributes(toAttributeList(typeEntity.getAttributes()));

@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.common.dictionary.old.dto.ObjectStructure;
 import org.kuali.student.common.dictionary.service.old.DictionaryService;
-import org.kuali.student.common.search.service.SearchManager;
 import org.kuali.student.common.validator.old.Validator;
 import org.kuali.student.core.organization.dao.OrganizationDao;
 import org.kuali.student.core.organization.entity.Org;
@@ -59,7 +58,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private OrganizationDao organizationDao;
     private DictionaryService dictionaryServiceDelegate;
-    private SearchManager searchManager;
     private Validator validator;
 
     /**
@@ -76,14 +74,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
     }
 
-    public SearchManager getSearchManager() {
-        return searchManager;
-    }
-
-    public void setSearchManager(SearchManager searchManager) {
-        this.searchManager = searchManager;
-    }
-
     public DictionaryService getDictionaryServiceDelegate() {
         return dictionaryServiceDelegate;
     }
@@ -98,6 +88,14 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     public void setValidator(Validator validator) {
         this.validator = validator;
+    }
+    
+    public OrganizationDao getOrganizationDao() {
+        return organizationDao;
+    }
+
+    public void setOrganizationDao(OrganizationDao organizationDao) {
+        this.organizationDao = organizationDao;
     }
 
     @Override
@@ -500,8 +498,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<OrgPersonRelationInfo> getOrgPersonRelationsByPerson(String personId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         checkForMissingParameter(personId, "personId");
-        //checkForMissingParameter(orgId, "orgId");
-
+        
         //List<OrgPersonRelation> oprts = organizationDao.getOrgPersonRelationsByPerson(personId, orgId);
         //return OrganizationAssembler.toOrgPersonRelationInfos(oprts);
         return null;
