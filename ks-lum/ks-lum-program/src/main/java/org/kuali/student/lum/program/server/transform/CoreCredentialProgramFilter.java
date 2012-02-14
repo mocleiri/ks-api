@@ -4,28 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.dictionary.MetadataServiceImpl;
-import org.kuali.student.core.assembly.transform.AbstractDataFilter;
-import org.kuali.student.core.assembly.transform.DataBeanMapper;
-import org.kuali.student.core.assembly.transform.DefaultDataBeanMapper;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.MissingParameterException;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.exceptions.PermissionDeniedException;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
-import org.kuali.student.core.search.dto.SearchResultRow;
+import org.kuali.student.common.assembly.data.Data;
+import org.kuali.student.common.assembly.data.Metadata;
+import org.kuali.student.common.assembly.transform.AbstractDataFilter;
+import org.kuali.student.common.exceptions.DoesNotExistException;
+import org.kuali.student.common.exceptions.InvalidParameterException;
+import org.kuali.student.common.exceptions.MissingParameterException;
+import org.kuali.student.common.exceptions.OperationFailedException;
+import org.kuali.student.common.exceptions.PermissionDeniedException;
+import org.kuali.student.common.search.dto.SearchParam;
+import org.kuali.student.common.search.dto.SearchRequest;
+import org.kuali.student.common.search.dto.SearchResult;
+import org.kuali.student.common.search.dto.SearchResultCell;
+import org.kuali.student.common.search.dto.SearchResultRow;
+import org.kuali.student.common.util.ContextUtils;
 import org.kuali.student.lum.lu.service.LuService;
-import org.kuali.student.lum.program.client.ProgramClientConstants;
 import org.kuali.student.lum.program.client.ProgramConstants;
-import org.kuali.student.lum.program.dto.CoreProgramInfo;
-import org.kuali.student.lum.program.dto.CredentialProgramInfo;
-import org.kuali.student.lum.program.service.ProgramService;
 
 /**
  * Add/remove the related CredentialPrograms titles to/from Program data (for display purposes only, as the data is obviously
@@ -35,11 +29,7 @@ import org.kuali.student.lum.program.service.ProgramService;
  */
 public class CoreCredentialProgramFilter extends AbstractDataFilter {
 
-    private MetadataServiceImpl metadataService;
-    private ProgramService programService;
     private LuService luService;
-    private final DataBeanMapper mapper = new DefaultDataBeanMapper();
-    private final Metadata credPgmMetadata = null;
 
     /**
      * Remove CredentialPrograms titles
@@ -65,10 +55,6 @@ public class CoreCredentialProgramFilter extends AbstractDataFilter {
             // Add the Credential Programs' titles to the data passed in
             data.set(ProgramConstants.CREDENTIAL_PROGRAMS, credPgmData);
         }
-    }
-
-    public void setProgramService(ProgramService programService) {
-        this.programService = programService;
     }
 
     public void setLuService(LuService luService) {
@@ -97,7 +83,7 @@ public class CoreCredentialProgramFilter extends AbstractDataFilter {
 
         request.setParams(searchParams);
 
-        SearchResult searchResult = luService.search(request);
+        SearchResult searchResult = luService.search(request,ContextUtils.getContextInfo());
         if (searchResult.getRows().size() > 0) {
             for(SearchResultRow srrow : searchResult.getRows()){
                 List<SearchResultCell> srCells = srrow.getCells();
