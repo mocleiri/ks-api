@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.kuali.student.common</groupId>
     <artifactId>ks-common</artifactId>
-    <version>1.1.1-perf-SNAPSHOT</version>
+    <version>1.2.2-M2-SNAPSHOT</version>
   </parent>
   <dependencies>
     <dependency>
@@ -206,15 +206,15 @@
           <artifactId>jetty</artifactId>
         </exclusion>
         
-		<!-- JOTM -->        
-        <exclusion>                                 
+		<!-- JOTM uncomment to switch to Bitronix -->        
+        <!-- exclusion>                                 
           <groupId>xapool</groupId>                 
           <artifactId>xapool</artifactId>           
         </exclusion>                                
         <exclusion>                                 
           <groupId>jotm</groupId>                   
           <artifactId>jotm</artifactId>             
-        </exclusion> 
+        </exclusion--> 
       </exclusions>
     </dependency>
   </dependencies>

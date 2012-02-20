@@ -41,11 +41,11 @@ import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.kim.service.KIMServiceLocator;
 import org.kuali.rice.student.StudentWorkflowConstants;
 import org.kuali.rice.student.bo.KualiStudentKimAttributes;
-import org.kuali.student.core.exceptions.OperationFailedException;
+import org.kuali.student.common.exceptions.OperationFailedException;
+import org.kuali.student.common.rice.StudentIdentityConstants;
 import org.kuali.student.core.proposal.ProposalConstants;
 import org.kuali.student.core.proposal.dto.ProposalInfo;
 import org.kuali.student.core.proposal.service.ProposalService;
-import org.kuali.student.core.rice.StudentIdentityConstants;
 public class KualiStudentPostProcessorBase implements PostProcessor{
 	private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(KualiStudentPostProcessorBase.class);
 
@@ -147,9 +147,13 @@ public class KualiStudentPostProcessorBase implements PostProcessor{
 		return new ProcessDocReport(success);
 	}
 
-	protected boolean processCustomRouteLevelChange(DocumentRouteLevelChange documentRouteLevelChange, ProposalInfo proposalInfo) throws Exception {
-	    // do nothing but allow override
-	    return true;
+	protected boolean processCustomRouteLevelChange(
+			DocumentRouteLevelChange documentRouteLevelChange,
+			ProposalInfo proposalInfo) throws Exception {
+		//Update the proposal with the new node name
+		proposalInfo.getAttributes().put("workflowNode", documentRouteLevelChange.getNewNodeName());
+		getProposalService().updateProposal(proposalInfo.getId(), proposalInfo);
+		return true;
 	}
 
 	public ProcessDocReport doRouteStatusChange(DocumentRouteStatusChange statusChangeEvent) throws Exception {

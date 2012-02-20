@@ -21,17 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.kuali.student.core.dto.AmountInfo;
-import org.kuali.student.core.dto.CurrencyAmountInfo;
-import org.kuali.student.core.dto.TimeAmountInfo;
-import org.kuali.student.core.entity.Amount;
-import org.kuali.student.core.entity.CurrencyAmount;
-import org.kuali.student.core.entity.TimeAmount;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.VersionMismatchException;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.service.impl.BaseAssembler;
+import org.kuali.student.common.dto.AmountInfo;
+import org.kuali.student.common.dto.CurrencyAmountInfo;
+import org.kuali.student.common.dto.TimeAmountInfo;
+import org.kuali.student.common.entity.Amount;
+import org.kuali.student.common.entity.CurrencyAmount;
+import org.kuali.student.common.entity.TimeAmount;
+import org.kuali.student.common.exceptions.DoesNotExistException;
+import org.kuali.student.common.exceptions.InvalidParameterException;
+import org.kuali.student.common.exceptions.VersionMismatchException;
+import org.kuali.student.common.search.dto.SearchParam;
+import org.kuali.student.common.service.impl.BaseAssembler;
 import org.kuali.student.lum.lrc.dto.ResultComponentTypeInfo;
 import org.kuali.student.lum.lu.dao.LuDao;
 import org.kuali.student.lum.lu.dto.AccreditationInfo;
@@ -39,7 +39,6 @@ import org.kuali.student.lum.lu.dto.AdminOrgInfo;
 import org.kuali.student.lum.lu.dto.AffiliatedOrgInfo;
 import org.kuali.student.lum.lu.dto.CluAccountingInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
-import org.kuali.student.lum.lu.dto.CluCreditInfo;
 import org.kuali.student.lum.lu.dto.CluFeeInfo;
 import org.kuali.student.lum.lu.dto.CluFeeRecordInfo;
 import org.kuali.student.lum.lu.dto.CluIdentifierInfo;
@@ -73,7 +72,6 @@ import org.kuali.student.lum.lu.entity.CluAdminOrg;
 import org.kuali.student.lum.lu.entity.CluAtpTypeKey;
 import org.kuali.student.lum.lu.entity.CluCampusLocation;
 import org.kuali.student.lum.lu.entity.CluCluRelation;
-import org.kuali.student.lum.lu.entity.CluCredit;
 import org.kuali.student.lum.lu.entity.CluFee;
 import org.kuali.student.lum.lu.entity.CluFeeAmount;
 import org.kuali.student.lum.lu.entity.CluFeeAttribute;
@@ -764,30 +762,6 @@ public class LuServiceAssembler extends BaseAssembler {
 		return dto;
 	}
 
-	public static CluCreditInfo toCluCreditInfos(CluCredit entity) {
-		if (entity == null) {
-			return null;
-		}
-		CluCreditInfo dto = new CluCreditInfo();
-
-		BeanUtils.copyProperties(entity, dto, new String[] { "id",
-				"repeatTime", "minTimeToComplete", "maxTimeToComplete",
-				"maxAllowableInactivity", "maxTimeResultsRecognized" });
-		dto.setRepeatTime(toTimeAmountInfo(entity.getRepeatTime()));
-		dto
-				.setMinTimeToComplete(toTimeAmountInfo(entity
-						.getMinTimeToComplete()));
-		dto
-				.setMaxTimeToComplete(toTimeAmountInfo(entity
-						.getMaxTimeToComplete()));
-		dto.setMaxAllowableInactivity(toTimeAmountInfo(entity
-				.getMaxAllowableInactivity()));
-		dto.setMaxTimeResultsRecognized(toTimeAmountInfo(entity
-				.getMaxTimeResultsRecognized()));
-
-		return dto;
-	}
-
 	public static List<ResultComponentTypeInfo> toResultComponentTypeInfo(
 			List<String> componentIds) {
 		List<ResultComponentTypeInfo> dtos = new ArrayList<ResultComponentTypeInfo>();
@@ -913,71 +887,6 @@ public class LuServiceAssembler extends BaseAssembler {
 		TimeAmount timeAmount = new TimeAmount();
 		BeanUtils.copyProperties(timeAmountInfo, timeAmount);
 		return timeAmount;
-	}
-
-	public static CluCredit toCluCredit(CluCreditInfo cluCreditInfo) {
-		if (cluCreditInfo == null) {
-			return null;
-		}
-		CluCredit cluCredit = new CluCredit();
-
-		cluCredit.setMaxAllowableInactivity(LuServiceAssembler
-				.toTimeAmount(cluCreditInfo.getMaxAllowableInactivity()));
-		cluCredit.setMaxTimeResultsRecognized(LuServiceAssembler
-				.toTimeAmount(cluCreditInfo.getMaxTimeResultsRecognized()));
-		cluCredit.setMaxTimeToComplete(LuServiceAssembler
-				.toTimeAmount(cluCreditInfo.getMaxTimeToComplete()));
-		cluCredit.setMinTimeToComplete(LuServiceAssembler
-				.toTimeAmount(cluCreditInfo.getMinTimeToComplete()));
-		cluCredit.setRepeatTime(LuServiceAssembler.toTimeAmount(cluCreditInfo
-				.getRepeatTime()));
-
-		BeanUtils.copyProperties(cluCreditInfo, cluCredit, new String[] {
-				"repeatTime", "minTimeToComplete", "maxTimeToComplete",
-				"maxAllowableInactivity", "maxTimeResultsRecognized" });
-
-		return cluCredit;
-	}
-
-	public static void copyCluCredit(CluCreditInfo cluCreditInfo,
-			CluCredit entity) {
-		if (entity == null) {
-			return;
-		}
-		if (entity.getMaxAllowableInactivity() == null) {
-			entity.setMaxAllowableInactivity(new TimeAmount());
-		}
-		BeanUtils.copyProperties(cluCreditInfo.getMaxAllowableInactivity(),
-				entity.getMaxAllowableInactivity());
-
-		if (entity.getMaxTimeResultsRecognized() == null) {
-			entity.setMaxTimeResultsRecognized(new TimeAmount());
-		}
-		BeanUtils.copyProperties(cluCreditInfo.getMaxTimeResultsRecognized(),
-				entity.getMaxTimeResultsRecognized());
-
-		if (entity.getMaxTimeToComplete() == null) {
-			entity.setMaxTimeToComplete(new TimeAmount());
-		}
-		BeanUtils.copyProperties(cluCreditInfo.getMaxTimeToComplete(), entity
-				.getMaxTimeToComplete());
-
-		if (entity.getMinTimeToComplete() == null) {
-			entity.setMinTimeToComplete(new TimeAmount());
-		}
-		BeanUtils.copyProperties(cluCreditInfo.getMinTimeToComplete(), entity
-				.getMinTimeToComplete());
-
-		if (entity.getRepeatTime() == null) {
-			entity.setRepeatTime(new TimeAmount());
-		}
-		BeanUtils.copyProperties(cluCreditInfo.getRepeatTime(), entity
-				.getRepeatTime());
-
-		BeanUtils.copyProperties(cluCreditInfo, entity, new String[] {
-				"repeatTime", "minTimeToComplete", "maxTimeToComplete",
-				"maxAllowableInactivity", "maxTimeResultsRecognized" });
-
 	}
 
 	public static List<AccreditationInfo> toAccreditationInfos(

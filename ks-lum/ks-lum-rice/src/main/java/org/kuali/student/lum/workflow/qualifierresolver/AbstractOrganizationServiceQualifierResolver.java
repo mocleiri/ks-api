@@ -23,12 +23,12 @@ import org.kuali.rice.kew.util.KEWConstants;
 import org.kuali.rice.kew.util.XmlHelper;
 import org.kuali.rice.kim.bo.types.dto.AttributeSet;
 import org.kuali.rice.student.bo.KualiStudentKimAttributes;
+import org.kuali.student.common.search.dto.SearchParam;
+import org.kuali.student.common.search.dto.SearchRequest;
+import org.kuali.student.common.search.dto.SearchResult;
+import org.kuali.student.common.search.dto.SearchResultCell;
+import org.kuali.student.common.search.dto.SearchResultRow;
 import org.kuali.student.core.organization.service.OrganizationService;
-import org.kuali.student.core.search.dto.SearchParam;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
-import org.kuali.student.core.search.dto.SearchResultCell;
-import org.kuali.student.core.search.dto.SearchResultRow;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -45,7 +45,7 @@ public abstract class AbstractOrganizationServiceQualifierResolver implements Qu
     protected static final String DOCUMENT_CONTENT_XML_ORG_ID_KEY = "organizationIdDocumentContentKey";
 
     // below string MUST match
-    // org.kuali.student.core.assembly.transform.ProposalWorkflowFilter.DOCUMENT_CONTENT_XML_ROOT_ELEMENT_NAME constant
+    // org.kuali.student.common.assembly.transform.ProposalWorkflowFilter.DOCUMENT_CONTENT_XML_ROOT_ELEMENT_NAME constant
     public static final String DOCUMENT_CONTENT_XML_ROOT_ELEMENT_NAME = "info";
 
     public static final String KUALI_ORG_TYPE_CURRICULUM_PARENT = "kuali.org.CurriculumParent";
@@ -115,7 +115,7 @@ public abstract class AbstractOrganizationServiceQualifierResolver implements Qu
     protected List<SearchResultRow> relatedOrgsFromOrgId(String orgId, String relationType, String relatedOrgType) {
         List<SearchResultRow> results = null;
         if (null != orgId) {
-            List<SearchParam> queryParamValues = new ArrayList<SearchParam>(2);
+            List<SearchParam> queryParamValues = new ArrayList<SearchParam>(3);
             SearchParam qpRelType = new SearchParam();
             qpRelType.setKey("org.queryParam.relationType");
             qpRelType.setValue(relationType);
@@ -154,12 +154,10 @@ public abstract class AbstractOrganizationServiceQualifierResolver implements Qu
             for (SearchResultRow result : results) {
                 AttributeSet attributeSet = new AttributeSet();
                 String resolvedOrgId = "";
-                String resolvedOrgShortName = "";
                 for (SearchResultCell resultCell : result.getCells()) {
                     if ("org.resultColumn.orgId".equals(resultCell.getKey())) {
                         resolvedOrgId = resultCell.getValue();
-                    } else if ("org.resultColumn.orgShortName".equals(resultCell.getKey())) {
-                        resolvedOrgShortName = resultCell.getValue();
+                        break;
                     }
                 }
                 if (orgIdKey != null) {

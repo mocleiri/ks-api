@@ -15,11 +15,11 @@
  */
 package org.kuali.student.lum.course.service.assembler;
 
+import org.kuali.student.common.assembly.BOAssembler;
+import org.kuali.student.common.assembly.BaseDTOAssemblyNode;
+import org.kuali.student.common.assembly.BaseDTOAssemblyNode.NodeOperation;
+import org.kuali.student.common.assembly.data.AssemblyException;
 import org.kuali.student.common.util.UUIDHelper;
-import org.kuali.student.core.assembly.BOAssembler;
-import org.kuali.student.core.assembly.BaseDTOAssemblyNode;
-import org.kuali.student.core.assembly.BaseDTOAssemblyNode.NodeOperation;
-import org.kuali.student.core.assembly.data.AssemblyException;
 import org.kuali.student.lum.course.dto.CourseJointInfo;
 import org.kuali.student.lum.lu.dto.CluCluRelationInfo;
 import org.kuali.student.lum.lu.dto.CluInfo;
@@ -68,6 +68,31 @@ public class CourseJointAssembler implements BOAssembler<CourseJointInfo, CluClu
 			joint.setCourseNumberSuffix(clu.getOfficialIdentifier().getSuffixCode());
 			joint.setRelationId(cluRel.getId());
 
+		} catch (Exception e) {
+			throw new AssemblyException("Error getting related clus", e);
+		} 
+		
+		return joint;
+	}
+
+	public CourseJointInfo assemble(CluCluRelationInfo cluRel, String cluId, CourseJointInfo jointInfo, boolean shallowBuild) throws AssemblyException {
+		if(null == cluRel) {
+			return null;
+		}
+		
+		CourseJointInfo joint = (jointInfo != null) ? jointInfo : new CourseJointInfo();
+
+		CluInfo clu;
+		try {
+			clu = luService.getClu(cluId);
+			
+			joint.setCourseId(clu.getId());
+			joint.setType(clu.getType());
+			joint.setSubjectArea(clu.getOfficialIdentifier().getDivision());
+			joint.setCourseTitle(clu.getOfficialIdentifier().getLongName());
+			joint.setCourseNumberSuffix(clu.getOfficialIdentifier().getSuffixCode());
+			joint.setRelationId(cluRel.getId());
+			
 		} catch (Exception e) {
 			throw new AssemblyException("Error getting related clus", e);
 		} 
