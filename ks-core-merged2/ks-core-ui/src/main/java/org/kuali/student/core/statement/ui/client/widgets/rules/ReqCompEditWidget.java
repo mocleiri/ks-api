@@ -252,7 +252,7 @@ public class ReqCompEditWidget extends FlowPanel {
         desc.setPlain("");
         desc.setFormatted("");
         editedReqComp = new ReqComponentInfoUi();
-        //TODO KSCM editedReqComp.setDesc(desc);
+        editedReqComp.setDesc(desc);
         editedReqComp.setId(newReqCompId + Integer.toString(tempReqCompInfoID++));
         editedReqComp.setReqCompFields(null);
         //editedReqComp.setRequiredComponentType(reqCompTypeInfo);

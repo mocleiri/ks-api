@@ -112,7 +112,7 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
         Data result = new Data();
 //      SaveResult<Data> result = new SaveResult<Data>();
         try{
-        	// TODO KSCM            orgInfo = orgService.getOrganization(id);
+        	orgInfo = orgService.getOrganization(id);
             OrgInfoData orgInfoData = new OrgInfoData();
             orgInfoData.setOrgInfo(orgInfo);
             OrgHelper resultOrg = buildOrgDataMap(orgInfoData);
@@ -249,7 +249,7 @@ public class OrgProposalAssembler extends BaseAssembler<Data, OrgHelper>{
                         // TODO KSCM result = orgService.createOrganization(orgInfo.getTypeKey(), orgInfo);
                         break;
                     case UPDATED:
-                        // TODO KSCM result = orgService.updateOrganization(orgInfo.getId(), orgInfo);
+                    	result = orgService.updateOrganization(orgInfo.getId(), orgInfo);
                     default:
                 }
             }

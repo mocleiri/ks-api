@@ -73,7 +73,7 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
         List<OrgPositionRestrictionInfo> positions = new ArrayList<OrgPositionRestrictionInfo>();
         Data orgPositionMap = null;
         try{
-            //TODO KSCM positions = orgService.getPositionRestrictionsByOrg(id);
+        	positions = orgService.getPositionRestrictionsByOrg(id);
             orgPositionMap = buildOrgPositionMap(positions);
         }
         //catch(DoesNotExistException dnee){
@@ -128,8 +128,9 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
                     OrgPositionRestrictionInfo orgPositionRestrictionInfo = buildOrgPositionRestrictionInfo(orgPositionHelper);
                     orgPositionRestrictionInfo.setId(orgPositionHelper.getId());
                     try {
-                        OrgPositionRestrictionInfo result = null;
-                        //TODO KSCM OrgPositionRestrictionInfo result = orgService.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
+//                    	KSCM-320:  Check TODOs
+//                        OrgPositionRestrictionInfo result = null;
+                        OrgPositionRestrictionInfo result = orgService.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
                         addVersionIndicator(orgPositionHelper.getData(), OrgPositionRestrictionInfo.class.getName(), result.getId(), result.getMetaInfo().getVersionInd());
                     } catch (Exception e) {
                         throw new AssemblyException();
@@ -141,7 +142,7 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
             else if(isDeleted(orgPositionHelper.getData())&&orgPositionHelper.getId()!=null){
                 try{
                     if(orgPositionHelper.getId()!=null){
-                        //TODO KSCM StatusInfo  result = orgService.removePositionRestrictionFromOrg(orgPositionHelper.getOrgId(), orgPositionHelper.getPersonRelationType());
+                    	StatusInfo  result = orgService.removePositionRestrictionFromOrg(orgPositionHelper.getOrgId(), orgPositionHelper.getPersonRelationType());
                         propIter.remove();
                     }
                 }
@@ -154,9 +155,10 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
                 orgPositionHelper.setOrgId((OrgHelper.wrap((Data)input.get("orgInfo")).getId()));
                 OrgPositionRestrictionInfo orgPositionRestrictionInfo = buildOrgPositionRestrictionInfo(orgPositionHelper);
                 try{
-                    OrgPositionRestrictionInfo result = null;
-                    //TODO KSCM OrgPositionRestrictionInfo  result = orgService.addPositionRestrictionToOrg(orgPositionHelper.getOrgId(), 
-                    //TODO KSCM        orgPositionHelper.getPersonRelationType(), orgPositionRestrictionInfo);
+//                	KSCM-320:  Check TODOs
+//                    OrgPositionRestrictionInfo result = null;
+                    OrgPositionRestrictionInfo  result = orgService.addPositionRestrictionToOrg(orgPositionHelper.getOrgId(), 
+                    		orgPositionHelper.getPersonRelationType(), orgPositionRestrictionInfo);
                     orgPositionHelper.setId(result.getId());
                     addVersionIndicator(orgPositionHelper.getData(),OrgPositionRestrictionInfo.class.getName(),result.getId(),result.getMetaInfo().getVersionInd());
                 }
@@ -183,10 +185,10 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
             orgPositionHelper.setId(position.getId());
             orgPositionHelper.setOrgId(position.getOrgId());
             orgPositionHelper.setPersonRelationType(position.getOrgPersonRelationTypeKey());
-            // TODO KSCM orgPositionHelper.setTitle(position.getTitle());
-            // TODO KSCM orgPositionHelper.setDesc(position.getTitle());
+            orgPositionHelper.setTitle(position.getTitle());
+            orgPositionHelper.setDesc(position.getTitle());
             orgPositionHelper.setMinNumRelations(position.getMinNumRelations());
-            // TODO KSCM orgPositionHelper.setMaxNumRelations(position.getMaxNumRelations());
+            orgPositionHelper.setMaxNumRelations(position.getMaxNumRelations());
             addVersionIndicator(orgPositionHelper.getData(),OrgPositionRestrictionInfo.class.getName(),position.getId(),position.getMetaInfo().getVersionInd());
             orgPositions.set(count,orgPositionHelper.getData());
             count = count +1;
@@ -197,10 +199,10 @@ public class OrgPositionRestrictionAssembler implements Assembler<Data, OrgPosit
     private OrgPositionRestrictionInfo buildOrgPositionRestrictionInfo(OrgPositionHelper orgPositionHelper){
         OrgPositionRestrictionInfo orgPositionRestrictionInfo = new OrgPositionRestrictionInfo();
         orgPositionRestrictionInfo.setOrgPersonRelationTypeKey(orgPositionHelper.getPersonRelationType());
-        // TODO KSCM orgPositionRestrictionInfo.setTitle(orgPositionHelper.getTitle());
-        // TODO KSCM orgPositionRestrictionInfo.setDesc(orgPositionHelper.getDesc());
+        orgPositionRestrictionInfo.setTitle(orgPositionHelper.getTitle());
+        orgPositionRestrictionInfo.setDesc(orgPositionHelper.getDesc());
         orgPositionRestrictionInfo.setMinNumRelations(orgPositionHelper.getMinNumRelations());
-        // TODO KSCM orgPositionRestrictionInfo.setMaxNumRelations(orgPositionHelper.getMaxNumRelations());
+        orgPositionRestrictionInfo.setMaxNumRelations(orgPositionHelper.getMaxNumRelations());
         orgPositionRestrictionInfo.setOrgId(orgPositionHelper.getOrgId());
         if (isModified(orgPositionHelper.getData())) {
             if (isUpdated(orgPositionHelper.getData())) {

@@ -89,7 +89,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public StatusInfo removePositionRestrictionFromOrg(String orgId, String orgPersonRelationTypeKey){
         try {
-         // TODO KSCM return service.removePositionRestrictionFromOrg(orgId, orgPersonRelationTypeKey);
+        	return service.removePositionRestrictionFromOrg(orgId, orgPersonRelationTypeKey);
         } catch (Exception e) {
 			LOG.error(e);
 		}
@@ -99,7 +99,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public StatusInfo removeOrgOrgRelation(String orgOrgRelationId){
         try {
-         // TODO KSCM return service.removeOrgOrgRelation(orgOrgRelationId);
+        	return service.removeOrgOrgRelation(orgOrgRelationId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -109,7 +109,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public List<OrgHierarchyInfo> getOrgHierarchies() {
         try {
-         // TODO KSCM return service.getOrgHierarchies();
+        	return service.getOrgHierarchies();
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -119,7 +119,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public List<OrgOrgRelationInfo> getOrgOrgRelationsByOrg(String orgId) {
         try {
-         // TODO KSCM return service.getOrgOrgRelationsByOrg(orgId);
+        	return service.getOrgOrgRelationsByOrg(orgId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -130,7 +130,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     public List<OrgOrgRelationInfo> getOrgOrgRelationsByRelatedOrg(String orgId) {
         
         try {
-         // TODO KSCM return service.getOrgOrgRelationsByRelatedOrg(orgId);
+        	return service.getOrgOrgRelationsByRelatedOrg(orgId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -140,7 +140,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public List<OrgInfo> getOrganizationsByIdList(List<String> orgIdList) {
         try {
-         // TODO KSCM return service.getOrganizationsByIdList(orgIdList);
+        	return service.getOrganizationsByIdList(orgIdList);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -150,7 +150,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public List<String> getAllDescendants(String orgId, String orgHierarchy) {
         try {
-         // TODO KSCM return service.getAllDescendants(orgId, orgHierarchy);
+        	return service.getAllDescendants(orgId, orgHierarchy);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -160,7 +160,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public OrgPositionRestrictionInfo addPositionRestrictionToOrg(OrgPositionRestrictionInfo orgPositionRestrictionInfo) {
         try {
-         // TODO KSCM return service.addPositionRestrictionToOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
+        	return service.addPositionRestrictionToOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -191,7 +191,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public List<OrgPersonRelationTypeInfo> getOrgPersonRelationTypes() {
         try {
-         // TODO KSCM return service.getOrgPersonRelationTypes();
+        	return service.getOrgPersonRelationTypes();
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -200,7 +200,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public List<OrgTypeInfo> getOrgTypes() {
         try {
-         // TODO KSCM return service.getOrgTypes();
+        	return service.getOrgTypes();
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -210,7 +210,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public List<OrgOrgRelationTypeInfo> getOrgOrgRelationTypes() {
         try {
-         // TODO KSCM return service.getOrgOrgRelationTypes();
+        	return service.getOrgOrgRelationTypes();
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -220,7 +220,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public OrgOrgRelationTypeInfo getOrgOrgRelationType(String orgOrgRelationTypeKey) {
         try {
-         // TODO KSCM return service.getOrgOrgRelationType(orgOrgRelationTypeKey);
+        	return service.getOrgOrgRelationType(orgOrgRelationTypeKey);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -229,7 +229,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public List<OrgTreeInfo> getOrgDisplayTree(String orgId, String orgHierarchy, int maxLevels) {
         try {
-         // TODO KSCM return service.getOrgTree(orgId, orgHierarchy, maxLevels);
+        	return service.getOrgTree(orgId, orgHierarchy, maxLevels);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -238,7 +238,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public OrgInfo getOrganization(String orgId) {
         try {
-         // TODO KSCM return service.getOrganization(orgId);
+        	return service.getOrganization(orgId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -248,7 +248,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public List<OrgPositionRestrictionInfo> getPositionRestrictionsByOrg(String orgId) {
         try {
-         // TODO KSCM return service.getPositionRestrictionsByOrg(orgId);
+        	return service.getPositionRestrictionsByOrg(orgId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -258,7 +258,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public OrgInfo updateOrganization(OrgInfo orgInfo) {
         try {
-         // TODO KSCM return service.updateOrganization(orgInfo.getId(), orgInfo);
+        	return service.updateOrganization(orgInfo.getId(), orgInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -268,7 +268,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
 
     public OrgPositionRestrictionInfo updatePositionRestrictionForOrg(OrgPositionRestrictionInfo orgPositionRestrictionInfo) {
         try {
-         // TODO KSCM return service.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
+        	return service.updatePositionRestrictionForOrg(orgPositionRestrictionInfo.getOrgId(), orgPositionRestrictionInfo.getOrgPersonRelationTypeKey(), orgPositionRestrictionInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -278,7 +278,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public OrgOrgRelationInfo updateOrgOrgRelation(OrgOrgRelationInfo orgOrgRelationInfo) {
         try {
-         // TODO KSCM return service.updateOrgOrgRelation(orgOrgRelationInfo.getId(), orgOrgRelationInfo);
+        	return service.updateOrgOrgRelation(orgOrgRelationInfo.getId(), orgOrgRelationInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -291,7 +291,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
             OrgPersonRelationInfo orgPersonRelationInfo) {
 
         try {
-         // TODO KSCM return service.createOrgPersonRelation(orgId, personId, orgPersonRelationTypeKey, orgPersonRelationInfo);
+        	return service.createOrgPersonRelation(orgId, personId, orgPersonRelationTypeKey, orgPersonRelationInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -302,7 +302,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     public List<OrgPersonRelationTypeInfo> getOrgPersonRelationTypesForOrgType(
             String orgTypeKey) {
         try {
-         // TODO KSCM return service.getOrgPersonRelationTypesForOrgType(orgTypeKey);
+        	return service.getOrgPersonRelationTypesForOrgType(orgTypeKey);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -312,7 +312,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public List<OrgPersonRelationInfo> getOrgPersonRelationsByOrg(String orgId) {
         try {
-         // TODO KSCM return service.getOrgPersonRelationsByOrg(orgId);
+        	return service.getOrgPersonRelationsByOrg(orgId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -322,7 +322,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
     @Override
     public StatusInfo removeOrgPersonRelation(String orgPersonRelationId) {
         try {
-         // TODO KSCM return service.removeOrgPersonRelation(orgPersonRelationId);
+        	return service.removeOrgPersonRelation(orgPersonRelationId);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -334,7 +334,7 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
             String orgPersonRelationId,
             OrgPersonRelationInfo orgPersonRelationInfo) {
         try {
-         // TODO KSCM return service.updateOrgPersonRelation(orgPersonRelationId, orgPersonRelationInfo);
+        	return service.updateOrgPersonRelation(orgPersonRelationId, orgPersonRelationInfo);
         } catch (Exception e) {
         	LOG.error(e);
 		}
@@ -453,18 +453,20 @@ public class OrgRpcGwtServlet extends AbstractBaseDataOrchestrationRpcGwtServlet
         ArrayList<OrgPositionPersonRelationInfo> relations = new ArrayList<OrgPositionPersonRelationInfo>();
         OrgPositionPersonRelationInfo personRelationInfo = null;
         try{
-            List<OrgPersonRelationInfo> orgPersonRelations = null;
-            // TODO KSCM List<OrgPersonRelationInfo> orgPersonRelations = service.getAllOrgPersonRelationsByOrg(orgId);
-            List<OrgPositionRestrictionInfo> orgPositionRestrictions = null;
-            // TODO KSCM List<OrgPositionRestrictionInfo> orgPositionRestrictions = service.getPositionRestrictionsByOrg(orgId);
+//        	KSCM-320 Check TODOs
+//            List<OrgPersonRelationInfo> orgPersonRelations = null;
+            List<OrgPersonRelationInfo> orgPersonRelations = service.getAllOrgPersonRelationsByOrg(orgId);
+//        	KSCM-320 Check TODOs
+//            List<OrgPositionRestrictionInfo> orgPositionRestrictions = null;
+            List<OrgPositionRestrictionInfo> orgPositionRestrictions = service.getPositionRestrictionsByOrg(orgId);
             
             for(OrgPositionRestrictionInfo position:orgPositionRestrictions){
                 personRelationInfo = new OrgPositionPersonRelationInfo();
                 personRelationInfo.setOrgPersonRelationTypeKey(position.getOrgPersonRelationTypeKey());
-                // TODO KSCM personRelationInfo.setTitle(position.getTitle());
-                // TODO KSCM personRelationInfo.setDesc(position.getDesc());
+                personRelationInfo.setTitle(position.getTitle());
+                personRelationInfo.setDesc(position.getDesc());
                 personRelationInfo.setMinNumRelations(position.getMinNumRelations().toString());
-                // TODO KSCM personRelationInfo.setMaxNumRelations(position.getMaxNumRelations());
+                personRelationInfo.setMaxNumRelations(position.getMaxNumRelations());
                 ArrayList<String> names = new ArrayList<String>();
                 for(OrgPersonRelationInfo relation: orgPersonRelations){
                     if(position.getOrgPersonRelationTypeKey().equals(relation.getType())){

@@ -63,11 +63,11 @@ public class RulesUtil {
         if (inStatementInfo != null) {
             clonedLuStatementInfo = new StatementInfo();
             clonedLuStatementInfo.setName(inStatementInfo.getName());
-            //TODO KSCM clonedLuStatementInfo.setDesc(inStatementInfo.getDesc());
+            clonedLuStatementInfo.setDesc(inStatementInfo.getDesc());
             clonedLuStatementInfo.setOperator(inStatementInfo.getOperator());
             clonedLuStatementInfo.setStatementIds(new ArrayList<String>(inStatementInfo.getStatementIds()));
             clonedLuStatementInfo.setReqComponentIds(new ArrayList<String>(inStatementInfo.getReqComponentIds()));
-            //TODO KSCM clonedLuStatementInfo.setAttributes(clone(inStatementInfo.getAttributes()));
+            clonedLuStatementInfo.setAttributes(clone(inStatementInfo.getAttributes()));
             clonedLuStatementInfo.setMetaInfo(clone(inStatementInfo.getMetaInfo()));
             clonedLuStatementInfo.setType(inStatementInfo.getType());
             clonedLuStatementInfo.setState(inStatementInfo.getState());
@@ -119,7 +119,7 @@ public class RulesUtil {
     	ReqComponentInfoUi clonedReqComponentInfo = null;
         if (inReqComponentInfo != null) {
             clonedReqComponentInfo = new ReqComponentInfoUi();
-            //TODO KSCM clonedReqComponentInfo.setDesc(inReqComponentInfo.getDesc());
+            clonedReqComponentInfo.setDesc(inReqComponentInfo.getDesc());
             clonedReqComponentInfo.setReqCompFields(clone(inReqComponentInfo.getReqCompFields()));
             if (inReqComponentInfo.getEffectiveDate() != null) {
                 clonedReqComponentInfo.setEffectiveDate((java.util.Date)inReqComponentInfo.getEffectiveDate().clone());
@@ -189,9 +189,9 @@ public class RulesUtil {
         if (inStatementTreeViewInfo != null) {
             clonedStatementTreeViewInfoInfo = new StatementTreeViewInfo();
             clonedStatementTreeViewInfoInfo.setName(inStatementTreeViewInfo.getName());
-            //TODO KSCM clonedStatementTreeViewInfoInfo.setDesc(inStatementTreeViewInfo.getDesc());
+            clonedStatementTreeViewInfoInfo.setDesc(inStatementTreeViewInfo.getDesc());
             clonedStatementTreeViewInfoInfo.setOperator(inStatementTreeViewInfo.getOperator());
-            //TODO KSCM clonedStatementTreeViewInfoInfo.setAttributes(clone(inStatementTreeViewInfo.getAttributes()));
+            clonedStatementTreeViewInfoInfo.setAttributes(clone(inStatementTreeViewInfo.getAttributes()));
             clonedStatementTreeViewInfoInfo.setMetaInfo(clone(inStatementTreeViewInfo.getMetaInfo()));
             clonedStatementTreeViewInfoInfo.setType(inStatementTreeViewInfo.getType());
             clonedStatementTreeViewInfoInfo.setState(inStatementTreeViewInfo.getState());

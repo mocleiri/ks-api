@@ -36,12 +36,11 @@ public class ProposalRpcGwtServlet extends BaseRpcGwtServletAbstract<ProposalSer
     @Override
     public ProposalInfo getProposalByWorkflowId(String workflowId) throws Exception {
         try {
-            //TODO KSCM return service.getProposalByWorkflowId(workflowId);
+        	return service.getProposalByWorkflowId(workflowId);
         } catch (Exception e) {
             LOGGER.error(e);
             throw e;
         }
-        return null;
     }
 
 }

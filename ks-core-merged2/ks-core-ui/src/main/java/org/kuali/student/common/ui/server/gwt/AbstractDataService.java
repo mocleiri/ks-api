@@ -174,7 +174,7 @@ public abstract class AbstractDataService implements DataService{
 		try {
 			Metadata metadata = transformationManager.getUnfilteredMetadata(getDtoClass().getName());
 			Object dto = null;
-			 //TODO KSCM dto = transformationManager.getMapper().convertFromData(data, getDtoClass(), metadata);
+			dto = transformationManager.getMapper().convertFromData(data, getDtoClass(), metadata);
 			validationResults = validate(dto, contextInfo);
 		} catch (Exception e) {
 			throw new OperationFailedException("Unable to validate data", e);

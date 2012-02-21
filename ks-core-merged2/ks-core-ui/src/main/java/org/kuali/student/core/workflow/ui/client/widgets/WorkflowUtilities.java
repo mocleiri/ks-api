@@ -1069,8 +1069,7 @@ public class WorkflowUtilities{
                                                                     for(FieldDescriptor fd:blanketApproveDialogView.getFields()){
                                                                         ignoreFields.add(fd.getFieldKey());
                                                                     }
-                                                                    //TODO KSCM if(!ValidationResultInfo.hasValidationErrors(results,ErrorLevel.WARN,ignoreFields)){
-                                                                    if(true){
+                                                                    if(!ValidationResultInfo.hasValidationErrors(results,ErrorLevel.WARN,ignoreFields)){
                                                                         //Save first and then do the workflow actions later
                                                                         SaveActionEvent saveActionEvent = new SaveActionEvent();
                                                                         saveActionEvent.setActionCompleteCallback(new ActionCompleteCallback(){

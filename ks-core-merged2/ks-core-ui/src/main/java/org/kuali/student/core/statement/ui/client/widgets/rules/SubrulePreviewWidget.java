@@ -54,8 +54,7 @@ public class SubrulePreviewWidget extends FlowPanel {
     private void buildRequirementHeader(StatementTreeViewInfo stmtTreeInfo) {
 
         SectionTitle header = SectionTitle.generateH6Title("");
-     // TODO KSCM        if (stmtTreeInfo.getOperator() == StatementOperatorTypeKey.AND) {
-        	if (true) {
+        if (stmtTreeInfo.getOperator() == StatementOperatorTypeKey.AND) {
             header.setHTML("Must meet <b>all of the following:</b>");
         } else {
             header.setHTML("Must meet <b>1 of the following:</b>");
@@ -144,7 +143,7 @@ public class SubrulePreviewWidget extends FlowPanel {
             
             // only pass the operator after the first requirement panel is built
             if(includedOperator == null) {
-                //TODO KSCM includedOperator = statement.getOperator();
+            	includedOperator = statement.getOperator();
             }
         }
     }
@@ -170,7 +169,7 @@ public class SubrulePreviewWidget extends FlowPanel {
             ReqComponentInfo reqComp = subStatement.getReqComponents().iterator().next();
             String nl = getPreviewNaturalLanguageForReqComponent(reqComp);
             if (!firstInList) {
-                //TODO KSCM prefixOperator = parentStatement.getOperator();
+            	prefixOperator = parentStatement.getOperator();
             }
             return buildRequirementPanel(reqComp, prefixOperator, nl);
           }
@@ -179,12 +178,12 @@ public class SubrulePreviewWidget extends FlowPanel {
         StringBuilder headerText = new StringBuilder();
         
         if (!firstInList) {
-            //TODO KSCM prefixOperator = parentStatement.getOperator();
+        	prefixOperator = parentStatement.getOperator();
         }
 
         appendOperatorTag(headerText, prefixOperator);
         
-        //TODO KSCM headerText.append(subStatement.getOperator() == StatementOperatorTypeKey.AND ? OPERATOR_HEADER_AND : OPERATOR_HEADER_OR);
+        headerText.append(subStatement.getOperator() == StatementOperatorTypeKey.AND ? OPERATOR_HEADER_AND : OPERATOR_HEADER_OR);
         
         FlowPanel panel = new FlowPanel();
         panel.add(new HTML(headerText.toString()));

@@ -316,7 +316,7 @@ public class RuleExpressionParser {
                     op = StatementOperatorTypeKey.OR;
                 }
                 StatementInfo statementInfo = new StatementInfo();
-                //TODO KSCM statementInfo.setOperator(op);
+                statementInfo.setOperator(op);
                 statementInfo.setType(statementType);
                 statementInfo.setId(oldStatementVO.getStatementInfo().getId());
                 //Need to copy the metadata here to ensure that the statement can be updated correctly.
@@ -368,7 +368,7 @@ public class RuleExpressionParser {
     private StatementVO wrapReqComponent(StatementOperatorTypeKey op, ReqComponentVO rc, String statementType) {
         StatementVO wrapS = new StatementVO();
         StatementInfo wrapStatementInfo = new StatementInfo();
-        //TODO KSCM wrapStatementInfo.setOperator(op);
+        wrapStatementInfo.setOperator(op);
         wrapStatementInfo.setType(statementType);
         wrapS.setStatementInfo(wrapStatementInfo);
         wrapS.addReqComponentVO(rc);

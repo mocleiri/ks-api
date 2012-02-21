@@ -117,7 +117,7 @@ public class UploadServlet extends HttpServlet{
 			        if(name.equals("documentDescription")){
 			        	RichTextInfo text = new RichTextInfo();
 			        	text.setPlain(value);
-			        	//TODO KSCM info.setDesc(text);
+			        	info.setDesc(text);
 			        }
 			    } else {
 			    	String fullFileName = item.getName();
@@ -142,7 +142,7 @@ public class UploadServlet extends HttpServlet{
 				    	fileStatus.setStatus(FileTransferStatus.UPLOAD_FINISHED);
 				    	bInfo.setBinary(new String(Base64.encodeBase64(bytes.toByteArray())));
 				    	
-				    	//TODO KSCM info.setDocumentBinaryInfo(bInfo);
+				    	info.setDocumentBinaryInfo(bInfo);
 				    	info.setState(DtoState.ACTIVE.toString());
 				    	info.setFileName(filename);
 				    	
@@ -159,14 +159,13 @@ public class UploadServlet extends HttpServlet{
 			    	}
 			    }
 			     
-		    	if(//TODO KSCM info.getDesc() != null 
-		    	   //TODO KSCM && info.getDocumentBinaryInfo() != null && 
+		    	if(info.getDesc() != null 
+		    	   && info.getDocumentBinaryInfo() != null && 
 		    	   info.getType() != null){
 		    		//FileStatus fileStatus = status.getFileStatusMap().get(info.getFileName());
 		    		FileStatus fileStatus = status.getFileStatusList().get(currentItem);
 		    		try{
-		    		    DocumentInfo createdDoc = null;
-			    		//TODO KSCM DocumentInfo createdDoc = documentService.createDocument(info.getType(), "documentCategory.proposal", info);
+		    		    DocumentInfo createdDoc = documentService.createDocument(info.getType(), "documentCategory.proposal", info);
 			    		fileStatus.setStatus(FileTransferStatus.COMMIT_FINISHED);
 			    		if(createdDoc != null){
 			    			status.getCreatedDocIds().add(createdDoc.getId());
@@ -174,14 +173,14 @@ public class UploadServlet extends HttpServlet{
 			    		}
 			    		
 			    		RefDocRelationInfo relationInfo = new RefDocRelationInfo();
-			    		//TODO KSCM relationInfo.setState(DtoState.ACTIVE.toString());
-			    		//TODO KSCM relationInfo.setDesc(info.getDesc());
+			    		relationInfo.setState(DtoState.ACTIVE.toString());
+			    		relationInfo.setDesc(info.getDesc());
 			    		relationInfo.setRefObjectId(request.getParameter("referenceId"));
 			    		relationInfo.setRefObjectTypeKey(request.getParameter("refObjectTypeKey"));
 			    		relationInfo.setTitle(info.getFileName());
 			    		relationInfo.setDocumentId(createdDoc.getId());
-			    		//TODO KSCM relationInfo.setType(request.getParameter("refDocRelationTypeKey"));
-			    		//TODO KSCM documentService.createRefDocRelation(relationInfo.getRefObjectTypeKey(),relationInfo.getRefObjectId(),relationInfo.getDocumentId(),relationInfo.getType(), relationInfo);
+			    		relationInfo.setType(request.getParameter("refDocRelationTypeKey"));
+			    		documentService.createRefDocRelation(relationInfo.getRefObjectTypeKey(),relationInfo.getRefObjectId(),relationInfo.getDocumentId(),relationInfo.getType(), relationInfo);
 		    		}catch(Exception e){
 		    			fileError = true;
 		    			LOG.error(e);
@@ -211,21 +210,20 @@ public class UploadServlet extends HttpServlet{
 			throws ServletException, IOException {
 			DocumentInfo info = null;
 			try {
-			  //TODO KSCM info = documentService.getDocument(request.getParameter("docId"));
+				info = documentService.getDocument(request.getParameter("docId"));
 			} catch (Exception e) {
 				LOG.error(e);
 			}
 			
 			if(info != null 
-			      //TODO KSCM && info.getDocumentBinaryInfo() != null 
-			      //TODO KSCM && info.getDocumentBinaryInfo().getBinary() != null 
-			      //TODO KSCM && !(info.getDocumentBinaryInfo().getBinary().isEmpty())
+			      && info.getDocumentBinaryInfo() != null 
+			      && info.getDocumentBinaryInfo().getBinary() != null 
+			      && !(info.getDocumentBinaryInfo().getBinary().isEmpty())
 			        ){
 				
 				ServletOutputStream op = response.getOutputStream();
 				try {
-				    byte[] fileBytes = null;
-				    //TODO KSCM byte[] fileBytes = Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
+				    byte[] fileBytes = Base64.decodeBase64(info.getDocumentBinaryInfo().getBinary().getBytes());
 					int length = fileBytes.length;
 			        
 			        ServletContext context = getServletConfig().getServletContext();
