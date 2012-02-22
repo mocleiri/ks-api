@@ -20,6 +20,8 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.kuali.student.common.versionmanagement.dto.VersionDisplayInfo;
+import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.lum.clu.dto.AdminOrgInfo;
 import org.kuali.student.r2.lum.program.dto.assembly.ProgramAtpAssembly;
 import org.kuali.student.r2.lum.program.dto.assembly.ProgramBasicOrgAssembly;
@@ -152,5 +154,11 @@ public class CredentialProgramInfo extends CommonWithCredentialProgramInfo imple
     public void setResultOptions(List<String> resultOptions) {
         this.resultOptions = resultOptions;
     }
+
+    @Deprecated
+	public VersionDisplayInfo getVersionInfo(ContextInfo contextInfo) {
+		// TODO TODO KSCM what to repalce with
+		return null;
+	}
     
 }

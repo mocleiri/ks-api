@@ -203,4 +203,10 @@ public class MajorDisciplineInfo extends CommonWithProgramVariationInfo implemen
     public void setOrgCoreProgram(CoreProgramInfo orgCoreProgram) {
         this.orgCoreProgram = orgCoreProgram;
     }
+
+    // TODO KSCM what to replace this with NINA
+	@Deprecated
+    public Object getVersionInfo()  {
+		return null;
+	}
 }

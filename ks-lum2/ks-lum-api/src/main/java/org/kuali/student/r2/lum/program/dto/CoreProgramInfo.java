@@ -16,6 +16,8 @@ import java.util.List;
 import javax.xml.bind.annotation.*;
 
 
+import org.kuali.student.common.versionmanagement.dto.VersionDisplayInfo;
+import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.lum.program.dto.assembly.ProgramAtpAssembly;
 import org.kuali.student.r2.lum.program.dto.assembly.ProgramBasicOrgAssembly;
 import org.kuali.student.r2.lum.program.dto.assembly.ProgramCommonAssembly;
@@ -71,4 +73,10 @@ public class CoreProgramInfo extends CommonWithCoreProgramInfo
     public CoreProgramInfo(CoreProgram input) {
         super(input);
     }
+
+    @Deprecated
+	public VersionDisplayInfo getVersionInfo(ContextInfo contextInfo) {
+		// TODO KSCM how to implement
+		return null;
+	}
 }
