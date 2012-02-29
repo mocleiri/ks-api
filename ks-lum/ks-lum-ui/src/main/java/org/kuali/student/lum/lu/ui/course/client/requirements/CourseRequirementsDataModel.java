@@ -16,16 +16,18 @@ package org.kuali.student.lum.lu.ui.course.client.requirements;
 
 import java.util.*;
 
+import org.kuali.student.common.dto.ContextInfo;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.mvc.*;
 import org.kuali.student.common.ui.client.widgets.dialog.ConfirmationDialog;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
-import org.kuali.student.common.ui.client.widgets.rules.RulesUtil;
+import org.kuali.student.common.util.ContextUtils;
 import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
 import org.kuali.student.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.core.statement.dto.StatementTypeInfo;
+import org.kuali.student.core.statement.ui.client.widgets.rules.RulesUtil;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.CourseRpcServiceAsync;
 import org.kuali.student.lum.program.client.rpc.StatementRpcService;
@@ -63,7 +65,7 @@ public class CourseRequirementsDataModel {
         origCourseReqInfos = new LinkedHashMap<Integer, StatementTreeViewInfo>();
         courseReqState = new HashMap<Integer, requirementState>();
         origCourseReqState = new HashMap<Integer, requirementState>();
-        stmtTypes = new ArrayList<StatementTypeInfo>();        
+        stmtTypes = new ArrayList<StatementTypeInfo>();
         isInitialized = false;
 
         parentController.requestModel(modelId, new ModelRequestCallback() {
@@ -80,13 +82,14 @@ public class CourseRequirementsDataModel {
                 String courseId = ((DataModel)model).getRoot().get("id");
                 retrieveStatementTypes(courseId, onReadyCallback);
             }
-        });    
+        });
     }
 
     public void retrieveStatementTypes(final String courseId, final Callback<Boolean> onReadyCallback) {
 
         //retrieve available course requirement types
-            statementRpcServiceAsync.getStatementTypesForStatementTypeForCourse("kuali.statement.type.course", new KSAsyncCallback<List<StatementTypeInfo>>() {
+            //TODO KSCM - Correct ContextInfo parameter?
+            statementRpcServiceAsync.getStatementTypesForStatementTypeForCourse("kuali.statement.type.course", ContextUtils.getContextInfo(), new KSAsyncCallback<List<StatementTypeInfo>>() {
                 @Override
                 public void handleFailure(Throwable caught) {
                     Window.alert(caught.getMessage());
@@ -118,7 +121,8 @@ public class CourseRequirementsDataModel {
         }
 
         courseRemoteService.getCourseStatements(courseId, CourseRequirementsManageView.RULEEDIT_TEMLATE,
-                                                    CourseRequirementsManageView.TEMLATE_LANGUAGE, new KSAsyncCallback<List<StatementTreeViewInfo>>() {
+                //TODO KSCM - Correct ContextInfo parameter?
+                                                    CourseRequirementsManageView.TEMLATE_LANGUAGE, ContextUtils.getContextInfo(), new KSAsyncCallback<List<StatementTreeViewInfo>>() {
             @Override
             public void handleFailure(Throwable caught) {
                 Window.alert(caught.getMessage());
@@ -151,7 +155,7 @@ public class CourseRequirementsDataModel {
                 isInitialized = true;
                 onReadyCallback.exec(true);
             }
-        });     
+        });
     }
 
     public StatementTreeViewInfo updateRules(StatementTreeViewInfo newSubRule, Integer internalCourseReqID, boolean isNewRule) {
@@ -173,15 +177,14 @@ public class CourseRequirementsDataModel {
         return newSubRule;
     }
 
-    public void updateCourseRequisites(final String courseId, final Callback<List<StatementTreeViewInfo>> callback) {
-
+    public void updateCourseRequisites(final String courseId, final String courseState, final Callback<List<StatementTreeViewInfo>> callback) {
         //course proposal has to be in the database before we can save rules
         if (courseId == null) {
             final ConfirmationDialog dialog = new ConfirmationDialog("Submit Course Title", "Before saving rules please submit course proposal title");
             dialog.getConfirmButton().addClickHandler(new ClickHandler(){
                 @Override
                 public void onClick(ClickEvent event) {
-                    dialog.hide();    
+                    dialog.hide();
                 }
             });
             dialog.show();
@@ -189,8 +192,8 @@ public class CourseRequirementsDataModel {
         }
 
         final List<String> referencedProgReqIds = new ArrayList<String>();
-
-        courseRemoteService.storeCourseStatements(courseId.toString(), courseReqState, courseReqInfos, new KSAsyncCallback<Map<Integer, StatementTreeViewInfo>>() {
+        //TODO KSCM - Correct ContextInfo parameter?
+        courseRemoteService.storeCourseStatements(courseId.toString(), courseState, courseReqState, courseReqInfos, ContextUtils.getContextInfo(), new KSAsyncCallback<Map<Integer, StatementTreeViewInfo>>() {
             @Override
             public void handleFailure(Throwable caught) {
                 Window.alert(caught.getMessage());
@@ -231,11 +234,11 @@ public class CourseRequirementsDataModel {
                     }
                 }
 
-                KSNotifier.add(new KSNotification("Save Successful", false, 4000));
+                KSNotifier.add(new KSNotification("Requirements Save Successful", false, 4000));
                 //MajorManager.getEventBus().fireEvent(new StoreRequirementIDsEvent(referencedProgReqIds));
                 callback.exec(new ArrayList(storedRules.values()));  //update display widgets
             }
-        });        
+        });
     }
 
     public static void stripStatementIds(StatementTreeViewInfo tree) {
@@ -245,7 +248,6 @@ public class CourseRequirementsDataModel {
         if ((tree.getId() != null) && (tree.getId().indexOf(CourseRequirementsSummaryView.NEW_STMT_TREE_ID)) >= 0) {
             tree.setId(null);
         }
-        tree.setState("Active");
 
         if ((statements != null) && (statements.size() > 0)) {
             // retrieve all statements
@@ -262,8 +264,6 @@ public class CourseRequirementsDataModel {
                 for (ReqCompFieldInfo field : reqComponent.getReqCompFields()) {
                     field.setId(null);
                 }
-
-                reqComponent.setState("Active");
             }
         }
     }
@@ -286,7 +286,7 @@ public class CourseRequirementsDataModel {
         }
 
         Window.alert("Problem retrieving key for course requisite: " +  rule.getId());
-        GWT.log("Problem retrieving key for course requisite: " +  rule.getId(), null);        
+        GWT.log("Problem retrieving key for course requisite: " +  rule.getId(), null);
 
         return null;
     }
@@ -307,7 +307,7 @@ public class CourseRequirementsDataModel {
         throw new Exception();
 
         } catch (Exception e) {
-            Window.alert("Exception" + e.getStackTrace().toString());   
+            Window.alert("Exception" + e.getStackTrace().toString());
         }
         return null;
     }
@@ -330,7 +330,7 @@ public class CourseRequirementsDataModel {
     public void updateRule(Integer internalProgReqID, StatementTreeViewInfo rule) {
         courseReqInfos.put(internalProgReqID, rule);
         markRuleAsEdited(internalProgReqID);
-    }    
+    }
 
     public void markRuleAsDeleted(Integer internalCourseReqID) {
         if ((courseReqState.get(internalCourseReqID) == requirementState.STORED) ||
@@ -349,7 +349,7 @@ public class CourseRequirementsDataModel {
         String name = getStmtTypeInfo(stmtTypeId).getName();
         return (name == null ? "" : name);
     }
-    
+
     public boolean isRuleExists(String stmtTypeId) {
         boolean showNoRuleText = true;
         for(StatementTreeViewInfo ruleInfo : courseReqInfos.values()) {
@@ -393,7 +393,7 @@ public class CourseRequirementsDataModel {
             courseReqState.put(key, origCourseReqState.get(key));
         }
     }
-    
+
     public StatementTreeViewInfo getRule(Integer internalCourseReqID) {
         return courseReqInfos.get(internalCourseReqID);
     }
@@ -403,7 +403,8 @@ public class CourseRequirementsDataModel {
         StatementRpcServiceAsync statementRpcServiceAsync = GWT.create(StatementRpcService.class);
 
         //retrieve available course requirement types
-        statementRpcServiceAsync.getStatementTypesForStatementTypeForCourse("kuali.statement.type.course", new KSAsyncCallback<List<StatementTypeInfo>>() {
+        //TODO KSCM - Correct ContextInfo parameter?
+        statementRpcServiceAsync.getStatementTypesForStatementTypeForCourse("kuali.statement.type.course", ContextUtils.getContextInfo(), new KSAsyncCallback<List<StatementTypeInfo>>() {
             @Override
             public void handleFailure(Throwable caught) {
 	            Window.alert(caught.getMessage());
@@ -414,7 +415,7 @@ public class CourseRequirementsDataModel {
             @Override
             public void onSuccess(List<StatementTypeInfo> stmtInfoTypes) {
                 //store the statement types
-                List<StatementTypeInfo> stmtTypes = new ArrayList<StatementTypeInfo>();                
+                List<StatementTypeInfo> stmtTypes = new ArrayList<StatementTypeInfo>();
                 for (StatementTypeInfo stmtInfoType : stmtInfoTypes) {
                     stmtTypes.add(stmtInfoType);
                 }
