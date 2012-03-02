@@ -24,6 +24,8 @@ import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
 
+import org.kuali.student.r2.common.exceptions.CircularReferenceException;
+import org.kuali.student.r2.common.exceptions.CircularRelationshipException;
 import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
 import org.kuali.student.r2.common.exceptions.DependentObjectsExistException;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -31,9 +33,12 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
+import org.kuali.student.r2.common.exceptions.UnsupportedActionException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
+import org.kuali.student.r2.core.statement.dto.StatementTreeViewInfo;
 import org.kuali.student.r2.lum.util.constants.CourseServiceConstants;
-import org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo;
+
 import org.kuali.student.r2.lum.course.dto.ActivityInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.dto.FormatInfo;
@@ -142,10 +147,15 @@ public interface CourseService {
      *             date version.
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
+     * @throws CircularReferenceException 
+     * @throws CircularRelationshipException 
+     * @throws AlreadyExistsException 
+     * @throws DependentObjectsExistException 
+     * @throws UnsupportedActionException 
      */
     public CourseInfo updateCourse(@WebParam(name = "courseId") String courseId, @WebParam(name = "courseInfo") CourseInfo courseInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, VersionMismatchException, OperationFailedException,
-            PermissionDeniedException;
+            PermissionDeniedException, UnsupportedActionException, DependentObjectsExistException, AlreadyExistsException, CircularRelationshipException, CircularReferenceException;
 
     /**
      * Deletes a Course.
@@ -157,9 +167,13 @@ public interface CourseService {
      * @throws MissingParameterException invalid courseId
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
+     * @throws CircularReferenceException 
+     * @throws CircularRelationshipException 
+     * @throws DependentObjectsExistException 
+     * @throws UnsupportedActionException 
      */
     public StatusInfo deleteCourse(@WebParam(name = "courseId") String courseId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException,
-            MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException, AlreadyExistsException;
+            MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, DataValidationErrorException, AlreadyExistsException, UnsupportedActionException, DependentObjectsExistException, CircularRelationshipException, CircularReferenceException;
 
     /**
      * Validates a course based on its dictionary
@@ -298,9 +312,10 @@ public interface CourseService {
      * @throws MissingParameterException invalid courseId or statement tree view
      *             Id
      * @throws OperationFailedException unable to complete request
+     * @throws PermissionDeniedException 
      */
     public List<ValidationResultInfo> validateCourseStatement(@WebParam(name = "courseId") String courseId, @WebParam(name = "statementTreeViewInfo") StatementTreeViewInfo statementTreeViewInfo,
-            @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException;
+            @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
     /**
      * Creates a new Course version based on the current course
@@ -317,10 +332,11 @@ public interface CourseService {
      * @throws PermissionDeniedException authorization failure
      * @throws VersionMismatchException The action was attempted on an out of
      *             date version
+     * @throws ReadOnlyException 
      */
     public CourseInfo createNewCourseVersion(@WebParam(name = "courseId") String courseId, @WebParam(name = "versionComment") String versionComment,
             @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException,
-            OperationFailedException, PermissionDeniedException, VersionMismatchException;
+            OperationFailedException, PermissionDeniedException, VersionMismatchException, ReadOnlyException;
 
     /**
      * Sets a specific version of the Course as current. The sequence number
@@ -345,9 +361,11 @@ public interface CourseService {
      *             number from the one provided is marked current
      * @throws OperationFailedException unable to complete request
      * @throws PermissionDeniedException authorization failure
+     * @throws org.kuali.student.r2.common.exceptions.IllegalVersionSequencingException 
+     * @throws DataValidationErrorException 
      */
     public StatusInfo setCurrentCourseVersion(@WebParam(name = "courseVersionId") String courseVersionId, @WebParam(name = "currentVersionStart") Date currentVersionStart,
             @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, IllegalVersionSequencingException,
-            OperationFailedException, PermissionDeniedException;
-
+            OperationFailedException, PermissionDeniedException, org.kuali.student.r2.common.exceptions.IllegalVersionSequencingException, DataValidationErrorException;
+    
 }
