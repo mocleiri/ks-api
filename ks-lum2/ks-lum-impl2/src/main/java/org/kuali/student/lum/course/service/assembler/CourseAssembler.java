@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 import org.kuali.student.r1.common.assembly.BOAssembler;
 import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode;
 import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode.NodeOperation;
-import org.kuali.student.r1.common.assembly.data.AssemblyException;
+import org.kuali.student.r2.common.assembler.AssemblyException;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r1.common.dto.DtoConstants;
 import org.kuali.student.r1.common.dto.RichTextInfo;
@@ -41,8 +41,11 @@ import org.kuali.student.r2.common.exceptions.InvalidParameterException;
 import org.kuali.student.r2.common.exceptions.MissingParameterException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.common.util.UUIDHelper;
+import org.kuali.student.conversion.util.R1R2ConverterUtil;
 import org.kuali.student.r1.core.atp.dto.AtpInfo;
 import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.infc.Course;
 import org.kuali.student.r1.lum.course.dto.CourseCrossListingInfo;
 import org.kuali.student.r1.lum.course.dto.CourseExpenditureInfo;
 import org.kuali.student.r1.lum.course.dto.CourseFeeInfo;
@@ -81,13 +84,13 @@ import org.springframework.util.StringUtils;
 // TODO KSCM-226
 public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
-	@Override
-	public CourseInfo assemble(CluInfo baseDTO, CourseInfo businessDTO,
-			boolean shallowBuild, ContextInfo contextInfo)
-			throws AssemblyException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public CourseInfo assemble(CluInfo baseDTO, CourseInfo businessDTO,
+//			boolean shallowBuild, ContextInfo contextInfo)
+//			throws AssemblyException {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public BaseDTOAssemblyNode<CourseInfo, CluInfo> disassemble(
@@ -97,219 +100,236 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 		return null;
 	}
 //
-//    final static Logger LOG = Logger.getLogger(CourseAssembler.class);
-//	private LuService luService;
-//	private FormatAssembler formatAssembler;
-//	private CourseJointAssembler courseJointAssembler;
+    final static Logger LOG = Logger.getLogger(CourseAssembler.class);
+	private CluService cluService;
+	private FormatAssembler formatAssembler;
+	private CourseJointAssembler courseJointAssembler;
 //	private LoAssembler loAssembler;
 //	private LearningObjectiveService loService;
-//    private CluAssemblerUtils cluAssemblerUtils;
+    private CluAssemblerUtils cluAssemblerUtils;
 //    private LrcService lrcService;
 //    private AtpService atpService;
 //    private float defaultCreditIncrement = 1.0f;
 //	
-//	@Override
-//	public CourseInfo assemble(CluInfo clu, CourseInfo courseInfo,
-//			boolean shallowBuild,ContextInfo contextInfo) throws AssemblyException {
-//
-//		CourseInfo course = (null != courseInfo) ? courseInfo
-//				: new CourseInfo(null);
-//
-//		// Copy all the data from the clu to the course
-//		
-//		// TODO KSCM		course.setAttributes(clu.getAttributes());
-//		course.setCampusLocations(clu.getCampusLocations());
-//		course.setCode(clu.getOfficialIdentifier().getCode());
-//		course.setCourseNumberSuffix(clu.getOfficialIdentifier()
-//				.getSuffixCode());
-//		course.setLevel(clu.getOfficialIdentifier().getLevel());
-//		course.setOutOfClassHours(clu.getIntensity());
-//		course.setInstructors(clu.getInstructors());
-//		course.setStartTerm(clu.getExpectedFirstAtp());
-//		course.setEndTerm(clu.getLastAtp());
-//		course.setCourseTitle(clu.getOfficialIdentifier().getLongName());
-//
-//		// CrossListings
-//		List<CourseCrossListingInfo> crossListings = assembleCrossListings(clu.getAlternateIdentifiers()); 
-//		course.setCrossListings(crossListings);
-//		
-//		//Variation
-//		List<CourseVariationInfo> variations = assembleVariations(clu.getAlternateIdentifiers()); 
-//		course.setVariations(variations);
-//		
-////		course.setDepartment(clu.getPrimaryAdminOrg().getOrgId());
-//		if(course.getUnitsDeployment()==null){
-//			course.setUnitsDeployment(new ArrayList<String>());
-//		}
-//		if(course.getUnitsContentOwner()==null){
-//			course.setUnitsContentOwner(new ArrayList<String>());
-//		}
-//		List<String> courseAdminOrgs = new ArrayList<String>();
-//		List<String> courseSubjectOrgs = new ArrayList<String>();
-//		for(AdminOrgInfo adminOrg: clu.getAdminOrgs()){
-//			// TODO KSCM
-////			if(adminOrg.getType().equals(CourseAssemblerConstants.ADMIN_ORG)){
-////				courseAdminOrgs.add(adminOrg.getOrgId());
-////			}
-////			if(adminOrg.getType().equals(CourseAssemblerConstants.SUBJECT_ORG)){
-////				courseSubjectOrgs.add(adminOrg.getOrgId());
-////			}
-//		}
-//		course.setUnitsDeployment(courseAdminOrgs);
-//		course.setUnitsContentOwner(courseSubjectOrgs);
-//		course.setDescr(clu.getDescr());
-//		course.setDuration(clu.getStdDuration());
-//		course.setEffectiveDate(clu.getEffectiveDate());
-//		course.setExpirationDate(clu.getExpirationDate());
-//
-//		//Fees
-//		//Fee justification
-//		List<CourseFeeInfo> fees = new ArrayList<CourseFeeInfo>();
-//		List<CourseRevenueInfo> revenues = new ArrayList<CourseRevenueInfo>();
-//		if(clu.getFeeInfo() != null){
-//			course.setFeeJustification(clu.getFeeInfo().getDescr());
-//
-//			//Fees and revenues come from the same place but revenues have a special feeType
-//			for(CluFeeRecordInfo cluFeeRecord: clu.getFeeInfo().getCluFeeRecords()){
-//				String feeType = cluFeeRecord.getFeeType();
-//				if(CourseAssemblerConstants.COURSE_FINANCIALS_REVENUE_TYPE.equals(feeType)){
-//					CourseRevenueInfo courseRevenue = new CourseRevenueInfo();
-//					courseRevenue.setFeeType(feeType);
-//					courseRevenue.setAffiliatedOrgs(cluFeeRecord.getAffiliatedOrgs());
-//					courseRevenue.setAttributes(cluFeeRecord.getAttributes());
-//					courseRevenue.setId(cluFeeRecord.getId());
+	@Override
+	public CourseInfo assemble(CluInfo clu, CourseInfo courseInfo,
+			boolean shallowBuild,ContextInfo contextInfo) throws AssemblyException {
+
+	    // TODO KSCM Is this corect : CourseInfo(), CourseInfo has constructor    
+	    // public CourseInfo(Course courseInfo) {
+	    // in "old" code and r2
+//	    CourseInfo course = (null != courseInfo) ? courseInfo
+//	                : new CourseInfo(null);
+		CourseInfo course = (null != courseInfo) ? courseInfo
+				: new CourseInfo();
+
+		// Copy all the data from the clu to the course
+		
+//		 TODO KSCM		course.setAttributes(clu.getAttributes());
+		course.setCampusLocations(clu.getCampusLocations());
+		course.setCode(clu.getOfficialIdentifier().getCode());
+		course.setCourseNumberSuffix(clu.getOfficialIdentifier()
+				.getSuffixCode());
+		course.setLevel(clu.getOfficialIdentifier().getLevel());
+		course.setOutOfClassHours(clu.getIntensity());
+		course.setInstructors(clu.getInstructors());
+		course.setStartTerm(clu.getExpectedFirstAtp());
+		course.setEndTerm(clu.getLastAtp());
+		course.setCourseTitle(clu.getOfficialIdentifier().getLongName());
+
+		// CrossListings
+		List<CourseCrossListingInfo> crossListings = assembleCrossListings(clu.getAlternateIdentifiers()); 
+		course.setCrossListings(crossListings);
+		
+		//Variation
+		List<CourseVariationInfo> variations = assembleVariations(clu.getAlternateIdentifiers()); 
+		course.setVariations(variations);
+		
+//		course.setDepartment(clu.getPrimaryAdminOrg().getOrgId());
+		if(course.getUnitsDeployment()==null){
+			course.setUnitsDeployment(new ArrayList<String>());
+		}
+		if(course.getUnitsContentOwner()==null){
+			course.setUnitsContentOwner(new ArrayList<String>());
+		}
+		List<String> courseAdminOrgs = new ArrayList<String>();
+		List<String> courseSubjectOrgs = new ArrayList<String>();
+		for(AdminOrgInfo adminOrg: clu.getAdminOrgs()){
+			// TODO KSCM
+//			if(adminOrg.getType().equals(CourseAssemblerConstants.ADMIN_ORG)){
+//				courseAdminOrgs.add(adminOrg.getOrgId());
+//			}
+//			if(adminOrg.getType().equals(CourseAssemblerConstants.SUBJECT_ORG)){
+//				courseSubjectOrgs.add(adminOrg.getOrgId());
+//			}
+		}
+		course.setUnitsDeployment(courseAdminOrgs);
+		course.setUnitsContentOwner(courseSubjectOrgs);
+		course.setDescr(clu.getDescr());
+		course.setDuration(clu.getStdDuration());
+		course.setEffectiveDate(clu.getEffectiveDate());
+		course.setExpirationDate(clu.getExpirationDate());
+
+		//Fees
+		//Fee justification
+		List<CourseFeeInfo> fees = new ArrayList<CourseFeeInfo>();
+		List<CourseRevenueInfo> revenues = new ArrayList<CourseRevenueInfo>();
+		if(clu.getFeeInfo() != null){
+			course.setFeeJustification(clu.getFeeInfo().getDescr());
+
+			//Fees and revenues come from the same place but revenues have a special feeType
+			for(CluFeeRecordInfo cluFeeRecord: clu.getFeeInfo().getCluFeeRecords()){
+				String feeType = cluFeeRecord.getFeeType();
+				if(CourseAssemblerConstants.COURSE_FINANCIALS_REVENUE_TYPE.equals(feeType)){
+					CourseRevenueInfo courseRevenue = new CourseRevenueInfo();
+					courseRevenue.setFeeType(feeType);
+					courseRevenue.setAffiliatedOrgs(cluFeeRecord.getAffiliatedOrgs());
+					courseRevenue.setAttributes(cluFeeRecord.getAttributes());
+					courseRevenue.setId(cluFeeRecord.getId());
+					//TODO KSCM courseRevenue.setMeta(cluFeeRecord.getMetaInfo());
+					// MetaInfo not used in r2
 //					courseRevenue.setMeta(cluFeeRecord.getMetaInfo());
-//					revenues.add(courseRevenue);
-//				}else{
-//					CourseFeeInfo courseFee = new CourseFeeInfo();
-//					courseFee.setFeeType(feeType);
-//					courseFee.setRateType(cluFeeRecord.getRateType());
-//					courseFee.setDescr(cluFeeRecord.getDescr());
-//					courseFee.setMeta(cluFeeRecord.getMetaInfo());
-//					courseFee.setId(cluFeeRecord.getId());
-//					courseFee.setFeeAmounts(cluFeeRecord.getFeeAmounts());
-//					courseFee.setAttributes(cluFeeRecord.getAttributes());
-//					fees.add(courseFee);
-//				}
-//			}
-//		}
-//		course.setFees(fees);
-//		course.setRevenues(revenues);
-//		//Expenditures are mapped from accounting info
-//		if(course.getExpenditure() == null || clu.getAccountingInfo() == null){
-//			course.setExpenditure(new CourseExpenditureInfo());
-//		}
-//		if(clu.getAccountingInfo() != null){
-//			course.getExpenditure().setAffiliatedOrgs(clu.getAccountingInfo().getAffiliatedOrgs());
-//		}
-//		
-//		course.setId(clu.getId());
+					courseRevenue.setMetaInfo(cluFeeRecord.getMetaInfo());
+					revenues.add(courseRevenue);
+				}else{
+					CourseFeeInfo courseFee = new CourseFeeInfo();
+					courseFee.setFeeType(feeType);
+					courseFee.setRateType(cluFeeRecord.getRateType());
+					courseFee.setDescr(cluFeeRecord.getDescr());
+					courseFee.setMetaInfo(cluFeeRecord.getMetaInfo());
+					courseFee.setId(cluFeeRecord.getId());
+					courseFee.setFeeAmounts(cluFeeRecord.getFeeAmounts());
+					courseFee.setAttributes(cluFeeRecord.getAttributes());
+					fees.add(courseFee);
+				}
+			}
+		}
+		course.setFees(fees);
+		course.setRevenues(revenues);
+		//Expenditures are mapped from accounting info
+		if(course.getExpenditure() == null || clu.getAccountingInfo() == null){
+			course.setExpenditure(new CourseExpenditureInfo());
+		}
+		if(clu.getAccountingInfo() != null){
+			course.getExpenditure().setAffiliatedOrgs(clu.getAccountingInfo().getAffiliatedOrgs());
+		}
+		
+		course.setId(clu.getId());
+		//TODO KSCM Is this replacement correct was :
 //		course.setTypeKey(clu.getType());
-//		course.setTermsOffered(clu.getOfferedAtpTypes());
-//		course.setPrimaryInstructor(clu.getPrimaryInstructor());
-//		course.setInstructors(clu.getInstructors());
+		course.setType(clu.getType());
+		course.setTermsOffered(clu.getOfferedAtpTypes());
+		course.setPrimaryInstructor(clu.getPrimaryInstructor());
+		course.setInstructors(clu.getInstructors());
+		//TODO KSCM Is this replacement correct was :
 //		course.setStateKey(clu.getState());
-//		course.setSubjectArea(clu.getOfficialIdentifier().getDivision());
-//		course.setTranscriptTitle(clu.getOfficialIdentifier().getShortName());
-//		course.setMeta(clu.getMetaInfo());
-//		course.setVersionInfo(clu.getVersionInfo());
-//
-//		
-//		//Special topics code
-//		course.setSpecialTopicsCourse(false);
-//		for(LuCodeInfo luCode : clu.getLuCodes()){
-//			if(CourseAssemblerConstants.COURSE_CODE_SPECIAL_TOPICS.equals(luCode.getTypeKey())){
-//				course.setSpecialTopicsCourse(Boolean.parseBoolean(luCode.getValue()));
-//				break;
-//			}
-//		}
-//		//Pilot Course code
-//		course.setPilotCourse(false);
-//		for(LuCodeInfo luCode : clu.getLuCodes()){
-//			if(CourseAssemblerConstants.COURSE_CODE_PILOT_COURSE.equals(luCode.getTypeKey())){
-//				course.setPilotCourse(Boolean.parseBoolean(luCode.getValue()));
-//				break;
-//			}
-//		}
-//		
-//		// Don't make any changes to nested datastructures if this is
-//		if (!shallowBuild) {
-//			try {
-//				// Use the luService to find Joints, then convert and add to the
-//				// course
-//				List<CluCluRelationInfo> cluClus = luService.getCluCluRelationsByClu(clu.getId(),contextInfo);
-//				
-//				for (CluCluRelationInfo cluRel : cluClus) {
-//					if (cluRel.getType().equals(CourseAssemblerConstants.JOINT_RELATION_TYPE)) {
-//						CourseJointInfo jointInfo = null;
-//						if(cluRel.getCluId().equals(clu.getId()))
-//							jointInfo = courseJointAssembler.assemble(cluRel, cluRel.getRelatedCluId(), null, false);
-//						else
-//							jointInfo = courseJointAssembler.assemble(cluRel, cluRel.getCluId(), null, false);
-//						if (jointInfo == null)
-//						course.getJoints().add(jointInfo);
-//					}
-//				}
-//			} catch (DoesNotExistException e) {
-//			} catch (Exception e) {
-//				throw new AssemblyException("Error getting course joints", e);
-//			}
-//
-//			try {
-//				// Use the luService to find formats, then convert and add to
-//				// the course
-//				List<CluInfo> formats = luService.getRelatedClusByCluId(course
-//						.getId(),
-//						CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE , new ContextInfo());
-//				
-//				for (CluInfo format : formats) {
-//					FormatInfo formatInfo = formatAssembler.assemble(format,
-//							null, false,contextInfo);
-//					course.getFormats().add(formatInfo);
-//				}
-//
-//			} catch (DoesNotExistException e) {
-//			} catch (Exception e) {
-//				throw new AssemblyException("Error getting related formats", e);
-//			}
-//
-//			try{
-//				//Set Credit and Grading options
-//				List<CluResultInfo> cluResults = luService.getCluResultByClu(course.getId(),contextInfo);
-//
-//				List<ResultComponentInfo> creditOptions = assembleCreditOptions(cluResults);
-////TODO KSCM --> This was the orignal problem                course.setCreditOptions(creditOptions);
-//                //Down below I traverse through the list and combined all the ResultComponent Names
-//                //into one big list. The uncertainty here is ground in the fact that I am unsure what is
-//                //suppose to be passed to setCreditOptions from ResultCompenent.
-//                List<String> listOfCreditOptions = new ArrayList<String>();
-//                for (ResultComponentInfo r : creditOptions){
-//                    
-//                    
-//				    //listOfCreditOptions.addAll(r.getResultValues());
-//                    listOfCreditOptions.add(r.getName());
-//                }
-//
+		course.setState(clu.getState());
+		course.setSubjectArea(clu.getOfficialIdentifier().getDivision());
+		course.setTranscriptTitle(clu.getOfficialIdentifier().getShortName());
+		course.setMetaInfo(clu.getMetaInfo());
+		course.setVersionInfo(clu.getVersionInfo());
+
+		
+		//Special topics code
+		course.setSpecialTopicsCourse(false);
+		for(LuCodeInfo luCode : clu.getLuCodes()){
+		  //TODO KSCM Is this replacement correct was :
+		    //luCode.getTypeKey()
+			if(CourseAssemblerConstants.COURSE_CODE_SPECIAL_TOPICS.equals(luCode.getType())){
+				course.setSpecialTopicsCourse(Boolean.parseBoolean(luCode.getValue()));
+				break;
+			}
+		}
+		//Pilot Course code
+		course.setPilotCourse(false);
+		for(LuCodeInfo luCode : clu.getLuCodes()){
+		  //TODO KSCM Is this replacement correct was :
+		    //luCode.getTypeKey()
+			if(CourseAssemblerConstants.COURSE_CODE_PILOT_COURSE.equals(luCode.getType())){
+				course.setPilotCourse(Boolean.parseBoolean(luCode.getValue()));
+				break;
+			}
+		}
+		
+		// Don't make any changes to nested datastructures if this is
+		if (!shallowBuild) {
+			try {
+				// Use the luService to find Joints, then convert and add to the
+				// course
+				List<CluCluRelationInfo> cluClus = R1R2ConverterUtil.convertLists(cluService.getCluCluRelationsByClu(clu.getId(),contextInfo), CluCluRelationInfo.class);
+				
+				for (CluCluRelationInfo cluRel : cluClus) {
+					if (cluRel.getType().equals(CourseAssemblerConstants.JOINT_RELATION_TYPE)) {
+						CourseJointInfo jointInfo = null;
+						if(cluRel.getCluId().equals(clu.getId()))
+							jointInfo = courseJointAssembler.assemble(cluRel, cluRel.getRelatedCluId(), null, false, contextInfo);
+						else
+							jointInfo = courseJointAssembler.assemble(cluRel, cluRel.getCluId(), null, false, contextInfo);
+						if (jointInfo == null)
+						course.getJoints().add(jointInfo);
+					}
+				}
+			} catch (DoesNotExistException e) {
+			} catch (Exception e) {
+				throw new AssemblyException("Error getting course joints", e);
+			}
+
+			try {
+				// Use the luService to find formats, then convert and add to
+				// the course
+				List<CluInfo> formats = R1R2ConverterUtil.convertLists(cluService.getRelatedClusByCluAndRelationType(course
+						.getId(),
+						CourseAssemblerConstants.COURSE_FORMAT_RELATION_TYPE , new ContextInfo()), CluInfo.class);
+				
+				for (CluInfo format : formats) {
+					FormatInfo formatInfo = formatAssembler.assemble(format,
+							null, false,contextInfo);
+					course.getFormats().add(formatInfo);
+				}
+
+			} catch (DoesNotExistException e) {
+			} catch (Exception e) {
+				throw new AssemblyException("Error getting related formats", e);
+			}
+
+			try{
+				//Set Credit and Grading options
+				List<CluResultInfo> cluResults = R1R2ConverterUtil.convertLists(cluService.getCluResultByClu(course.getId(),contextInfo), CluResultInfo.class);
+
+				List<ResultComponentInfo> creditOptions = assembleCreditOptions(cluResults);
+//TODO KSCM --> This was the orignal problem                course.setCreditOptions(creditOptions);
+                //Down below I traverse through the list and combined all the ResultComponent Names
+                //into one big list. The uncertainty here is ground in the fact that I am unsure what is
+                //suppose to be passed to setCreditOptions from ResultCompenent.
+                List<String> listOfCreditOptions = new ArrayList<String>();
+                for (ResultComponentInfo r : creditOptions){
+                    
+                    
+				    //listOfCreditOptions.addAll(r.getResultValues());
+                    listOfCreditOptions.add(r.getName());
+                }
+
+                //TODO KSCM method takes List<ResultComponentInfo> in r1 as parameter and List<String> in r2
 //                course.setCreditOptions(listOfCreditOptions);
-//				List<String> gradingOptions = assembleGradingOptions(cluResults);
-//				
-//				course.setGradingOptions(gradingOptions);
-//			} catch (DoesNotExistException e){
-//			} catch (Exception e) {
-//				throw new AssemblyException("Error getting course results", e);
-//			}
-//			
-//			//Learning Objectives
-//            course.getCourseSpecificLOs().addAll(cluAssemblerUtils.assembleLos(course.getId(), shallowBuild));
-//			
-//		}
-//
-//		//Remove special cases for grading options
-//		course.getGradingOptions().remove(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT);
-//		
-//		return course;
-//	}
-//
+				List<String> gradingOptions = assembleGradingOptions(cluResults);
+				
+				course.setGradingOptions(gradingOptions);
+			} catch (DoesNotExistException e){
+			} catch (Exception e) {
+				throw new AssemblyException("Error getting course results", e);
+			}
+			
+			//Learning Objectives
+            course.getCourseSpecificLOs().addAll(cluAssemblerUtils.assembleLos(course.getId(), shallowBuild, contextInfo));
+			
+		}
+
+		//Remove special cases for grading options
+		course.getGradingOptions().remove(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT);
+		
+		return course;
+	}
+
 //	@Override
 //	public BaseDTOAssemblyNode<CourseInfo, CluInfo> disassemble(
 //			CourseInfo course, NodeOperation operation,ContextInfo contextInfo)
@@ -763,49 +783,49 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 //		return results;
 //	}
 //
-//	private List<String> assembleGradingOptions(List<CluResultInfo> cluResults){
-//		
-//		String courseResultType = CourseAssemblerConstants.COURSE_RESULT_TYPE_GRADE;
-//		
-//		List<String> results = new ArrayList<String>();
-//		//Loop through all the CluResults to find the one with the matching type
-//		for(CluResultInfo cluResult:cluResults){
-//			if(courseResultType.equals(cluResult.getType())){
-//				//Loop through all options and add to the list of Strings
-//				for(ResultOptionInfo resultOption: cluResult.getResultOptions()){
-//					results.add(resultOption.getResultComponentId());
-//				}
-//				break;
-//			}
-//		}
-//		return results;
-//	}
+	private List<String> assembleGradingOptions(List<CluResultInfo> cluResults){
+		
+		String courseResultType = CourseAssemblerConstants.COURSE_RESULT_TYPE_GRADE;
+		
+		List<String> results = new ArrayList<String>();
+		//Loop through all the CluResults to find the one with the matching type
+		for(CluResultInfo cluResult:cluResults){
+			if(courseResultType.equals(cluResult.getType())){
+				//Loop through all options and add to the list of Strings
+				for(ResultOptionInfo resultOption: cluResult.getResultOptions()){
+					results.add(resultOption.getResultComponentId());
+				}
+				break;
+			}
+		}
+		return results;
+	}
 //	
-//	private List<ResultComponentInfo> assembleCreditOptions(
-//			List<CluResultInfo> cluResults) throws AssemblyException {
-//		String courseResultType = CourseAssemblerConstants.COURSE_RESULT_TYPE_CREDITS;
-//		List<ResultComponentInfo> results = new ArrayList<ResultComponentInfo>();
-//		//Loop through all the CluResults to find the one with the matching type
-//		for(CluResultInfo cluResult:cluResults){
-//			if(courseResultType.equals(cluResult.getType())){
-//				//Loop through all options and add to the list of Strings
-//				for(ResultOptionInfo resultOption: cluResult.getResultOptions()){
-//					try {
-//					    if(resultOption.getResultComponentId()!=null){
-//                            ResultComponentInfo resultComponent = null;
-//    // TODO KSCM						lrcService.getResultComponent(resultOption.getResultComponentId());
-//    						results.add(resultComponent);
-//					    }
-//// TODO KSCM					} catch (DoesNotExistException e) {
-//						LOG.warn("Course Credit option:"+resultOption.getId()+" refers to non-existant ResultComponentInfo "+resultOption.getResultComponentId());
-//					} catch (Exception e) {
-//						throw new AssemblyException("Error getting result components",e);
-//					}
-//				}
-//			}
-//		}
-//		return results;
-//	}
+	private List<ResultComponentInfo> assembleCreditOptions(
+			List<CluResultInfo> cluResults) throws AssemblyException {
+		String courseResultType = CourseAssemblerConstants.COURSE_RESULT_TYPE_CREDITS;
+		List<ResultComponentInfo> results = new ArrayList<ResultComponentInfo>();
+		//Loop through all the CluResults to find the one with the matching type
+		for(CluResultInfo cluResult:cluResults){
+			if(courseResultType.equals(cluResult.getType())){
+				//Loop through all options and add to the list of Strings
+				for(ResultOptionInfo resultOption: cluResult.getResultOptions()){
+					try {
+					    if(resultOption.getResultComponentId()!=null){
+                            ResultComponentInfo resultComponent = null;
+    // TODO KSCM						lrcService.getResultComponent(resultOption.getResultComponentId());
+    						results.add(resultComponent);
+					    }
+// TODO KSCM					} catch (DoesNotExistException e) {
+						LOG.warn("Course Credit option:"+resultOption.getId()+" refers to non-existant ResultComponentInfo "+resultOption.getResultComponentId());
+					} catch (Exception e) {
+						throw new AssemblyException("Error getting result components",e);
+					}
+				}
+			}
+		}
+		return results;
+	}
 //	
 //	// TODO Use CluAssemblerUtils
 //	private List<BaseDTOAssemblyNode<?, ?>> disassembleLos(String cluId,
@@ -1115,65 +1135,70 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 //
 //		return results;
 //	}
-//	
-//	private List<CourseVariationInfo> assembleVariations(List<CluIdentifierInfo> cluIdents) {
-//		List<CourseVariationInfo> variations = new ArrayList<CourseVariationInfo>();
-//		if (cluIdents != null) {
-//			for (CluIdentifierInfo cluIdent : cluIdents) {
-//				if (cluIdent.getType() != null && 
-//						cluIdent.getType().equals(CourseAssemblerConstants.COURSE_VARIATION_IDENT_TYPE)) {
-//					CourseVariationInfo variation = new CourseVariationInfo();
-//					variation.setId(cluIdent.getId());
-//					variation.setTypeKey(cluIdent.getType());
-//					variation.setCourseNumberSuffix(cluIdent.getSuffixCode());
-//					variation.setSubjectArea(cluIdent.getDivision());
-//					variation.setVariationCode(cluIdent.getVariation());
-//					variation.setVariationTitle(cluIdent.getLongName());
-//					variations.add(variation);
-//				}
-//			}
-//		}
-//		return variations;
-//	}
-//	
-//    private List<CourseCrossListingInfo> assembleCrossListings(List<CluIdentifierInfo> cluIdents)
-//            throws AssemblyException {
-//		List<CourseCrossListingInfo> crossListings = new ArrayList<CourseCrossListingInfo>();
-//		if (cluIdents != null) {
-//			for (CluIdentifierInfo cluIdent : cluIdents) {
-//				if (cluIdent.getType() != null && 
-//						cluIdent.getType().equals(CourseAssemblerConstants.COURSE_CROSSLISTING_IDENT_TYPE)) {
-//					CourseCrossListingInfo crosslisting = new CourseCrossListingInfo();
-//
-//                    if (cluIdent.getAttributes().containsKey("courseId")) {
-//                        try {
-//                            CluInfo cluInfo = luService.getClu(cluIdent.getAttributes().get("courseId") , new ContextInfo());
-//                            crosslisting.setId(cluIdent.getId());
-//                            crosslisting.setCode(cluInfo.getOfficialIdentifier().getCode());
-//                            crosslisting.setAttributes(cluIdent.getAttributes());
+	
+	private List<CourseVariationInfo> assembleVariations(List<CluIdentifierInfo> cluIdents) {
+		List<CourseVariationInfo> variations = new ArrayList<CourseVariationInfo>();
+		if (cluIdents != null) {
+			for (CluIdentifierInfo cluIdent : cluIdents) {
+				if (cluIdent.getType() != null && 
+						cluIdent.getType().equals(CourseAssemblerConstants.COURSE_VARIATION_IDENT_TYPE)) {
+					CourseVariationInfo variation = new CourseVariationInfo();
+					variation.setId(cluIdent.getId());
+					//TODO KSCM was variation.setTypeKey(cluIdent.getType());
+					variation.setType(cluIdent.getType());
+					variation.setCourseNumberSuffix(cluIdent.getSuffixCode());
+					variation.setSubjectArea(cluIdent.getDivision());
+					variation.setVariationCode(cluIdent.getVariation());
+					variation.setVariationTitle(cluIdent.getLongName());
+					variations.add(variation);
+				}
+			}
+		}
+		return variations;
+	}
+	
+    private List<CourseCrossListingInfo> assembleCrossListings(List<CluIdentifierInfo> cluIdents)
+            throws AssemblyException {
+		List<CourseCrossListingInfo> crossListings = new ArrayList<CourseCrossListingInfo>();
+		if (cluIdents != null) {
+			for (CluIdentifierInfo cluIdent : cluIdents) {
+				if (cluIdent.getType() != null && 
+						cluIdent.getType().equals(CourseAssemblerConstants.COURSE_CROSSLISTING_IDENT_TYPE)) {
+					CourseCrossListingInfo crosslisting = new CourseCrossListingInfo();
+
+                    if (cluIdent.getAttributes().containsKey("courseId")) {
+                        try {
+                            CluInfo cluInfo = R1R2ConverterUtil.convert(cluService.getClu(cluIdent.getAttributes().get("courseId") , new ContextInfo()), CluInfo.class);
+                            crosslisting.setId(cluIdent.getId());
+                            crosslisting.setCode(cluInfo.getOfficialIdentifier().getCode());
+                            crosslisting.setAttributes(cluIdent.getAttributes());
+                            //TODO KSCM was setTypeKey
 //                            crosslisting.setTypeKey(cluInfo.getType());
-//                            crosslisting.setCourseNumberSuffix(cluInfo.getOfficialIdentifier().getSuffixCode());
-//                            crosslisting.setSubjectArea(cluInfo.getOfficialIdentifier().getDivision());
-//                            crosslisting.setDepartment(cluIdent.getOrgId());
-//                        } catch (Exception e) {
-//                            throw new AssemblyException("Error getting related clus", e);
-//                        }
-//                    } else {
-//                        crosslisting.setId(cluIdent.getId());
-//                        crosslisting.setCode(cluIdent.getCode());
-//                        crosslisting.setAttributes(cluIdent.getAttributes());
+                            crosslisting.setType(cluInfo.getType());
+                            crosslisting.setCourseNumberSuffix(cluInfo.getOfficialIdentifier().getSuffixCode());
+                            crosslisting.setSubjectArea(cluInfo.getOfficialIdentifier().getDivision());
+                            crosslisting.setDepartment(cluIdent.getOrgId());
+                        } catch (Exception e) {
+                            throw new AssemblyException("Error getting related clus", e);
+                        }
+                    } else {
+                        crosslisting.setId(cluIdent.getId());
+                        crosslisting.setCode(cluIdent.getCode());
+                        crosslisting.setAttributes(cluIdent.getAttributes());
+                        //TODO KSCM was setTypeKey
 //                        crosslisting.setTypeKey(cluIdent.getType());
-//                        crosslisting.setCourseNumberSuffix(cluIdent.getSuffixCode());
-//                        crosslisting.setSubjectArea(cluIdent.getDivision());
-//                        crosslisting.setDepartment(cluIdent.getOrgId());
-//                    }
-//
-//					crossListings.add(crosslisting);
-//				}
-//			}
-//		}
-//		return crossListings;
-//	}
+                        crosslisting.setType(cluIdent.getType());
+                        crosslisting.setCourseNumberSuffix(cluIdent.getSuffixCode());
+                        crosslisting.setSubjectArea(cluIdent.getDivision());
+                        crosslisting.setDepartment(cluIdent.getOrgId());
+                    }
+
+					crossListings.add(crosslisting);
+				}
+			}
+		}
+		return crossListings;
+	}
 //	
 //	// TODO This is pretty much a copy of the disassembleJoints
 //	// code... maybe can be made generic

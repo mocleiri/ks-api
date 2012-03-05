@@ -15,6 +15,12 @@
 
 package org.kuali.student.r2.core.statement.service;
 
+import java.util.List;
+
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.TypeInfo;
@@ -28,16 +34,10 @@ import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
 import org.kuali.student.r2.common.exceptions.ReadOnlyException;
 import org.kuali.student.r2.common.exceptions.VersionMismatchException;
-
 import org.kuali.student.r2.core.statement.dto.RefStatementRelationInfo;
 import org.kuali.student.r2.core.statement.dto.ReqComponentInfo;
 import org.kuali.student.r2.core.statement.dto.StatementInfo;
 import org.kuali.student.r2.core.statement.dto.StatementTreeViewInfo;
-
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import java.util.List;
 
 
 
@@ -950,4 +950,19 @@ public interface StatementService {
     @Deprecated
 	public String getNaturalLanguageForReqComponent(String reqComponentId,
 			String string, String string2);
+    
+    /**
+     * Retrieves a list of object statement relationships for a particular object.
+     * 
+     * @param refObjectTypeKey Reference type
+     * @param refObjectId Reference identifier
+     * @return List of object statement relationships for a particular object
+     * @throws DoesNotExistException Object not found
+     * @throws InvalidParameterException One or more parameters invalid
+     * @throws MissingParameterException One or more parameters not specified
+     * @throws OperationFailedException Unable to complete request
+     */
+    @Deprecated
+    public List<RefStatementRelationInfo> getRefStatementRelationsByRef(@WebParam(name="refObjectTypeKey")String refObjectTypeKey, @WebParam(name="refObjectId")String refObjectId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException;
+
 }
