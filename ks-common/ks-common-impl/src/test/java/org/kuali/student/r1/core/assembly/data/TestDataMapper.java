@@ -1,4 +1,4 @@
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.r1.core.assembly.data;
 
 import static org.junit.Assert.assertEquals;
 

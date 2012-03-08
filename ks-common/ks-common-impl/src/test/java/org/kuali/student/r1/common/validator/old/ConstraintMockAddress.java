@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.validator.old;
+package org.kuali.student.r1.common.validator.old;
 
 import java.util.List;
 

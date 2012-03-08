@@ -1,4 +1,4 @@
-package org.kuali.student.common.validator;
+package org.kuali.student.r1.common.validator;
 
 import static org.junit.Assert.assertEquals;
 

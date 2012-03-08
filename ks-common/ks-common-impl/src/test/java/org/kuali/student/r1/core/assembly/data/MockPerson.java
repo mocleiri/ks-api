@@ -1,9 +1,9 @@
-package org.kuali.student.core.assembly.data;
+package org.kuali.student.r1.core.assembly.data;
 
 import java.util.Date;
 import java.util.List;
 
-import org.kuali.student.common.validator.old.ConstraintMockAddress;
+import org.kuali.student.r1.common.validator.old.ConstraintMockAddress;
 
 public class MockPerson {
     protected String firstName;

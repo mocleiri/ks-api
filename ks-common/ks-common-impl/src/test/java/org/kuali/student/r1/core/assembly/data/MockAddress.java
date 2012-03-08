@@ -1,46 +1,39 @@
-/**
- * Copyright 2010 The Kuali Foundation Licensed under the
- * Educational Community License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may
- * obtain a copy of the License at
- *
- * http://www.osedu.org/licenses/ECL-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS"
- * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing
- * permissions and limitations under the License.
- */
-
-package org.kuali.student.common.validator;
+package org.kuali.student.r1.core.assembly.data;
 
 import java.util.List;
+import java.util.Map;
 
-public class ConstraintMockAddress {
-
+public class MockAddress {
 	protected String line1;
-	
+
 	protected String line2;
-	
+
 	protected String city;
-	
+
 	protected String state;
-	
+
 	protected String country;
-	
+
 	protected String stateCode;
-	
-	protected String province;
-	
+
 	protected List<String> phoneNumbers;
-	
+
 	protected String type;
-	
+
 	protected String id;
 
 	protected String postalCode;
 	
+	protected Map<String,String> attributes;
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
+
 	/**
 	 * @return the line1
 	 */
@@ -49,7 +42,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param line1 the line1 to set
+	 * @param line1
+	 *            the line1 to set
 	 */
 	public void setLine1(String line1) {
 		this.line1 = line1;
@@ -63,7 +57,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param line2 the line2 to set
+	 * @param line2
+	 *            the line2 to set
 	 */
 	public void setLine2(String line2) {
 		this.line2 = line2;
@@ -77,7 +72,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param city the city to set
+	 * @param city
+	 *            the city to set
 	 */
 	public void setCity(String city) {
 		this.city = city;
@@ -91,7 +87,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param country the country to set
+	 * @param country
+	 *            the country to set
 	 */
 	public void setCountry(String country) {
 		this.country = country;
@@ -105,7 +102,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param phoneNumbers the phoneNumbers to set
+	 * @param phoneNumbers
+	 *            the phoneNumbers to set
 	 */
 	public void setPhoneNumbers(List<String> phoneNumbers) {
 		this.phoneNumbers = phoneNumbers;
@@ -119,7 +117,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -133,7 +132,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param state the state to set
+	 * @param state
+	 *            the state to set
 	 */
 	public void setState(String state) {
 		this.state = state;
@@ -147,7 +147,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(String id) {
 		this.id = id;
@@ -161,7 +162,8 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param postalCode the postalCode to set
+	 * @param postalCode
+	 *            the postalCode to set
 	 */
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
@@ -175,20 +177,11 @@ public class ConstraintMockAddress {
 	}
 
 	/**
-	 * @param stateCode the stateCode to set
+	 * @param stateCode
+	 *            the stateCode to set
 	 */
 	public void setStateCode(String stateCode) {
 		this.stateCode = stateCode;
 	}
 
-	
-	public String getProvince() {
-		return province;
-	}
-
-	public void setProvince(String province) {
-		this.province = province;
-	}	
-	
-	
 }

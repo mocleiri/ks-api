@@ -1,4 +1,4 @@
-package org.kuali.student.common.search;
+package org.kuali.student.r1.common.search;
 
 import java.util.ArrayList;
 import java.util.List;

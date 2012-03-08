@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package org.kuali.student.common.assembly;
+package org.kuali.student.r1.common.assembly;
 
 import static org.junit.Assert.assertEquals;
 
