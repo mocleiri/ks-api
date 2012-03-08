@@ -15,19 +15,31 @@
 
 package org.kuali.student.common.ui.client.mvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.application.ViewContext;
 import org.kuali.student.common.ui.client.configurable.mvc.LayoutController;
+import org.kuali.student.common.ui.client.configurable.mvc.views.SectionView;
 import org.kuali.student.common.ui.client.mvc.breadcrumb.BreadcrumbSupport;
 import org.kuali.student.common.ui.client.mvc.history.HistoryManager;
 import org.kuali.student.common.ui.client.mvc.history.HistorySupport;
 import org.kuali.student.common.ui.client.mvc.history.NavigationEvent;
+import org.kuali.student.common.ui.client.reporting.ReportExport;
 import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 import org.kuali.student.common.ui.client.security.RequiresAuthorization;
-import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.common.ui.client.service.GwtExportRpcService;
+import org.kuali.student.common.ui.client.service.GwtExportRpcServiceAsync;
+import org.kuali.student.common.ui.client.util.ExportElement;
+import org.kuali.student.common.ui.client.util.ExportUtils;
+import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
+import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.rice.authorization.PermissionType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
@@ -43,7 +55,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Kuali Student Team
  */
-public abstract class Controller extends Composite implements HistorySupport, BreadcrumbSupport{
+public abstract class Controller extends Composite implements HistorySupport, BreadcrumbSupport, ReportExport{
 	public static final Callback<Boolean> NO_OP_CALLBACK = new Callback<Boolean>() {
 		@Override
 		public void exec(Boolean result) {
@@ -51,7 +63,6 @@ public abstract class Controller extends Composite implements HistorySupport, Br
 		}
 	};
 	
-	private final String controllerId;
     protected Controller parentController = null;
     private View currentView = null;
     private Enum<?> currentViewEnum = null;
@@ -60,9 +71,9 @@ public abstract class Controller extends Composite implements HistorySupport, Br
     private final Map<String, ModelProvider<? extends Model>> models = new HashMap<String, ModelProvider<? extends Model>>();
     private boolean fireNavEvents = true;
     private HandlerManager applicationEventHandlers = new HandlerManager(this);
-
-    protected Controller(final String controllerId) {
-        this.controllerId = controllerId;
+    private GwtExportRpcServiceAsync reportExportRpcService = GWT.create(GwtExportRpcService.class);
+    
+    protected Controller() {
     }
     
     /**
@@ -109,60 +120,46 @@ public abstract class Controller extends Composite implements HistorySupport, Br
 		        }
 		        beginShowView(view, viewType, onReadyCallback);
 				
-			}});
+			}},null);
     }
     
     private <V extends Enum<?>> void beginShowView(final View view, final V viewType, final Callback<Boolean> onReadyCallback){
-    	beforeViewChange(viewType, new Callback<Boolean>(){
+        beforeViewChange(viewType, new Callback<Boolean>(){
 
-			@Override
-			public void exec(Boolean result) {
-				if(result){
-					 boolean requiresAuthz = (view instanceof RequiresAuthorization) && ((RequiresAuthorization)view).isAuthorizationRequired(); 
-						
-				        if (requiresAuthz){
-				        	ViewContext tempContext = new ViewContext();
-				        	if(view instanceof LayoutController){
-				        		tempContext = ((LayoutController) view).getViewContext();
-				        	}                 
-				        	else{
-				        		tempContext = view.getController().getViewContext();
-				        	}
-				        	
-				        	PermissionType permType = (tempContext != null) ? tempContext.getPermissionType() : null;
-				        	if (permType != null) {
-				        		GWT.log("Checking permission type '" + permType.getPermissionTemplateName() + "' for view '" + view.toString() + "'", null);
-				            	//A callback is required if async rpc call is required for authz check
-					        	((RequiresAuthorization)view).checkAuthorization(permType, new AuthorizationCallback(){
-									public void isAuthorized() {
-										finalizeShowView(view, viewType, onReadyCallback);
-									}
-				
-									public void isNotAuthorized(String msg) {
-										Window.alert(msg);
-										onReadyCallback.exec(false);					
-									}        		
-					        	});
-				        	}
-				        	else {
-				        		GWT.log("Cannot find PermissionType for view '" + view.toString() + "' which requires authorization", null);
-				            	finalizeShowView(view, viewType, onReadyCallback);
-				        	}
-				        } else {
-				    		GWT.log("Not Requiring Auth.", null);
-				        	finalizeShowView(view, viewType, onReadyCallback);
-				        }
-				}
-				else{
-					onReadyCallback.exec(false);
-				}
-				
-			}
-		});
+            @Override
+            public void exec(Boolean result) {
+                if(result){
+                     boolean requiresAuthz = (view instanceof RequiresAuthorization) && ((RequiresAuthorization)view).isAuthorizationRequired(); 
+                        
+                        if (requiresAuthz){
+//                          GWT.log("Checking permission type '" + getViewContext().getPermissionType().getPermissionTemplateName() + "' for viewType '" + viewType.toString() + "'", null);
+
+                            //A callback is required if async rpc call is required for authz check
+                            ((RequiresAuthorization)view).checkAuthorization(new AuthorizationCallback(){
+                                public void isAuthorized() {
+                                    finalizeShowView(view, viewType, onReadyCallback);
+                                }
+            
+                                public void isNotAuthorized(String msg) {
+                                    Window.alert(msg);
+                                    onReadyCallback.exec(false);                    
+                                }               
+                            });
+                        } else {
+                            GWT.log("Not Requiring Auth.", null);
+                            finalizeShowView(view, viewType, onReadyCallback);
+                        }
+                }
+                else{
+                    onReadyCallback.exec(false);
+                }
+                
+            }
+        });
     }
     
     private <V extends Enum<?>> void finalizeShowView(final View view, final V viewType, final Callback<Boolean> onReadyCallback){
-        if ((currentView == null) || currentView.beforeHide()) {
+        if (((currentView == null) || currentView.beforeHide()) && view != null) {
 			view.beforeShow(new Callback<Boolean>() {
 				@Override
 				public void exec(Boolean result) {
@@ -303,11 +300,11 @@ public abstract class Controller extends Composite implements HistorySupport, Br
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void requestModel(final ModelRequestCallback callback) {
         requestModel((String)null, callback);
     }
-    
+
     public <T extends Model> void registerModel(String modelId, ModelProvider<T> provider) {
         models.put(modelId, provider);
     }
@@ -366,6 +363,18 @@ public abstract class Controller extends Composite implements HistorySupport, Br
      * @param view
      */
     protected abstract void hideView(View view);
+
+    /**
+     * Returns the view associated with the specified enum value. See showView(V viewType) above for a full description
+     * defaults to the abstract get view method unless overridden
+     * @param <V>
+     * @param viewType
+     * @param callback
+     * @param tokenMap optionally passed in token map if you need tokens from the history manager
+     */
+    protected <V extends Enum<?>> void getView(V viewType, Callback<View> callback, Map<String, String> tokenMap){
+    	getView(viewType, callback);
+    }
 
     /**
      * Returns the view associated with the specified enum value. See showView(V viewType) above for a full description
@@ -501,7 +510,7 @@ public abstract class Controller extends Composite implements HistorySupport, Br
 		                    	currentView.onHistoryEvent(nextHistoryStack);
 		                    }
 						}
-					});
+					},tokenMap);
     
                 }
             }
@@ -539,5 +548,88 @@ public abstract class Controller extends Composite implements HistorySupport, Br
     public void resetCurrentView(){
     	currentView = null;
     }
+  
+    /**
+     * 
+     * This method implement the "Generic Export" of a windows content to Jasper based on the format the user selected.
+     * This method can be overwritten on a subclass to do specific export to the specific view
+     * 
+     * @see org.kuali.student.common.ui.client.reporting.ReportExport#doReportExport(java.util.ArrayList)
+     */
+    @Override
+    public void doReportExport(List<ExportElement> exportElements, final String format, final String reportTitle) {        
+     // Service call...
+    	final BlockingTask loadDataTask = new BlockingTask("Generating Export File");
+        
+        DataModel dataModel = getExportDataModel();
+        Data modelDataObject = null;
+        if (dataModel != null) {
+            modelDataObject = dataModel.getRoot();
+        }   
+        
+        
+        // we want to show that something is happening while the files are generated.
+        KSBlockingProgressIndicator.addTask(loadDataTask);
+        
+        reportExportRpcService.reportExport(exportElements, modelDataObject, getExportTemplateName(), format, reportTitle, new KSAsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        // On success get documentID back from GWT Servlet//
+                    	
+                    	// We need to get the base url and strip the gwt module name . 
+                    	String baseUrl = GWT.getHostPageBaseURL();
+                    	baseUrl = baseUrl.replaceFirst(GWT.getModuleName() + "/", "");                    	                    
+                    	
+                    	KSBlockingProgressIndicator.removeTask(loadDataTask);
+                    	
+                        Window.open(baseUrl + "exportDownloadHTTPServlet?exportId="+result + "&format=" + format, "", "");                          
+                    }
+
+					@Override
+					public void handleFailure(Throwable caught) {
+						KSBlockingProgressIndicator.removeTask(loadDataTask);
+						super.handleFailure(caught);
+					}				                    
+                    
+                });
+
+            
+        
+    }
+       
+    // TODO Nina ??? Do we want to keep this seen in the light of the exportElements parameter
+    @Override
+    public DataModel getExportDataModel() {
+        return null;
+    }
+
+    /**
+     * 
+     * @see org.kuali.student.common.ui.client.reporting.ReportExport#getExportTemplateName()
+     */
+    @Override
+    public String getExportTemplateName() {
+        return exportTemplateName;
+    }
     
+    @Override
+    public List<ExportElement> getExportElementsFromView() {
+        String viewName = null;
+        View currentView = this.getCurrentView();
+        if (currentView != null) {
+            
+            ArrayList<ExportElement> exportElements = null;
+
+            if (currentView != null && currentView instanceof SectionView) {
+                viewName =  currentView.getName();
+                exportElements = ExportUtils.getExportElementsFromView((SectionView)currentView, exportElements, viewName, "Sectionname");
+                return exportElements;
+            } else {
+//                logger.warn("ExportUtils.getExportElementsFromView not implemented for :" + this.getCurrentView());
+            }
+        } else {
+//            logger.warn("ExportUtils.getExportElementsFromView controller currentView is null :" + this.getClass().getName());
+        }
+        return null;
+    }
 }

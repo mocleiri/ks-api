@@ -25,7 +25,7 @@ import org.kuali.student.common.ui.client.widgets.focus.FocusGroup;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
 import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
-import org.kuali.student.core.dto.Idable;
+import org.kuali.student.r1.common.dto.Idable;
 
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusHandler;
@@ -49,6 +49,7 @@ import com.google.gwt.user.client.ui.FlexTable;
  * @author Kuali Student Team 
  *
  */
+@Deprecated
 public class KSCheckBoxListImpl extends KSSelectItemWidgetAbstract implements ValueChangeHandler<Boolean>, HasBlurHandlers, HasFocusHandlers {
     private final FocusGroup focus = new FocusGroup(this);
     private FlexTable layout = new FlexTable();

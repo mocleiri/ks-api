@@ -18,11 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kuali.student.common.ui.client.service.MetadataRpcService;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.dictionary.MetadataServiceImpl;
+import org.kuali.student.r1.common.assembly.data.Metadata;
+import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+@Deprecated
 public class MetadataRpcGwtServlet extends RemoteServiceServlet implements MetadataRpcService {
 
     private static final long serialVersionUID = 1L;

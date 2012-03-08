@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 import org.kuali.student.common.ui.client.security.RequiresAuthorization;
-import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.r1.common.rice.authorization.PermissionType;
 
 
 /**
@@ -90,11 +90,11 @@ public class DelegatingViewComposite extends ViewComposite implements RequiresAu
     }
 
 	@Override
-	public void checkAuthorization(PermissionType permissionType, AuthorizationCallback callback) {
-		if (childController instanceof RequiresAuthorization){
-			((RequiresAuthorization)childController).checkAuthorization(permissionType, callback);
-		}				
-	}
+    public void checkAuthorization(AuthorizationCallback callback) {
+        if (childController instanceof RequiresAuthorization){
+            ((RequiresAuthorization)childController).checkAuthorization(callback);
+        }               
+    }
 
 	@Override
 	public boolean isAuthorizationRequired() {

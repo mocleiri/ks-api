@@ -19,15 +19,21 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
+
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityGroup;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.HasFocusLostCallbacks;
 import org.kuali.student.common.ui.client.widgets.KSLabel;
 import org.kuali.student.common.ui.client.widgets.list.HasSelectionChangeHandlers;
+import org.kuali.student.common.ui.client.widgets.list.KSCheckBoxList;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectedList;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeEvent;
 import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
+import org.kuali.student.common.ui.client.widgets.search.KSPicker;
 
 /**
  * Adds the appropriate handler to the widget contained within the FieldDescriptor for when
@@ -35,6 +41,7 @@ import org.kuali.student.common.ui.client.widgets.list.SelectionChangeHandler;
  *
  * @author Kuali Student Team
  */
+@Deprecated
 public class ValidationEventBindingImpl implements ValidationEventBinding {
 
     public void bind(final FieldDescriptor fd) {
@@ -47,6 +54,15 @@ public class ValidationEventBindingImpl implements ValidationEventBinding {
                     if (event.isUserInitiated()) {
                         processValidationEvent(fd);
                     }
+                }
+            });
+        } else if(w instanceof KSPicker && ((KSPicker)w).getInputWidget() instanceof HasSelectionChangeHandlers){
+            ((KSPicker)w).addSelectionChangeHandler(new SelectionChangeHandler() {
+                @Override
+                public void onSelectionChange(SelectionChangeEvent event) {
+                	if(event.isUserInitiated()){
+                		processValidationEvent(fd);
+                	}
                 }
             });
         } else if (w instanceof HasBlurHandlers) {
@@ -62,6 +78,14 @@ public class ValidationEventBindingImpl implements ValidationEventBinding {
                     processValidationEvent(fd);
                 }
             });
+        } else if (w instanceof HasValueChangeHandlers) {
+            ((HasValueChangeHandlers<Object>) w).addValueChangeHandler(new ValueChangeHandler<Object>() {
+
+                @Override
+                public void onValueChange(ValueChangeEvent<Object> event) {
+                    processValidationEvent(fd);
+                }
+            });
         } else if (w instanceof KSLabel
                 || w instanceof org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityComposite
                 || w instanceof MultiplicityGroup) {
@@ -70,7 +94,8 @@ public class ValidationEventBindingImpl implements ValidationEventBinding {
             GWT.log("The field with key: " + fd.getFieldKey() +
                     " does not use a widget which implements an interface that can perform on the fly validation", null);
         }
-        if (w instanceof KSSelectedList) {
+        //Dont add focus lost to the oracle if it is repeating
+        if (w instanceof KSSelectedList && !((KSSelectedList)w).getConfig().isRepeating) {
             ((HasFocusLostCallbacks) w).addFocusLostCallback(new Callback<Boolean>() {
                 @Override
                 public void exec(Boolean result) {

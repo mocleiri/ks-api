@@ -17,9 +17,9 @@ package org.kuali.student.lum.lrc.dao;
 
 import java.util.List;
 
-import org.kuali.student.core.dao.CrudDao;
-import org.kuali.student.core.dao.SearchableDao;
-import org.kuali.student.core.exceptions.DoesNotExistException;
+import org.kuali.student.r1.common.dao.CrudDao;
+import org.kuali.student.r1.common.dao.SearchableDao;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.lum.lrc.entity.ResultComponentType;
 
 public interface LrcDao extends CrudDao, SearchableDao  {

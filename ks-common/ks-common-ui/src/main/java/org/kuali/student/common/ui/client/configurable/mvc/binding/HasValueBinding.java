@@ -19,8 +19,8 @@ import java.util.Date;
 
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.widgets.KSCheckBox;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.QueryPath;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.assembly.data.QueryPath;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasValue;
@@ -31,6 +31,7 @@ import com.google.gwt.user.client.ui.HasValue;
  * @author Kuali Student Team
  *
  */
+@Deprecated
 public class HasValueBinding extends ModelWidgetBindingSupport<HasValue> {
 
     public static HasValueBinding INSTANCE = new HasValueBinding();

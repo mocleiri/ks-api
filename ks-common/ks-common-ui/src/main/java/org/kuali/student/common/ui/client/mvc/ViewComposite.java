@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author Kuali Student Team
  */
+@Deprecated
 public abstract class ViewComposite extends Composite implements View {
     private final Controller controller;
     private final String name;
@@ -130,4 +131,14 @@ public abstract class ViewComposite extends Composite implements View {
     	// TODO Auto-generated method stub
     	return this;
     }
+    
+    public boolean isExportButtonActive() {
+        return false;
+    }
+
+	@Override
+	public void showExport(boolean show) {
+		// Needs to be implemented on subclass where applicable
+	}
+    
 }

@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kuali.student.common.ui.shared.IdAttributes.IdType;
-import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.r1.common.rice.authorization.PermissionType;
 
 /**
  * ViewContext can be used to pass along context information when switching or initializing a view.

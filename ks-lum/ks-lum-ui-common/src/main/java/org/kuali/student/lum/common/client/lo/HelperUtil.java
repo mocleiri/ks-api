@@ -1,7 +1,7 @@
 package org.kuali.student.lum.common.client.lo;
 
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.helper.PropertyEnum;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.assembly.helper.PropertyEnum;
 
 /**
  * @author Igor

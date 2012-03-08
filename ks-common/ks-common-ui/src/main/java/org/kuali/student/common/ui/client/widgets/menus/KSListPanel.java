@@ -20,10 +20,12 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.WidgetCollection;
 
 /**
  * @author wilj
  */
+@Deprecated
 public class KSListPanel extends ComplexPanel {
     public enum ListType {
         ORDERED, UNORDERED
@@ -94,5 +96,8 @@ public class KSListPanel extends ComplexPanel {
 
     }
 
+    public WidgetCollection getChildren() {
+        return super.getChildren();    
+    }
 
 }

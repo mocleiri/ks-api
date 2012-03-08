@@ -1,14 +1,16 @@
 package org.kuali.student.common.ui.client.service;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.kuali.student.core.search.dto.SearchRequest;
-import org.kuali.student.core.search.dto.SearchResult;
+
+import org.kuali.student.r1.common.search.dto.SearchRequest;
+import org.kuali.student.r1.common.search.dto.SearchResult;
 
 import java.util.HashMap;
 
 /**
  * @author Igor
  */
+@Deprecated
 public class CachingSearchService implements SearchRpcServiceAsync {
 
     private static CachingSearchService INSTANCE = new CachingSearchService();

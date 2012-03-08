@@ -17,7 +17,9 @@ package org.kuali.student.lum.common.client.lo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
+import org.kuali.student.r1.common.assembly.data.Data;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.mvc.Callback;
@@ -40,11 +42,10 @@ import org.kuali.student.common.ui.client.widgets.list.impl.SimpleListItems;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotification;
 import org.kuali.student.common.ui.client.widgets.notification.KSNotifier;
 import org.kuali.student.common.ui.client.widgets.searchtable.ResultRow;
-import org.kuali.student.core.assembly.data.Data;
 import org.kuali.student.lum.common.client.lo.rpc.LoCategoryRpcService;
 import org.kuali.student.lum.common.client.lo.rpc.LoCategoryRpcServiceAsync;
-import org.kuali.student.lum.lo.dto.LoCategoryInfo;
-import org.kuali.student.lum.lo.dto.LoCategoryTypeInfo;
+import org.kuali.student.r2.lum.lo.dto.LoCategoryInfo;
+import org.kuali.student.r1.lum.lo.dto.LoCategoryTypeInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -59,6 +60,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+// TODO KSCM-244
 public class CategoryManagement extends Composite {
     private KSButton addButton = new KSButton("Create", ButtonStyle.SECONDARY);
     private KSButton deleteButton = new KSButton("Delete", ButtonStyle.SECONDARY);
@@ -292,6 +294,22 @@ public class CategoryManagement extends Composite {
         this.categoryManagementTable = new CategoryManagementTable(hideInactiveCategories, isMultiSelect);
         initCategoryManagement();
     }
+    /**
+     * This constructor is used to filter out items already in the picker
+     * <p>
+     * We need to pass the list in the constructor because the table is populated
+     * using an async call  
+     * <p>
+     * See KSLAB-1871
+     * 
+     * @param hideInactiveCategories  ?
+     * @param isMultiSelect
+     * @param loCategoriesToFilter a list of categories that should be filtered from the popup on open
+     */
+    public CategoryManagement(boolean hideInactiveCategories, boolean isMultiSelect, List<LoCategoryInfo> loCategoriesToFilter) {
+        this.categoryManagementTable = new CategoryManagementTable(hideInactiveCategories, isMultiSelect, loCategoriesToFilter);
+        initCategoryManagement();
+    }
     public List<LoCategoryInfo> getSelectedCategoryList(){
         return categoryManagementTable.getSelectedLoCategoryInfos();
     }
@@ -300,14 +318,15 @@ public class CategoryManagement extends Composite {
 
         List<ResultRow> bufferList = new ArrayList<ResultRow>();
         if(subjectCheckBox.getValue() == true){
-            bufferList.addAll(categoryManagementTable.getRowsByType("subject"));
+            bufferList.addAll(categoryManagementTable.getRowsByType("loCategoryType.subject"));
         }
         if(skillCheckBox.getValue() == true){
-            bufferList.addAll(categoryManagementTable.getRowsByType("skill"));
+            bufferList.addAll(categoryManagementTable.getRowsByType("loCategoryType.skillarea"));
         }
         if(accreditationCheckBox.getValue() == true){
-            bufferList.addAll(categoryManagementTable.getRowsByType("accreditation"));
+            bufferList.addAll(categoryManagementTable.getRowsByType("loCategoryType.accreditation"));
         }
+        Collections.sort(bufferList);
         categoryManagementTable.redraw(bufferList);
 
     }
@@ -418,7 +437,14 @@ public class CategoryManagement extends Composite {
         public void setCategory(LoCategoryInfo cate) {
             categoryInfo = cate;
             categoryNameLabel.setText(categoryInfo.getName());
-            categoryTypeLabel.setText(categoryInfo.getType());
+            if (categoryTypeList != null) {
+                for (LoCategoryTypeInfo catTypeInfo : categoryTypeList) {
+                    if (catTypeInfo.getId() != null && catTypeInfo.getId().equals(categoryInfo.getType())) {
+                        categoryTypeLabel.setText(catTypeInfo.getName());
+                        break;
+                    }
+                }
+            }
         }
     }
     class UpdateCategoryDialog extends KSLightBox {
@@ -452,7 +478,7 @@ public class CategoryManagement extends Composite {
                 public void onClick(ClickEvent event) {
                     LoCategoryInfo cate = getCategory();
                     boolean error = false;
-                    layout.clearValidation();
+                    layout.clearValidationErrors();
                     if(nameTextBox.getText().isEmpty()){
                     	layout.addValidationErrorMessage("Category", "Required");
                     	error = true;
@@ -559,7 +585,7 @@ public class CategoryManagement extends Composite {
                 public void onClick(ClickEvent event) {
                     LoCategoryInfo cate = getCategory();
                     boolean error = false;
-                    layout.clearValidation();
+                    layout.clearValidationErrors();
                     if(nameTextBox.getText().isEmpty()){
                     	layout.addValidationErrorMessage("Category", "Required");
                     	error = true;

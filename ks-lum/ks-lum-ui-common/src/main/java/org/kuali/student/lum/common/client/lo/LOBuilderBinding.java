@@ -8,9 +8,9 @@ import java.util.Map;
 
 import org.kuali.student.common.ui.client.configurable.mvc.binding.ModelWidgetBindingSupport;
 import org.kuali.student.common.ui.client.mvc.DataModel;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.lum.lo.dto.LoCategoryInfo;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.assembly.data.QueryPath;
+import org.kuali.student.r2.lum.lo.dto.LoCategoryInfo;
 
 /**
  * @author Igor
@@ -97,7 +97,7 @@ public class LOBuilderBinding extends ModelWidgetBindingSupport<LOBuilder> {
                 sortedDisplayInfos.add(loDisplayInfoHelper);
             }
             for (LoDisplayInfoHelper loDisplayInfoHelper : sortedDisplayInfos) {
-                LOPicker picker = new LOPicker(LOBuilder.getMessageGroup(), LOBuilder.getType(), LOBuilder.getState(), LOBuilder.getRepoKey());
+                LOPicker picker = new LOPicker(LOBuilder.getMessageGroup(), LOBuilder.getType(), LOBuilder.getState(), LOBuilder.getRepoKey(), LOBuilder.getLoListDescLength());
                 
                 LoInfoHelper loInfoHelper = new LoInfoHelper(loDisplayInfoHelper.getLoInfo());
                 RichTextHelper descriptionHelper = new RichTextHelper(loInfoHelper.getDesc());
