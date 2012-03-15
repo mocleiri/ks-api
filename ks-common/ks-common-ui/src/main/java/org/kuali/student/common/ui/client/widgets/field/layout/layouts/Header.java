@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
+@Deprecated
 public class Header extends Composite{
 	private FlowPanel header = new FlowPanel();
     private SectionTitle title;
@@ -35,7 +36,7 @@ public class Header extends Composite{
         this.updateable = updateable;
 
         FlowPanel actions = new FlowPanel();
-        actions.add(help);
+        //actions.add(help);
         if (updateable)
 		    actions.add(delete);
 		

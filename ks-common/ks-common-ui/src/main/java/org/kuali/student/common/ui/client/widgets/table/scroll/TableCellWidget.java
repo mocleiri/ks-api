@@ -9,11 +9,13 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
+@Deprecated
 public class TableCellWidget extends Composite implements  HasClickHandlers, HasChangeHandlers {
 	Widget defaultTableEditor;
 	public TableCellWidget(Object value){
 		if(value instanceof Boolean){
-			defaultTableEditor = new CheckBox();	
+			defaultTableEditor = new CheckBox();
+            ((CheckBox)defaultTableEditor).setTabIndex(-1);
 		}else {
 			defaultTableEditor = new EditableLabel();
 		}
@@ -64,4 +66,8 @@ public class TableCellWidget extends Composite implements  HasClickHandlers, Has
 		}
 		return null;
 	}
+
+    public Widget getDefaultTableEditor() {
+        return defaultTableEditor;
+    }
 }

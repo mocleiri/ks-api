@@ -25,46 +25,50 @@ import java.util.TreeSet;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.dictionary.MetadataServiceImpl;
-import org.kuali.student.core.dto.CurrencyAmountInfo;
-import org.kuali.student.core.dto.RichTextInfo;
-import org.kuali.student.core.dto.StatusInfo;
-import org.kuali.student.core.dto.TimeAmountInfo;
-import org.kuali.student.core.exceptions.AlreadyExistsException;
-import org.kuali.student.core.exceptions.CircularReferenceException;
-import org.kuali.student.core.exceptions.CircularRelationshipException;
-import org.kuali.student.core.exceptions.DataValidationErrorException;
-import org.kuali.student.core.exceptions.DependentObjectsExistException;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.IllegalVersionSequencingException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.MissingParameterException;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.core.exceptions.PermissionDeniedException;
-import org.kuali.student.core.exceptions.UnsupportedActionException;
-import org.kuali.student.core.exceptions.VersionMismatchException;
-import org.kuali.student.core.statement.dto.ReqCompFieldInfo;
-import org.kuali.student.core.statement.dto.ReqComponentInfo;
-import org.kuali.student.core.statement.dto.StatementOperatorTypeKey;
-import org.kuali.student.core.statement.dto.StatementTreeViewInfo;
-import org.kuali.student.core.statement.service.StatementService;
-import org.kuali.student.core.validation.dto.ValidationResultInfo;
-import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
-import org.kuali.student.lum.course.dto.ActivityInfo;
-import org.kuali.student.lum.course.dto.CourseFeeInfo;
-import org.kuali.student.lum.course.dto.CourseInfo;
-import org.kuali.student.lum.course.dto.FormatInfo;
-import org.kuali.student.lum.course.dto.LoDisplayInfo;
-import org.kuali.student.lum.course.service.CourseService;
-import org.kuali.student.lum.course.service.CourseServiceConstants;
+import org.kuali.student.r1.common.assembly.data.Metadata;
+import org.kuali.student.r1.common.assembly.dictionary.MetadataServiceImpl;
+import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.dto.CurrencyAmountInfo;
+import org.kuali.student.r2.common.dto.DtoConstants;
+import org.kuali.student.r2.common.dto.RichTextInfo;
+import org.kuali.student.r2.common.dto.StatusInfo;
+import org.kuali.student.r2.common.dto.TimeAmountInfo;
+import org.kuali.student.r2.common.exceptions.AlreadyExistsException;
+import org.kuali.student.r2.common.exceptions.CircularReferenceException;
+import org.kuali.student.r2.common.exceptions.CircularRelationshipException;
+import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
+import org.kuali.student.r2.common.exceptions.DependentObjectsExistException;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.IllegalVersionSequencingException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.UnsupportedActionException;
+import org.kuali.student.r2.common.exceptions.VersionMismatchException;
+import org.kuali.student.r2.common.dto.ValidationResultInfo;
+import org.kuali.student.r1.common.versionmanagement.dto.VersionDisplayInfo;
+import org.kuali.student.r2.core.statement.dto.ReqCompFieldInfo;
+import org.kuali.student.r2.core.statement.dto.ReqComponentInfo;
+import org.kuali.student.r1.core.statement.dto.StatementOperatorTypeKey;
+import org.kuali.student.r2.core.statement.dto.StatementTreeViewInfo;
+import org.kuali.student.r2.core.statement.service.StatementService;
+import org.kuali.student.r2.lum.course.dto.ActivityInfo;
+import org.kuali.student.r2.lum.course.dto.CourseCrossListingInfo;
+import org.kuali.student.r2.lum.course.dto.CourseFeeInfo;
+import org.kuali.student.r2.lum.course.dto.CourseInfo;
+import org.kuali.student.r2.lum.course.dto.FormatInfo;
+import org.kuali.student.r2.lum.course.dto.LoDisplayInfo;
+import org.kuali.student.r2.lum.course.service.CourseService;
+import org.kuali.student.r1.lum.course.service.CourseServiceConstants;
+import org.kuali.student.common.test.util.ContextInfoTestUtility;
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.lo.dto.LoCategoryInfo;
-import org.kuali.student.lum.lo.dto.LoInfo;
-import org.kuali.student.lum.lrc.dto.ResultComponentInfo;
-import org.kuali.student.lum.lu.dto.AdminOrgInfo;
-import org.kuali.student.lum.lu.dto.AffiliatedOrgInfo;
-import org.kuali.student.lum.lu.dto.CluInstructorInfo;
+import org.kuali.student.r2.lum.lo.dto.LoCategoryInfo;
+import org.kuali.student.r2.lum.lo.dto.LoInfo;
+import org.kuali.student.r1.lum.lrc.dto.ResultComponentInfo;
+import org.kuali.student.r2.lum.clu.dto.AdminOrgInfo;
+import org.kuali.student.r2.lum.clu.dto.AffiliatedOrgInfo;
+import org.kuali.student.r2.lum.clu.dto.CluInstructorInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -72,6 +76,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:course-test-context.xml"})
 public class TestCourseServiceImpl {
+	
+	ContextInfo contextInfo = ContextInfoTestUtility.getEnglishContextInfo();
     @Autowired
     CourseService courseService;
     @Autowired
@@ -86,9 +92,9 @@ public class TestCourseServiceImpl {
         CourseInfo cInfo = null;
         try {
             assertNotNull(cInfo = generator.getCourseTestData());
-            CourseInfo createdCourse = courseService.createCourse(cInfo);
+            CourseInfo createdCourse = courseService.createCourse(cInfo, contextInfo);
             assertNotNull(createdCourse);
-            assertEquals("draft", createdCourse.getState());
+            assertEquals(DtoConstants.STATE_DRAFT, createdCourse.getState());
             assertEquals("kuali.lu.type.CreditCourse", createdCourse.getType());
             assertEquals(cInfo.getStartTerm(), createdCourse.getStartTerm());
             assertEquals(cInfo.getEndTerm(), createdCourse.getEndTerm());
@@ -102,7 +108,7 @@ public class TestCourseServiceImpl {
     }
 
     private void dumpValidationErrors(CourseInfo cInfo) throws Exception {
-        List<ValidationResultInfo> validationResults = courseService.validateCourse("SYSTEM", cInfo);
+        List<ValidationResultInfo> validationResults = courseService.validateCourse("SYSTEM", cInfo, contextInfo);
         for (ValidationResultInfo vr : validationResults) {
             System.out.println(vr.getElement() + " " + vr.getMessage());
         }
@@ -118,15 +124,14 @@ public class TestCourseServiceImpl {
             cInfo.setSpecialTopicsCourse(true);
             cInfo.setPilotCourse(true);
             cInfo.setCode("");
-            CourseInfo createdCourse = courseService.createCourse(cInfo);
+            CourseInfo createdCourse = courseService.createCourse(cInfo, contextInfo);
             assertNotNull(createdCourse);
 
             // get it fresh from database
-            CourseInfo retrievedCourse = courseService.getCourse(createdCourse.getId());
+            CourseInfo retrievedCourse = courseService.getCourse(createdCourse.getId(), contextInfo);
             assertNotNull(retrievedCourse);
 
             // confirm it has the right contents
-            assertEquals("323", retrievedCourse.getCode().substring(4));
             assertEquals("323", retrievedCourse.getCourseNumberSuffix());
 
             assertEquals("level-36", retrievedCourse.getLevel());
@@ -197,7 +202,7 @@ public class TestCourseServiceImpl {
             assertEquals("orgId-43", instructor.getOrgId());
             assertEquals("personId-44", instructor.getPersonId());
 
-            assertEquals("draft", retrievedCourse.getState());
+            assertEquals(DtoConstants.STATE_DRAFT, retrievedCourse.getState());
             assertTrue(subjectAreaSet.contains(retrievedCourse.getSubjectArea()));
 
             assertEquals("kuali.lu.type.CreditCourse", retrievedCourse.getType());
@@ -242,7 +247,7 @@ public class TestCourseServiceImpl {
         cInfo.setPilotCourse(true);
         try {
             System.out.println("creating course...");
-            createdCourse = courseService.createCourse(cInfo);
+            createdCourse = courseService.createCourse(cInfo, contextInfo);
         } catch (DataValidationErrorException e) {
             dumpValidationErrors(cInfo);
             fail("DataValidationError: " + e.getMessage());
@@ -277,7 +282,17 @@ public class TestCourseServiceImpl {
         // Add two New formats
         FormatInfo newFormat = new FormatInfo();
         newFormat.setType(CourseAssemblerConstants.COURSE_FORMAT_TYPE);
-        newFormat.setState("DRAFT");
+        newFormat.setState(DtoConstants.STATE_DRAFT);
+        
+        TimeAmountInfo timeInfo = new TimeAmountInfo();
+        timeInfo.setAtpDurationTypeKey("kuali.atp.duration.Semester");
+        timeInfo.setTimeQuantity(12);        
+        newFormat.setDuration(timeInfo);
+        
+        List<String> termsOfferedList = new ArrayList<String>();
+        termsOfferedList.add("FALL2010");        
+        newFormat.setTermsOffered(termsOfferedList);
+        
         Map<String, String> attrMap = new HashMap<String, String>();
         attrMap.put("FRMT", "value");
         newFormat.setAttributes(attrMap);
@@ -285,19 +300,19 @@ public class TestCourseServiceImpl {
         // Add two new activities to new formats
         ActivityInfo newActivity1 = new ActivityInfo();
         newActivity1.setActivityType(CourseAssemblerConstants.COURSE_ACTIVITY_DIRECTED_TYPE);
-        newActivity1.setState("DRAFT");
+        newActivity1.setState(DtoConstants.STATE_DRAFT);
         newFormat.getActivities().add(newActivity1);
 
         ActivityInfo newActivity2 = new ActivityInfo();
         newActivity2.setActivityType(CourseAssemblerConstants.COURSE_ACTIVITY_LAB_TYPE);
-        newActivity2.setState("DRAFT");
+        newActivity2.setState(DtoConstants.STATE_DRAFT);
         newFormat.getActivities().add(newActivity2);
 
         createdCourse.getFormats().add(newFormat);
 
         FormatInfo newFormat2 = new FormatInfo();
         newFormat2.setType(CourseAssemblerConstants.COURSE_FORMAT_TYPE);
-        newFormat2.setState("DRAFT");
+        newFormat2.setState(DtoConstants.STATE_DRAFT);
         createdCourse.getFormats().add(newFormat2);
 
         Map<String, String> attributes = createdCourse.getAttributes();
@@ -316,13 +331,13 @@ public class TestCourseServiceImpl {
         createdCourse.setSpecialTopicsCourse(false);
         createdCourse.setPilotCourse(false);
 
-        createdCourse.getCourseSpecificLOs().get(0).getLoInfo().getDesc().setPlain("UPDATED!!!");
+        createdCourse.getCourseSpecificLOs().get(0).getLoInfo().getDescr().setPlain("UPDATED!!!");
         createdCourse.getCourseSpecificLOs().remove(1);
         LoDisplayInfo displayInfo = new LoDisplayInfo();
         displayInfo.setLoInfo(new LoInfo());
-        displayInfo.getLoInfo().setDesc(new RichTextInfo());
+        displayInfo.getLoInfo().setDescr(new RichTextInfo());
         createdCourse.getCourseSpecificLOs().add(displayInfo);
-        createdCourse.getCourseSpecificLOs().get(1).getLoInfo().getDesc().setPlain("BrandNew!!!");
+        createdCourse.getCourseSpecificLOs().get(1).getLoInfo().getDescr().setPlain("BrandNew!!!");
         createdCourse.getCourseSpecificLOs().get(1).getLoCategoryInfoList().add(new LoCategoryInfo());
         createdCourse.getCourseSpecificLOs().get(1).getLoCategoryInfoList().get(0).setId("category-3");
 
@@ -362,6 +377,13 @@ public class TestCourseServiceImpl {
                 assertEquals(2, uFrmt.getActivities().size());
                 String actType = uFrmt.getActivities().get(0).getActivityType();
                 assertTrue(CourseAssemblerConstants.COURSE_ACTIVITY_DIRECTED_TYPE.equals(actType) || CourseAssemblerConstants.COURSE_ACTIVITY_LAB_TYPE.equals(actType));
+
+                assertEquals(1, uFrmt.getTermsOffered().size());
+                assertEquals("FALL2010", uFrmt.getTermsOffered().get(0));
+                
+                TimeAmountInfo tIfo = uFrmt.getDuration();
+                assertNotNull(tIfo);
+                assertEquals((int)12, (int) tIfo.getTimeQuantity());
             }
 
             // Check to see if activity is deleted from an existing format
@@ -449,7 +471,7 @@ public class TestCourseServiceImpl {
             assertNotNull(cInfo);
             CourseInfo createdCourse = courseService.createCourse(cInfo);
             assertNotNull(createdCourse);
-            assertEquals("draft", createdCourse.getState());
+            assertEquals(DtoConstants.STATE_DRAFT, createdCourse.getState());
             assertEquals("kuali.lu.type.CreditCourse", createdCourse.getType());
             String courseId = createdCourse.getId();
             CourseInfo retrievedCourse = courseService.getCourse(courseId);
@@ -465,6 +487,72 @@ public class TestCourseServiceImpl {
         }
     }
 
+    /**
+     * 
+     * This method tests setting code, attributes in course cross listing
+     *
+     */
+    @Test
+    public void testCourseCrossListing() {
+        CourseDataGenerator generator = new CourseDataGenerator();
+        try {
+            CourseInfo cInfo = generator.getCourseTestData();
+            assertNotNull(cInfo);
+
+           
+            CourseCrossListingInfo ccInfo = new CourseCrossListingInfo();
+            ccInfo.setCourseNumberSuffix("100");
+            ccInfo.setSubjectArea("CHEM");
+            
+            Map<String, String> da = new HashMap<String, String>();
+            da.put("KEY1", "VALUE1");
+            
+            ccInfo.setAttributes(da);
+            
+            CourseCrossListingInfo ccInfo1 = new CourseCrossListingInfo();
+            ccInfo1.setCourseNumberSuffix("200");
+            ccInfo1.setSubjectArea("MATH");
+            ccInfo1.setCode("LIFE042");
+
+            List<CourseCrossListingInfo> ccList = new ArrayList<CourseCrossListingInfo>();
+            ccList.add(ccInfo);
+            ccList.add(ccInfo1);
+
+            cInfo.setCrossListings(ccList);
+            
+            try {
+                cInfo = courseService.createCourse(cInfo);
+            } catch (DataValidationErrorException e) {
+                dumpValidationErrors(cInfo);
+                fail("DataValidationError: " + e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                fail("failed creating course:" + e.getMessage());
+            }
+            
+            CourseInfo rcInfo = courseService.getCourse(cInfo.getId());
+            
+            assertEquals(2,rcInfo.getCrossListings().size());
+            
+            for(CourseCrossListingInfo rcc : rcInfo.getCrossListings()) {
+                
+                if("100".equals(rcc.getCourseNumberSuffix())) {                   
+                    assertEquals("VALUE1", rcc.getAttributes().get("KEY1"));
+                } else {
+                    assertEquals("LIFE042", rcc.getCode());
+                }                
+            }
+            
+        } catch (Exception e) {
+            System.out.println("caught exception: " + e.getClass().getName());
+            System.out.println("message: " + e.getMessage());
+            e.printStackTrace(System.out);
+            e.printStackTrace();
+            fail(e.getMessage());
+        }        
+            
+    }
+    
     @Test
     public void testCreditOptions() {
         CourseDataGenerator generator = new CourseDataGenerator();

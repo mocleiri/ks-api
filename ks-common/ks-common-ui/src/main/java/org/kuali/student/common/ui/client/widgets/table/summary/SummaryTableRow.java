@@ -2,6 +2,7 @@ package org.kuali.student.common.ui.client.widgets.table.summary;
 
 import com.google.gwt.user.client.ui.Widget;
 
+@Deprecated
 public class SummaryTableRow {
     private boolean isRequired = false;
     private String title ="";
@@ -75,7 +76,8 @@ public class SummaryTableRow {
     	this.shown = show;
     }
     
-    protected boolean isShown(){
+    // TODO Nina - Code Review - is it ok that i change to public...
+    public boolean isShown(){
     	return shown;
     }
 }

@@ -6,6 +6,12 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Content block for use in ContentBlockLayout
+ * @author Kuali Student Team
+ * @see ContentBlockLayout
+ */
+@Deprecated
 public class ContentBlock extends VerticalFlowPanel{
 	
 	private SectionTitle sectionTitle = SectionTitle.generateH2Title("");

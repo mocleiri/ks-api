@@ -21,9 +21,9 @@ import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.DisplayM
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityComposite;
 import org.kuali.student.common.ui.client.configurable.mvc.multiplicity.MultiplicityItem;
 import org.kuali.student.common.ui.client.mvc.DataModel;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.QueryPath;
-import org.kuali.student.core.assembly.data.Data.Property;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.assembly.data.QueryPath;
+import org.kuali.student.r1.common.assembly.data.Data.Property;
 
 /**
  * This just goes through each item in the multiplicity composite and calls it's binding
@@ -34,6 +34,7 @@ import org.kuali.student.core.assembly.data.Data.Property;
 /**
  * @deprecated
  */
+@Deprecated
 public class MultiplicityCompositeBinding extends ModelWidgetBindingSupport<MultiplicityComposite> {
     public static MultiplicityCompositeBinding INSTANCE = new MultiplicityCompositeBinding();
 

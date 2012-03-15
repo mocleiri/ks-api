@@ -15,7 +15,6 @@
 
 package org.kuali.student.common.ui.client.widgets;
 
-import org.kuali.student.common.ui.client.event.NavigationActionEvent;
 import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.mvc.Controller;
 
@@ -25,6 +24,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.Window;
 
+@Deprecated
 public abstract class NavigationHandler implements ClickHandler, KeyDownHandler {
 	private final String url;
 	 private final Controller controller;
@@ -68,11 +68,6 @@ public abstract class NavigationHandler implements ClickHandler, KeyDownHandler 
 			    if (result) {
 				     if (url != null) {
 				    	 Window.Location.assign(url);
-				     } else if(navEnum != null){
-				    	 controller.fireApplicationEvent(new NavigationActionEvent(navEnum));
-				     }
-				     else{
-				    	 controller.fireApplicationEvent(new NavigationActionEvent(navigationKey));
 				     }
 				}
 			}

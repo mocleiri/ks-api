@@ -19,6 +19,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.kuali.student.r1.common.assembly.data.Metadata;
+import org.kuali.student.r2.common.util.ContextUtils;
+
+import org.kuali.student.r1.core.statement.dto.ReqCompFieldInfo;
+import org.kuali.student.r1.core.statement.dto.ReqCompFieldTypeInfo;
+import org.kuali.student.r1.core.statement.dto.ReqComponentInfo;
+import org.kuali.student.r1.core.statement.dto.ReqComponentTypeInfo;
+import org.kuali.student.r1.core.statement.dto.StatementOperatorTypeKey;
+import org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo;
+import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo;
 import org.kuali.student.common.ui.client.application.KSAsyncCallback;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.configurable.mvc.views.VerticalSectionView;
@@ -30,15 +40,16 @@ import org.kuali.student.common.ui.client.widgets.buttongroups.ButtonEnumeration
 import org.kuali.student.common.ui.client.widgets.field.layout.button.ActionCancelGroup;
 import org.kuali.student.common.ui.client.widgets.progress.BlockingTask;
 import org.kuali.student.common.ui.client.widgets.progress.KSBlockingProgressIndicator;
-import org.kuali.student.common.ui.client.widgets.rules.ReqCompEditWidget;
-import org.kuali.student.common.ui.client.widgets.rules.ReqComponentInfoUi;
-import org.kuali.student.common.ui.client.widgets.rules.RuleManageWidget;
-import org.kuali.student.common.ui.client.widgets.rules.RulesUtil;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.statement.dto.*;
-import org.kuali.student.core.versionmanagement.dto.VersionDisplayInfo;
-import org.kuali.student.lum.common.client.widgets.*;
-import org.kuali.student.lum.lu.dto.CluInfo;
+import org.kuali.student.core.statement.ui.client.widgets.rules.ReqCompEditWidget;
+import org.kuali.student.core.statement.ui.client.widgets.rules.ReqComponentInfoUi;
+import org.kuali.student.core.statement.ui.client.widgets.rules.RuleManageWidget;
+import org.kuali.student.core.statement.ui.client.widgets.rules.RulesUtil;
+import org.kuali.student.lum.common.client.widgets.BuildCluSetWidget;
+import org.kuali.student.lum.common.client.widgets.CluSetRetrieverImpl;
+import org.kuali.student.lum.common.client.widgets.CourseWidget;
+import org.kuali.student.lum.common.client.widgets.GradeWidget;
+import org.kuali.student.lum.common.client.widgets.ProgramWidget;
+import org.kuali.student.r2.lum.clu.dto.CluInfo;
 import org.kuali.student.lum.lu.ui.course.client.service.LuRpcService;
 import org.kuali.student.lum.lu.ui.course.client.service.LuRpcServiceAsync;
 import org.kuali.student.lum.program.client.rpc.StatementRpcService;
@@ -67,10 +78,10 @@ public class CourseRequirementsManageView extends VerticalSectionView {
     private CourseRequirementsViewController parentController;
 
     //view's widgets
-    private VerticalPanel layout = new VerticalPanel();
-    private ReqCompEditWidget editReqCompWidget;
-    private RuleManageWidget ruleManageWidget;
-    private SimplePanel twiddlerPanel = new SimplePanel();
+    protected VerticalPanel layout = new VerticalPanel();
+    protected ReqCompEditWidget editReqCompWidget;
+    protected RuleManageWidget ruleManageWidget;
+    protected SimplePanel twiddlerPanel = new SimplePanel();
     private ActionCancelGroup actionCancelButtons = new ActionCancelGroup(ButtonEnumerations.SaveCancelEnum.SAVE, ButtonEnumerations.SaveCancelEnum.CANCEL);
 
     //view's data
@@ -87,8 +98,18 @@ public class CourseRequirementsManageView extends VerticalSectionView {
     private boolean userClickedSaveButton = false;
 	private BlockingTask creatingRuleTask = new BlockingTask("Creating Rule");
 
-    public CourseRequirementsManageView(CourseRequirementsViewController parentController, Enum<?> viewEnum, String name, String modelId) {
+    public CourseRequirementsManageView() {
+        super();
+    }
+
+    public CourseRequirementsManageView(CourseRequirementsViewController parentController, Enum<?> viewEnum,
+            String name, String modelId) {
         super(viewEnum, name, modelId);
+        this.parentController = parentController;
+    }
+
+    public void init(CourseRequirementsViewController parentController, Enum<?> viewEnum, String name, String modelId) {
+        super.init(viewEnum, name, modelId, true);
         this.parentController = parentController;
     }
 
@@ -113,7 +134,7 @@ public class CourseRequirementsManageView extends VerticalSectionView {
         editReqCompWidget.setRetrieveCustomWidgetCallback(retrieveCustomWidgetCallback);
     }
 
-    private void draw() {
+    protected void draw() {
 
         remove(layout);
         layout.clear();
@@ -143,7 +164,7 @@ public class CourseRequirementsManageView extends VerticalSectionView {
         displaySaveButton();
     }
 
-    private void displaySaveButton() {
+    protected void displaySaveButton() {
         actionCancelButtons.addStyleName("KS-Course-Requisites-Save-Button");
         actionCancelButtons.addCallback(new Callback<ButtonEnumerations.ButtonEnum>(){
              @Override
@@ -274,8 +295,9 @@ public class CourseRequirementsManageView extends VerticalSectionView {
                         if (rule.getStatements() != null && !rule.getStatements().isEmpty()) {
                             StatementTreeViewInfo newStatementTreeViewInfo = new StatementTreeViewInfo();
                             newStatementTreeViewInfo.setId(CourseRequirementsSummaryView.NEW_STMT_TREE_ID + Integer.toString(tempStmtTreeViewInfoID++));
-                            newStatementTreeViewInfo.setOperator(rule.getStatements().get(0).getOperator());
+                            newStatementTreeViewInfo.setOperator(rule.getOperator());
                             newStatementTreeViewInfo.getReqComponents().add(reqComp);
+                            newStatementTreeViewInfo.setType(rule.getType());
                             rule.getStatements().add(newStatementTreeViewInfo);
                         } else {
                             rule.getReqComponents().add(reqComp);
@@ -334,7 +356,7 @@ public class CourseRequirementsManageView extends VerticalSectionView {
                     customWidgets.put("kuali.reqComponent.field.type.grade.id", new GradeWidget());
                 } else if (RulesUtil.isCourseWidget(fieldTypeInfo.getId())) {
 
-                    final CourseWidget courseWidget = new CourseWidget();
+                    final CourseWidget courseWidget = GWT.create(CourseWidget.class);
                     
                     courseWidget.addGetCluNameCallback(new Callback() {
 
@@ -434,7 +456,7 @@ public class CourseRequirementsManageView extends VerticalSectionView {
                 fieldTypes.add("kuali.reqComponent.field.type.gradeType.id");
             }
 
-            metadataServiceAsync.getMetadataList("org.kuali.student.core.statement.dto.ReqCompFieldInfo", fieldTypes, null, new KSAsyncCallback<List<Metadata>>() {
+            metadataServiceAsync.getMetadataList(ReqCompFieldInfo.class.getName(), fieldTypes, null, new KSAsyncCallback<List<Metadata>>() {
                 public void handleFailure(Throwable caught) {
                     Window.alert(caught.getMessage());
                     GWT.log("getMetadataList failed for req. comp. types: '" + fieldTypes.toString() + "'",caught);

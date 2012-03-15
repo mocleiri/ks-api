@@ -15,9 +15,9 @@
 
 package org.kuali.student.common.util.security;
 
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class SecurityUtils {
 	
@@ -42,6 +42,15 @@ public class SecurityUtils {
         }
 		return username;
 	}
+	/** 
+	 * Add this method to use the new method as specified in Enr-1.0 (ks-1.3) as this method is used in CM
+	 * 
+	 * @return principal id
+	 */
+	@Deprecated
+	public static String getCurrentPrincipalId() {
+		return getCurrentUserId();
+	}
 	
 	public static String getPrincipalUserName(){
 		String username = "unknown";
@@ -59,4 +68,13 @@ public class SecurityUtils {
 	    return username;
 	}
 
+	/**
+	 * This can be used to get the current user's principal name from security context
+	 * 
+	 * @return principal name
+	 */
+	@Deprecated
+	public static String getCurrentPrincipalName(){
+	    return getPrincipalUserName();
+	}
 }

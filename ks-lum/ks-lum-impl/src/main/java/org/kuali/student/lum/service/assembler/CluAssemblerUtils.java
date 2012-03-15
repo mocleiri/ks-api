@@ -15,22 +15,27 @@
  */
 package org.kuali.student.lum.service.assembler;
 
-import org.kuali.student.core.assembly.BaseDTOAssemblyNode;
-import org.kuali.student.core.assembly.BaseDTOAssemblyNode.NodeOperation;
-import org.kuali.student.core.assembly.data.AssemblyException;
-import org.kuali.student.core.dto.RichTextInfo;
-import org.kuali.student.core.exceptions.DoesNotExistException;
-import org.kuali.student.core.exceptions.InvalidParameterException;
-import org.kuali.student.core.exceptions.MissingParameterException;
-import org.kuali.student.core.exceptions.OperationFailedException;
-import org.kuali.student.lum.course.dto.LoDisplayInfo;
+import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode;
+import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode.NodeOperation;
+import org.kuali.student.r2.common.assembler.AssemblyException;
+import org.kuali.student.r2.common.dto.DtoConstants;
+import org.kuali.student.r2.common.dto.RichTextInfo;
+import org.kuali.student.r2.common.dto.ContextInfo;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.lum.clu.service.CluService;
+import org.kuali.student.r2.lum.course.dto.LoDisplayInfo;
+import org.kuali.student.conversion.util.R1R2ConverterUtil;
 import org.kuali.student.lum.course.service.assembler.LoAssembler;
-import org.kuali.student.lum.lo.dto.LoInfo;
-import org.kuali.student.lum.lo.service.LearningObjectiveService;
-import org.kuali.student.lum.lu.dto.CluLoRelationInfo;
-import org.kuali.student.lum.lu.dto.CluResultInfo;
-import org.kuali.student.lum.lu.dto.ResultOptionInfo;
-import org.kuali.student.lum.lu.service.LuService;
+import org.kuali.student.r2.lum.lo.dto.LoInfo;
+import org.kuali.student.r2.lum.lo.service.LearningObjectiveService;
+import org.kuali.student.r2.lum.clu.dto.CluLoRelationInfo;
+import org.kuali.student.r2.lum.clu.dto.CluResultInfo;
+import org.kuali.student.r2.lum.clu.dto.ResultOptionInfo;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,7 +51,7 @@ import java.util.Map.Entry;
  *
  */
 public class CluAssemblerUtils {
-    private LuService luService;
+    private CluService cluService;
     private LearningObjectiveService loService;
     private LoAssembler loAssembler;
 
@@ -69,7 +74,7 @@ public class CluAssemblerUtils {
 
     public BaseDTOAssemblyNode<?, ?> disassembleCluResults(String cluId,
 			String cluState, List<String> options, NodeOperation operation, String resultType,
-			String resultsDescription, String resultDescription) throws AssemblyException {
+			String resultsDescription, String resultDescription, ContextInfo contextInfo) throws AssemblyException {
 		BaseDTOAssemblyNode<List<String>, CluResultInfo> cluResultNode = new BaseDTOAssemblyNode<List<String>, CluResultInfo>(null);
 		if(resultType==null){
 			throw new AssemblyException("resultType can not be null");
@@ -84,7 +89,8 @@ public class CluAssemblerUtils {
 		//If this is not a create, lookup the results for this clu
 		if (!NodeOperation.CREATE.equals(operation)) {
 			try {
-				List<CluResultInfo> cluResultList = luService.getCluResultByClu(cluId);
+			 	List<CluResultInfo> cluResultList = null;
+				cluResultList = cluService.getCluResultByClu(cluId, contextInfo);
 
 				for (CluResultInfo currentResult : cluResultList) {
 					if (resultType.equals(currentResult.getType())) {
@@ -95,21 +101,25 @@ public class CluAssemblerUtils {
 						}else{
 							//Find all the Result options and store in a map for easy access later
 							cluResultNode.setOperation(NodeOperation.UPDATE);
+							
 							for(ResultOptionInfo resultOption:currentResult.getResultOptions()){
-								currentResults.put(resultOption.getResultComponentId(), resultOption);
+								// Set the state of the result option so it appears in the KSLU_RSLT_OPT table
+							    // States include Draft, Approved, Superseded etc.
+							    resultOption.setState(cluState);
+							    currentResults.put(resultOption.getResultComponentId(), resultOption);
 							}
 						}
 					}
 				}
-			} catch (DoesNotExistException e) {
-			} catch (InvalidParameterException e) {
-				throw new AssemblyException("Error getting related " + resultsDescription, e);
-			} catch (MissingParameterException e) {
-				throw new AssemblyException("Error getting related " + resultsDescription, e);
-			} catch (OperationFailedException e) {
-				throw new AssemblyException("Error getting related " + resultsDescription, e);
-			}
-		}
+				} catch (DoesNotExistException e) {
+				} catch (InvalidParameterException e) {
+				    throw new AssemblyException("Error getting related " + resultsDescription, e);
+				} catch (MissingParameterException e) {
+				    throw new AssemblyException("Error getting related " + resultsDescription, e);
+				} catch (OperationFailedException e) {
+				    throw new AssemblyException("Error getting related " + resultsDescription, e);
+				    }
+				 }
 
 		//If this is a delete we don't need the result options, just the CluResultInfo
 		if(!NodeOperation.DELETE.equals(operation)){
@@ -121,27 +131,39 @@ public class CluAssemblerUtils {
 				cluResult.setType(resultType);
 				RichTextInfo desc = new RichTextInfo();
 				desc.setPlain(resultsDescription);
-				cluResult.setDesc(desc);
+				cluResult.setDescr(desc);
 				cluResult.setEffectiveDate(new Date());
 				cluResultNode.setOperation(NodeOperation.CREATE);
 			}
 
+			
 			cluResult.setResultOptions(new ArrayList<ResultOptionInfo>());
 
+            // Set the state of the result so it appears in the KSLU_CLU_RSLT table
+            // States include Draft, Approved, Superseded etc.
+			cluResult.setState(cluState);
+			
 			// Loop through all the credit options in this clu
 			for (String optionType : options) {
 				if(currentResults.containsKey(optionType)){
 					//If the option exists already copy it to the new list of result options
 					ResultOptionInfo resultOptionInfo = currentResults.get(optionType);
+                    
+					// Set the state of the result option so it appears in the KSLU_RSLT_OPT table
+                    // States include Draft, Approved, Superseded etc.
+					resultOptionInfo.setState(cluState);
 					cluResult.getResultOptions().add(resultOptionInfo);
 				}else{
 					//Otherwise create a new result option
 					ResultOptionInfo resultOptionInfo = new ResultOptionInfo();
 					RichTextInfo desc = new RichTextInfo();
 					desc.setPlain(resultDescription);
-					resultOptionInfo.setDesc(desc);
+					resultOptionInfo.setDescr(desc);
 					resultOptionInfo.setResultComponentId(optionType);
-					resultOptionInfo.setState(cluState);
+                    
+					// Set the state of the result option so it appears in the KSLU_RSLT_OPT table
+                    // States include Draft, Approved, Superseded etc.
+                    resultOptionInfo.setState(cluState);
 
 					cluResult.getResultOptions().add(resultOptionInfo);
 				}
@@ -152,14 +174,14 @@ public class CluAssemblerUtils {
 		return cluResultNode;
 	}
 
-    public List<LoDisplayInfo> assembleLos(String cluId, boolean shallowBuild) throws AssemblyException {
+    public List<LoDisplayInfo> assembleLos(String cluId, boolean shallowBuild, ContextInfo contextInfo) throws AssemblyException {
         List<LoDisplayInfo> loInfos = new ArrayList<LoDisplayInfo>();
         try {
-            List<CluLoRelationInfo> cluLoRelations = luService.getCluLoRelationsByClu(cluId);
+            List<CluLoRelationInfo> cluLoRelations = cluService.getCluLoRelationsByClu(cluId, contextInfo);
             for (CluLoRelationInfo cluLoRelation : cluLoRelations) {
                 String loId = cluLoRelation.getLoId();
-                LoInfo lo = loService.getLo(loId);
-                loInfos.add(loAssembler.assemble(lo, null, shallowBuild));
+                LoInfo lo = loService.getLo(loId, contextInfo);
+                // TODO KSCM-421 loInfos.add(loAssembler.assemble(R1R2ConverterUtil.convert(lo, org.kuali.student.r1.lum.lo.dto.LoInfo.class), null, shallowBuild, contextInfo));
             }
         } catch (Exception e) {
             throw new AssemblyException("Error getting learning objectives", e);
@@ -169,7 +191,7 @@ public class CluAssemblerUtils {
     }
     
 	public List<BaseDTOAssemblyNode<?, ?>> disassembleLos(String cluId, String cluState, List<LoDisplayInfo> loInfos,
-			NodeOperation operation) throws AssemblyException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException{
+			NodeOperation operation, ContextInfo contextInfo) throws AssemblyException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{
 		// TODO Auto-generated method stub
 		List<BaseDTOAssemblyNode<?, ?>> results = new ArrayList<BaseDTOAssemblyNode<?, ?>>();
 
@@ -177,7 +199,7 @@ public class CluAssemblerUtils {
 		// id
 		Map<String, CluLoRelationInfo> currentCluLoRelations = new HashMap<String, CluLoRelationInfo>();
 		try {
-			List<CluLoRelationInfo> cluLoRelations = luService.getCluLoRelationsByClu(cluId);
+			List<CluLoRelationInfo> cluLoRelations = cluService.getCluLoRelationsByClu(cluId, contextInfo);
 			for(CluLoRelationInfo cluLoRelation:cluLoRelations){
 				if(CluAssemblerConstants.CLU_LO_CLU_SPECIFIC_RELATION.equals(cluLoRelation.getType())){
 					currentCluLoRelations.put(cluLoRelation.getLoId(), cluLoRelation);
@@ -198,8 +220,8 @@ public class CluAssemblerUtils {
                 // the lo does not exist, so create
                 // Assemble and add the lo
 		    	loDisplay.getLoInfo().setId(null);
-                BaseDTOAssemblyNode<LoDisplayInfo, LoInfo> loNode = loAssembler
-                        .disassemble(loDisplay, NodeOperation.CREATE);
+		    	loDisplay.getLoInfo().setState(cluState);
+                BaseDTOAssemblyNode<org.kuali.student.r1.lum.course.dto.LoDisplayInfo, org.kuali.student.r1.lum.lo.dto.LoInfo> loNode = loAssembler.disassemble(R1R2ConverterUtil.convert(loDisplay, org.kuali.student.r1.lum.course.dto.LoDisplayInfo.class), NodeOperation.CREATE, contextInfo);
                 results.add(loNode);
 
                 // Create the relationship and add it as well
@@ -207,7 +229,11 @@ public class CluAssemblerUtils {
                 relation.setCluId(cluId);
                 relation.setLoId(loNode.getNodeData().getId());
                 relation.setType(CluAssemblerConstants.CLU_LO_CLU_SPECIFIC_RELATION);
-                relation.setState(cluState);
+                
+                // Relations can be either Active or Suspended
+                // For now, we set them all to Active
+                // DO NOT use states like draft, superseded, etc for relations
+                relation.setState(DtoConstants.STATE_ACTIVE);
 
                 BaseDTOAssemblyNode<LoDisplayInfo, CluLoRelationInfo> relationNode = new BaseDTOAssemblyNode<LoDisplayInfo, CluLoRelationInfo>(
                         null);
@@ -217,9 +243,10 @@ public class CluAssemblerUtils {
                 results.add(relationNode);
             } else if (NodeOperation.UPDATE == operation
 					&& currentCluLoRelations.containsKey(loDisplay.getLoInfo().getId())) {
-				// If the clu already has this lo, then just update the lo
-                BaseDTOAssemblyNode<LoDisplayInfo, LoInfo> loNode = loAssembler
-                		.disassemble(loDisplay, NodeOperation.UPDATE);
+				// On update, we need to change the state of the LO to
+                // match the state of the parent program
+                loDisplay.getLoInfo().setState(cluState);
+                BaseDTOAssemblyNode<org.kuali.student.r1.lum.course.dto.LoDisplayInfo, org.kuali.student.r1.lum.lo.dto.LoInfo> loNode = loAssembler.disassemble(R1R2ConverterUtil.convert(loDisplay, org.kuali.student.r1.lum.course.dto.LoDisplayInfo.class), NodeOperation.UPDATE, contextInfo);
 				results.add(loNode);
 
 				// remove this entry from the map so we can tell what needs to
@@ -236,8 +263,7 @@ public class CluAssemblerUtils {
                 relationToDeleteNode.setOperation(NodeOperation.DELETE);
                 results.add(relationToDeleteNode);
 
-                BaseDTOAssemblyNode<LoDisplayInfo, LoInfo> loNode = loAssembler
-        				.disassemble(loDisplay, NodeOperation.DELETE);
+                BaseDTOAssemblyNode<org.kuali.student.r1.lum.course.dto.LoDisplayInfo, org.kuali.student.r1.lum.lo.dto.LoInfo> loNode = loAssembler.disassemble(R1R2ConverterUtil.convert(loDisplay, org.kuali.student.r1.lum.course.dto.LoDisplayInfo.class), NodeOperation.DELETE, contextInfo);
                 results.add(loNode);
 
                 // remove this entry from the map so we can tell what needs to
@@ -258,10 +284,9 @@ public class CluAssemblerUtils {
             relationToDeleteNode.setOperation(NodeOperation.DELETE);
             results.add(relationToDeleteNode);
 
-            LoInfo loToDelete = loService.getLo(entry.getKey());
-            LoDisplayInfo loDisplayToDelete = loAssembler.assemble(loToDelete, null, false);
-            BaseDTOAssemblyNode<LoDisplayInfo, LoInfo> loNode = loAssembler
-            		.disassemble(loDisplayToDelete, NodeOperation.DELETE);
+            LoInfo loToDelete = loToDelete = loService.getLo(entry.getKey(), contextInfo);
+            LoDisplayInfo loDisplayToDelete = R1R2ConverterUtil.convert(loAssembler.assemble(R1R2ConverterUtil.convert(loToDelete, org.kuali.student.r1.lum.lo.dto.LoInfo.class), null, false, contextInfo), org.kuali.student.r2.lum.course.dto.LoDisplayInfo.class);
+            BaseDTOAssemblyNode<org.kuali.student.r1.lum.course.dto.LoDisplayInfo, org.kuali.student.r1.lum.lo.dto.LoInfo> loNode = loAssembler.disassemble(R1R2ConverterUtil.convert(loDisplayToDelete, org.kuali.student.r1.lum.course.dto.LoDisplayInfo.class), NodeOperation.DELETE, contextInfo);
             results.add(loNode);
         }
 
@@ -269,8 +294,8 @@ public class CluAssemblerUtils {
 	}
 
     // Spring setters
-    public void setLuService(LuService luService) {
-        this.luService = luService;
+    public void setCluService(CluService cluService) {
+        this.cluService = cluService;
     }
 
     public void setLoService(LearningObjectiveService loService) {

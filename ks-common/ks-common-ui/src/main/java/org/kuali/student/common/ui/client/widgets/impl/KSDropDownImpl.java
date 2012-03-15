@@ -22,7 +22,7 @@ import org.kuali.student.common.ui.client.mvc.Callback;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectItemWidgetAbstract;
 import org.kuali.student.common.ui.client.widgets.list.ListItems;
 import org.kuali.student.common.ui.client.widgets.list.ModelListItems;
-import org.kuali.student.core.dto.Idable;
+import org.kuali.student.r1.common.dto.Idable;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -41,6 +41,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ListBox;
 
+@Deprecated
 public class KSDropDownImpl extends KSSelectItemWidgetAbstract implements HasFocusHandlers, HasBlurHandlers{
 
 	private ListBox listBox;
@@ -120,11 +121,21 @@ public class KSDropDownImpl extends KSSelectItemWidgetAbstract implements HasFoc
 
 	public void selectItem(String id){
 	    if (id != null){
+	    	boolean matched = false;
     		for(int i = 0; i < listBox.getItemCount(); i++){
     			if(id.equals(listBox.getValue(i))){
+    				matched = true;
     				listBox.setSelectedIndex(i);
     				fireChangeEvent(false);
+    				break;
     			}
+    		}
+    		if(!matched){
+	    		//Default to select the first item if the id does not match and make it a user event
+				if(blankFirstItem && listBox.getSelectedIndex() != 0){
+					listBox.setSelectedIndex(0);
+					fireChangeEvent(false);
+				}
     		}
 	    }
 	}

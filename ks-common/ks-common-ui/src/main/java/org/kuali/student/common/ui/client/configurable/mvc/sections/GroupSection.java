@@ -18,6 +18,13 @@ package org.kuali.student.common.ui.client.configurable.mvc.sections;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.widgets.field.layout.layouts.GroupFieldLayout;
 
+/**
+ * A section which uses GroupFieldLayout.
+ * 
+ * @author Kuali Student Team
+ * @see GroupFieldLayout
+ */
+@Deprecated
 public class GroupSection extends BaseSection{
 
 	public GroupSection(){

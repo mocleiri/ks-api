@@ -19,17 +19,18 @@ import java.util.List;
 
 import org.kuali.student.common.ui.client.security.AuthorizationCallback;
 import org.kuali.student.common.ui.client.security.RequiresAuthorization;
-import org.kuali.student.core.rice.authorization.PermissionType;
+import org.kuali.student.r1.common.rice.authorization.PermissionType;
 
 
 /**
  * This is a simple view composite that delegates all view operations to nested
  * controller. Use of this view allows you to nest controllers in the view
- * hierarchy.
+ * hierarchy.  This class is deprecated for all future development.
  * 
  * @author Kuali Student Team
  *
  */
+@Deprecated
 public class DelegatingViewComposite extends ViewComposite implements RequiresAuthorization {
     Controller childController;
     
@@ -89,11 +90,11 @@ public class DelegatingViewComposite extends ViewComposite implements RequiresAu
     }
 
 	@Override
-	public void checkAuthorization(PermissionType permissionType, AuthorizationCallback callback) {
-		if (childController instanceof RequiresAuthorization){
-			((RequiresAuthorization)childController).checkAuthorization(permissionType, callback);
-		}				
-	}
+    public void checkAuthorization(AuthorizationCallback callback) {
+        if (childController instanceof RequiresAuthorization){
+            ((RequiresAuthorization)childController).checkAuthorization(callback);
+        }               
+    }
 
 	@Override
 	public boolean isAuthorizationRequired() {

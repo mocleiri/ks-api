@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.kuali.student.lum.course.dto.CourseInfo;
+import org.kuali.student.r1.common.dto.DtoConstants;
+import org.kuali.student.r1.lum.course.dto.CourseInfo;
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.lrc.dto.ResultComponentInfo;
+import org.kuali.student.r1.lum.lrc.dto.ResultComponentInfo;
 
 /**
  * Use this class to generate test data for a course (it may need improvements for creating real relationships for more
@@ -193,7 +194,7 @@ public class CourseDataGenerator {
             return activities[generator.nextInt(activities.length)];
         }
         if ("state".equals(name)) {
-            return "draft";
+            return DtoConstants.STATE_DRAFT;
         }
         if ("contactHours".equals(parentPropertyName) && "unitType".equals(name)) {
             return "kuali.atp.duration.day";
@@ -228,6 +229,12 @@ public class CourseDataGenerator {
         // TODO: make it return A, B, C...
         if ("variationCode".equals(name)) {
             return "A";
+        }
+        if("startTerm".equals(name)){
+        	return "atp.2009FallSemester";
+        }
+        if("endTerm".equals(name)){
+        	return "atp.2009FallSemester";
         }
         // Default
         return name + "-" + propertyIndex;

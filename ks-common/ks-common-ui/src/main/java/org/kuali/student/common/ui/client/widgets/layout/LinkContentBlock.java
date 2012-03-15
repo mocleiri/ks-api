@@ -7,6 +7,13 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * A content block which contains a list of links/widgets and adds them in a consistent manner
+ * 
+ * @author Kuali Student Team
+ *
+ */
+@Deprecated
 public class LinkContentBlock extends ContentBlock{
 
 	protected KSListPanel listLayout = new KSListPanel();

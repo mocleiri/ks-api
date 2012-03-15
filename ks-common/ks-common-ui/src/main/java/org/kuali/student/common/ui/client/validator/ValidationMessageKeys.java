@@ -15,12 +15,13 @@
 
 package org.kuali.student.common.ui.client.validator;
 
+@Deprecated
 public enum ValidationMessageKeys {
 	REQUIRED("validation.required"),
 	MIN_OCCURS("validation.minOccurs", "minOccurs"),
 	MAX_OCCURS("validation.maxOccurs", "maxOccurs"),
 	REQUIRES_FIELD("validation.requiresField"),
-	VALID_CHARS("validation.validCharsFailed"),
+	VALID_CHARS("validation.validCharsFailed", "validChars"),
 	OCCURS("validation.occurs"),
 	BOOLEAN("validation.mustBeBoolean"),
 	DOUBLE("validation.mustBeDouble"),
@@ -33,8 +34,9 @@ public enum ValidationMessageKeys {
 	DATE("validation.mustBeDate"),
 	LENGTH_OUT_OF_RANGE("validation.lengthOutOfRange"),
 	MAX_LENGTH("validation.maxLengthFailed", "maxLength"),
-	MIN_LENGTH("validation.minLengthFailed", "minLength")
-	;
+	MIN_LENGTH("validation.minLengthFailed", "minLength"),
+	INVALID_VALUE("validation.invalid");
+    
 	private final String key;
 	private final String property;
 	

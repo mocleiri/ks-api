@@ -25,10 +25,11 @@ import org.kuali.student.common.ui.client.mvc.CollectionModel;
 import org.kuali.student.common.ui.client.mvc.CollectionModelChangeEvent;
 import org.kuali.student.common.ui.client.mvc.ModelChangeEvent;
 import org.kuali.student.common.ui.client.mvc.ModelChangeHandler;
-import org.kuali.student.core.dto.Idable;
+import org.kuali.student.r1.common.dto.Idable;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 
+@Deprecated
 public abstract class ModelListItems<T extends Idable> implements ListItems{
     protected List<Callback<T>> addCallbacks = new ArrayList<Callback<T>>();
     protected List<Callback<T>> removeCallbacks = new ArrayList<Callback<T>>();

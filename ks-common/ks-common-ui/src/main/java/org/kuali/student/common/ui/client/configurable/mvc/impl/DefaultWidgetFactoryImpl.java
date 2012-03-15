@@ -28,15 +28,22 @@ import org.kuali.student.common.ui.client.widgets.KSTextArea;
 import org.kuali.student.common.ui.client.widgets.KSTextBox;
 import org.kuali.student.common.ui.client.widgets.list.KSSelectedList;
 import org.kuali.student.common.ui.client.widgets.search.KSPicker;
-import org.kuali.student.core.assembly.data.LookupMetadata;
-import org.kuali.student.core.assembly.data.LookupParamMetadata;
-import org.kuali.student.core.assembly.data.Metadata;
-import org.kuali.student.core.assembly.data.MetadataInterrogator;
-import org.kuali.student.core.assembly.data.Data.DataType;
-import org.kuali.student.core.assembly.data.MetadataInterrogator.ConstraintIds;
+import org.kuali.student.r1.common.assembly.data.LookupMetadata;
+import org.kuali.student.r1.common.assembly.data.LookupParamMetadata;
+import org.kuali.student.r1.common.assembly.data.Metadata;
+import org.kuali.student.r1.common.assembly.data.MetadataInterrogator;
+import org.kuali.student.r1.common.assembly.data.Data.DataType;
+import org.kuali.student.r1.common.assembly.data.MetadataInterrogator.ConstraintIds;
 
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * DefaultWidgetFactory implementation
+ * @see DefaultWidgetFactory
+ * @author Kuali Student Team
+ *
+ */
+@Deprecated
 public class DefaultWidgetFactoryImpl extends DefaultWidgetFactory {	
 
 	@Override
@@ -95,7 +102,7 @@ public class DefaultWidgetFactoryImpl extends DefaultWidgetFactory {
 		return _getWidget(config);
 	}
 
-	private Widget _getWidget(WidgetConfigInfo config) {
+	protected Widget _getWidget(WidgetConfigInfo config) {
 		Widget result = null;
 		if(!config.canView) {
 		    result =  new KSPlaceholder();
@@ -138,6 +145,7 @@ public class DefaultWidgetFactoryImpl extends DefaultWidgetFactory {
                             result = new KSTextArea();
                             result.addStyleName("ks-textarea-width");
                             if(config.maxLength != null){
+                                ((KSTextArea)(result)).setMaxLength(config.maxLength);
                             	if(config.maxLength < 250){
                             		result.addStyleName("ks-textarea-small-height");
                             	}

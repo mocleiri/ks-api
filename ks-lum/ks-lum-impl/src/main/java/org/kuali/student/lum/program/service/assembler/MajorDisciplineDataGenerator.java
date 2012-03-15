@@ -1,7 +1,8 @@
 package org.kuali.student.lum.program.service.assembler;
 
+import org.kuali.student.r1.common.dto.DtoConstants;
 import org.kuali.student.lum.course.service.assembler.CourseAssemblerConstants;
-import org.kuali.student.lum.program.dto.MajorDisciplineInfo;
+import org.kuali.student.r1.lum.program.dto.MajorDisciplineInfo;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -202,7 +203,7 @@ public class MajorDisciplineDataGenerator {
 		}
 
 		if("state".equals(name)){
-			return ProgramAssemblerConstants.DRAFT;
+			return DtoConstants.STATE_DRAFT;
 		}
 
 		if("campusLocations".equals(parentPropertyName)){

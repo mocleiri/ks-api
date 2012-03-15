@@ -3,6 +3,13 @@ package org.kuali.student.common.ui.client.configurable.mvc.sections;
 import org.kuali.student.common.ui.client.configurable.mvc.SectionTitle;
 import org.kuali.student.common.ui.client.widgets.field.layout.layouts.TableFieldLayout;
 
+/**
+ * Section that uses a TableFieldLayout.
+ * 
+ * @author Kuali Student Team
+ * @see TableFieldLayout
+ */
+@Deprecated
 public class TableSection extends BaseSection{
 	public TableSection(){
 		init();

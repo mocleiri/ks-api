@@ -19,12 +19,19 @@ import java.util.Date;
 
 import org.kuali.student.common.ui.client.mvc.DataModel;
 import org.kuali.student.common.ui.client.widgets.KSCheckBox;
-import org.kuali.student.core.assembly.data.Data;
-import org.kuali.student.core.assembly.data.QueryPath;
+import org.kuali.student.r1.common.assembly.data.Data;
+import org.kuali.student.r1.common.assembly.data.QueryPath;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasValue;
 
+/**
+ * Model widget binding for HasValue widgets.  HasValue widgets can return any object type, so the
+ * to from translated is done with known/expected types for KS.
+ * @author Kuali Student Team
+ *
+ */
+@Deprecated
 public class HasValueBinding extends ModelWidgetBindingSupport<HasValue> {
 
     public static HasValueBinding INSTANCE = new HasValueBinding();
