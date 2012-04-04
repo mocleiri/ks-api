@@ -19,7 +19,15 @@ import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
+import org.kuali.student.r2.common.exceptions.DependentObjectsExistException;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
+import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.core.appointment.constants.AppointmentServiceConstants;
 import org.kuali.student.r2.core.appointment.dto.AppointmentInfo;
 import org.kuali.student.r2.core.appointment.dto.AppointmentSlotInfo;
@@ -46,12 +54,12 @@ public interface AppointmentService {
      *                      locale information about the caller of service
      *                      operation
      * @return an Appointment
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentId or contextInfo is missing
+     * @throws DoesNotExistException     appointmentId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentId or contextInfo is missing
      *                                   or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public AppointmentInfo getAppointment(@WebParam(name = "appointmentId") String appointmentId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -64,12 +72,12 @@ public interface AppointmentService {
      *                       locale information about the caller of service
      *                       operation
      * @return a list of Appointments
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     a appointmentId in list not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentId or contextInfo is
+     * @throws DoesNotExistException     a appointmentId in list not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentInfo> getAppointmentsByIds(@WebParam(name = "appointmentIds") List<String> appointmentIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -82,11 +90,11 @@ public interface AppointmentService {
      *                           service operation
      * @return a list of Appointment identifiers matching appointmentTypeKey or
      *         an empty list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentTypeKey or contextInfo is
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentTypeKey or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> getAppointmentIdsByType(@WebParam(name = "appointmentTypeKey") String appointmentTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -99,11 +107,11 @@ public interface AppointmentService {
      *                          service operation
      * @return a list of Appointments to the given AppointmentSlot or an empty
      *         list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException contextInfo is not valid
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentSlotId or contextInfo is
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException appointmentSlotId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentInfo> getAppointmentsBySlot(@WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -116,11 +124,11 @@ public interface AppointmentService {
      *                    operation
      * @return a list of Appointments to the given Person or an empty list if
      *         none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException personId or contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException personId or contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> getAppointmentIdsByPerson(@WebParam(name = "personId") String personId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -134,11 +142,11 @@ public interface AppointmentService {
      *                          service operation
      * @return a list of Appointments to the given Person and Slot or an empty
      *         list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException personId, appointmentSlotId or contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException personId, appointmentSlotId or contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentInfo> getAppointmentsByPersonAndSlot(@WebParam(name = "personId") String personId, @WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -151,11 +159,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of Appointment Ids
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> searchForAppointmentIds(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -168,11 +176,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of Appointment information
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentInfo> searchForAppointments(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -197,15 +205,15 @@ public interface AppointmentService {
      *                           service operation
      * @return a list of validation results or an empty list if validation
      *         succeeded
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     validationTypeKey, personId,
+     * @throws DoesNotExistException     validationTypeKey, personId,
      *                                   appointmentSlotId or appointmentTypeKey
      *                                   not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid appointmentInfo or contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException validationTypeKey, personId,
+     * @throws InvalidParameterException invalid appointmentInfo or contextInfo
+     * @throws MissingParameterException validationTypeKey, personId,
      *                                   appointmentSlotId, appointmentTypeKey
      *                                   or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<ValidationResultInfo> validateAppointment(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "personId") String personId, @WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "appointmentTypeKey") String appointmentTypeKey, @WebParam(name = "appointmentInfo") AppointmentInfo appointmentInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -221,17 +229,17 @@ public interface AppointmentService {
      *                           and locale information about the caller of
      *                           service operation
      * @return detailed information about the appointment
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException supplied data is invalid
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentSlotId or appointmentTypeKey
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws DoesNotExistException        appointmentSlotId or appointmentTypeKey
      *                                      does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentInfo or
+     * @throws InvalidParameterException    invalid appointmentInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    personId, appointmentSlotId,
+     * @throws MissingParameterException    personId, appointmentSlotId,
      *                                      appointmentTypeKey or contextInfo is
      *                                      missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read only
      */
     public AppointmentInfo createAppointment(@WebParam(name = "personId") String personId, @WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "appointmentTypeKey") String appointmentTypeKey, @WebParam(name = "appointmentInfo") AppointmentInfo appointmentInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
@@ -245,17 +253,17 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException supplied data is invalid
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentWindowId or appointmentTypeKey
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws DoesNotExistException        appointmentWindowId or appointmentTypeKey
      *                                      does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentInfo or
+     * @throws InvalidParameterException    invalid appointmentInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    personId, appointmentWindowId,
+     * @throws MissingParameterException    personId, appointmentWindowId,
      *                                      appointmentTypeKey or contextInfo is
      *                                      missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read only
      * @impl AppointmentSlots are assumed to be already generated for the
      * AppointmentWindow
@@ -275,18 +283,18 @@ public interface AppointmentService {
      *                        locale information about the caller of service
      *                        operation
      * @return updated appointment relationship information
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException one or more values invalid for this
+     * @throws DataValidationErrorException one or more values invalid for this
      *                                      operation
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentInfo or
+     * @throws DoesNotExistException        appointmentId not found
+     * @throws InvalidParameterException    invalid appointmentInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    appointmentId, appointmentInfo or
+     * @throws MissingParameterException    appointmentId, appointmentInfo or
      *                                      contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read-only
-     * @throws org.kuali.student.r2.common.exceptions.VersionMismatchException     optimistic locking failure or the
+     * @throws VersionMismatchException     optimistic locking failure or the
      *                                      action was attempted on an out of
      *                                      date version
      */
@@ -300,12 +308,12 @@ public interface AppointmentService {
      *                      locale information about the caller of service
      *                      operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentId or contextInfo is missing
+     * @throws DoesNotExistException     appointmentId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentId or contextInfo is missing
      *                                   or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public StatusInfo deleteAppointment(@WebParam(name = "appointmentId") String appointmentId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -317,12 +325,12 @@ public interface AppointmentService {
      *                          and locale information about the caller of
      *                          service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentSlotId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentSlotId or contextInfo is
+     * @throws DoesNotExistException     appointmentSlotId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentSlotId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      * @impl capture number of appointments deleted in the message field of
      * StatusInfo
      */
@@ -336,12 +344,12 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentWindowId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowId or contextInfo is
+     * @throws DoesNotExistException     appointmentWindowId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentWindowId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      * @impl capture number of appointments deleted in the message field of
      * StatusInfo
      */
@@ -355,12 +363,12 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return an AppointmentWindow
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentWindowId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowId or contextInfo is
+     * @throws DoesNotExistException     appointmentWindowId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentWindowId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public AppointmentWindowInfo getAppointmentWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -373,13 +381,13 @@ public interface AppointmentService {
      *                             principalId and locale information about the
      *                             caller of service operation
      * @return a list of AppointmentWindows
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     a appointmentWindowId in list not
+     * @throws DoesNotExistException     a appointmentWindowId in list not
      *                                   found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowId or contextInfo is
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentWindowId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentWindowInfo> getAppointmentWindowsByIds(@WebParam(name = "appointmentWindowIds") List<String> appointmentWindowIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -393,11 +401,11 @@ public interface AppointmentService {
      *                                 the caller of service operation
      * @return a list of AppointmentWindow identifiers matching
      *         appointmentWindowTypeKey or an empty list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowTypeKey or contextInfo
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentWindowTypeKey or contextInfo
      *                                   is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> getAppointmentWindowIdsByType(@WebParam(name = "appointmentWindowTypeKey") String appointmentWindowTypeKey, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -410,11 +418,11 @@ public interface AppointmentService {
      *                     operation
      * @return AppointmentWindows associated with the given Population or an
      *         empty list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException contextInfo is not valid
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException populationId or contextInfo is missing
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException populationId or contextInfo is missing
      *                                   or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> getAppointmentWindowIdsByPopulation(@WebParam(name = "populationId") String populationId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -428,11 +436,11 @@ public interface AppointmentService {
      *                          service operation
      * @return AppointmentWindows associated with the given Population or an
      *         empty list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException contextInfo is not valid
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException periodMilestoneId or contextInfo is
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException periodMilestoneId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentWindowInfo> getAppointmentWindowsByPeriod(@WebParam(name = "periodMilestoneId") String periodMilestoneId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -445,11 +453,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of AppointmentWindow Ids
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> searchForAppointmentWindowIds(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -462,11 +470,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of Appointment information
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentWindowInfo> searchForAppointmentWindows(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -490,15 +498,15 @@ public interface AppointmentService {
      *                                 the caller of service operation
      * @return a list of validation results or an empty list if validation
      *         succeeded
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     assignedOrderTypeKey or appointmentWindowTypeKey
+     * @throws DoesNotExistException     assignedOrderTypeKey or appointmentWindowTypeKey
      *                                   does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid appointmentWindowInfo or
+     * @throws InvalidParameterException invalid appointmentWindowInfo or
      *                                   contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException periodMilestoneId, populationId,
+     * @throws MissingParameterException periodMilestoneId, populationId,
      *                                   assignedOrderTypeKey, appointmentWindowTypeKey
      *                                   or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<ValidationResultInfo> validateAppointmentWindow(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "appointmentWindowTypeKey") String appointmentWindowTypeKey, @WebParam(name = "appointmentWindowInfo") AppointmentWindowInfo appointmentWindowInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -513,17 +521,17 @@ public interface AppointmentService {
      *                                 principalId and locale information about
      *                                 the caller of service operation
      * @return detailed information about the appointment
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException supplied data is invalid
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        assignedOrderTypeKey or appointmentWindowTypeKey
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws DoesNotExistException        assignedOrderTypeKey or appointmentWindowTypeKey
      *                                      does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentWindowInfo or
+     * @throws InvalidParameterException    invalid appointmentWindowInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    periodMilestoneId, populationId,
+     * @throws MissingParameterException    periodMilestoneId, populationId,
      *                                      assignedOrderTypeKey, appointmentWindowTypeKey
      *                                      or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read only
      */
     public AppointmentWindowInfo createAppointmentWindow(@WebParam(name = "appointmentWindowTypeKey") String appointmentWindowTypeKey, @WebParam(name = "appointmentWindowInfo") AppointmentWindowInfo appointmentWindowInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException;
@@ -539,18 +547,18 @@ public interface AppointmentService {
      *                              principalId and locale information about the
      *                              caller of service operation
      * @return updated appointment relationship information
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException one or more values invalid for this
+     * @throws DataValidationErrorException one or more values invalid for this
      *                                      operation
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentWindowId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentWindowInfo or
+     * @throws DoesNotExistException        appointmentWindowId not found
+     * @throws InvalidParameterException    invalid appointmentWindowInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    appointmentWindowId, appointmentWindowInfo
+     * @throws MissingParameterException    appointmentWindowId, appointmentWindowInfo
      *                                      or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read-only
-     * @throws org.kuali.student.r2.common.exceptions.VersionMismatchException     optimistic locking failure or the
+     * @throws VersionMismatchException     optimistic locking failure or the
      *                                      action was attempted on an out of
      *                                      date version
      */
@@ -564,12 +572,12 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentWindowId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowId or contextInfo is
+     * @throws DoesNotExistException     appointmentWindowId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentWindowId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public StatusInfo deleteAppointmentWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -581,12 +589,12 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return an AppointmentSlot
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     appointmentSlotId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentSlotId or contextInfo is
+     * @throws DoesNotExistException     appointmentSlotId not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentSlotId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public AppointmentSlotInfo getAppointmentSlot(@WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -599,12 +607,12 @@ public interface AppointmentService {
      *                       locale information about the caller of service
      *                       operation
      * @return a list of Appointments
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException     an appointmentSlotId in list not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentSlotId or contextInfo is
+     * @throws DoesNotExistException     an appointmentSlotId in list not found
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException appointmentSlotId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentSlotInfo> getAppointmentSlotsByIds(@WebParam(name = "appointmentSlotIds") List<String> appointmentSlotIds, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -618,11 +626,11 @@ public interface AppointmentService {
      *                          service operation
      * @return AppointmentSlots belonging to the Person or an empty list if none
      *         found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException contextInfo is not valid
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException personId or contextInfo is missing or
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException personId or contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentSlotInfo> getAppointmentSlotsByPersonAndPeriod(@WebParam(name = "personId") String personId, @WebParam(name = "periodMilestoneId") String periodMilestoneId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -635,11 +643,11 @@ public interface AppointmentService {
      *                            service operation
      * @return AppointmentSlots belonging to the AppointmentWindow or an empty
      *         list if none found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException contextInfo is not valid
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException appointmentWindowId or contextInfo is
+     * @throws InvalidParameterException contextInfo is not valid
+     * @throws MissingParameterException appointmentWindowId or contextInfo is
      *                                   missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentSlotInfo> getAppointmentSlotsByWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -653,11 +661,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of AppointmentSlot Ids
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<String> searchForAppointmentSlotIds(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -670,11 +678,11 @@ public interface AppointmentService {
      *                    locale information about the caller of service
      *                    operation
      * @return list of AppointmentSlot information
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException criteria, contextInfo is missing or
+     * @throws InvalidParameterException invalid contextInfo
+     * @throws MissingParameterException criteria, contextInfo is missing or
      *                                   null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException  unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException an authorization failure occurred
+     * @throws OperationFailedException  unable to complete request
+     * @throws PermissionDeniedException an authorization failure occurred
      */
     public List<AppointmentSlotInfo> searchForAppointmentSlots(@WebParam(name = "criteria") QueryByCriteria criteria, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -691,15 +699,15 @@ public interface AppointmentService {
      *                               the caller of service operation
      * @return a list of validation results or an empty list if validation
      *         succeeded
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        validationTypeKey, appointmentWindowId
+     * @throws DoesNotExistException        validationTypeKey, appointmentWindowId
      *                                      or appointmentSlotTypeKey does not
      *                                      exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    validationTypeKey, appointmentWindowId,
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws MissingParameterException    validationTypeKey, appointmentWindowId,
      *                                      appointmentSlotTypeKey or
      *                                      contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
      */
     public List<ValidationResultInfo> validateAppointmentSlot(@WebParam(name = "validationTypeKey") String validationTypeKey, @WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "appointmentSlotTypeKey") String appointmentSlotTypeKey, @WebParam(name = "appointmentSlotInfo") AppointmentSlotInfo appointmentSlotInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -715,15 +723,15 @@ public interface AppointmentService {
      *                               the caller of service operation
      * @return created AppointmentSlot for the given AppointmentWindow and slot
      *         information
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException supplied data is invalid
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentWindowId or appointmentSlotTypeKey
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws DoesNotExistException        appointmentWindowId or appointmentSlotTypeKey
      *                                      does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    appointmentWindowId, appointmentSlotTypeKey
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws MissingParameterException    appointmentWindowId, appointmentSlotTypeKey
      *                                      or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read only
      * @impl Check out blackout milestone type and corresponding milestones
      */
@@ -739,14 +747,14 @@ public interface AppointmentService {
      *                            service operation
      * @return created AppointmentSlots for the window using its
      *         AppointmentSlotRule information
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException supplied data is invalid
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentWindowId does not exist
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    appointmentWindowId or contextInfo
+     * @throws DataValidationErrorException supplied data is invalid
+     * @throws DoesNotExistException        appointmentWindowId does not exist
+     * @throws InvalidParameterException    invalid contextInfo
+     * @throws MissingParameterException    appointmentWindowId or contextInfo
      *                                      is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read only
      * @impl Check out blackout milestone type and corresponding milestones
      * @impl throw OperationFailedException if unable to create needed slots either because  both EndDate and MaxAppointmentsPerSlot were specified and cannot be satisfied or due to some other reason
@@ -764,18 +772,18 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return updated appointment slot  information
-     * @throws org.kuali.student.r2.common.exceptions.DataValidationErrorException one or more values invalid for this
+     * @throws DataValidationErrorException one or more values invalid for this
      *                                      operation
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException        appointmentSlotId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException    invalid appointmentSlotInfo or
+     * @throws DoesNotExistException        appointmentSlotId not found
+     * @throws InvalidParameterException    invalid appointmentSlotInfo or
      *                                      contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException    appointmentSlotId, appointmentSlotInfo
+     * @throws MissingParameterException    appointmentSlotId, appointmentSlotInfo
      *                                      or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException     unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException    an authorization failure occurred
-     * @throws org.kuali.student.r2.common.exceptions.ReadOnlyException            an attempt at supplying information
+     * @throws OperationFailedException     unable to complete request
+     * @throws PermissionDeniedException    an authorization failure occurred
+     * @throws ReadOnlyException            an attempt at supplying information
      *                                      designated as read-only
-     * @throws org.kuali.student.r2.common.exceptions.VersionMismatchException     optimistic locking failure or the
+     * @throws VersionMismatchException     optimistic locking failure or the
      *                                      action was attempted on an out of
      *                                      date version
      */
@@ -789,16 +797,16 @@ public interface AppointmentService {
      *                          and locale information about the caller of
      *                          service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DependentObjectsExistException delete would leave orphaned
+     * @throws DependentObjectsExistException delete would leave orphaned
      *                                        objects or violate integrity
      *                                        constraints
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException          appointmentWindowId or appointmentSlotId
+     * @throws DoesNotExistException          appointmentWindowId or appointmentSlotId
      *                                        not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException      invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException      appointmentWindowId, appointmentSlotId
+     * @throws InvalidParameterException      invalid contextInfo
+     * @throws MissingParameterException      appointmentWindowId, appointmentSlotId
      *                                        or contextInfo is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException       unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException      an authorization failure occurred
+     * @throws OperationFailedException       unable to complete request
+     * @throws PermissionDeniedException      an authorization failure occurred
      */
     public StatusInfo deleteAppointmentSlot(@WebParam(name = "appointmentSlotId") String appointmentSlotId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DependentObjectsExistException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
 
@@ -810,15 +818,15 @@ public interface AppointmentService {
      *                            and locale information about the caller of
      *                            service operation
      * @return status of the operation (success, failed)
-     * @throws org.kuali.student.r2.common.exceptions.DependentObjectsExistException delete would leave orphaned
+     * @throws DependentObjectsExistException delete would leave orphaned
      *                                        objects or violate integrity
      *                                        constraints
-     * @throws org.kuali.student.r2.common.exceptions.DoesNotExistException          appointmentWindowId not found
-     * @throws org.kuali.student.r2.common.exceptions.InvalidParameterException      invalid contextInfo
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException      appointmentWindowId or contextInfo
+     * @throws DoesNotExistException          appointmentWindowId not found
+     * @throws InvalidParameterException      invalid contextInfo
+     * @throws MissingParameterException      appointmentWindowId or contextInfo
      *                                        is missing or null
-     * @throws org.kuali.student.r2.common.exceptions.OperationFailedException       unable to complete request
-     * @throws org.kuali.student.r2.common.exceptions.PermissionDeniedException      an authorization failure occurred
+     * @throws OperationFailedException       unable to complete request
+     * @throws PermissionDeniedException      an authorization failure occurred
      * @impl delete the corresponding appointments
      */
     public StatusInfo deleteAppointmentSlotsByWindow(@WebParam(name = "appointmentWindowId") String appointmentWindowId, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DependentObjectsExistException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException;
