@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.kuali.student.enrollment.courseofferingset.infc.SocRolloverResults;
+import org.kuali.student.enrollment.courseofferingset.infc.SocRolloverResult;
 import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.w3c.dom.Element;
 
@@ -41,9 +41,9 @@ import org.w3c.dom.Element;
     "meta",
     "attributes",
     "_futureElements"})
-public class SocRolloverResultsInfo
+public class SocRolloverResultInfo
         extends IdEntityInfo
-        implements SocRolloverResults {
+        implements SocRolloverResult {
 
     private static final long serialVersionUID = 1L;
     @XmlElement
@@ -61,7 +61,7 @@ public class SocRolloverResultsInfo
     @XmlAnyElement
     private List<Element> _futureElements;
 
-    public SocRolloverResultsInfo() {
+    public SocRolloverResultInfo() {
     }
 
     /**
@@ -69,7 +69,7 @@ public class SocRolloverResultsInfo
      *
      * @param 
      */
-    public SocRolloverResultsInfo(SocRolloverResults orig) {
+    public SocRolloverResultInfo(SocRolloverResult orig) {
 
         super(orig);
 

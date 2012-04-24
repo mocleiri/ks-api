@@ -15,23 +15,22 @@
  */
 package org.kuali.student.r2.common.util.constants;
 
-import org.kuali.student.enrollment.courseofferingset.dto.SocInfo;
+import org.kuali.student.enrollment.batchjobresults.dto.BatchJobResultItemInfo;
+import org.kuali.student.enrollment.batchjobresults.dto.BatchJobResultInfo;
 import org.kuali.student.r2.common.constants.CommonServiceConstants;
 
 /**
- * Course Offering Service Constants
- * @see LuiServiceConstants
+ * Batch Job Results Service Constants
  *
  * @author nwright
  */
-public class CourseOfferingSetServiceConstants {
+public class BatchJobResultServiceConstants {
 
    
-    public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "courseOfferingSet";
-    public static final String SERVICE_NAME_LOCAL_PART = "socService";
-    public static final String REF_OBJECT_URI_SOC = NAMESPACE + "/" + SocInfo.class.getSimpleName();
+    public static final String NAMESPACE = CommonServiceConstants.REF_OBJECT_URI_GLOBAL_PREFIX + "batchJobResults";
+    public static final String SERVICE_NAME_LOCAL_PART = "batchJobResultsService";
+    public static final String REF_OBJECT_URI_BATCH_JOB_RESULTS = NAMESPACE + "/" + BatchJobResultInfo.class.getSimpleName();
+    public static final String REF_OBJECT_URI_BATCH_JOB_RESULT_ITEM = NAMESPACE + "/" + BatchJobResultItemInfo.class.getSimpleName();
     
-    public static final String MAIN_SOC_TYPE_KEY = "kuali.soc.type.main";
-    public static final String ROLLOVER_RESULT_TYPE_KEY = "kuali.soc.rollover.result.rollover";
-    public static final String REVERSE_ROLLOVER_RESULT_TYPE_KEY = "kuali.soc.rollover.result.reverse";
+
 }
