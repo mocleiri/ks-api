@@ -25,11 +25,11 @@ import org.kuali.student.r2.common.infc.Attribute;
 
 @Entity
 @Table(name = "KSEN_LPR_TRANS_ATTR")
-public class LprTransactionAttributeEntity extends BaseAttributeEntity<LprTransactionEntity> {
+public class LprTransactionAttributeEntity extends BaseAttributeEntityNew<LprTransactionEntity> {
 
-    @ManyToOne
-    @JoinColumn(name = "OWNER_ID")
-    private LprTransactionEntity owner;
+	public LprTransactionAttributeEntity() {
+		super();
+	}
 
     public LprTransactionAttributeEntity() {}
 
@@ -51,12 +51,7 @@ public class LprTransactionAttributeEntity extends BaseAttributeEntity<LprTransa
         return owner;
     }
 
-	public void fromDto(Attribute info) {
-		
-		setKey(info.getKey());
-		setValue(info.getValue());
-	}
-
+    
 	
 
 }

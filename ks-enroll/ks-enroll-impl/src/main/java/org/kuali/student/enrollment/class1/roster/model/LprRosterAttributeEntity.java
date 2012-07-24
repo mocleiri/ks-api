@@ -5,35 +5,21 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kuali.student.enrollment.class1.roster.model.LprRosterEntity;
 import org.kuali.student.r2.common.entity.BaseAttributeEntity;
+import org.kuali.student.r2.common.entity.BaseAttributeEntityNew;
 import org.kuali.student.r2.common.infc.Attribute;
 
 @Entity
 @Table(name = "KSEN_LPR_ROSTER_ATTR")
-public class LprRosterAttributeEntity extends BaseAttributeEntity<LprRosterEntity> {
+public class LprRosterAttributeEntity extends BaseAttributeEntityNew<LprRosterEntity> {
 
-    @ManyToOne
-    @JoinColumn(name = "OWNER_ID")
-    private LprRosterEntity owner;
+	public LprRosterAttributeEntity() {
+		super();
+	}
 
-    public LprRosterAttributeEntity () {
-    }
+	public LprRosterAttributeEntity(Attribute att, LprRosterEntity owner) {
+		super(att, owner);
+	}
 
-    public LprRosterAttributeEntity(String key, String value) {
-        super(key, value);
-    }
-
-    public LprRosterAttributeEntity(Attribute att) {
-        super(att);
-    }
-
-    @Override
-    public void setOwner(LprRosterEntity owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public LprRosterEntity getOwner() {
-        return owner;
-    }
 }
