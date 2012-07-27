@@ -19,6 +19,7 @@ import org.kuali.student.r2.core.state.dto.StateInfo;
 import org.kuali.student.r2.core.state.service.StateService;
 import org.kuali.student.r2.core.type.dto.TypeInfo;
 import org.kuali.student.r2.core.type.service.TypeService;
+import org.kuali.student.enrollment.class2.courseoffering.util.ViewHelperUtil;
 
 import javax.xml.namespace.QName;
 import java.util.Map;
@@ -48,6 +49,13 @@ public class ActivityOfferingWrapperInquirableImpl extends InquirableImpl {
                 instructorWrapper.setTypeName(type.getName());
                 aoWrapper.getInstructors().add(instructorWrapper);
             }
+
+            // Display the Instructor Name with the Highest % of Effort, Jira 1736
+            OfferingInstructorInfo offeringInstructorInfo = ViewHelperUtil.findDisplayInstructor(activityOfferingInfo.getInstructors());
+            if (null != offeringInstructorInfo) {
+                aoWrapper.setInstructorNameHighestPercentEffort(offeringInstructorInfo.getPersonName());
+            }
+
             return aoWrapper;
         } catch (Exception e) {
            throw new RuntimeException(e);

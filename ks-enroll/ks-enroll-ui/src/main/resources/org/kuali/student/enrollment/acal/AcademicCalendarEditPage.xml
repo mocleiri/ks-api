@@ -19,7 +19,7 @@
                     <list>
                         <bean parent="Uif-ActionLink" p:methodToCall="toCopy" p:actionLabel="Copy" p:style="text-align:center;" p:render="@{#view.readOnly}"/>
                         <bean parent="Uif-ActionLink" p:methodToCall="toEdit" p:actionLabel="Edit" p:style="text-align:center;" p:render="@{#view.readOnly}"/>
-                        <bean parent="Uif-ActionLink" p:clientSideJs="confirmDeletion('Are you sure you want to delete this academic calendar?')" p:methodToCall="delete" p:actionLabel="Delete" p:style="text-align:center;" p:render="@{#view.readOnly}"/>
+                        <bean parent="Uif-ActionLink" p:clientSideJs="confirmDeletion('Are you sure you want to delete this academic calendar?')" p:methodToCall="delete" p:actionLabel="Delete" p:style="text-align:center;" p:render="@{#view.readOnly and !officialUI}"/>
                     </list>
                 </property>
             </bean>
@@ -52,9 +52,9 @@
                         <bean parent="Uif-SecondaryActionButton" p:methodToCall="save" p:actionLabel="Save"
                               p:performClientSideValidation="true" p:render="@{!officialCalendar and !#view.readOnly}"/>
                         <bean parent="Uif-ActionLink" p:methodToCall="delete"
-                              p:actionLabel="@{officialCalendar ? 'Delete Calendar' : 'Delete Draft'}"
+                              p:actionLabel="Delete Draft"
                               p:clientSideJs="confirmDeletion('Are you sure you want to delete this academic calendar?')"
-                              p:render="@{!newCalendar and !#view.readOnly}"/>
+                              p:render="@{!newCalendar and !#view.readOnly and !officialUI}"/>
                         <bean parent="Uif-ActionLink" p:actionLabel="Cancel" p:clientSideJs="stepBrowserBack()" p:render="@{!#view.readOnly}"/>
                     </list>
                 </property>
@@ -229,16 +229,16 @@
 		</property>
 	</bean>
 
-    <bean id="KS-AcademicCalendar-HolidaySubSection" parent="Uif-VerticalBoxGroup">
+    <!--<bean id="KS-AcademicCalendar-HolidaySubSection" parent="Uif-VerticalBoxGroup">
         <property name="style" value="margin-bottom:0;"/>
         <property name="items">
             <list>
-                <ref bean="KS-AcademicCalendar-HolidaySubSection-NotFound" />
-                <ref bean="KS-AcademicCalendar-HolidaySubSection-Found" />
+                &lt;!&ndash;<ref bean="KS-AcademicCalendar-HolidaySubSection-NotFound" />&ndash;&gt;
+                <ref bean="KS-AcademicCalendar-HolidaySubSection" />
             </list>
         </property>
-    </bean>
-    <bean id="KS-AcademicCalendar-HolidaySubSection-NotFound" parent="Uif-VerticalBoxSubSection">
+    </bean>-->
+    <!--<bean id="KS-AcademicCalendar-HolidaySubSection-NotFound" parent="Uif-VerticalBoxSubSection">
         <property name="headerText" value="Holidays" />
         <property name="render" value="@{#form.holidayCalendarList.empty}"/>
         <property name="style" value="margin-bottom:0;"/>
@@ -247,17 +247,16 @@
                 <bean parent="Uif-Message" p:messageText="No Holiday Calendar available"/>
             </list>
         </property>
-    </bean>
-    <bean id="KS-AcademicCalendar-HolidaySubSection-Found" parent="Uif-Disclosure-StackedCollectionSubSection" p:id="acal-holidays" >
+    </bean>-->
+    <bean id="KS-AcademicCalendar-HolidaySubSection" parent="Uif-Disclosure-StackedCollectionSubSection" p:id="acal-holidays" >
         <property name="headerText" value="Holidays" />
-        <property name="render" value="@{!#form.holidayCalendarList.empty}"/>
-        <property name="propertyName" value="holidayCalendarList" />
         <property name="collectionObjectClass" value="org.kuali.student.enrollment.class2.acal.dto.HolidayCalendarWrapper" />
-        <property name="collectionLookup.quickfinderAction.render" value="false" />
+        <property name="layoutManager.lineGroupPrototype.disclosure.render" value="true"/>
         <property name="layoutManager">
              <ref bean="Uif-StackedCollectionLayout-WithBoxItems"/>
         </property>
-        <property name="layoutManager.lineGroupPrototype.disclosure.render" value="true"/>
+        <property name="propertyName" value="holidayCalendarList" />
+        <property name="collectionLookup.quickfinderAction.render" value="false" />
         <property name="layoutManager.lineGroupPrototype.header.headerText" value="@{#line.holidayCalendarInfo.name}"/>
         <property name="layoutManager.lineGroupPrototype.footer.render" value="@{#isAddLine}"/>
         <property name="layoutManager.lineGroupPrototype.header.style" value="margin-bottom:1em;"/>
@@ -302,18 +301,8 @@
                         <bean parent="Uif-DropdownControl"/>
                     </property>
                     <property name="optionsFinder">
-                        <bean class="org.kuali.student.enrollment.class2.acal.keyvalue.HolidayWrapperListFinder" />
+                        <bean class="org.kuali.student.enrollment.class2.acal.keyvalue.HolidayWrapperListFinder" p:addBlankOption="false"/>
                     </property>
-                    <!--<property name="control">-->
-                        <!--<bean parent="Uif-TextControl" p:size="60"/>-->
-                    <!--</property>-->
-                    <!--<property name="quickfinder.dataObjectClassName" value="org.kuali.student.enrollment.class2.acal.dto.HolidayCalendarWrapper" />-->
-                    <!--<property name="quickfinder.fieldConversions">-->
-                        <!--<map>-->
-                            <!--<entry key="id" value="id" />-->
-                        <!--</map>-->
-                    <!--</property>-->
-
                 </bean>
                 <bean parent="Uif-InputField"
                       p:propertyName="holidayCalendarInfo.name"

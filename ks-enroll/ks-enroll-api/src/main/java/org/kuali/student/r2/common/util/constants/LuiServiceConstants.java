@@ -125,11 +125,13 @@ public class LuiServiceConstants {
      * Implemented: 6/14/2012  by cclin
      */
     public static final String COURSE_OFFERING_PROCESS_KEY = "kuali.course.offering.process";
+    public static final String LUI_CO_STATE_DRAFT_KEY = "kuali.lui.course.offering.state.draft";
     public static final String LUI_CO_STATE_PLANNED_KEY = "kuali.lui.course.offering.state.planned";
     public static final String LUI_CO_STATE_OFFERED_KEY = "kuali.lui.course.offering.state.offered";
     public static final String LUI_CO_STATE_CANCELED_KEY = "kuali.lui.course.offering.state.canceled";
 
     public static final String[] COURSE_OFFERING_PROCESS_STATE_KEYS = {
+        LUI_CO_STATE_DRAFT_KEY,
         LUI_CO_STATE_PLANNED_KEY,
         LUI_CO_STATE_OFFERED_KEY,
         LUI_CO_STATE_CANCELED_KEY
@@ -153,11 +155,13 @@ public class LuiServiceConstants {
      * The process is identical to the course offering.
      */
     public static final String FORMAT_OFFERING_PROCESS_KEY = "kuali.format.offering.process";
+    public static final String LUI_FO_STATE_DRAFT_KEY = "kuali.lui.format.offering.state.draft";
     public static final String LUI_FO_STATE_PLANNED_KEY = "kuali.lui.format.offering.state.planned";
     public static final String LUI_FO_STATE_OFFERED_KEY = "kuali.lui.format.offering.state.offered";
     public static final String LUI_FO_STATE_CANCELED_KEY = "kuali.lui.format.offering.state.canceled";
 
     public static final String[] FORMAT_OFFERING_PROCESS_STATE_KEYS = {
+            LUI_FO_STATE_DRAFT_KEY,
             LUI_FO_STATE_PLANNED_KEY,
             LUI_FO_STATE_OFFERED_KEY,
             LUI_FO_STATE_CANCELED_KEY
@@ -285,6 +289,13 @@ public class LuiServiceConstants {
      */
     public static final String ALL_REGISTRATION_ORDERING_TYPE_KEY = "kuali.registration.ordering.type.all";
 //    public static final String SEQUENCED_REGISTRATION_ORDERING_TYPE_KEY = "kuali.registration.ordering.type.sequenced";   
+    
+    /**
+     * Registration Group States
+     */
+    public static final String REGISTRATION_GROUP_OPEN_STATE_KEY = " kuali.lui.registration.group.state.open";
+    public static final String REGISTRATION_GROUP_CLOSED_STATE_KEY = " kuali.lui.registration.group.state.closed";
+    public static final String REGISTRATION_GROUP_SUSPENDED_STATE_KEY = " kuali.lui.registration.group.state.suspended";
     
     /**
      * known lu codes

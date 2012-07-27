@@ -16,10 +16,14 @@
  */
 package org.kuali.student.enrollment.class2.courseoffering.service.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.kuali.student.enrollment.class2.courseoffering.service.CourseOfferingCodeGenerator;
 import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * This class //TODO ...
@@ -72,23 +76,22 @@ public class CourseOfferingCodeGeneratorImpl implements CourseOfferingCodeGenera
         throw new RuntimeException("Error generating codes");
     }
 
-    //Gets the next letter of the alphabet in caps in the form A,B,C...Z,AA,AB,AC...AZ,AAA...
-    private String getNextCode(String s){
-        char lastLetter = s.charAt(s.length()-1);
-        String beginningString = "";
-        if ('Z' == lastLetter){
-            //Add "A"s for the current length of the string
-            for(int i=0;i<s.length();i++){
-                beginningString += "A";
-            }
-            return beginningString + "A";
-        }else{
-            lastLetter++;
-            if(s.length()>1){
-                beginningString  = s.substring(0,s.length()-1);
-            }
-            return beginningString + lastLetter;
+    /**
+     * Gets the next letter of the alphabet in caps in the form A,B...Z,AA,AB...AZ,BA,BB..BZ,CA,CB....ZZ,AAA,AAB...
+     *
+     * Make sure it's public as it's needed for Test class
+     *
+     * @param source source code string
+     * @return next code
+     */
+    public String getNextCode(String source){
+        if (StringUtils.isEmpty(source)){
+            return "A";
+        } else if (StringUtils.endsWithIgnoreCase(source,"Z")){
+            return getNextCode(StringUtils.substringBeforeLast(source,"Z")) + "A";
+        } else {
+            char lastLetter = source.charAt(source.length()-1);
+            return StringUtils.substringBeforeLast(source,""+lastLetter) + ++lastLetter;
         }
     }
-
 }
