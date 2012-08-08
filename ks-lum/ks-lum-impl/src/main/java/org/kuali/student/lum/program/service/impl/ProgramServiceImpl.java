@@ -28,10 +28,10 @@ import org.kuali.student.r1.common.search.dto.SearchTypeInfo;
 import org.kuali.student.r1.common.search.service.SearchManager;
 import org.kuali.student.r1.common.validator.ServerDateParser;
 import org.kuali.student.r1.common.validator.ValidatorUtils;
-import org.kuali.student.r1.core.atp.dto.AtpInfo;
-import org.kuali.student.r1.core.atp.service.AtpService;
-import org.kuali.student.r1.core.document.dto.RefDocRelationInfo;
-import org.kuali.student.r1.core.document.service.DocumentService;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
+import org.kuali.student.r2.core.document.dto.RefDocRelationInfo;
+import org.kuali.student.r2.core.document.service.DocumentService;
 import org.kuali.student.r1.lum.statement.typekey.ReqComponentFieldTypes;
 import org.kuali.student.r2.common.assembler.AssemblyException;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -54,10 +54,10 @@ import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.common.util.constants.ProgramServiceConstants;
 import org.kuali.student.r2.common.validator.Validator;
 import org.kuali.student.r2.common.validator.ValidatorFactory;
-import org.kuali.student.r2.core.statement.dto.ReqCompFieldInfo;
-import org.kuali.student.r2.core.statement.dto.ReqComponentInfo;
-import org.kuali.student.r2.core.statement.dto.StatementTreeViewInfo;
-import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo;
+import org.kuali.student.r1.core.statement.dto.ReqCompFieldInfo;
+import org.kuali.student.r1.core.statement.dto.ReqComponentInfo;
+import org.kuali.student.r1.core.statement.dto.StatementTreeViewInfo;
+import org.kuali.student.r2.core.versionmanagement.dto.VersionDisplayInfo ;
 import org.kuali.student.r2.lum.clu.dto.CluCluRelationInfo;
 import org.kuali.student.r2.lum.clu.dto.CluInfo;
 import org.kuali.student.r2.lum.clu.dto.CluSetInfo;
@@ -277,14 +277,14 @@ public class ProgramServiceImpl implements ProgramService{
         */
         
         // Set the state on the statement tree itself
-        statementTreeViewInfo.setStateKey(state);
+        statementTreeViewInfo.setState(state);
          
         // Get all the requirements components for this statement
         List<ReqComponentInfo> reqComponents = statementTreeViewInfo.getReqComponents();
         
         // Loop over requirements and set the state for each requirement
         for(Iterator<ReqComponentInfo> it = reqComponents.iterator(); it.hasNext();)
-            it.next().setStateKey(state);
+            it.next().setState(state);
         
         // Loop over each statement and set the state for each statement (recursively calling this method)
         for(Iterator<StatementTreeViewInfo> itr = statementTreeViewInfo.getStatements().iterator(); itr.hasNext();)
@@ -307,9 +307,9 @@ public class ProgramServiceImpl implements ProgramService{
 				for(ReqCompFieldInfo field:reqComp.getReqCompFields()){
 					field.setId(null);
 					//copy any clusets that are adhoc'd and set the field value to the new cluset
-					if(ReqComponentFieldTypes.COURSE_CLUSET_KEY.getId().equals(field.getTypeKey())||
-					   ReqComponentFieldTypes.PROGRAM_CLUSET_KEY.getId().equals(field.getTypeKey())||
-					   ReqComponentFieldTypes.CLUSET_KEY.getId().equals(field.getTypeKey())){
+					if(ReqComponentFieldTypes.COURSE_CLUSET_KEY.getId().equals(field.getType())||
+					   ReqComponentFieldTypes.PROGRAM_CLUSET_KEY.getId().equals(field.getType())||
+					   ReqComponentFieldTypes.CLUSET_KEY.getId().equals(field.getType())){
 						try {
 							CluSetInfo cluSet = cluService.getCluSet(field.getValue(),contextInfo);
 							cluSet.setId(null);
@@ -411,12 +411,12 @@ public class ProgramServiceImpl implements ProgramService{
 		copyProgramRequirements(majorDiscipline.getProgramRequirements(),majorDiscipline.getStateKey(),contextInfo);
 
 		//Copy documents(create new relations to the new version)
-		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId);
+		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId, contextInfo);
 		if(docRelations!=null){
 			for(RefDocRelationInfo docRelation:docRelations){
 				docRelation.setId(null);
 				docRelation.setRefObjectId(majorDiscipline.getId());
-				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", majorDiscipline.getId(), docRelation.getDocumentId(), docRelation.getType(), docRelation);
+				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", majorDiscipline.getId(), docRelation.getDocumentId(), docRelation.getTypeKey(), docRelation, contextInfo);
 			}
 		}
 	}
@@ -439,12 +439,12 @@ public class ProgramServiceImpl implements ProgramService{
 		copyProgramRequirements(originaCredentialProgram.getProgramRequirements(),originaCredentialProgram.getStateKey(),contextInfo);
 
 		//Copy documents(create new relations to the new version)
-		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId);
+		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId, contextInfo);
 		if(docRelations!=null){
 			for(RefDocRelationInfo docRelation:docRelations){
 				docRelation.setId(null);
 				docRelation.setRefObjectId(originaCredentialProgram.getId());
-				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", originaCredentialProgram.getId(), docRelation.getDocumentId(), docRelation.getType(), docRelation);
+				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", originaCredentialProgram.getId(), docRelation.getDocumentId(), docRelation.getTypeKey(), docRelation, contextInfo);
 			}
 		}
 	}
@@ -463,12 +463,12 @@ public class ProgramServiceImpl implements ProgramService{
 		copyProgramRequirements(originalCoreProgram.getProgramRequirements(),originalCoreProgram.getStateKey(),contextInfo);
 
 		//Copy documents(create new relations to the new version)
-		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId);
+		List<RefDocRelationInfo> docRelations = documentService.getRefDocRelationsByRef("kuali.org.RefObjectType.ProposalInfo", originalId, contextInfo);
 		if(docRelations!=null){
 			for(RefDocRelationInfo docRelation:docRelations){
 				docRelation.setId(null);
 				docRelation.setRefObjectId(originalCoreProgram.getId());
-				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", originalCoreProgram.getId(), docRelation.getDocumentId(), docRelation.getType(), docRelation);
+				documentService.createRefDocRelation("kuali.org.RefObjectType.ProposalInfo", originalCoreProgram.getId(), docRelation.getDocumentId(), docRelation.getTypeKey(), docRelation, contextInfo);
 			}
 		}
 	}
@@ -1495,8 +1495,8 @@ public class ProgramServiceImpl implements ProgramService{
 
 	private void validateMajorDisciplineAtps(MajorDisciplineInfo majorDisciplineInfo, List<ValidationResultInfo> validationResults,ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
 		String startTerm = majorDisciplineInfo.getStartTerm();
-		if(!isEmpty(majorDisciplineInfo.getAttributeInfoValue(majorDisciplineInfo.getAttributes(),"endInstAdmitTerm"))){
-				compareAtps(startTerm, majorDisciplineInfo.getAttributeInfoValue(majorDisciplineInfo.getAttributes(),"endInstAdmitTerm"), validationResults, "End Inst Admin Term", "endInstAdmitTerm",contextInfo);
+		if(!isEmpty(majorDisciplineInfo.getAttributeInfoValue(majorDisciplineInfo.getAttributes(), "endInstAdmitTerm"))){
+				compareAtps(startTerm, majorDisciplineInfo.getAttributeInfoValue(majorDisciplineInfo.getAttributes(), "endInstAdmitTerm"), validationResults, "End Inst Admin Term", "endInstAdmitTerm",contextInfo);
 		}
 		if(!isEmpty(majorDisciplineInfo.getEndProgramEntryTerm())){
 			compareAtps(startTerm, majorDisciplineInfo.getEndTerm(), validationResults, "End Program Entry Term", "endProgramEntryTerm",contextInfo);
@@ -1538,7 +1538,7 @@ public class ProgramServiceImpl implements ProgramService{
 		if(atpKey==null){
 			return null;
 		}
-		return atpService.getAtp(atpKey);
+		return atpService.getAtp(atpKey, contextInfo);
 	}
 	//FIXME error should return using message service and not static text
 	private void compareAtps(String aptKey1, String aptKey2, List<ValidationResultInfo> validationResults, String field, String path,ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException{

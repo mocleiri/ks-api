@@ -146,6 +146,7 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    @Override
     @Transactional(readOnly = true)
     public CourseInfo getCourse(String courseId, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
 
@@ -210,6 +211,7 @@ public class CourseServiceImpl implements CourseService {
         return validationResults;
     }
 
+    @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatementTreeViewInfo createCourseStatement(String courseId, StatementTreeViewInfo statementTreeViewInfo, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, DataValidationErrorException {
         checkForMissingParameter(courseId, "courseId");
@@ -240,6 +242,7 @@ public class CourseServiceImpl implements CourseService {
         return statementTreeViewInfo;
     }
 
+	@Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo deleteCourseStatement(String courseId, StatementTreeViewInfo statementTreeViewInfo, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         checkForMissingParameter(courseId, "courseId");
@@ -365,6 +368,7 @@ public class CourseServiceImpl implements CourseService {
         this.statementService = statementService;
     }
 
+	@Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public CourseInfo createNewCourseVersion(String versionIndCourseId, String versionComment, ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException, ReadOnlyException {
 
@@ -417,6 +421,7 @@ public class CourseServiceImpl implements CourseService {
 
     }
 
+    @Override
     @Transactional(readOnly = false, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
     public StatusInfo setCurrentCourseVersion(String courseVersionId, Date currentVersionStart, ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, IllegalVersionSequencingException, OperationFailedException, PermissionDeniedException, DataValidationErrorException {
         return cluService.setCurrentCluVersion(courseVersionId, currentVersionStart, contextInfo);

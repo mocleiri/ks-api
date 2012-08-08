@@ -9,8 +9,6 @@ import org.kuali.student.r2.common.infc.RichText;
 import org.kuali.student.r2.common.infc.TimeAmount;
 import org.kuali.student.r2.core.versionmanagement.infc.Version;
 import org.kuali.student.r2.lum.clu.infc.CluInstructor;
-import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
-
 
 /**
  * Detailed information about a single course. For specific usage, check the
@@ -209,14 +207,14 @@ public interface Course extends IdEntity {
      * 
      * @name Credit Options
      */
-    public List<ResultValuesGroupInfo> getCreditOptions();
+    public List<String> getCreditOptions();
 
     /**
      * Flag to indicate the course as a special topics course
      * 
      * @name Special Topics Course?
      */
-    public boolean isSpecialTopicsCourse();
+    public Boolean isSpecialTopicsCourse();
 
     /**
      * Flag to indicate a one-time or pilot course, which is likely to have
@@ -224,7 +222,7 @@ public interface Course extends IdEntity {
      * 
      * @name Pilot Course?
      */
-    public boolean isPilotCourse();
+    public Boolean isPilotCourse();
 
     /**
      * The first academic time period that this Course would be effective.

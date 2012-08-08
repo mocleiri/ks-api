@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.kuali.student.r2.common.dto.ContextInfo;
-import org.kuali.student.r2.common.util.constants.ExemptionServiceConstants;
+import org.kuali.student.r2.core.constants.ExemptionServiceConstants;
 import org.kuali.student.r2.core.exemption.dto.ExemptionInfo;
 import org.kuali.student.r2.core.exemption.dto.ExemptionRequestInfo;
 
@@ -42,6 +42,7 @@ public class ExemptionServicePersistenceConformanceTest {
     }
     private static final String TEST_PRINCIPAL_ID1 = "testPrincipalId1";
     private static final String TEST_PRINCIPAL_ID2 = "testPrincipalId2";
+
     private ContextInfo getContext() {
         ContextInfo context = new ContextInfo();
         context.setPrincipalId("testPrincipalId1");
@@ -59,7 +60,7 @@ public class ExemptionServicePersistenceConformanceTest {
         // create
         String exemptionRequestId = "request1";
         ExemptionInfo info = new ExemptionInfo();
-        info.setTypeKey(ExemptionServiceConstants.EXEMPTION_PROCESS_KEY );
+        info.setTypeKey(ExemptionServiceConstants.EXEMPTION_PROCESS_KEY);
         info.setStateKey(ExemptionServiceConstants.EXEMPTION_ACTIVE_STATE_KEY);
         info.setPersonId("person1");
         Date before = new Date();
@@ -112,7 +113,7 @@ public class ExemptionServicePersistenceConformanceTest {
         if (result == info) {
             fail("returned object should not be the same as the one passed in");
         }
-        assertEquals (info.getId(), result.getId());
+        assertEquals(info.getId(), result.getId());
         assertEquals(info.getTypeKey(), result.getTypeKey());
         assertEquals(info.getStateKey(), result.getStateKey());
         assertEquals(info.getPersonId(), result.getPersonId());
@@ -127,10 +128,10 @@ public class ExemptionServicePersistenceConformanceTest {
             fail("update time should not be after the call");
         }
         assertEquals(TEST_PRINCIPAL_ID2, result.getMeta().getUpdateId());
-        if (info.getMeta().getVersionInd().compareTo(result.getMeta().getVersionInd())>= 0) {
-            fail ("version ind should be lexically greater than the old version id");
+        if (info.getMeta().getVersionInd().compareTo(result.getMeta().getVersionInd()) >= 0) {
+            fail("version ind should be lexically greater than the old version id");
         }
-        
+
         // delete
     }
 
@@ -171,5 +172,4 @@ public class ExemptionServicePersistenceConformanceTest {
         assertEquals(TEST_PRINCIPAL_ID1, result.getMeta().getUpdateId());
         assertNotNull(result.getMeta().getVersionInd());
     }
-
 }

@@ -8,17 +8,18 @@
 
 package org.kuali.student.r2.core.class1.organization.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.jws.WebService;
+
 import org.apache.log4j.Logger;
 import org.kuali.rice.core.api.criteria.GenericQueryResults;
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
 import org.kuali.student.r1.common.dictionary.old.dto.ObjectStructure;
 import org.kuali.student.r1.common.dictionary.service.old.DictionaryService;
-import org.kuali.student.r1.common.search.dto.SearchCriteriaTypeInfo;
-import org.kuali.student.r1.common.search.dto.SearchRequest;
-import org.kuali.student.r1.common.search.dto.SearchResult;
-import org.kuali.student.r1.common.search.dto.SearchResultTypeInfo;
-import org.kuali.student.r1.common.search.dto.SearchTypeInfo;
-import org.kuali.student.r1.common.search.service.SearchManager;
 import org.kuali.student.r1.common.validator.old.Validator;
 import org.kuali.student.r1.core.organization.dao.OrganizationDao;
 import org.kuali.student.r1.core.organization.entity.Org;
@@ -32,22 +33,27 @@ import org.kuali.student.r1.core.organization.entity.OrgType;
 import org.kuali.student.r2.common.criteria.CriteriaLookupService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
-import org.kuali.student.r2.common.dto.TypeInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
-import org.kuali.student.r2.common.exceptions.*;
+import org.kuali.student.r2.common.exceptions.DataValidationErrorException;
+import org.kuali.student.r2.common.exceptions.DoesNotExistException;
+import org.kuali.student.r2.common.exceptions.InvalidParameterException;
+import org.kuali.student.r2.common.exceptions.MissingParameterException;
+import org.kuali.student.r2.common.exceptions.OperationFailedException;
+import org.kuali.student.r2.common.exceptions.PermissionDeniedException;
+import org.kuali.student.r2.common.exceptions.ReadOnlyException;
+import org.kuali.student.r2.common.exceptions.VersionMismatchException;
 import org.kuali.student.r2.core.class1.organization.dao.ExtendedOrgDao;
-import org.kuali.student.r2.core.organization.dto.*;
+import org.kuali.student.r2.core.organization.dto.OrgHierarchyInfo;
+import org.kuali.student.r2.core.organization.dto.OrgInfo;
+import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
+import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
+import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
+import org.kuali.student.r2.core.organization.dto.OrgTreeInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationService;
-import org.kuali.student.r2.core.service.util.AssemblerHelper;
+import org.kuali.student.r2.common.dto.TypeInfo;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.jws.WebService;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-@WebService(endpointInterface = "org.kuali.student.r2.core.organization.service.OrganizationService", serviceName = "OrganizationService", portName = "OrganizationService", targetNamespace = "http://student.kuali.org/wsdl/organization")
+@WebService(endpointInterface = "org.kuali.student.core.organization.service.OrganizationService", serviceName = "OrganizationService", portName = "OrganizationService", targetNamespace = "http://student.kuali.org/wsdl/organization")
 @Transactional(readOnly = true, noRollbackFor = {DoesNotExistException.class}, rollbackFor = {Throwable.class})
 public class OrganizationServiceImpl implements OrganizationService {
 
@@ -56,7 +62,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     private OrganizationDao organizationDao;
     private ExtendedOrgDao extendedOrgDao;
     private DictionaryService dictionaryServiceDelegate;
-    private SearchManager searchManager;
     private Validator validator;
     private CriteriaLookupService criteriaLookupService;
 
@@ -64,9 +69,9 @@ public class OrganizationServiceImpl implements OrganizationService {
      * Check for missing parameter and throw localized exception if missing
      * 
      * @param param
-     * @param paramName
+     * @param parameter
      *            name
-     * @throws org.kuali.student.r2.common.exceptions.MissingParameterException
+     * @throws MissingParameterException
      */
     private void checkForMissingParameter(Object param, String paramName) throws MissingParameterException {
         if (param == null) {
@@ -82,14 +87,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         this.dictionaryServiceDelegate = dictionaryServiceDelegate;
     }
     
-    public SearchManager getSearchManager() {
-        return searchManager;
-    }
-
-    public void setSearchManager(SearchManager searchManager) {
-        this.searchManager = searchManager;
-    }
-
     public Validator getValidator() {
         return validator;
     }
@@ -164,7 +161,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public List<TypeInfo> getOrgTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        return AssemblerHelper.toGenericTypeInfoList(organizationDao.find(OrgType.class));
+        return OrganizationAssembler.toOrgTypeInfos(organizationDao.find(OrgType.class));
     }
 
     @Override
@@ -330,7 +327,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<TypeInfo> getOrgOrgRelationTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         List<OrgOrgRelationType> orgOrgRelationTypes = organizationDao.find(OrgOrgRelationType.class);
-        return AssemblerHelper.toGenericTypeInfoList(orgOrgRelationTypes);
+        return OrganizationAssembler.toOrgOrgRelationTypeInfos(orgOrgRelationTypes);
     }
 
     @Override
@@ -338,16 +335,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         checkForMissingParameter(orgTypeKey, "orgTypeKey");
 
         List<OrgOrgRelationType> orgOrgRelationTypes = organizationDao.getOrgOrgRelationTypesForOrgType(orgTypeKey);
-        return AssemblerHelper.toGenericTypeInfoList(orgOrgRelationTypes);
-    }
-
-    @Override
-    @Deprecated
-    public TypeInfo getOrgOrgRelationTypeForOrgType(String orgTypeKey, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        checkForMissingParameter(orgTypeKey, "orgTypeKey");
-        List<TypeInfo> infos = getOrgOrgRelationTypesForOrgType(orgTypeKey,contextInfo );
-
-        return (infos.size() >0 ? infos.get(0) : new TypeInfo());
+        return OrganizationAssembler.toOrgOrgRelationTypeInfos(orgOrgRelationTypes);
     }
 
     @Override
@@ -355,7 +343,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         checkForMissingParameter(orgHierarchyId, "orgHierarchyId");
 
         List<OrgOrgRelationType> orgOrgRelationTypes = organizationDao.getOrgOrgRelationTypesForOrgHierarchy(orgHierarchyId);
-        return AssemblerHelper.toGenericTypeInfoList(orgOrgRelationTypes);
+        return OrganizationAssembler.toOrgOrgRelationTypeInfos(orgOrgRelationTypes);
     }
 
     @Override
@@ -532,7 +520,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public List<TypeInfo> getOrgPersonRelationTypes(ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
         List<OrgPersonRelationType> oprts = organizationDao.find(OrgPersonRelationType.class);
-        return AssemblerHelper.toGenericTypeInfoList(oprts);
+        return OrganizationAssembler.toOrgPersonRelationTypeInfos(oprts);
     }
 
     @Override
@@ -540,7 +528,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         checkForMissingParameter(orgTypeKey, "orgTypeKey");
 
         List<OrgPersonRelationType> oprts = organizationDao.getOrgPersonRelationTypesForOrgType(orgTypeKey);
-        return AssemblerHelper.toGenericTypeInfoList(oprts);
+        return OrganizationAssembler.toOrgPersonRelationTypeInfos(oprts);
     }
 
     @Override
@@ -603,13 +591,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         List<OrgPersonRelation> orgPersonRelations = extendedOrgDao.getOrgPersonRelationsByTypeAndOrg(orgPersonRelationTypeKey, orgId);
         return OrganizationAssembler.toOrgPersonRelationInfos(orgPersonRelations);
-    }
-
-    @Override
-    @Deprecated
-    public OrgPersonRelationInfo getOrgPersonRelationByTypeAndOrg(String orgPersonRelationTypeKey, String orgId, ContextInfo contextInfo) throws InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException {
-        List<OrgPersonRelationInfo> infos = getOrgPersonRelationsByTypeAndOrg(orgPersonRelationTypeKey, orgId, contextInfo);
-        return (infos.size() >0 ? infos.get(0) : new OrgPersonRelationInfo());
     }
 
     @Override
@@ -963,88 +944,33 @@ public class OrganizationServiceImpl implements OrganizationService {
         return new ArrayList<OrgTreeInfo>(results);
     }
     
-    private List<OrgTreeInfo> parseOrgTree(String rootOrgId,
-            String orgHierarchyId, int maxLevels, int currentLevel) {
+    private List<OrgTreeInfo> parseOrgTree(String rootOrgId, String orgHierarchyId, int maxLevels, int currentLevel) {
         List<OrgTreeInfo> results = new ArrayList<OrgTreeInfo>();
-        if(maxLevels==0||currentLevel<maxLevels){
-            List<OrgTreeInfo> orgTreeInfos = this.organizationDao.getOrgTreeInfo(rootOrgId,orgHierarchyId);
-            for(OrgTreeInfo orgTreeInfo:orgTreeInfos){
-                orgTreeInfo.setPositions(this.organizationDao.getOrgMembershipCount(orgTreeInfo.getOrgId()));
-                results.addAll(parseOrgTree(orgTreeInfo.getOrgId(),orgHierarchyId, maxLevels, currentLevel+1));
-            }
-            results.addAll(orgTreeInfos);
-        }
+
+        if (maxLevels == 0 || currentLevel < maxLevels) {
+            List<org.kuali.student.r2.core.organization.dto.OrgTreeInfo> orgTreeInfos = this.organizationDao.getOrgTreeInfo(rootOrgId, orgHierarchyId);
+            for (org.kuali.student.r2.core.organization.dto.OrgTreeInfo orgTreeInfo : orgTreeInfos) {
+
+                OrgTreeInfo treeInfo = new OrgTreeInfo();
+                treeInfo.setOrgId(orgTreeInfo.getOrgId());
+                treeInfo.setDisplayName(orgTreeInfo.getDisplayName());
+                treeInfo.setOrgHierarchyId(orgTreeInfo.getOrgHierarchyId());
+                treeInfo.setParentId(orgTreeInfo.getParentId());
+                treeInfo.setPersonId(orgTreeInfo.getPersonId());
+                treeInfo.setPositionId(orgTreeInfo.getPositionId());
+                treeInfo.setRelationTypeKey(orgTreeInfo.getRelationTypeKey());
+                treeInfo.setPositions(this.organizationDao.getOrgMembershipCount(orgTreeInfo.getOrgId()));
+
+                results.add(treeInfo);
+    
+                results.addAll(parseOrgTree(orgTreeInfo.getOrgId(), orgHierarchyId, maxLevels, currentLevel + 1));
+    }
+    }
+
         return results;
     }
 
     public ObjectStructure getObjectStructure(String objectTypeKey) {
         return dictionaryServiceDelegate.getObjectStructure(objectTypeKey);
-    }
-
-    @Override
-    public SearchResult search(SearchRequest searchRequest) throws MissingParameterException {
-        checkForMissingParameter(searchRequest, "searchRequest");
-        return searchManager.search(searchRequest, organizationDao);
-    }
-    
-    @Override
-    public SearchCriteriaTypeInfo getSearchCriteriaType(
-            String searchCriteriaTypeKey) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-
-        return searchManager.getSearchCriteriaType(searchCriteriaTypeKey);
-    }
-
-    @Override
-    public List<SearchCriteriaTypeInfo> getSearchCriteriaTypes()
-            throws OperationFailedException {
-        return searchManager.getSearchCriteriaTypes();
-    }
-
-    @Override
-    public SearchResultTypeInfo getSearchResultType(String searchResultTypeKey)
-            throws DoesNotExistException, InvalidParameterException,
-            MissingParameterException, OperationFailedException {
-        checkForMissingParameter(searchResultTypeKey, "searchResultTypeKey");
-        return searchManager.getSearchResultType(searchResultTypeKey);
-    }
-
-    @Override
-    public List<SearchResultTypeInfo> getSearchResultTypes()
-            throws OperationFailedException {
-        return searchManager.getSearchResultTypes();
-    }
-
-    @Override
-    public SearchTypeInfo getSearchType(String searchTypeKey)
-            throws DoesNotExistException, InvalidParameterException,
-            MissingParameterException, OperationFailedException {
-        checkForMissingParameter(searchTypeKey, "searchTypeKey");
-        return searchManager.getSearchType(searchTypeKey);
-    }
-
-    @Override
-    public List<SearchTypeInfo> getSearchTypes()
-            throws OperationFailedException {
-        return searchManager.getSearchTypes();
-    }
-
-    @Override
-    public List<SearchTypeInfo> getSearchTypesByCriteria(
-            String searchCriteriaTypeKey) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-        checkForMissingParameter(searchCriteriaTypeKey, "searchCriteriaTypeKey");
-        return searchManager.getSearchTypesByCriteria(searchCriteriaTypeKey);
-    }
-
-    @Override
-    public List<SearchTypeInfo> getSearchTypesByResult(
-            String searchResultTypeKey) throws DoesNotExistException,
-            InvalidParameterException, MissingParameterException,
-            OperationFailedException {
-        checkForMissingParameter(searchResultTypeKey, "searchResultTypeKey");
-        return searchManager.getSearchTypesByResult(searchResultTypeKey);
     }
 }

@@ -34,8 +34,9 @@ import org.kuali.student.lum.service.assembler.CluAssemblerUtils;
 import org.kuali.student.r1.common.assembly.BOAssembler;
 import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode;
 import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode.NodeOperation;
-import org.kuali.student.r1.core.atp.dto.AtpInfo;
-import org.kuali.student.r1.core.atp.service.AtpService;
+import org.kuali.student.r2.common.util.ContextUtils;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.service.AtpService;
 import org.kuali.student.r2.lum.course.dto.CourseCrossListingInfo;
 import org.kuali.student.r2.lum.course.dto.CourseExpenditureInfo;
 import org.kuali.student.r2.lum.course.dto.CourseFeeInfo;
@@ -45,6 +46,7 @@ import org.kuali.student.r2.lum.course.dto.CourseRevenueInfo;
 import org.kuali.student.r2.lum.course.dto.CourseVariationInfo;
 import org.kuali.student.r2.lum.course.dto.FormatInfo;
 import org.kuali.student.r2.lum.course.dto.LoDisplayInfo;
+import org.kuali.student.r2.lum.lrc.dto.ResultComponentInfo;
 import org.kuali.student.r2.common.assembler.AssemblyException;
 import org.kuali.student.r2.common.dto.AttributeInfo;
 import org.kuali.student.r2.common.dto.ContextInfo;
@@ -263,8 +265,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
                 //Set Credit and Grading options
                 List<CluResultInfo> cluResults = cluService.getCluResultByClu(course.getId(),contextInfo);
 
-                List<ResultValuesGroupInfo> creditOptions = assembleCreditOptions(cluResults, contextInfo);
-
+				List<ResultComponentInfo> creditOptions = assembleCreditOptions(cluResults, contextInfo);
                 course.setCreditOptions(creditOptions);
 
                 List<String> gradingOptions = assembleGradingOptions(cluResults);
@@ -281,7 +282,9 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         }
 
         //Remove special cases for grading options
-        course.getGradingOptions().remove(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT);
+        if(course.getGradingOptions().remove(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT)){
+            course.getAttributes().put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_AUDIT,"true");
+        }
 
         return course;
     }
@@ -289,7 +292,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
     @Override
     public BaseDTOAssemblyNode<CourseInfo, CluInfo> disassemble(
             CourseInfo course, NodeOperation operation,ContextInfo contextInfo)
-            throws AssemblyException, PermissionDeniedException {
+			throws AssemblyException {
 
         if (course == null) {
             // FIXME Unsure now if this is an exception or just return null or
@@ -403,7 +406,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         //Default course effective dates to the atps if entered
         if(course.getStartTerm() != null){
             try {
-                AtpInfo startAtp = atpService.getAtp(course.getStartTerm());
+                AtpInfo startAtp = atpService.getAtp(course.getStartTerm(), contextInfo);
                 course.setEffectiveDate(startAtp.getStartDate());
             } catch (Exception e) {
                 throw new AssemblyException("Error getting start term Atp.",e);
@@ -411,7 +414,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         }
         if(course.getEndTerm() != null){
             try {
-                AtpInfo endAtp = atpService.getAtp(course.getEndTerm());
+                AtpInfo endAtp = atpService.getAtp(course.getEndTerm(), contextInfo);
                 course.setExpirationDate(endAtp.getEndDate());
             } catch (Exception e) {
                 throw new AssemblyException("Error getting end term Atp.",e);
@@ -456,17 +459,11 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
 
         //Disassemble the CluResults (grading and credit options)
         //Special code to take audit from attributes and put into options
-        for (AttributeInfo attr : course.getAttributes()){
-            if (attr.getKey() != null){
-                if (attr.getKey().equals(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_AUDIT)
-                    && "true".equals(attr.getValue()) ){
+		if(course.getAttributes().containsKey(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_AUDIT)&&"true".equals(course.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_AUDIT))){
                 	if(!course.getGradingOptions().contains(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT)){
                     	course.getGradingOptions().add(CourseAssemblerConstants.COURSE_RESULT_COMP_GRADE_AUDIT);
                 	}
-                	break;
             	}
-            }
-        }
 
         List<CluResultInfo> cluResultList;
         try {
@@ -579,39 +576,38 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         //See if we need to create any new lrcs
         if(NodeOperation.DELETE!=operation){
             //Find all the existing LRCs for the following three types
-            Set<String> resultValueGroupIds = new HashSet<String>();
+			Set<String> rsltComps = new HashSet<String>();
 
             try{
                 try {
-                    resultValueGroupIds.addAll(lrcService.getResultValuesGroupIdsByType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED, contextInfo));
+					rsltComps.addAll(lrcService.getResultComponentIdsByResultComponentType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED));
                 } catch (DoesNotExistException e) {}
                 try {
-                    resultValueGroupIds.addAll(lrcService.getResultValuesGroupIdsByType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE, contextInfo));
+					rsltComps.addAll(lrcService.getResultComponentIdsByResultComponentType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE));
                 } catch (DoesNotExistException e) {}
                 try {
-                    resultValueGroupIds.addAll(lrcService.getResultValuesGroupIdsByType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE, contextInfo));
+					rsltComps.addAll(lrcService.getResultComponentIdsByResultComponentType(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE));
                 } catch (DoesNotExistException e) {}
 
                 //Create any LRCs that do not yet exist
-                for(ResultValuesGroupInfo creditOption:course.getCreditOptions()){
-
+				for(ResultComponentInfo creditOption:course.getCreditOptions()){
                     String id = null;
                     String type = null;
                     List<String> resultValues = null;
-                    List<AttributeInfo> attributes = null;
+					Map<String,String> attributes = null;
                     //Depending on the type, set the id, type and result values differently
-                    if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED.equals(creditOption.getTypeKey())){
-                        float fixedCreditValue = Float.parseFloat(creditOption.getAttributeInfoValue(creditOption.getAttributes(), CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE));
+					if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED.equals(creditOption.getType())){
+                        float fixedCreditValue = Float.parseFloat(creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE));
                         id = CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX + fixedCreditValue;
                         type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_FIXED;
                         resultValues = new ArrayList<String>();
                         resultValues.add(String.valueOf(fixedCreditValue));
-                        attributes = new ArrayList<AttributeInfo>();
-                        attributes.add(new AttributeInfo(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE, String.valueOf(fixedCreditValue)));
-                    }else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE.equals(creditOption.getTypeKey())){
-                        Collections.sort(creditOption.getResultValueKeys());
+						attributes = new HashMap<String,String>();
+						attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_FIXED_CREDIT_VALUE, String.valueOf(fixedCreditValue));
+					}else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE.equals(creditOption.getType())){
+						Collections.sort(creditOption.getResultValues());
                         StringBuilder sb = new StringBuilder(CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX);
-                        for(Iterator<String> iter = creditOption.getResultValueKeys().iterator();iter.hasNext();){
+						for(Iterator<String> iter = creditOption.getResultValues().iterator();iter.hasNext();){
                             sb.append(iter.next());
                             if(iter.hasNext()){
                                 sb.append(",");
@@ -619,20 +615,20 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
                         }
                         id = sb.toString();
                         type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_MULTIPLE;
-                        resultValues = creditOption.getResultValueKeys();
-                    }else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE.equals(creditOption.getTypeKey())){
+						resultValues = creditOption.getResultValues();
+					}else if(CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE.equals(creditOption.getType())){
                         /*
                                * For variable credits create a Result values that goes from min to max with the specified increment.
                                * If no increment is specified, use 1.0 as the increment. The increment can be specified as a float.
                                */
 
-                        String minCreditValue = creditOption.getAttributeInfoValue(creditOption.getAttributes(), CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE);
-                        String maxCreditValue = creditOption.getAttributeInfoValue(creditOption.getAttributes(), CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE);
-                        String creditValueIncr = creditOption.getAttributeInfoValue(creditOption.getAttributes(), CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR);
+					    String minCreditValue = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE);
+						String maxCreditValue = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE);
+						String creditValueIncr = creditOption.getAttributes().get(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR);
                         float minCredits = Float.parseFloat(minCreditValue);
                         float maxCredits = Float.parseFloat(maxCreditValue);
 
-                        float increment = (null != creditValueIncr && creditValueIncr.length() > 0 ) ? Float.parseFloat(creditValueIncr) : defaultCreditIncrement ;
+						float increment = (null != creditValueIncr && creditValueIncr.length() > 0 ) ? Float.parseFloat(creditValueIncr) : 1.0f ;
 
                         id = CourseAssemblerConstants.COURSE_RESULT_COMP_CREDIT_PREFIX + minCreditValue + "-" + maxCreditValue;
                         type = CourseAssemblerConstants.COURSE_RESULT_COMP_TYPE_CREDIT_VARIABLE;
@@ -640,32 +636,32 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
                         for(float i = minCredits; i <= maxCredits; i+=increment){
                             resultValues.add(String.valueOf(i));
                         }
-                        attributes = new ArrayList<AttributeInfo>();
-                        attributes.add(new AttributeInfo(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE, minCreditValue));
-                        attributes.add(new AttributeInfo(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE, maxCreditValue));
-                        attributes.add(new AttributeInfo(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR, creditValueIncr));
+						attributes = new HashMap<String,String>();
+						attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MIN_CREDIT_VALUE, minCreditValue);
+						attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_MAX_CREDIT_VALUE, maxCreditValue);
+                        attributes.put(CourseAssemblerConstants.COURSE_RESULT_COMP_ATTR_CREDIT_VALUE_INCR, creditValueIncr);
                     }
 
                     //Set the id
-                    creditOption.setKey(id);
+					creditOption.setId(id);
 
                     //Create a new result component
-                    if(id != null && !resultValueGroupIds.contains(id)){
+					if(id != null && !rsltComps.contains(id)){
 
                         //need to make a fixed degree result type component
-                        ResultValuesGroupInfo resultValueGroup = new ResultValuesGroupInfo();
-                        resultValueGroup.setKey(id);
-                        resultValueGroup.setTypeKey(type);
-                        resultValueGroup.setStateKey(course.getStateKey());
-                        resultValueGroup.setResultValueKeys(resultValues);
-                        resultValueGroup.setAttributes(attributes);
-                        BaseDTOAssemblyNode<ResultValuesGroupInfo, ResultValuesGroupInfo> node = new BaseDTOAssemblyNode<ResultValuesGroupInfo, ResultValuesGroupInfo>(null);
+						ResultComponentInfo resultComponent = new ResultComponentInfo();
+						resultComponent.setId(id);
+						resultComponent.setType(type);
+						resultComponent.setState (course.getState());
+						resultComponent.setResultValues(resultValues);
+						resultComponent.setAttributes(attributes);
+						BaseDTOAssemblyNode<ResultComponentInfo, ResultComponentInfo> node = new BaseDTOAssemblyNode<ResultComponentInfo, ResultComponentInfo>(null);
                         node.setOperation(NodeOperation.CREATE);
-                        node.setNodeData(resultValueGroup);
+						node.setNodeData(resultComponent);
                         node.setBusinessDTORef(creditOption);
                         results.add(node);
 
-                        resultValueGroupIds.add(id);
+						rsltComps.add(id);
                     }
                 }
             }catch (NumberFormatException e){
@@ -700,22 +696,22 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         }
 
         //Loop through options on the course, if they are new, create a new cluResult
-        for(ResultValuesGroupInfo creditOption : course.getCreditOptions()){
+		for(ResultComponentInfo creditOption : course.getCreditOptions()){
             if (NodeOperation.CREATE == operation
-                    || (NodeOperation.UPDATE == operation && !currentResults.containsKey(creditOption.getKey()) )) {
+		            || (NodeOperation.UPDATE == operation && !currentResults.containsKey(creditOption.getId()) )) {
 
                 ResultOptionInfo resultOption = new ResultOptionInfo();
-                resultOption.setStateKey(course.getStateKey());
-                resultOption.setResultComponentId(creditOption.getKey());
+		    	resultOption.setState(course.getState());
+		    	resultOption.setResultComponentId(creditOption.getId());
 
                 CluResultInfo cluResult = new CluResultInfo();
                 cluResult.setCluId(clu.getId());
-                cluResult.setStateKey(course.getStateKey());
-                cluResult.setTypeKey(courseResultType);
+				cluResult.setState(course.getState());
+				cluResult.setType(courseResultType);
 
                 cluResult.getResultOptions().add(resultOption);
 
-                BaseDTOAssemblyNode<ResultValuesGroupInfo, CluResultInfo> cluResultNode = new BaseDTOAssemblyNode<ResultValuesGroupInfo, CluResultInfo>(null);
+				BaseDTOAssemblyNode<ResultComponentInfo, CluResultInfo> cluResultNode = new BaseDTOAssemblyNode<ResultComponentInfo, CluResultInfo>(null);
                 cluResultNode.setNodeData(cluResult);
                 cluResultNode.setOperation(NodeOperation.CREATE);
 
@@ -734,7 +730,7 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         //Delete the leftovers
         for(Entry<String,List<CluResultInfo>> entry:currentResults.entrySet()){
             for(CluResultInfo cluResult:entry.getValue()){
-                BaseDTOAssemblyNode<ResultValuesGroupInfo, CluResultInfo> cluResultNode = new BaseDTOAssemblyNode<ResultValuesGroupInfo, CluResultInfo>(null);
+				BaseDTOAssemblyNode<ResultComponentInfo, CluResultInfo> cluResultNode = new BaseDTOAssemblyNode<ResultComponentInfo, CluResultInfo>(null);
                 cluResultNode.setNodeData(cluResult);
                 cluResultNode.setOperation(NodeOperation.DELETE);
                 results.add(cluResultNode);
@@ -761,25 +757,23 @@ public class CourseAssembler implements BOAssembler<CourseInfo, CluInfo> {
         }
         return results;
     }
-    //
-    private List<ResultValuesGroupInfo> assembleCreditOptions(
+
+	private List<ResultComponentInfo> assembleCreditOptions(
             List<CluResultInfo> cluResults, ContextInfo contextInfo) throws AssemblyException {
         String courseResultType = CourseAssemblerConstants.COURSE_RESULT_TYPE_CREDITS;
-        List<ResultValuesGroupInfo> results = new ArrayList<ResultValuesGroupInfo>();
+		List<ResultComponentInfo> results = new ArrayList<ResultComponentInfo>();
         //Loop through all the CluResults to find the one with the matching type
         for(CluResultInfo cluResult:cluResults){
             if(courseResultType.equals(cluResult.getTypeKey())){
                 //Loop through all options and add to the list of Strings
                 for(ResultOptionInfo resultOption: cluResult.getResultOptions()){
                     try {
-                        if(resultOption.getResultComponentId()!=null){
-                            ResultValuesGroupInfo resultValuesGroup = lrcService.getResultValuesGroup(resultOption.getResultComponentId(), contextInfo);
-                            results.add(resultValuesGroup);
-                        }
+						ResultComponentInfo resultComponent = lrcService.getResultComponent(resultOption.getResultComponentId());
+						results.add(resultComponent);
                     } catch (DoesNotExistException e) {
-                        LOG.warn("Course Credit option:"+resultOption.getId()+" refers to non-existant ResultValuesGroupInfo "+ resultOption.getResultComponentId());
+						LOG.warn("Course Credit option:"+resultOption.getId()+" refers to non-existant ResultComponentInfo "+resultOption.getResultComponentId());
                     } catch (Exception e) {
-                        throw new AssemblyException("Error getting ResultValuesGroupInfo",e);
+						throw new AssemblyException("Error getting result components",e);
                     }
                 }
             }

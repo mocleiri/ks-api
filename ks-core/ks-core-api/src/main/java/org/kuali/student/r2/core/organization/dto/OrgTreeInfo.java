@@ -70,13 +70,6 @@ public class OrgTreeInfo
     public OrgTreeInfo() {
     }
     
-    public OrgTreeInfo(String orgId, String parentId, String displayName) {
-        super();
-        this.orgId = orgId;
-        this.parentId = parentId;
-        this.displayName = displayName;
-    }   
-    
     /**
      * Constructs a new OrgTreeInfo from another OrgTree
      *

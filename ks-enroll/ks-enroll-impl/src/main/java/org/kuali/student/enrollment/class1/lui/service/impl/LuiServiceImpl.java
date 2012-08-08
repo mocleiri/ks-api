@@ -246,10 +246,9 @@ public class LuiServiceImpl
         entity.setAtpId(atpId);
         entity.setCluId(cluId);
         entity.setLuiType(luiTypeKey);
-        entity.setCreateId(context.getPrincipalId());
-        entity.setCreateTime(context.getCurrentDate());
-        entity.setUpdateId(context.getPrincipalId());
-        entity.setUpdateTime(context.getCurrentDate());
+        
+        entity.setEntityCreated(context);
+        
         if(entity.getIdentifiers() != null){
             for(LuiIdentifierEntity ident:entity.getIdentifiers()){
                 ident.setCreateId(context.getPrincipalId());
@@ -299,8 +298,9 @@ public class LuiServiceImpl
         }
 
         //Update any Meta information
-        entity.setUpdateId(context.getPrincipalId());
-        entity.setUpdateTime(context.getCurrentDate());
+       
+        entity.setEntityUpdated(context);
+        
 
         if(entity.getIdentifiers() != null){
             for(LuiIdentifierEntity ident:entity.getIdentifiers()){
@@ -503,9 +503,11 @@ public class LuiServiceImpl
                                                             ContextInfo context)
         throws InvalidParameterException, MissingParameterException, 
                OperationFailedException, PermissionDeniedException {
-
+        if (luiId == null) {
+            throw new MissingParameterException("luiId is null");
+        }
         List<LuiInfo> relatedLuis =  new ArrayList<LuiInfo>();
-        List<LuiEntity> relatedLuiEntities =  luiLuiRelationDao.getRelatedLuisByLuiIdAndRelationType(luiId,luiLuiRelationTypeKey ) ;
+        List<LuiEntity> relatedLuiEntities =  luiLuiRelationDao.getRelatedLuisByLuiIdAndRelationType(luiId, luiLuiRelationTypeKey);
         for(LuiEntity relatedLuiEntity : relatedLuiEntities) {
             relatedLuis.add(relatedLuiEntity.toDto());
         }
@@ -588,10 +590,9 @@ public class LuiServiceImpl
         }
 
         entity.setLuiLuiRelationType(luiLuiRelationTypeKey);
-        entity.setCreateId(context.getPrincipalId());
-        entity.setCreateTime(context.getCurrentDate());
-        entity.setUpdateId(context.getPrincipalId());
-        entity.setUpdateTime(context.getCurrentDate());
+        
+        entity.setEntityCreated(context);
+        
         luiLuiRelationDao.persist(entity);
 
         return entity.toDto();
@@ -620,8 +621,9 @@ public class LuiServiceImpl
 
         //Transform the DTO to the entity
         List<Object> orphans = entity.fromDto(luiLuiRelationInfo);
-        entity.setUpdateId(context.getPrincipalId());
-        entity.setUpdateTime(context.getCurrentDate());
+        
+        entity.setEntityUpdated(context);
+        
 
         luiLuiRelationDao.merge(entity);
 

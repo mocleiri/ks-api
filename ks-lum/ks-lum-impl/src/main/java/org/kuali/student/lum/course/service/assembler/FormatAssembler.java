@@ -15,12 +15,6 @@
  */
 package org.kuali.student.lum.course.service.assembler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.log4j.Logger;
 import org.kuali.student.r1.common.assembly.BOAssembler;
 import org.kuali.student.r1.common.assembly.BaseDTOAssemblyNode;
@@ -40,6 +34,13 @@ import org.kuali.student.r2.lum.clu.service.CluService;
 import org.kuali.student.r2.lum.course.dto.ActivityInfo;
 import org.kuali.student.r2.lum.course.dto.CourseInfo;
 import org.kuali.student.r2.lum.course.dto.FormatInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Assembler for FormatInfo. Assembles/Disassemble FormatInfo from CluInfo and
  * other structures.
@@ -72,7 +73,7 @@ public class FormatAssembler implements BOAssembler<FormatInfo, CluInfo> {
 		format.setAttributes(clu.getAttributes());
 	    format.setDuration(clu.getStdDuration());
 	    format.setTermsOffered(clu.getOfferedAtpTypes());
-		
+
 		// Don't make any changes to nested datastructures if this is
 		if (!shallowBuild) {
 			// Use the luService to find activities, then convert and add to the
@@ -124,7 +125,7 @@ public class FormatAssembler implements BOAssembler<FormatInfo, CluInfo> {
 															// already(important
 															// for creating
 															// relations)
-	
+
 		clu.setTypeKey(CourseAssemblerConstants.COURSE_FORMAT_TYPE);
 		clu.setStateKey(format.getStateKey());
 		clu.setIsEnrollable(false);
@@ -133,7 +134,7 @@ public class FormatAssembler implements BOAssembler<FormatInfo, CluInfo> {
 
 		clu.setStdDuration(format.getDuration());
 		clu.setOfferedAtpTypes(format.getTermsOffered());
-		
+
 		// Add the Clu to the result
 		result.setNodeData(clu);
 		result.setOperation(operation);
@@ -166,8 +167,8 @@ public class FormatAssembler implements BOAssembler<FormatInfo, CluInfo> {
 	 * 
 	 * If the Operation
 	 * 
+     * @param nodeId
 	 * @param format
-	 * @param result
 	 * @param operation
 	 * @return List of Assembly nodes
 	 * @throws AssemblyException

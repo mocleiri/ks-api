@@ -15,10 +15,30 @@
 
 package org.kuali.student.r2.core.class1.scheduling.model;
 
+import org.kuali.student.r2.common.entity.BaseAttributeEntity;
+import org.kuali.student.r2.common.infc.Attribute;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 /**
  * Entity class for dynamic attributes of a TimeSlot
  *
  * @author andrewlubbers
  */
-public class TimeSlotAttributeEntity {
+
+@Entity
+@Table(name = "KSEN_SCHED_TMSLOT_ATTR")
+public class TimeSlotAttributeEntity extends BaseAttributeEntity<TimeSlotEntity> {
+
+    public TimeSlotAttributeEntity() {
+        super();
+    }
+
+    public TimeSlotAttributeEntity(Attribute att, TimeSlotEntity owner) {
+        super(att, owner);
+    }
+
 }
