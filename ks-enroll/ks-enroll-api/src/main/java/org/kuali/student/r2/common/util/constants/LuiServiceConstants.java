@@ -232,7 +232,7 @@ public class LuiServiceConstants {
      *  LUI LUI Relation types
      */
     @Deprecated
-    public static final String LUI_LUI_RELATION_ASSOCIATED_TYPE_KE = "kuali.lui.lui.relation.associated";
+    public static final String LUI_LUI_RELATION_ASSOCIATED_TYPE_KEY = "kuali.lui.lui.relation.associated";
     // Actual LUI LUI Relation types KSENROLL-2237
     public static final String LUI_LUI_RELATION_DELIVERED_VIA_CO_TO_FO_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia.co2fo";
     public static final String LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_AO_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia.fo2ao";

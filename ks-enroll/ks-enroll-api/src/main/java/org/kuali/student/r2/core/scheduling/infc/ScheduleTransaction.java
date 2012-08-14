@@ -36,6 +36,16 @@ public interface ScheduleTransaction extends IdEntity {
      */
     public String getRefObjectId();
 
+
+    /**
+     * Schedule Batch identifier
+     *
+     * @name Schedule Batch id
+     * @required
+     * @readonly
+     */
+    public String getScheduleBatchId ();
+
     /**
      * Referenced object type key
      *
@@ -45,6 +55,22 @@ public interface ScheduleTransaction extends IdEntity {
      */
     public String getRefObjectTypeKey();
 
+    /**
+     * The Schedule Request Id.
+     *
+     * @name Schedule Id
+     * @required
+     * @readonly
+     */
+    public String getScheduleId();
+
+    /**
+     * Status of the schedule request
+     *
+     * @name Status Message
+     *
+     */
+    public String getStatusMessage();
 
     /**
      * The Schedule Request Component Ids. These provide a list of preferences.

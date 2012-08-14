@@ -158,7 +158,8 @@
     <gwt.codehaus.plugin.version>1.2</gwt.codehaus.plugin.version>
     <tomcat.plugin.version>1.1</tomcat.plugin.version>
     <plugin.impex.version>1.0.31</plugin.impex.version>
-    <!-- <jetty.plugin.version>8.0.0.M2</jetty.plugin.version> -->
+    <ks-contract-docs.plugin.version>1.0.1-SNAPSHOT</ks-contract-docs.plugin.version>
+   <!--  <jetty.plugin.version>8.0.0.M2</jetty.plugin.version> -->
 
     <!-- added by bonnie -->
     <jetty.plugin.version>7.3.1.v20110307</jetty.plugin.version>
@@ -178,8 +179,8 @@
     <ks.gwt.compile.style>OBF</ks.gwt.compile.style>
     <ks.java2ws.phase>none</ks.java2ws.phase>
     <ks.contractdoc.phase>site</ks.contractdoc.phase>
-    <ks.dictionarydoc.phase>none</ks.dictionarydoc.phase>
-    <ks.dictionarycreate.phase>none</ks.dictionarycreate.phase>
+    <ks.dictionarydoc.phase>site</ks.dictionarydoc.phase> 
+    <ks.dictionarycreate.phase>none</ks.dictionarycreate.phase>    
   </properties>
   <build>
     <pluginManagement>
