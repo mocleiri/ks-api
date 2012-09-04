@@ -36,7 +36,8 @@ import org.w3c.dom.Element;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RegistrationGroupInfo", propOrder = {
                 "id", "typeKey", "stateKey", "name", "descr", 
-                "formatOfferingId",  "courseOfferingId", "termId", 
+                "formatOfferingId",  "courseOfferingId", 
+                "activityOfferingClusterId", "termId", 
                 "registrationCode", "activityOfferingIds", 
                 "isGenerated",
                 "meta", "attributes", "_futureElements"})
@@ -62,6 +63,9 @@ public class RegistrationGroupInfo
 
     @XmlElement
     private String courseOfferingId;
+    
+    @XmlElement
+    private String activityOfferingClusterId;
 
     @XmlElement
     private String termId;
@@ -100,6 +104,8 @@ public class RegistrationGroupInfo
 
         this.formatOfferingId = registrationGroup.getFormatOfferingId();
         this.courseOfferingId = registrationGroup.getCourseOfferingId();
+        this.activityOfferingClusterId = registrationGroup.getActivityOfferingClusterId();
+        
         this.termId = registrationGroup.getTermId();
         
         this.registrationCode = registrationGroup.getRegistrationCode();
@@ -170,7 +176,18 @@ public class RegistrationGroupInfo
         this.isGenerated = isGenerated;
     }
     
-    @Override
+    
+    
+    public void setActivityOfferingClusterId(String activityOfferingClusterId) {
+		this.activityOfferingClusterId = activityOfferingClusterId;
+	}
+
+	@Override
+	public String getActivityOfferingClusterId() {
+		return activityOfferingClusterId;
+	}
+
+	@Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("RegistrationGroupInfo [id=");
@@ -179,6 +196,8 @@ public class RegistrationGroupInfo
         builder.append(formatOfferingId);
         builder.append(", courseOfferingId=");
         builder.append(courseOfferingId);
+        builder.append(", activityOfferingClusterId=");
+        builder.append(activityOfferingClusterId);
         builder.append(", termId=");
         builder.append(termId);
         builder.append(", activityOfferingIds=");

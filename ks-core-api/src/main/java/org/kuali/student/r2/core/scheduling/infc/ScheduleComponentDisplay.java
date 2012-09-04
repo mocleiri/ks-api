@@ -2,6 +2,9 @@ package org.kuali.student.r2.core.scheduling.infc;
 
 import org.kuali.student.r2.common.infc.DisplayObject;
 import org.kuali.student.r2.common.infc.HasId;
+import org.kuali.student.r2.core.room.dto.BuildingInfo;
+import org.kuali.student.r2.core.room.dto.RoomInfo;
+import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
 
 import java.util.List;
 
@@ -12,21 +15,24 @@ import java.util.List;
  * Time: 1:40 PM
  *
  * This interface represents a reusable display object in the Scheduling Service for ScheduleComponents.
+ * @author Mezba Mahtab
  */
 public interface ScheduleComponentDisplay extends HasId, DisplayObject {
 
     /**
-     * The Time Slots Ids.
-     *
-     * @name Time Slot Ids
+     * The Time Slots.
      * @required
      */
-    public List<String> getTimeSlotIds();
+    public List<TimeSlotInfo> getTimeSlots();
 
     /**
-     * The Room Id.
-     *
-     * @name Room Id
+     * The Room.
      */
-    public String getRoomId();
+    public RoomInfo getRoom();
+
+    /**
+     * The Building.
+     */
+    public BuildingInfo getBuilding();
+
 }

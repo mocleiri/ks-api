@@ -31,13 +31,19 @@ public interface ActivityOfferingCluster
     extends IdEntity {
 
     /**
+     * Private name of ActivityOfferingCluster
+     * @name Private Name
+     */
+    public String getPrivateName();
+
+    /**
      * Gets the format offering Id to which this template applies.
      *
      * @name Format Offering Id
      * @required
      */
     public String getFormatOfferingId();
-
+    
     /**
      * Gets the activity offering Id combinations. Each list within
      * this list contains a list of Activity Offering Ids.

@@ -85,4 +85,11 @@ public class TimeOfDayInfo implements TimeOfDay, Serializable {
         TimeOfDay timeOfDay = (TimeOfDay) obj;
         return this.milliSeconds==timeOfDay.getMilliSeconds();
     }
+
+    @Override
+    public String toString() {
+        return "TimeOfDayInfo{" +
+                "milliSeconds=" + milliSeconds +
+                '}';
+    }
 }

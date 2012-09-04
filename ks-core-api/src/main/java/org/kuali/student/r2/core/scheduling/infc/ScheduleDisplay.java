@@ -2,7 +2,8 @@ package org.kuali.student.r2.core.scheduling.infc;
 
 import org.kuali.student.r2.common.infc.DisplayObject;
 import org.kuali.student.r2.common.infc.IdEntity;
-import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentInfo;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentDisplayInfo;
 
 import java.util.List;
 
@@ -17,18 +18,14 @@ import java.util.List;
 public interface ScheduleDisplay extends IdEntity, DisplayObject {
 
     /**
-     * The ATP Id. Schedule Components are applied to this ATP.
-     *
-     * @name Atp Id
+     * The ATP. Schedule Components are applied to this ATP.
      * @required
      */
-    public String getAtpId();
+    public AtpInfo getAtp();
 
     /**
      * The Schedule Components. These provide a list of Time Slots
      * coupled with Room locations.
-     *
-     * @name Schedule Components
      */
-    public List<ScheduleComponentInfo> getScheduleComponents();
+    public List<ScheduleComponentDisplayInfo> getScheduleComponentDisplays();
 }

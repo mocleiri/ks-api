@@ -19,9 +19,12 @@ package org.kuali.student.r2.core.scheduling.dto;
 import org.kuali.student.r2.common.dto.DateRangeInfo;
 import org.kuali.student.r2.common.dto.IdEntityInfo;
 import org.kuali.student.r2.common.infc.DateRange;
+import org.kuali.student.r2.core.atp.dto.AtpInfo;
+import org.kuali.student.r2.core.atp.infc.Atp;
 import org.kuali.student.r2.core.scheduling.infc.MeetingTime;
 import org.kuali.student.r2.core.scheduling.infc.Schedule;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleComponent;
+import org.kuali.student.r2.core.scheduling.infc.ScheduleComponentDisplay;
 import org.kuali.student.r2.core.scheduling.infc.ScheduleDisplay;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -40,7 +43,7 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ScheduleDisplayInfo", propOrder = {"id", "typeKey", "stateKey", "name", "descr",
-        "atpId", "scheduleComponents",
+        "atp", "scheduleComponentDisplays",
         "meta", "attributes"})//, "_futureElements" }) TODO KSCM-372: Non-GWT translatable code
 public class ScheduleDisplayInfo extends IdEntityInfo implements ScheduleDisplay, Serializable {
 
@@ -49,9 +52,10 @@ public class ScheduleDisplayInfo extends IdEntityInfo implements ScheduleDisplay
     ////////////////////////
 
     @XmlElement
-    private String atpId;
+    private AtpInfo atp;
+
     @XmlElement
-    private List<ScheduleComponentInfo> scheduleComponents;
+    private List<ScheduleComponentDisplayInfo> scheduleComponentDisplays;
 
 //    TODO KSCM-372: Non-GWT translatable code
 //    @XmlAnyElement
@@ -67,10 +71,10 @@ public class ScheduleDisplayInfo extends IdEntityInfo implements ScheduleDisplay
     public ScheduleDisplayInfo(ScheduleDisplay scheduleDisplay) {
         super (scheduleDisplay);
         if (null != scheduleDisplay) {
-            this.atpId = scheduleDisplay.getAtpId();
-            this.scheduleComponents = new ArrayList<ScheduleComponentInfo>();
-            for (ScheduleComponent scheduleComponent : scheduleDisplay.getScheduleComponents()) {
-                this.scheduleComponents.add(new ScheduleComponentInfo(scheduleComponent));
+            this.atp= scheduleDisplay.getAtp();
+            this.scheduleComponentDisplays = new ArrayList<ScheduleComponentDisplayInfo>();
+            for (ScheduleComponentDisplayInfo scheduleComponentDisplayInfo : scheduleDisplay.getScheduleComponentDisplays()) {
+                this.scheduleComponentDisplays.add(new ScheduleComponentDisplayInfo(scheduleComponentDisplayInfo));
             }
         }
     }
@@ -80,25 +84,20 @@ public class ScheduleDisplayInfo extends IdEntityInfo implements ScheduleDisplay
     ////////////////////////////////////
 
     @Override
-    public String getAtpId() {
-        return this.atpId;
+    public AtpInfo getAtp() {
+        return atp;
     }
 
-    public void setAtpId(String atpId) {
-        this.atpId = atpId;
+    public void setAtp(AtpInfo atp) {
+        this.atp = atp;
     }
 
     @Override
-    public List<ScheduleComponentInfo> getScheduleComponents() {
-        if (null == this.scheduleComponents) {
-            return new ArrayList<ScheduleComponentInfo>();
-        }
-        else {
-            return this.scheduleComponents;
-        }
+    public List<ScheduleComponentDisplayInfo> getScheduleComponentDisplays() {
+        return scheduleComponentDisplays;
     }
 
-    public void setScheduleComponentIds(List<ScheduleComponentInfo> scheduleComponents) {
-        this.scheduleComponents = scheduleComponents;
+    public void setScheduleComponentDisplays(List<ScheduleComponentDisplayInfo> scheduleComponentDisplays) {
+        this.scheduleComponentDisplays = scheduleComponentDisplays;
     }
 }
