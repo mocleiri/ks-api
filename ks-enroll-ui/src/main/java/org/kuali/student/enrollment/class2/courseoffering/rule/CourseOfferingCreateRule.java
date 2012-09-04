@@ -28,7 +28,9 @@ public class CourseOfferingCreateRule extends MaintenanceDocumentRuleBase {
         if (document.getNewMaintainableObject().getDataObject() instanceof CourseOfferingCreateWrapper){
             CourseOfferingCreateWrapper coWrapper = (CourseOfferingCreateWrapper)document.getNewMaintainableObject().getDataObject();
 
-            String newCoCode = coWrapper.getCatalogCourseCode() + coWrapper.getCourseOfferingSuffix();
+
+            // Catalog course code is case INSENSITIVE, but the suffix is case SENSITIVE
+            String newCoCode = (coWrapper.getCatalogCourseCode().toUpperCase()) + coWrapper.getCourseOfferingSuffix();
             try {
                 List<CourseOfferingInfo> wrapperList = getCourseOfferingService().getCourseOfferingsByCourseAndTerm(coWrapper.getCourse().getId(), coWrapper.getTerm().getId(), getContextInfo());
                 for (CourseOfferingInfo courseOfferingInfo : wrapperList) {

@@ -16,7 +16,11 @@ import org.kuali.student.enrollment.class2.courseoffering.service.CourseOffering
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingConstants;
 import org.kuali.student.enrollment.class2.courseoffering.util.CourseOfferingResourceLoader;
 import org.kuali.student.enrollment.class2.courseoffering.util.ViewHelperUtil;
-import org.kuali.student.enrollment.courseoffering.dto.*;
+import org.kuali.student.enrollment.courseoffering.dto.ActivityOfferingInfo;
+import org.kuali.student.enrollment.courseoffering.dto.CourseOfferingInfo;
+import org.kuali.student.enrollment.courseoffering.dto.FormatOfferingInfo;
+import org.kuali.student.enrollment.courseoffering.dto.OfferingInstructorInfo;
+import org.kuali.student.enrollment.courseoffering.dto.RegistrationGroupInfo;
 import org.kuali.student.enrollment.courseoffering.service.CourseOfferingService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.LocaleInfo;
@@ -32,8 +36,8 @@ import org.kuali.student.r2.core.class1.type.service.TypeService;
 import org.kuali.student.r2.core.room.dto.BuildingInfo;
 import org.kuali.student.r2.core.room.dto.RoomInfo;
 import org.kuali.student.r2.core.room.service.RoomService;
-import org.kuali.student.r2.core.scheduling.dto.ScheduleComponentInfo;
-import org.kuali.student.r2.core.scheduling.dto.ScheduleInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestComponentInfo;
+import org.kuali.student.r2.core.scheduling.dto.ScheduleRequestInfo;
 import org.kuali.student.r2.core.scheduling.dto.TimeSlotInfo;
 import org.kuali.student.r2.core.scheduling.service.SchedulingService;
 import org.kuali.student.r2.lum.course.dto.ActivityInfo;
@@ -44,7 +48,16 @@ import org.kuali.student.r2.lum.lrc.dto.ResultValuesGroupInfo;
 import org.kuali.student.r2.lum.lrc.service.LRCService;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperServiceImpl implements CourseOfferingManagementViewHelperService{
@@ -72,8 +85,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
 
         // Do search.  In ideal case, terms returns one element, which is the desired term.
         AcademicCalendarService acalService = _getAcalService();
-        List<TermInfo> terms = acalService.searchForTerms(criteria, new ContextInfo());
-        return terms;
+        return acalService.searchForTerms(criteria, new ContextInfo());
     }
 
     public void loadCourseOfferingsByTermAndSubjectCode (String termId, String subjectCode, CourseOfferingManagementForm form) throws Exception{
@@ -132,7 +144,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                         throw new RuntimeException("Alert: find more than one term for specified termCode: "+termCode);
                     }
                 } else {
-                    new Exception("Error: Does not find a valid term with Term = "+ termCode);
+                    throw new RuntimeException("Error: Does not find a valid term with Term = "+ termCode);
                 }
             }
 
@@ -241,7 +253,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         }
 
         // Get the matching activity offering type for the selected activity
-        TypeInfo activityOfferingType = null;
+        TypeInfo activityOfferingType;
         try {
             List<TypeInfo> types = getTypeService().getAllowedTypesForType(activity.getTypeKey(), getContextInfo());
             // only one AO type should be mapped to each Activity type
@@ -278,7 +290,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
     public void loadActivityOfferingsByCourseOffering (CourseOfferingInfo theCourseOfferingInfo, CourseOfferingManagementForm form) throws Exception{
         String courseOfferingId = theCourseOfferingInfo.getId();
         List<ActivityOfferingInfo> activityOfferingInfoList;
-        List<ActivityOfferingWrapper> activityOfferingWrapperList = null;
+        List<ActivityOfferingWrapper> activityOfferingWrapperList;
 
         try {
             activityOfferingInfoList =_getCourseOfferingService().getActivityOfferingsByCourseOffering(courseOfferingId, getContextInfo());
@@ -298,67 +310,51 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                     wrapper.setFirstInstructorDisplayName(displayInstructor.getPersonName());
                 }
 
-/*
-                calendar.setTimeInMillis(1344443400000L);
-                String sTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
-                calendar.setTimeInMillis(1344447000000L);
-                String eTime = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
-
-                List<Integer>  testDays = new ArrayList<Integer>();
-                testDays.add(calendar.get(Calendar.DAY_OF_WEEK)-2);
-                testDays.add(calendar.get(Calendar.DAY_OF_WEEK));
-                wrapper.setStartTimeDisplay(sTime);
-                wrapper.setEndTimeDisplay(eTime);
-                wrapper.setDaysDisplayName(getDays(testDays));
-                wrapper.setBuildingName("COMPUTER SCIENCE INSTRUCTIONAL");
-                wrapper.setRoomName("CSI 2118");
-                SchedulingService service  = getSchedulingService();
-                RoomService roomService1 = getRoomService();
-*/
-
                 // assign the time and days
-                if (info.getScheduleId() != null) {
-                    ScheduleInfo scheduleInfo = getSchedulingService().getSchedule(info.getScheduleId(), getContextInfo());
-                    if (scheduleInfo != null) {
-                        List<ScheduleComponentInfo> componentList = scheduleInfo.getScheduleComponents();
-                        if (componentList != null && componentList.size() > 0) {
-                            List<String> ids = componentList.get(0).getTimeSlotIds();
-                            if (ids != null && ids.size() > 0) {
-                                TimeSlotInfo timeSlot = getSchedulingService().getTimeSlot(ids.get(0), getContextInfo());
-                                if (timeSlot != null) {
-                                    TimeOfDayInfo startTime = timeSlot.getStartTime();
-                                    TimeOfDayInfo endTime = timeSlot.getEndTime();
-                                    List<Integer> days = timeSlot.getWeekdays();
+                SimpleDateFormat format = new SimpleDateFormat("hh:mm a");
+                List<ScheduleRequestInfo> scheduleRequestInfoList = getSchedulingService().getScheduleRequestsByRefObject(LuiServiceConstants.ACTIVITY_OFFERING_GROUP_TYPE_KEY  , info.getId(), getContextInfo());
+                if (scheduleRequestInfoList != null && scheduleRequestInfoList.size() > 0) {
+                    ScheduleRequestInfo scheduleRequestInfo = scheduleRequestInfoList.get(0);
+                    List<ScheduleRequestComponentInfo> componentList = scheduleRequestInfo.getScheduleRequestComponents();
+                    if (componentList != null && componentList.size() > 0) {
+                        List<String> ids = componentList.get(0).getTimeSlotIds();
+                        if (ids != null && ids.size() > 0) {
+                            TimeSlotInfo timeSlot = getSchedulingService().getTimeSlot(ids.get(0), getContextInfo());
+                            if (timeSlot != null) {
+                                TimeOfDayInfo startTime = timeSlot.getStartTime();
+                                TimeOfDayInfo endTime = timeSlot.getEndTime();
+                                List<Integer> days = timeSlot.getWeekdays();
 
-                                    if(startTime != null) {
-                                        calendar.setTimeInMillis(startTime.getMilliSeconds());
-                                        String start1 = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
-                                        wrapper.setStartTimeDisplay(start1);
-                                    }
-                                    if(endTime != null) {
-                                        calendar.setTimeInMillis(endTime.getMilliSeconds());
-                                        String end1 = calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + " " + getAmPm(calendar.get(Calendar.AM_PM));
-                                        wrapper.setEndTimeDisplay(end1);
-                                    }
-                                    if(days != null && days.size() > 0) {
-                                        wrapper.setDaysDisplayName(getDays(days));
-                                    }
+                                if (startTime != null) {
+                                    calendar.setTimeInMillis(startTime.getMilliSeconds());
+                                    wrapper.setStartTimeDisplay(format.format(calendar.getTime()));
+                                }
+                                if (endTime != null) {
+                                    calendar.setTimeInMillis(endTime.getMilliSeconds());
+                                    wrapper.setEndTimeDisplay(format.format(calendar.getTime()));
+                                }
+                                if (days != null && days.size() > 0) {
+                                    wrapper.setDaysDisplayName(getDays(days));
                                 }
                             }
-                            // assign building and room info
-                            String roomId = componentList.get(0).getRoomId();
-                            if(roomId != null) {
-                                RoomInfo roomInfo = getRoomService().getRoom(roomId, getContextInfo());
-                                if(roomInfo != null) {
-                                    if(roomInfo.getBuildingId() != null  && !roomInfo.getBuildingId().isEmpty()) {
+                        }
+
+                        // assign building and room info
+                        List<String> roomIds = componentList.get(0).getRoomIds();
+                        if (roomIds != null && roomIds.size() > 0) {
+                            if (roomIds.get(0) != null) {
+                                RoomInfo roomInfo = getRoomService().getRoom(roomIds.get(0), getContextInfo());
+                                if (roomInfo != null) {
+                                    if (roomInfo.getBuildingId() != null && !roomInfo.getBuildingId().isEmpty()) {
                                         BuildingInfo buildingInfo = getRoomService().getBuilding(roomInfo.getBuildingId(), getContextInfo());
-                                        if(buildingInfo != null)
-                                        wrapper.setBuildingName(buildingInfo.getName());
+                                        if (buildingInfo != null)
+                                            wrapper.setBuildingName(buildingInfo.getName());
                                     }
                                     wrapper.setRoomName(roomInfo.getName());
                                 }
                             }
                         }
+
                     }
                 }
                 activityOfferingWrapperList.add(wrapper);
@@ -386,7 +382,6 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
             if (wrapper.getIsChecked()) {
                 //  If the action is "Set as Draft" then the current state of the AO must be "Approved".
                 if (StringUtils.equals(CourseOfferingConstants.ACTIVITY_OFFERING_DRAFT_ACTION, selectedAction)) {
-                  //if (StringUtils.equals(wrapper.getAoInfo().getStateKey(), LuiServiceConstants.LUI_AO_STATE_SCHEDULED_KEY)){
                     if (StringUtils.equals(wrapper.getAoInfo().getStateKey(), LuiServiceConstants.LUI_AO_STATE_APPROVED_KEY)){
                         wrapper.getAoInfo().setStateKey(LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
                         wrapper.setStateName(draftState.getName());
@@ -395,7 +390,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                     } else {
                         //  Add the validation error once
                         if ( ! isErrorAdded){
-                            GlobalVariables.getMessageMap().putError("selectedOfferingAction",RiceKeyConstants.ERROR_CUSTOM,"Some Activity Offerings are not in draft state");
+                            GlobalVariables.getMessageMap().putError("selectedOfferingAction", RiceKeyConstants.ERROR_CUSTOM, "Some Activity Offerings are not in draft state");
                             isErrorAdded = true;
                         }
                     }
@@ -416,7 +411,6 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                 }
             }
         }
-
         // check for changes to states in the related COs and FOs
         ViewHelperUtil.updateCourseOfferingStateFromActivityOfferingStateChange(courseOfferingInfo, getContextInfo());
     }
@@ -439,29 +433,28 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
      */
     public void markCourseOfferingsForScheduling(List<CourseOfferingEditWrapper> coWrappers, boolean checkedOnly) throws Exception {
         boolean isErrorAdded = false;
+        boolean isWarningAdded = false;
         for (CourseOfferingEditWrapper coWrapper : coWrappers) {
             if ((coWrapper.getIsChecked() && checkedOnly) || ! checkedOnly) {
-                boolean isCOStateDraft =  StringUtils.equals(LuiServiceConstants.LUI_CO_STATE_DRAFT_KEY, coWrapper.getCoInfo().getStateKey());
-                boolean isCOStatePlanned =  StringUtils.equals(LuiServiceConstants.LUI_CO_STATE_PLANNED_KEY, coWrapper.getCoInfo().getStateKey());
-                if (isCOStateDraft || isCOStatePlanned) {
-                    List<ActivityOfferingInfo> activityOfferingInfos = getCourseOfferingService().getActivityOfferingsByCourseOffering(coWrapper.getCoInfo().getId(),getContextInfo());
-                    //  Iterate through the AOs and state change Draft -> Approved.
-                    for (ActivityOfferingInfo activityOfferingInfo : activityOfferingInfos) {
-                        boolean isAOStateDraft = StringUtils.equals(activityOfferingInfo.getStateKey(), LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
-                        if (isAOStateDraft) {
-                            activityOfferingInfo.setStateKey(LuiServiceConstants.LUI_AO_STATE_APPROVED_KEY);
-                            getCourseOfferingService().updateActivityOffering(activityOfferingInfo.getId(), activityOfferingInfo,getContextInfo());
-                        } else {
-                            if ( ! isErrorAdded) {
-                                GlobalVariables.getMessageMap().putError("selectedOfferingAction", CourseOfferingConstants.COURSEOFFERING_WITH_AO_DRAFT_APPROVED_ONLY);
-                                isErrorAdded = true;
-                            }
-                        }
-                    }
-                } else {
-                    if ( ! isErrorAdded) {
-                        GlobalVariables.getMessageMap().putError("selectedOfferingAction", CourseOfferingConstants.COURSEOFFERING_WITH_AO_DRAFT_APPROVED_ONLY);
+                List<ActivityOfferingInfo> activityOfferingInfos = getCourseOfferingService().getActivityOfferingsByCourseOffering(coWrapper.getCoInfo().getId(),getContextInfo());
+                if (activityOfferingInfos.size() == 0) {
+                    if(!isErrorAdded) {
+                        GlobalVariables.getMessageMap().putError("selectedOfferingAction", CourseOfferingConstants.COURSEOFFERING_INVALID_STATE_FOR_SELECTED_ACTION_ERROR);
                         isErrorAdded = true;
+                    }
+                    continue;
+                }
+                //  Iterate through the AOs and state change Draft -> Approved.
+                for (ActivityOfferingInfo activityOfferingInfo : activityOfferingInfos) {
+                    boolean isAOStateDraft = StringUtils.equals(activityOfferingInfo.getStateKey(), LuiServiceConstants.LUI_AO_STATE_DRAFT_KEY);
+                    if (isAOStateDraft) {
+                        activityOfferingInfo.setStateKey(LuiServiceConstants.LUI_AO_STATE_APPROVED_KEY);
+                        getCourseOfferingService().updateActivityOffering(activityOfferingInfo.getId(), activityOfferingInfo,getContextInfo());
+                    } else {
+                        if ( ! isWarningAdded) {
+                            GlobalVariables.getMessageMap().putWarning("manageCourseOfferingsPage", CourseOfferingConstants.COURSEOFFERING_WITH_AO_DRAFT_APPROVED_ONLY);
+                            isWarningAdded = true;
+                        }
                     }
                 }
             }
@@ -583,7 +576,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         return roomService;
     }
 
-    //get credit count from persisted COInfo or from CourseInfo
+    // get credit count from persisted COInfo or from CourseInfo
     private String getCreditCount(CourseOfferingInfo coInfo, CourseInfo courseInfo) throws Exception{
         return ViewHelperUtil.getCreditCount(coInfo, courseInfo);
     }
@@ -627,18 +620,12 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         return isMatched;        
     }
 
-    private String getAmPm(int ampm) {
-        if (ampm == 1) {
-            return "pm";
-        }
-        return "am";
-    }
 
     private String convertIntoDays(int day) {
-        String dayOfWeek = "";
+        String dayOfWeek;
         switch (day) {
             case 1:
-                dayOfWeek = "SU";
+                dayOfWeek = "U";
                 break;
             case 2:
                 dayOfWeek = "M";
@@ -650,7 +637,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
                 dayOfWeek = "W";
                 break;
             case 5:
-                dayOfWeek = "TH";
+                dayOfWeek = "H";
                 break;
             case 6:
                 dayOfWeek = "F";
@@ -661,6 +648,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
             default:
                 dayOfWeek = "";
         }
+        // TODO implement TBA when service stores it.
         return dayOfWeek;
     }
 
@@ -670,7 +658,7 @@ public class CourseOfferingManagementViewHelperServiceImpl extends ViewHelperSer
         if(intList == null) return sb.toString();
 
         for(Integer d : intList) {
-            sb.append(convertIntoDays(d.intValue()));
+            sb.append(convertIntoDays(d));
         }
         return sb.toString();
     }

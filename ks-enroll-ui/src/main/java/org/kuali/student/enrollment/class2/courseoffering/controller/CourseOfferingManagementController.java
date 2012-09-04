@@ -860,18 +860,17 @@ public class CourseOfferingManagementController extends UifControllerBase  {
      * Method used to edit a selected CO or AO
      */
     @RequestMapping(params = "methodToCall=edit")
-    public ModelAndView edit(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
-                             HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView edit(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm) throws Exception {
 
         Properties urlParameters = new Properties();
         Object selectedObject = _getSelectedObject(theForm, "edit");
 
-        if(selectedObject instanceof CourseOfferingEditWrapper){
+        if (selectedObject instanceof CourseOfferingEditWrapper){
 
             CourseOfferingInfo courseOfferingInfo = ((CourseOfferingEditWrapper) selectedObject).getCoInfo();
             urlParameters = _buildCOURLParameters(courseOfferingInfo,KRADConstants.Maintenance.METHOD_TO_CALL_EDIT,false,getContextInfo());
 
-        }else if(selectedObject instanceof ActivityOfferingWrapper) {
+        } else if(selectedObject instanceof ActivityOfferingWrapper) {
 
             ActivityOfferingWrapper aoWrapper = (ActivityOfferingWrapper)selectedObject;
 
@@ -890,22 +889,43 @@ public class CourseOfferingManagementController extends UifControllerBase  {
     }
 
     /**
+     *  Determine if any AOs were check-boxed.
+     *  @return True if any AOs where selected. Otherwise, false.
+     */
+    private boolean hasSelectedActivityOfferings(CourseOfferingManagementForm theForm) {
+        boolean bIsSelected = false;
+        List<ActivityOfferingWrapper> list = theForm.getActivityWrapperList();
+        for (ActivityOfferingWrapper activityOfferingWrapper : list) {
+            if (activityOfferingWrapper.getIsChecked()) {
+                bIsSelected = true;
+                break;
+            }
+        }
+        return bIsSelected;
+    }
+
+    /**
      * Method used to pick the selected AO actions
      */
     @RequestMapping(params = "methodToCall=selectedAoActions")
     public ModelAndView selectedAoActions(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
                                       HttpServletRequest request, HttpServletResponse response) throws Exception {
+        //  Stop here if no AOs are selected.
+        if ( ! hasSelectedActivityOfferings(theForm)) {
+            GlobalVariables.getMessageMap().putError("manageActivityOfferingsPage", CourseOfferingConstants.NO_AOS_SELECTED);
+            return getUIFModelAndView(theForm, CourseOfferingConstants.MANAGE_AO_PAGE);
+        }
 
         if (StringUtils.equals(theForm.getSelectedOfferingAction(), CourseOfferingConstants.ACTIVITY_OFFERING_DELETE_ACTION)){
             return confirmDelete(theForm, result, request, response);
         }
 
-        if (StringUtils.equals(theForm.getSelectedOfferingAction(), CourseOfferingConstants.ACTIVITY_OFFERING_DRAFT_ACTION) ||
+        if ( StringUtils.equals(theForm.getSelectedOfferingAction(), CourseOfferingConstants.ACTIVITY_OFFERING_DRAFT_ACTION) ||
             StringUtils.equals(theForm.getSelectedOfferingAction(), CourseOfferingConstants.ACTIVITY_OFFERING_SCHEDULING_ACTION)) {
             getViewHelperService(theForm).changeActivityOfferingsState(theForm.getActivityWrapperList(), theForm.getTheCourseOffering(), theForm.getSelectedOfferingAction());
         }
 
-        // reload the AOs
+        // Reload the AOs
         CourseOfferingInfo theCourseOffering = theForm.getTheCourseOffering();
         getViewHelperService(theForm).loadActivityOfferingsByCourseOffering(theCourseOffering, theForm);
         getViewHelperService(theForm).loadPreviousAndNextCourseOffering(theForm, theCourseOffering);
@@ -914,8 +934,7 @@ public class CourseOfferingManagementController extends UifControllerBase  {
     }
 
     @RequestMapping(params = "methodToCall=selectedCOActions")
-    public ModelAndView selectedCOActions(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm, BindingResult result,
-                                          HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ModelAndView selectedCOActions(@ModelAttribute("KualiForm") CourseOfferingManagementForm theForm) throws Exception {
 
         if (StringUtils.equals(theForm.getSelectedOfferingAction(),CourseOfferingConstants.ACTIVITY_OFFERING_SCHEDULING_ACTION)) {
             /*

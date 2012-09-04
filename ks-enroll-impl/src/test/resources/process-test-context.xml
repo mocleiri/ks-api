@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:ws="http://jax-ws.dev.java.net/spring/core"
-    xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:jee="http://www.springframework.org/schema/jee"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="
-          http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-          http://jax-ws.dev.java.net/spring/core http://jax-ws.dev.java.net/spring/core.xsd
-          http://jax-ws.dev.java.net/spring/servlet http://jax-ws.dev.java.net/spring/servlet.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+
+
           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-          http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+
           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <context:annotation-config/>
@@ -103,7 +96,7 @@
         <property name="em" ref="entityManager"/>
     </bean>
 
-    <bean id="processServiceImpl" class="org.kuali.student.r2.core.process.service.impl.ProcessServiceImpl">
+    <bean id="processServiceImpl" class="org.kuali.student.r2.core.process.impl.ProcessServiceImpl">
         <property name="checkDao" ref="checkDao"/>
         <property name="instructionDao" ref="instructionDao"/>
         <property name="processDao" ref="processDao"/>
@@ -111,7 +104,7 @@
         <property name="criteriaLookupService" ref="processCriteriaLookupService"/>
     </bean>
 
-    <bean id="processServiceMockImpl" class="org.kuali.student.r2.core.process.service.impl.ProcessServiceMockImpl">
+    <bean id="processServiceMockImpl" class="org.kuali.student.r2.core.process.impl.ProcessServiceMockImpl">
     </bean>
 
     <bean id="processServiceValidationDecorator"
@@ -185,6 +178,8 @@
         <property name="holdService" ref="holdService"/>
     </bean>
 
+    <bean id="acalAssembler" class="org.kuali.student.enrollment.class2.acal.service.assembler.AcademicCalendarAssembler"/>
+
     <bean id="acalService" class="org.kuali.student.enrollment.class2.acal.service.impl.AcademicCalendarServiceImpl">
         <property name="acalAssembler" ref="acalAssembler"/>
         <property name="atpService" ref="atpService"/>
@@ -195,7 +190,6 @@
         <constructor-arg ref="atpServiceMock"/>
     </bean>
 
-    <bean id="acalAssembler" class="org.kuali.student.enrollment.class2.acal.service.assembler.AcademicCalendarAssembler"/>
 
     <bean id="atpServiceMock" class="org.kuali.student.r2.core.class1.atp.service.impl.AtpServiceMockImpl"/>
 

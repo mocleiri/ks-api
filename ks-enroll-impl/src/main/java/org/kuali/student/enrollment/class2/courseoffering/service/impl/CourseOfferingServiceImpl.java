@@ -560,6 +560,9 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
         List<CourseOfferingInfo> existingCourseOfferings = findCourseOfferingsByTermAndCourseCode(term.getId(), courseInfo.getCode());
         String internalSufx = offeringCodeGenerator.generateCourseOfferingInternalCode(existingCourseOfferings);
         coInfo.setCourseNumberInternalSuffix(internalSufx);
+        if(coInfo.getCourseNumberSuffix() != null && !coInfo.getCourseNumberSuffix().isEmpty())  {
+            coInfo.setCourseOfferingCode(courseInfo.getCode() + coInfo.getCourseNumberSuffix());
+        }
         if (optionKeys.contains(CourseOfferingServiceConstants.APPEND_COURSE_OFFERING_IN_SUFFIX_OPTION_KEY)) {
             coInfo.setCourseNumberSuffix(internalSufx);
             coInfo.setCourseOfferingCode(courseInfo.getCode() + internalSufx);
@@ -1863,7 +1866,8 @@ public class CourseOfferingServiceImpl implements CourseOfferingService {
     public List<ValidationResultInfo> validateSeatPoolDefinition(String validationTypeKey,
                                                                  SeatPoolDefinitionInfo seatPoolDefinitionInfo, ContextInfo context) throws DataValidationErrorException,
             DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, VersionMismatchException {
-        throw new UnsupportedOperationException();
+        // TODO: KSENROLL-2658
+        return new ArrayList<ValidationResultInfo>();
     }
 
     @Override

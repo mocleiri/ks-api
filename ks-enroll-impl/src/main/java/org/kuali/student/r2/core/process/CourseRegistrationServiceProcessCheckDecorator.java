@@ -4,10 +4,8 @@
  */
 package org.kuali.student.r2.core.process;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.kuali.student.enrollment.courseregistration.service.CourseRegistrationService;
 import org.kuali.student.enrollment.class2.courseregistration.service.decorators.CourseRegistrationServiceDecorator;
+import org.kuali.student.enrollment.courseregistration.service.CourseRegistrationService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
@@ -19,6 +17,9 @@ import org.kuali.student.r2.common.infc.ValidationResult;
 import org.kuali.student.r2.core.constants.ProcessServiceConstants;
 import org.kuali.student.r2.core.process.context.CourseRegistrationProcessContextInfo;
 import org.kuali.student.r2.core.process.evaluator.ProcessEvaluator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
