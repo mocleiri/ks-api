@@ -1,12 +1,12 @@
 <%--
- Copyright 2007-2009 The Kuali Foundation
- 
+ Copyright 2005-2012 The Kuali Foundation
+
  Licensed under the Educational Community License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
- 
+
  http://www.opensource.org/licenses/ecl2.php
- 
+
  Unless required by applicable law or agreed to in writing, software
  distributed under the License is distributed on an "AS IS" BASIS,
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,19 +15,26 @@
 --%>
 <%@ include file="/rice-portal/jsp/sys/riceTldHeader.jsp"%>
 
+<channel:portalChannelTop channelTitle="KRAD Components" />
+<div class="body">
+    <strong>Input Fields</strong>
+    <ul class="chan">
+        <li></li>
+    </ul>
 
-<td class="content" valign="top">
-	<mainChannel:ksApplications/>
-    <mainChannel:coApplications/>
-    <mainChannel:ec1Applications/>
-    <mainChannel:wc1Applications/>
-</td>
-<td class="content" valign="top">
-    <mainChannel:ksMaintenance />
-</td>
-<td class="content" valign="top">
-	<mainChannel:workflow />
-	<mainChannel:notification />
-    <mainChannel:rules />
-    <mainChannel:holds />
-</td>
+    <strong>Other Fields</strong>
+    <ul class="chan">
+        <li></li>
+    </ul>
+
+    <strong>Validation</strong>
+    <ul class="chan">
+        <li></li>
+    </ul>
+
+    <strong>Validation - Regex</strong>
+    <ul class="chan">
+        <li></li>
+    </ul>
+</div>
+<channel:portalChannelBottom />
