@@ -21,13 +21,14 @@
   <ul class="chan">
     <li><a href="${ConfigProperties.ks.home.MainEntryPoint}">Kuali Student Home</a></li>
     <li><a href="${ConfigProperties.ks.lum.MainEntryPoint}">Curriculum Management</a></li>
-    <li><a href="${ConfigProperties.ks.org.MainEntryPoint}">Organization Management</a></li>
+    <!--<li><a href="${ConfigProperties.ks.org.MainEntryPoint}">Organization Management</a></li>      -->
   </ul>
+    <%--Disabled enrollment links because that application has not yet been released--%>
+    <%--
   <ul class="chan">
-    <li><portal:portalLink
-            title="Enrollment Home" displayTitle="true"
-            url="${ConfigProperties.application.url}/kr-krad/launch?viewId=enrollmentHomeView&methodToCall=start" /></li>
+    <li><a href="${ConfigProperties.application.url}/kr-krad/launch?viewId=enrollmentHomeView&methodToCall=start">Enrollment Home</a></li>
   </ul>
+  --%>
 
 </div>
 <channel:portalChannelBottom />
