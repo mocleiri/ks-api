@@ -354,11 +354,10 @@ public interface AcademicCalendarService {
     public AcademicCalendarInfo updateAcademicCalendar(@WebParam(name = "academicCalendarId") String academicCalendarId, @WebParam(name = "academicCalendarInfo") AcademicCalendarInfo academicCalendarInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
-     * Updates the state of an existing AcademicCalendar to another state
+     * Changes the state of an existing AcademicCalendar to another state
      * provided that it is valid to do so.
      *
-     * @param academicCalendarId        identifier of the AcademicCalendar to be
-     *                                  updated
+     * @param academicCalendarId Id of the AcademicCalendar to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           AcademicCalendar will be placed if the
      *                           operation succeeds.
@@ -685,7 +684,6 @@ public interface AcademicCalendarService {
      */
     public HolidayCalendarInfo copyHolidayCalendar(@WebParam(name = "holidayCalendarId") String holidayCalendarId, @WebParam(name = "startDate") Date startDate, @WebParam(name = "endDate") Date endDate,  @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException ;
 
-
     /**
      * Updates an existing Holiday Calendar. The HolidayCalendar Id,
      * Type, and Meta information may not be changed.
@@ -714,11 +712,10 @@ public interface AcademicCalendarService {
     public HolidayCalendarInfo updateHolidayCalendar(@WebParam(name = "holidayCalendarId") String holidayCalendarId, @WebParam(name = "holidayCalendarInfo") HolidayCalendarInfo holidayCalendarInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
-     * Updates the state of an existing HolidayCalendar to another state
+     * Changes the state of an existing HolidayCalendar to another state
      * provided that it is valid to do so.
      *
-     * @param holidayCalendarId  identifier of the HolidayCalendar to be
-     *                           updated
+     * @param holidayCalendarId Id of the HolidayCalendar to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           HolidayCalendar will be placed if the
      *                           operation succeeds.
@@ -1075,11 +1072,10 @@ public interface AcademicCalendarService {
     public TermInfo updateTerm(@WebParam(name = "termId") String termId, @WebParam(name = "termInfo") TermInfo termInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
-     * Updates the state of an existing Term to another state
+     * Changes the state of an existing Term to another state
      * provided that it is valid to do so.
      *
-     * @param termId             identifier of the Term to be
-     *                           updated
+     * @param termId Id of the Term to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           Term will be placed if the
      *                           operation succeeds.
@@ -1503,11 +1499,10 @@ public interface AcademicCalendarService {
     public KeyDateInfo updateKeyDate(@WebParam(name = "keyDateId") String keyDateId, @WebParam(name = "keyDateInfo") KeyDateInfo keyDateInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
-     * Updates the state of an existing KeyDate to another state
+     * Changes the state of an existing KeyDate to another state
      * provided that it is valid to do so.
      *
-     * @param keyDateId          identifier of the KeyDate to be
-     *                           updated
+     * @param keyDateId Id of the KeyDate to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           KeyDate will be placed if the
      *                           operation succeeds.
@@ -1864,11 +1859,10 @@ public interface AcademicCalendarService {
     public AcalEventInfo updateAcalEvent(@WebParam(name = "acalEventId") String acalEventId, @WebParam(name = "acalEventInfo") AcalEventInfo acalEventInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
     /**
-     * Updates the state of an existing AcalEvent to another state
+     * Changes the state of an existing AcalEvent to another state
      * provided that it is valid to do so.
      *
-     * @param acalEventId        identifier of the AcalEvent to be
-     *                          updated
+     * @param acalEventId Id of the AcalEvent to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           AcalEvent will be placed if the
      *                           operation succeeds.
@@ -2242,12 +2236,12 @@ public interface AcademicCalendarService {
      */
     public HolidayInfo updateHoliday(@WebParam(name = "holidayId") String holidayId, @WebParam(name = "holidayInfo") HolidayInfo holidayInfo, @WebParam(name = "contextInfo") ContextInfo contextInfo) throws DataValidationErrorException, DoesNotExistException, InvalidParameterException, MissingParameterException, OperationFailedException, PermissionDeniedException, ReadOnlyException, VersionMismatchException;
 
+
     /**
-     * Updates the state of an existing Holiday to another state
+     * Changes the state of an existing Holiday to another state
      * provided that it is valid to do so.
      *
-     * @param holidayId          identifier of the Holiday to be
-     *                           updated
+     * @param holidayId Id of the Holiday to be updated.
      * @param nextStateKey       The State Key into which the identified
      *                           Holiday will be placed if the
      *                           operation succeeds.

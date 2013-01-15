@@ -59,9 +59,8 @@ public class MessageInfo
     @XmlElement
     private String value;
 
-//    TODO KSCM-372: Non-GWT translatable code
-//    @XmlAnyElement
-//    private List<Element> _futureElements;
+    @XmlAnyElement
+    private List<Object> _futureElements;  
 
 
     /**
