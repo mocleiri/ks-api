@@ -16,19 +16,19 @@ INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Student Eligibility','kuali.statement.type.course.academicReadiness.studentEligibility',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
-  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Student Eligibilities + Prerequisite','Add conditions that will restrict student enrollment, addressing restrictions to majors, locations, credit level requirements, etc. or Add courses, with or without grade requirements, which a student must have completed in order to enroll.','kuali.statement.type.course.academicReadiness.studentEligibilityPrereq',0)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Student Eligibility + Prerequisite','Add conditions that will restrict student enrollment, addressing restrictions to majors, locations, credit level requirements, etc. or Add courses, with or without grade requirements, which a student must have completed in order to enroll.','kuali.statement.type.course.academicReadiness.studentEligibilityPrereq',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Repeatable for Credit','Course repeatable for credit.','kuali.statement.type.course.credit.repeatable',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
-  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Courses that Restrict Credit','Enrollment in or completion of another course that will restrict the credits to be awarded.','kuali.statement.type.course.credit.restriction',0)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Course that Restricts Credits','Enrollment in or completion of another course that will restrict the credits to be awarded.','kuali.statement.type.course.credit.restriction',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Credit Constraints','kuali.statement.type.course.creditConstraints',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_KEY,VER_NBR)
-  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Enrollment Elligibility','kuali.statement.type.course.enrollmentEligibility',0)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Enrollment Eligibility','kuali.statement.type.course.enrollmentEligibility',0)
 /
 INSERT INTO KSST_STMT_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Recommended Preparation','The courses and/or preparation added here will not prevent students from registering, but will be printed in the catalog.','kuali.statement.type.course.recommendedPreparation',0)

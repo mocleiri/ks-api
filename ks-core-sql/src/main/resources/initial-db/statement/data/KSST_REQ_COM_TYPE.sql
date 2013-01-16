@@ -25,6 +25,9 @@ INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Completed none credits from courses','Must not have successfully completed any credits from <courses>','kuali.reqComponent.type.course.courseset.credits.completed.none',0)
 /
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Enrolled in all required courses','Must be concurrently enrolled in all courses from <courses>','kuali.reqComponent.type.course.courseset.enrolled.all',0)
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Enrolled in N of required courses','Must be concurrently enrolled in a minimum of <n> courses from <courses>','kuali.reqComponent.type.course.courseset.enrolled.nof',0)
 /
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
@@ -39,11 +42,20 @@ INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Minimum grade in required courses','Must successfully complete a minimum of <n> courses from <courses> with a minimum grade of <gradeType> <grade>','kuali.reqComponent.type.course.courseset.nof.grade.min',0)
 /
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Earned minimum n credits','Must have earned a minimum of <n> total credits','kuali.reqComponent.type.course.credits.min')
+/
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Course repeatable for maximum credit','May be repeated for a maximum of <n> credits','kuali.reqComponent.type.course.credits.repeat.max',0)
 /
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Minimum cumulative GPA','Must have earned a minimum cumulative GPA of <GPA>','kuali.reqComponent.type.course.cumulative.gpa.min')
+/
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Enrolled in course','Must be concurrently enrolled in <course> ','kuali.reqComponent.type.course.enrolled',0)
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Free Text','Free Form Text','kuali.reqComponent.type.course.freeform.text')
 /
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Not completed course','Must not have successfully completed <course> ','kuali.reqComponent.type.course.notcompleted',0)
@@ -90,11 +102,29 @@ INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Complete program within duration after program entry','Must complete program within <n> <durations> after program entry term','kuali.reqComponent.type.program.completion.duration.afterentry',0)
 /
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Minimum advisor approved courses','Must have <n> courses from courses approved by advisor','kuali.reqComponent.type.program.courses.advisor')
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Minimum theme approved courses','Student must successfully complete <n> courses from <theme>','kuali.reqComponent.type.program.courses.theme')
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Minimum advisor approved credits','Must have <n> credits from courses approved by advisor','kuali.reqComponent.type.program.credits.advisor')
+/
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Earned more than n credits','Must not have earned more than <n> credits','kuali.reqComponent.type.program.credits.max',0)
 /
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Earned minimum n credits','Must have earned a minimum of <n> total credits','kuali.reqComponent.type.program.credits.min',0)
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY)
+  VALUES (TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),TO_DATE( '20130110135505', 'YYYYMMDDHH24MISS' ),'Minimum theme approved credits','Student must successfully complete <n> credits from <theme>','kuali.reqComponent.type.program.credits.theme')
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),TO_DATE( '20371231000000', 'YYYYMMDDHH24MISS' ),'Minimum cumulative GPA','Must have earned a minimum cumulative GPA of <GPA>','kuali.reqComponent.type.program.cumulative.gpa.min',0)
+/
+INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,EXPIR_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
+  VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),TO_DATE( '20371231000000', 'YYYYMMDDHH24MISS' ),'Minimum duration GPA','Must have earned a minimum <duration> GPA of <GPA>','kuali.reqComponent.type.program.duration.gpa.min',0)
 /
 INSERT INTO KSST_REQ_COM_TYPE (EFF_DT,NAME,TYPE_DESC,TYPE_KEY,VER_NBR)
   VALUES (TO_DATE( '20000101000000', 'YYYYMMDDHH24MISS' ),'Program enrolled in graduation major for final credits','<program> student must be enrolled in their graduation major for the final <n> credits taken','kuali.reqComponent.type.program.enrolled.credits.final',0)

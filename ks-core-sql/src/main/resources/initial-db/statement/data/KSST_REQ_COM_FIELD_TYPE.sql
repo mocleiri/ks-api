@@ -51,6 +51,9 @@ INSERT INTO KSST_REQ_COM_FIELD_TYPE (DATA_TYPE,DESCR,ID,NAME,READ_ONLY,VER_NBR)
 INSERT INTO KSST_REQ_COM_FIELD_TYPE (DATA_TYPE,DESCR,ID,NAME,READ_ONLY,VER_NBR)
   VALUES ('string','Test score','kuali.reqComponent.field.type.test.score','Test Score',0,0)
 /
+INSERT INTO KSST_REQ_COM_FIELD_TYPE (DATA_TYPE,DESCR,ID,NAME,READ_ONLY)
+  VALUES ('string','Free Text','kuali.reqComponent.field.type.value.freeform.text','Free Text',0)
+/
 INSERT INTO KSST_REQ_COM_FIELD_TYPE (DATA_TYPE,DESCR,ID,NAME,READ_ONLY,VER_NBR)
   VALUES ('integer','Integer Value','kuali.reqComponent.field.type.value.positive.integer','Integer Value',0,0)
 /
