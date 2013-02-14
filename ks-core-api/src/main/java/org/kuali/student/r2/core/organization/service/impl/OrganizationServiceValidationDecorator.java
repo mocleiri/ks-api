@@ -34,6 +34,7 @@ import org.kuali.student.r2.core.organization.dto.OrgOrgRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPersonRelationInfo;
 import org.kuali.student.r2.core.organization.dto.OrgPositionRestrictionInfo;
 import org.kuali.student.r2.core.organization.service.OrganizationServiceDecorator;
+import org.kuali.student.r2.core.organization.service.impl.lib.ValidationUtils;
 
 import java.util.List;
 

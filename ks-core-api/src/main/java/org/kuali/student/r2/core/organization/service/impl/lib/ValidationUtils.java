@@ -14,7 +14,7 @@
  *
  * Created by bobhurt on 9/9/11
  */
-package org.kuali.student.r2.core.organization.service.impl;
+package org.kuali.student.r2.core.organization.service.impl.lib;
 
 
 import org.kuali.student.r2.common.datadictionary.DataDictionaryValidator;

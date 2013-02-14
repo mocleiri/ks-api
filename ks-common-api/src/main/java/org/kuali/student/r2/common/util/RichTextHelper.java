@@ -34,7 +34,7 @@ public class RichTextHelper {
         return info;
     }
 
-    public RichTextInfo toRichTextInfo(String plain, String formatted) {
+    public static RichTextInfo toRichTextInfo(String plain, String formatted) {
         if (plain == null) {
             return null;
         }
