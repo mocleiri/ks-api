@@ -24,8 +24,8 @@ import org.kuali.rice.krms.api.repository.proposition.PropositionDefinitionContr
 import org.kuali.rice.krms.api.repository.term.TermDefinitionContract;
 import org.kuali.student.krms.naturallanguage.KRMSDataGenerator;
 import org.kuali.student.krms.naturallanguage.translators.PropositionTranslator;
-import org.kuali.student.r1.core.statement.naturallanguage.Context;
-import org.kuali.student.r1.core.statement.naturallanguage.ContextRegistry;
+import org.kuali.student.r2.core.krms.naturallanguage.Context;
+import org.kuali.student.r2.core.krms.naturallanguage.ContextRegistry;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.springframework.test.context.ContextConfiguration;

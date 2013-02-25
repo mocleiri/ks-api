@@ -28,10 +28,11 @@ import org.kuali.rice.krms.impl.repository.NaturalLanguageTemplateBoService;
 import org.kuali.rice.krms.impl.repository.NaturalLanguageUsageBoService;
 import org.kuali.rice.krms.impl.repository.TypeTypeRelationBoService;
 import org.kuali.student.enrollment.class2.courseoffering.service.decorators.PermissionServiceConstants;
+import org.kuali.student.krms.naturallanguage.TermParameterTypes;
 import org.kuali.student.krms.naturallanguage.util.KsKrmsConstants;
 import org.kuali.student.krms.naturallanguage.util.KsKrmsRepositoryServiceLocator;
-import org.kuali.student.r1.core.statement.naturallanguage.Context;
-import org.kuali.student.r1.core.statement.naturallanguage.ContextRegistry;
+import org.kuali.student.r2.core.krms.naturallanguage.Context;
+import org.kuali.student.r2.core.krms.naturallanguage.ContextRegistry;
 import org.kuali.student.r2.common.exceptions.DoesNotExistException;
 import org.kuali.student.r2.common.exceptions.OperationFailedException;
 import org.slf4j.Logger;
@@ -152,7 +153,7 @@ public class PropositionTranslator {
     private Map<String, Object> buildContextMap(PropositionDefinitionContract proposition) throws DoesNotExistException, OperationFailedException {
 
         //Access type service to retrieve type name.
-        KrmsTypeDefinitionContract type = KrmsRepositoryServiceLocator.getKrmsTypeRepositoryService().getTypeById(proposition.getTypeId());
+        KrmsTypeDefinitionContract type = getKrmsTypeRepositoryService().getTypeById(proposition.getTypeId());
         List<Context<TermDefinitionContract>> contextList = this.contextRegistry.get(type.getName());
         if(contextList == null || contextList.isEmpty()) {
         	throw new DoesNotExistException("Requirement component context not found in registry for requirement component type id: " + proposition.getTypeId());
@@ -168,8 +169,8 @@ public class PropositionTranslator {
                 term = KrmsRepositoryServiceLocator.getTermBoService().getTerm(p.getValue());
 
             }else if(p.getParameterType().equals(PropositionParameterType.CONSTANT)){
-                //TODO Add proposition constant to contextMap.
-                //contextMap.put()
+                //Add proposition constant to contextMap.
+                contextMap.put(TermParameterTypes.INTEGER_VALUE1_KEY.getId(),p.getValue());
             }
 
         }
