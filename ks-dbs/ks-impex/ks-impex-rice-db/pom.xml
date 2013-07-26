@@ -9,9 +9,6 @@
     <artifactId>ks-impex-rice-db</artifactId>
     <name>KS Impex Rice DB</name>
     <description>Kuali Student Impex Rice Database</description>
-    <properties>
-        <jdbc.username>KSRICE${db.branch.qualifier}</jdbc.username>
-    </properties>
     <build>
         <plugins>
             <plugin>
@@ -23,8 +20,9 @@
                         <goals>
                             <goal>load</goal>
                         </goals>
-                        <phase>prepare-package</phase>
+                        <phase>${impex.metainf.phase}</phase>
                         <configuration>
+                            <propertySourcesConfig>${impex.metainf.propertySource}</propertySourcesConfig>
                             <annotatedClass>${impex.metainf.context}</annotatedClass>
                         </configuration>
                     </execution>
@@ -32,4 +30,10 @@
             </plugin>
         </plugins>
     </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.kuali.common</groupId>
+            <artifactId>kuali-util</artifactId>
+        </dependency>
+    </dependencies>
 </project>

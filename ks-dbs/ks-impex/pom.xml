@@ -16,10 +16,9 @@
         <module>ks-impex-bundled-db</module>
     </modules>
     <properties>
-        <jdbc.source.db.base>KS_SOURCE_DB</jdbc.source.db.base>
-        <impex.metainf.context>org.kuali.student.deploy.spring.DataMetaInfConfig</impex.metainf.context>
-        <impex.data.resources>META-INF/${project.artifactId}-data.resources</impex.data.resources>
-        <impex.metainf.outputFile>${project.build.outputDirectory}/${impex.data.resources}</impex.metainf.outputFile>
+        <impex.metainf.propertySource>org.kuali.common.util.metainf.spring.MetaInfMpxPropertySourceConfig</impex.metainf.propertySource>
+        <impex.metainf.context>org.kuali.common.util.metainf.spring.MetaInfExecutableConfig</impex.metainf.context>
+        <impex.metainf.phase>prepare-package</impex.metainf.phase>
     </properties>
     <profiles>
         <profile>
@@ -32,18 +31,6 @@
                         <artifactId>spring-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>source-db-setup</id>
-                                <goals>
-                                    <goal>load</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <injectMavenProject>true</injectMavenProject>
-                                    <forceMojoExecution>true</forceMojoExecution>
-                                    <annotatedClass>org.kuali.common.maven.spring.SetSourceDbSchemaNameConfig</annotatedClass>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>source-db</id>
                                 <goals>
                                     <goal>load</goal>
@@ -52,8 +39,8 @@
                                 <configuration>
                                     <forceMojoExecution>true</forceMojoExecution>
                                     <removeExistingPropertySources>true</removeExistingPropertySources>
-                                    <propertySourcesConfig>org.kuali.student.deploy.spring.InitializeSourceDbMavenPropertySourceConfig</propertySourcesConfig>
-                                    <annotatedClass>org.kuali.common.jdbc.spring.SqlControllerConfig</annotatedClass>
+                                    <propertySourcesConfig>org.kuali.student.deploy.spring.SourceDbInitPropertySourceConfig</propertySourcesConfig>
+                                    <annotatedClass>org.kuali.common.jdbc.spring.SqlControllerExecutableConfig</annotatedClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -71,27 +58,15 @@
                         <artifactId>spring-maven-plugin</artifactId>
                         <executions>
                             <execution>
-                                <id>source-db-setup</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>load</goal>
-                                </goals>
-                                <configuration>
-                                    <injectMavenProject>true</injectMavenProject>
-                                    <forceMojoExecution>true</forceMojoExecution>
-                                    <annotatedClass>org.kuali.common.maven.spring.SetSourceDbSchemaNameConfig</annotatedClass>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>load</id>
+                                <id>dump</id>
                                 <phase>generate-resources</phase>
                                 <goals>
                                     <goal>load</goal>
                                 </goals>
                                 <configuration>
                                     <forceMojoExecution>true</forceMojoExecution>
-                                    <propertySourcesConfig>org.kuali.student.deploy.spring.ExportPropertyConfig</propertySourcesConfig>
-                                    <annotatedClass>org.kuali.student.deploy.spring.DbExportConfig</annotatedClass>
+                                    <propertySourcesConfig>org.kuali.student.deploy.spring.SourceDbDumpPropertySourceConfig</propertySourcesConfig>
+                                    <annotatedClass>org.kuali.common.impex.spring.DumpDatabaseExecutableConfig</annotatedClass>
                                 </configuration>
                             </execution>
                         </executions>
@@ -100,17 +75,51 @@
             </build>
         </profile>
         <profile>
+            <id>impexscm</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.kuali.maven.plugins</groupId>
+                        <artifactId>spring-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>impexscm</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>load</goal>
+                                </goals>
+                                <configuration>
+                                    <forceMojoExecution>true</forceMojoExecution>
+                                    <propertySourcesConfig>org.kuali.student.deploy.spring.SourceDbScmPropertySourceConfig</propertySourcesConfig>
+                                    <annotatedClass>org.kuali.student.deploy.spring.ScmUpdateExecutableConfig</annotatedClass>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- Add in the module specific dependencies -->
+                            <dependency>
+                                <groupId>org.kuali.student.db</groupId>
+                                <artifactId>ks-impex-rice-db</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.kuali.student.db</groupId>
+                                <artifactId>ks-impex-app-db</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.kuali.student.db</groupId>
+                                <artifactId>ks-impex-bundled-db</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <!-- Load a db from the schema SQL + mpx files generated by Impex -->
             <id>db</id>
-            <properties>
-                <impex.import.artifactId>${project.artifactId}</impex.import.artifactId>
-                <impex.schema.location>classpath:${project.groupId.path}/${project.artifactId}/${project.artifactId}-schema.xml</impex.schema.location>
-                <sql.schema.concurrent>${impex.schema.location}</sql.schema.concurrent>
-                <sql.constraints.concurrent>classpath:${project.groupId.path}/${project.artifactId}/${project.artifactId}-constraints-schema.xml</sql.constraints.concurrent>
-                <sql.data.concurrent>${impex.data.resources}</sql.data.concurrent>
-                <sql.data.concurrent.trackProgressByUpdateCount>true</sql.data.concurrent.trackProgressByUpdateCount>
-                <sql.execution.order>sql.schema.concurrent,sql.data.concurrent,sql.constraints.concurrent</sql.execution.order>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -125,12 +134,12 @@
                                 </goals>
                                 <configuration>
                                     <forceMojoExecution>true</forceMojoExecution>
-                                    <removeExistingPropertySources>true</removeExistingPropertySources>
-                                    <propertySourcesConfig>org.kuali.common.jdbc.spring.JdbcMavenPropertySourceConfig</propertySourcesConfig>
+                                    <injectMavenProject>true</injectMavenProject>
+                                    <propertySourcesConfig>org.kuali.student.deploy.spring.InitAppDbPropertySourceConfig</propertySourcesConfig>
                                     <annotatedClasses>
                                     <annotatedClass>org.kuali.common.impex.spring.MpxSupplierConfig</annotatedClass>
                                     <annotatedClass>org.kuali.common.impex.spring.SchemaXmlSupplierConfig</annotatedClass>
-                                    <annotatedClass>org.kuali.common.jdbc.spring.SqlControllerConfig</annotatedClass>
+                                    <annotatedClass>org.kuali.common.jdbc.spring.SqlControllerExecutableConfig</annotatedClass>
                                     </annotatedClasses>
                                 </configuration>
                             </execution>
@@ -165,6 +174,7 @@
         <profile>
             <id>local</id>
             <properties>
+                <db.vendor>oracle</db.vendor>
                 <properties.decrypt>false</properties.decrypt>
                 <oracle.dba.username>system</oracle.dba.username>
                 <oracle.dba.password>manager</oracle.dba.password>

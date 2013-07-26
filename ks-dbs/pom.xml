@@ -15,10 +15,6 @@
         <module>ks-db-validation</module>
         <module>ks-impex</module>
     </modules>
-    <properties>
-        <!-- Set this to something that is unique per KS branch -->
-        <db.branch.qualifier/>
-    </properties>
     <build>
         <pluginManagement>
             <plugins>
@@ -70,6 +66,11 @@
                             <groupId>org.kuali.common</groupId>
                             <artifactId>kuali-jdbc</artifactId>
                             <version>${kuali-jdbc.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.kuali.common</groupId>
+                            <artifactId>kuali-sql</artifactId>
+                            <version>${kuali-sql.version}</version>
                         </dependency>
                         <dependency>
                             <groupId>org.kuali.common</groupId>
