@@ -31,6 +31,15 @@ public class ExamOfferingServiceConstants {
     // TYPES
     /////////////////
 
-    public static final String TYPE_EXAM_OFFERING = "kuali.lui.type.ExamOffering";
-    public static final String TYPE_EXAM_OFFERING_FINAL = "kuali.lui.type.exam.offering.final";
+    public static final String EXAM_OFFERING_TYPE_KEY = "kuali.lui.type.exam.offering";
+    public static final String EXAM_OFFERING_FINAL_TYPE_KEY = "kuali.lui.type.exam.offering.final";
+
+    /////////////////
+    // STATES
+    /////////////////
+
+    public static final String EXAM_OFFERING_SCHEDULING_EXEMPT_STATE_KEY = "kuali.lui.exam.offering.scheduling.state.exempt";
+    public static final String EXAM_OFFERING_SCHEDULING_UNSCHEDULED_STATE_KEY = "kuali.lui.exam.offering.scheduling.state.unscheduled";
+    public static final String EXAM_OFFERING_SCHEDULING_MATRIX_ERROR_STATE_KEY = "kuali.lui.exam.offering.scheduling.state.matrix.error";
+
 }

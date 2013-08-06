@@ -117,7 +117,7 @@ public class KSKRMSServiceConstants {
     public static final String PROPOSITION_TYPE_TEST_SCORE = "kuali.krms.proposition.type.test.score";
     public static final String PROPOSITION_TYPE_COMPOUND_AND = "kuali.krms.proposition.type.compound.and";
     public static final String PROPOSITION_TYPE_COMPOUND_OR = "kuali.krms.proposition.type.compound.or";
-
+    public static final String PROPOSITION_TYPE_POPULATION = "kuali.krms.proposition.type.memberof.population";
     // term types
     public static final String TERM_TYPE_COURSE_ID = "kuali.krms.term.type.course.specific.id";
     public static final String TERM_TYPE_COURSE = "kuali.krms.term.type.course.specific";
@@ -147,6 +147,7 @@ public class KSKRMSServiceConstants {
     public static final String TERM_PARAMETER_TYPE_DURATION_TYPE_KEY = "kuali.term.parameter.type.durationType.id";
     public static final String TERM_PARAMETER_TYPE_ORGANIZATION_KEY = "kuali.term.parameter.type.org.id";
     public static final String TERM_PARAMETER_TYPE_CLU_KEY = "kuali.term.parameter.type.course.clu.id";
+    public static final String TERM_PARAMETER_TYPE_CO_KEY = "kuali.term.parameter.type.course.offering.id";
     public static final String TERM_PARAMETER_TYPE_TERM_KEY = "kuali.term.parameter.type.Term";
     public static final String TERM_PARAMETER_TYPE_TERM2_KEY = "kuali.term.parameter.type.Term2";
     public static final String TERM_PARAMETER_TYPE_TOTAL_CREDIT_KEY = "kuali.term.parameter.type.totalCredits";
@@ -155,6 +156,7 @@ public class KSKRMSServiceConstants {
     public static final String TERM_PARAMETER_TYPE_TEST_CLU_KEY = "kuali.term.parameter.type.test.clu.id";
     public static final String TERM_PARAMETER_TYPE_TERMCODE_KEY = "kuali.term.parameter.type.TermCode";
     public static final String TERM_PARAMETER_TYPE_TERMCODE2_KEY = "kuali.term.parameter.type.TermCode2";
+    public static final String TERM_PARAMETER_TYPE_POPULATION_KEY = "kuali.term.parameter.type.population";
 
     // term parameter types for nl
     public static final String TERM_PARAMETER_TYPE_CLULIST_KEY = "kuali.term.parameter.type.course.nl.clu.list";
@@ -182,13 +184,14 @@ public class KSKRMSServiceConstants {
     public static final String TERM_RESOLVER_COMPLETEDCOURSE = "CompletedCourse";
     public static final String TERM_RESOLVER_COMPLETEDCOURSES = "CompletedCourses";
     public static final String TERM_RESOLVER_NUMBEROFCOMPLETEDCOURSES = "NumberOfCompletedCourses";
-    public static final String TERM_RESOLVER_NUMBEROFCREDITSFROMCOMPLETEDCOURSES = "NumberOfCreditsFromCompletedCourses";
     public static final String TERM_RESOLVER_ENROLLEDCOURSE = "EnrolledCourse";
     public static final String TERM_RESOLVER_ENROLLEDCOURSES = "EnrolledCourses";
     public static final String TERM_RESOLVER_NUMBEROFENROLLEDCOURSES = "NumberOfEnrolledCourses";
     public static final String TERM_RESOLVER_GPAFORCOURSES = "GPAForCourses";
     public static final String TERM_RESOLVER_GRADETYPEFORCOURSES = "GradeTypeForCourses";
     public static final String TERM_RESOLVER_NUMBEROFCREDITSFROMORGANIZATION = "NumberOfCreditsFromOrganization";
+    public static final String TERM_RESOLVER_NUMBEROFCREDITSFROMCOMPLETEDCOURSES = "NumberOfCreditsFromCompletedCourses";
+    public static final String TERM_RESOLVER_NUMBEROFCREDITSEARNED = "NumberOfCreditsEarned";
     public static final String TERM_RESOLVER_ADMINORGANIZATIONPERMISSIONREQUIRED = "AdminOrganizationPermissionRequired";
     public static final String TERM_RESOLVER_SCOREONTEST = "ScoreOnTest";
     public static final String TERM_RESOLVER_FREEFORMTEXT = "FreeFormText";
@@ -198,7 +201,7 @@ public class KSKRMSServiceConstants {
     public static final String TERM_RESOLVER_ADMITTEDTOPROGRAMWITHCLASSSTANDING = "AdmittedToProgramWithClassStanding";
     public static final String TERM_RESOLVER_COMPLETEDCOURSEFORTERM = "CompletedCourseForTerm";
     public static final String TERM_RESOLVER_COMPLETEDCOURSEBETWEENTERMS = "CompletedCourseBetweenTerms";
-    public static final String TERM_RESOLVER_CLASSSTANDING = "ClassStanding";
+    public static final String TERM_RESOLVER_POPULATION= "Population";
     public static final String TERM_RESOLVER_INSTRUCTORPERMISSION = "InstructorPermission";
 
     // natural language usage keys
@@ -214,6 +217,7 @@ public class KSKRMSServiceConstants {
     public static final String TERM_PREREQUISITE_CONTEXTINFO = "contextInfo";
     public static final String TERM_PREREQUISITE_PERSON_ID = "personId";
     public static final String TERM_PREREQUISITE_CLU_ID = "cluId";
+    public static final String TERM_PREREQUISITE_TERM_ID = "termId";
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////
