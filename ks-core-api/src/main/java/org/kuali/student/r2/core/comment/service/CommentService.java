@@ -16,8 +16,6 @@
 package org.kuali.student.r2.core.comment.service;
 
 import org.kuali.rice.core.api.criteria.QueryByCriteria;
-import org.kuali.student.r1.common.dictionary.dto.ObjectStructureDefinition;
-import org.kuali.student.r1.common.dictionary.service.DictionaryService;
 import org.kuali.student.r2.common.dto.ContextInfo;
 import org.kuali.student.r2.common.dto.StatusInfo;
 import org.kuali.student.r2.common.dto.ValidationResultInfo;
@@ -49,7 +47,7 @@ import java.util.List;
 
 @WebService(name = "CommentService", targetNamespace = CommentServiceConstants.NAMESPACE)
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, use = SOAPBinding.Use.LITERAL, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED)
-public interface CommentService extends DictionaryService {
+public interface CommentService {
 
     /**
      * Retrieves information about a comment.
@@ -294,6 +292,10 @@ public interface CommentService extends DictionaryService {
      * performed by setting the validationType to the current object.
      *
      * @param validationTypeKey identifier of the extent of validation
+     * @param referenceId      identifier of reference
+     * @param referenceTypeKey reference type
+     * @param commentTypeKey    the identifier for the Comment
+     *                          Type to be validated
      * @param commentInfo       comment information to be tested
      * @param contextInfo       Context information containing the principalId and locale
      *                          information about the caller of service operation
@@ -304,16 +306,13 @@ public interface CommentService extends DictionaryService {
      * @throws OperationFailedException  unable to complete request
      */
     public List<ValidationResultInfo> validateComment(@WebParam(name = "validationTypeKey") String validationTypeKey,
+                                                      @WebParam(name = "referenceId") String referenceId,
+                                                      @WebParam(name = "referenceTypeKey") String referenceTypeKey,
+                                                      @WebParam(name = "commentTypeKey") String commentTypeKey,
                                                       @WebParam(name = "commentInfo") CommentInfo commentInfo,
                                                       @WebParam(name = "contextInfo") ContextInfo contextInfo)
             throws DoesNotExistException,
             InvalidParameterException,
             MissingParameterException,
             OperationFailedException;
-
-    @Deprecated
-    public ObjectStructureDefinition getObjectStructure(String objectTypeKey);
-
-    @Deprecated
-    public List<String> getObjectTypes();
 }

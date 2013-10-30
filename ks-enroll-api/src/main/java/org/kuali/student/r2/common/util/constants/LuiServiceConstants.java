@@ -280,12 +280,12 @@ public class LuiServiceConstants {
     public static final String LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_AO_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia.fo2ao";
     public static final String LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_RG_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia.fo2rg";
     public static final String LUI_LUI_RELATION_REGISTERED_FOR_VIA_RG_TO_AO_TYPE_KEY = "kuali.lui.lui.relation.type.registeredforvia.rg2ao";
+    public static final String LUI_LUI_RELATION_DELIVERED_VIA_FO_TO_EO_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia.fo2eo";
+    public static final String LUI_LUI_RELATION_REGISTERED_FOR_VIA_FO_TO_EO_TYPE_KEY = "kuali.lui.lui.relation.type.registeredforvia.fo2eo";
     // This is a grouping type
     public static final String LUI_LUI_RELATION_REGISTEREDFORVIA_TYPE_KEY = "kuali.lui.lui.relation.type.registeredforvia";
     // This is a grouping type
     public static final String LUI_LUI_RELATION_DELIVEREDVIA_TYPE_KEY = "kuali.lui.lui.relation.type.deliveredvia";
-    public static final String LUI_LUI_RELATION_REGISTERED_FOR_VIA_FO_TO_EO_TYPE_KEY = "kuali.lui.lui.relation.type.registeredforvia.fo2eo";
-    public static final String LUI_LUI_RELATION_REGISTERED_FOR_VIA_AO_TO_EO_TYPE_KEY = "kuali.lui.lui.relation.type.registeredforvia.ao2eo";
 
     /**
      * LUI LUI Relation States
@@ -345,9 +345,9 @@ public class LuiServiceConstants {
      *  defined in CourseOfferingServiceConstants
      */
     public static final String AUTOMATIC_WAITLIST_TYPE_KEY = "kuali.waitlist.type.automatic";
-    public static final String SEMIAUTOMATIC_WAITLIST_TYPE_KEY = "kuali.waitlist.type.semiautomatic";  
+    public static final String CONFIRMATION_WAITLIST_TYPE_KEY = "kuali.waitlist.type.Confirmation";
     public static final String MANUAL_WAITLIST_TYPE_KEY = "kuali.waitlist.type.manual";
-    public static final String[] ALL_WAITLIST_TYPES = { AUTOMATIC_WAITLIST_TYPE_KEY, SEMIAUTOMATIC_WAITLIST_TYPE_KEY,
+    public static final String[] ALL_WAITLIST_TYPES = { AUTOMATIC_WAITLIST_TYPE_KEY, CONFIRMATION_WAITLIST_TYPE_KEY,
         MANUAL_WAITLIST_TYPE_KEY
     };
     /**
